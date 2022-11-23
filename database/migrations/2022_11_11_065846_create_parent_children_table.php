@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('parent_children', function (Blueprint $table) {
             $table->id();
-            $table->string('parent_id')->default('');
-            $table->string('singleton_id')->default('');
-            $table->string('access_code')->default('');
+            $table->integer('parent_id');
+            $table->integer('singleton_id');
+            $table->string('access_code');
             $table->enum('status',['Linked','Unlinked'])->default('Unlinked');
             $table->timestamps();
         });

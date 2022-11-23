@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('reported_users', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id')->default('');
+            $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->string('singleton_id')->default('');
-            $table->string('reported_user_id')->default('');
+            $table->integer('singleton_id');
+            $table->integer('reported_user_id');
             $table->enum('reported_user_type', ['singleton','parent'])->default('singleton');
-            $table->string('reported_user_name')->default('');
+            $table->string('reported_user_name');
             $table->timestamps();
         });
     }

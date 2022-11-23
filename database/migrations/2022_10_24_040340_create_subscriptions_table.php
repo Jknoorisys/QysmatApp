@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->string('subscription_type')->default('');
-            $table->string('price')->default('');
-            $table->string('currency')->default('');
+            $table->string('subscription_type');
+            $table->string('price');
+            $table->string('currency');
             $table->enum('status', ['Active','Inactive','Deleted'])->default('Active');
             $table->timestamps();
         });

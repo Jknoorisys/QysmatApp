@@ -15,16 +15,16 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('booking_id')->default('');
-            $table->string('user_id')->default('');
+            $table->integer('booking_id');
+            $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->string('user_name')->default('');
-            $table->string('paid_by')->default('');
-            $table->string('paid_amount')->default('');
-            $table->string('currency_code')->default('');
-            $table->string('subscription_type')->default('');
-            $table->string('transaction_datetime')->default('');
-            $table->string('payment_status')->default('');
+            $table->string('user_name');
+            $table->string('paid_by');
+            $table->string('paid_amount');
+            $table->string('currency_code');
+            $table->string('subscription_type');
+            $table->string('transaction_datetime');
+            $table->string('payment_status');
             $table->timestamps();
         });
     }

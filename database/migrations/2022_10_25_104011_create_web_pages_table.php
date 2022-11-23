@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('web_pages', function (Blueprint $table) {
             $table->id();
-            $table->string('page_name')->default('');
-            $table->string('page_title')->default('');
-            $table->text('short_description')->default('');
-            $table->text('description')->default('');
+            $table->string('page_name');
+            $table->string('page_title');
+            $table->text('short_description');
+            $table->text('description');
             $table->enum('status', ['Active','Inactive','Deleted'])->default('Active');
             $table->timestamps();
         });

@@ -8,6 +8,7 @@ use App\Models\LastSwipe;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\RecievedMatches;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\UnMatches;
@@ -145,11 +146,37 @@ class Swipes extends Controller
         // }
 
         if ($request->swipe == 'right') {
+
+            $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->swiped_user_id]])->first();
+            if (!empty($unMatch)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.You have Un-Matched this User!'),
+                ],400);
+            }
+
+            $parent = Singleton::where([['id', '=', $request->swiped_user_id], ['status','=', 'Unblocked'], ['is_verified', '=', 'verified']])->first();
+            if (empty($parent)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.User Profile is not Linked with His/Her Parent/Gardian!'),
+                ],400);
+            }
+
             $right              = new MyMatches();
             $right->user_id     = $request->login_id;
             $right->user_type   = $request->user_type;
             $right->matched_id  = $request->swiped_user_id;
             $right->save();
+
+            if ($right){
+                $recieved = new RecievedMatches();
+                $recieved->user_id = $request->swiped_user_id;
+                $recieved->user_type = 'singleton';
+                $recieved->recieved_match_id = $request->login_id;
+                $recieved->save();
+            }
+
             $swipe = LastSwipe::updateOrCreate(
                 ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'swiped_user_id'    => $request->swiped_user_id],
                 [

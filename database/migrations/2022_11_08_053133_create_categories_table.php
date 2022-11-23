@@ -15,13 +15,13 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('singleton_id')->default('');
-            $table->enum('gender', ['Male','Female', 'Other',''])->default('');
-            $table->string('age_range')->default('');
-            $table->string('profession')->default('');
-            $table->string('location')->default('');
-            $table->string('height')->default('');
-            $table->string('islamic_sect')->default('');
+            $table->integer('singleton_id');
+            $table->enum('gender', ['Male','Female', 'Other']);
+            $table->string('age_range');
+            $table->string('profession');
+            $table->string('location');
+            $table->string('height');
+            $table->string('islamic_sect');
             $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');
             $table->timestamps();
         });

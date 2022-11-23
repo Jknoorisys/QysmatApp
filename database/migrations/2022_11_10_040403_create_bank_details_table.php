@@ -15,13 +15,13 @@ return new class extends Migration
     {
         Schema::create('bank_details', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id')->default('');
+            $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->string('card_holder_name')->default('');
-            $table->string('bank_name')->default('');
-            $table->string('card_number')->unique()->default('');
-            $table->string('month_year')->default('');
-            $table->string('cvv')->default('');
+            $table->string('card_holder_name');
+            $table->string('bank_name');
+            $table->string('card_number')->unique();
+            $table->string('month_year');
+            $table->string('cvv');
             $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');
             $table->timestamps();
         });

@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('deleted_users', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id')->default('');
+            $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->string('user_name')->default('');
-            $table->string('reason_type')->default('');
-            $table->text('reason')->default('');
+            $table->string('user_name');
+            $table->string('reason_type');
+            $table->text('reason');
             $table->timestamps();
         });
     }

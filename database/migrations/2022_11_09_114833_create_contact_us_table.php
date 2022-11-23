@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('contact_us', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id')->default('');
+            $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->string('user_name')->default('');
-            $table->string('title')->default('');
-            $table->text('description')->default('');
+            $table->string('user_name');
+            $table->string('title');
+            $table->text('description');
             $table->timestamps();
         });
     }

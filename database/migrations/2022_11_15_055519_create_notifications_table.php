@@ -15,12 +15,13 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id')->default('');
+            $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->string('user_name')->default('');
-            $table->string('title')->default('');
-            $table->text('message')->default('');
-            $table->text('attachment')->default('');
+            $table->string('user_name');
+            $table->integer('singleton_id');
+            $table->string('title');
+            $table->text('message');
+            $table->text('attachment');
             $table->enum('status',['read','unread'])->default('unread');
             $table->timestamps();
         });

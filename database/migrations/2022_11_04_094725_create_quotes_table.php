@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('quotes', function (Blueprint $table) {
             $table->id();
-            $table->text('quotes')->default('');
-            $table->string('image')->default('');
+            $table->text('quotes');
+            $table->string('image');
             $table->enum('status', ['Active','Inactive','Deleted'])->default('Active');
             $table->timestamps();
         });

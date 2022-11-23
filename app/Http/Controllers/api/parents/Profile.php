@@ -310,4 +310,44 @@ class Profile extends Controller
             ],400);
         }
     }
+
+    public function getChildProfile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'      => 'required||numeric',
+            'singleton_id'  => 'required||numeric',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        $profiles = DB::table('parent_children')
+                        ->where('parent_children.parent_id','=',$request->login_id)
+                        ->where('singletons.id','=',$request->singleton_id)
+                        ->join('singletons', 'singletons.id', '=', 'parent_children.singleton_id')
+                        ->select('singletons.*')
+                        ->first();
+
+        if(!empty($profiles)){
+            return response()->json([
+                'status'    => 'success',
+                'message'   => __('msg.Child Profile Details Fetched Successfully!'),
+                'data'      => $profiles
+            ],200);
+        }else{
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.No Profile Found!'),
+            ],400);
+        }
+    }
 }

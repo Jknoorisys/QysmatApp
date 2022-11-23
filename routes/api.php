@@ -6,6 +6,7 @@ use App\Http\Controllers\api\contact_us\ContactUs;
 use App\Http\Controllers\api\delete_account\DeleteUser;
 use App\Http\Controllers\api\parents\Auth;
 use App\Http\Controllers\api\parents\BlockOrReportUser as ParentsBlockOrReportUser;
+use App\Http\Controllers\api\parents\Chat as ParentsChat;
 use App\Http\Controllers\api\parents\Matches as ParentsMatches;
 use App\Http\Controllers\api\parents\Profile as ParentsProfile;
 use App\Http\Controllers\api\parents\Suggestions as ParentsSuggestions;
@@ -13,6 +14,7 @@ use App\Http\Controllers\api\parents\Swipes as ParentsSwipes;
 use App\Http\Controllers\api\quotes\IslamicQuotes;
 use App\Http\Controllers\api\singletons\Auth as SingletonsAuth;
 use App\Http\Controllers\api\singletons\BlockOrReportUser;
+use App\Http\Controllers\api\singletons\Chat;
 use App\Http\Controllers\api\singletons\Matches as SingletonsMatches;
 use App\Http\Controllers\api\singletons\Profile;
 use App\Http\Controllers\api\singletons\Suggestions;
@@ -79,6 +81,12 @@ Route::prefix('singleton')->group(function () {
 
     // Swipes
     Route::post('swipe' , [SingletonsSwipes::class, 'index']);
+
+    // Chats
+    Route::post('send-message' , [Chat::class, 'index']);
+    Route::post('messaged-users-list' , [Chat::class, 'messagedUsers']);
+    Route::post('chat-history' , [Chat::class, 'chatHistory']);
+    Route::post('close-chat' , [Chat::class, 'closeChat']);
 });
 
 // Parents
@@ -105,6 +113,7 @@ Route::prefix('parent')->group(function () {
     Route::post('send-access-request' , [ParentsProfile::class, 'sendAccessRequest']);
     Route::post('verify-access-code' , [ParentsProfile::class, 'verifyAccessRequest']);
     Route::post('get-linked-profiles' , [ParentsProfile::class, 'getLinkedProfiles']);
+    Route::post('get-child-profile' , [ParentsProfile::class, 'getChildProfile']);
 
     // Profile Suggestions
     Route::post('get-categories' , [ParentsSuggestions::class, 'index']);
@@ -123,6 +132,11 @@ Route::prefix('parent')->group(function () {
     // Swipes
     Route::post('swipe' , [ParentsSwipes::class, 'index']);
 
+    // Chats
+    Route::post('send-message' , [ParentsChat::class, 'index']);
+    Route::post('messaged-users-list' , [ParentsChat::class, 'messagedUsers']);
+    Route::post('chat-history' , [ParentsChat::class, 'chatHistory']);
+    Route::post('close-chat' , [ParentsChat::class, 'closeChat']);
 });
 
 // Static Pages

@@ -177,7 +177,10 @@ class Matches extends Controller
             ],400);
         }
 
-        $match = DB::table('my_matches')->where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id]])->get();
+        $match = DB::table('my_matches')
+                        ->where([['my_matches.user_id', '=', $request->login_id], ['my_matches.user_type', '=', $request->user_type], ['my_matches.singleton_id', '=', $request->singleton_id]])
+                        ->join('singletons', 'my_matches.matched_id', '=', 'singletons.id')
+                        ->get(['my_matches.user_id','my_matches.user_type','singletons.*']);
         if(!$match->isEmpty()){
             return response()->json([
                 'status'    => 'success',
@@ -215,7 +218,10 @@ class Matches extends Controller
             ],400);
         }
 
-        $match = DB::table('recieved_matches')->where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id]])->get();
+        $match = DB::table('recieved_matches')
+                    ->where([['recieved_matches.user_id', '=', $request->login_id], ['recieved_matches.user_type', '=', $request->user_type], ['recieved_matches.singleton_id', '=', $request->singleton_id]])
+                    ->join('singletons','recieved_matches.recieved_match_id','=','singletons.id')
+                    ->get(['recieved_matches.user_id','recieved_matches.user_type','recieved_matches.singleton_id','singletons.*']);
         if(!$match->isEmpty()){
             return response()->json([
                 'status'    => 'success',
@@ -253,7 +259,10 @@ class Matches extends Controller
             ],400);
         }
 
-        $match = DB::table('referred_matches')->where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id]])->get();
+        $match = DB::table('referred_matches')
+                    ->where([['referred_matches.user_id', '=', $request->login_id], ['referred_matches.user_type', '=', $request->user_type], ['referred_matches.singleton_id', '=', $request->singleton_id]])
+                    ->join('singletons', 'referred_matches.referred_match_id', '=', 'singletons.id')
+                    ->get(['referred_matches.user_id','referred_matches.user_type','referred_matches.singleton_id','singletons.*']);
         if(!$match->isEmpty()){
             return response()->json([
                 'status'    => 'success',

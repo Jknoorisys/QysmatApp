@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create('chat_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id')->default('');
+            $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->string('user_name')->default('');
-            $table->text('message')->default('');
+            $table->integer('singleton_id');
+            $table->integer('messaged_user_id');
+            $table->enum('messaged_user_type', ['singleton','parent'])->default('singleton');
+            $table->text('message');
             $table->enum('status',['active','inactive'])->default('active');
             $table->timestamps();
         });

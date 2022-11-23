@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('my_matches', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id')->default('');
+            $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->string('singleton_id')->default('');
-            $table->string('matched_id')->default('');
+            $table->integer('singleton_id');
+            $table->integer('matched_id');
             $table->enum('chat_in_progress',['0','1'])->default(0);
             $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');
             $table->timestamps();

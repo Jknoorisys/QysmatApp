@@ -270,6 +270,7 @@ return [
 
     'Profile Details Fetched Successfully!' => 'Profile Details Fetched Successfully!',
     'Profile Details Updated Successfully!' => 'Profile Details Updated Successfully!',
+    'Child Profile Details Fetched Successfully!' => 'Child Profile Details Fetched Successfully!',
     'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
     'Your Profile is No Linked with Your Children, Please search and Link.' => 'Your Profile is No Linked with Your Children, Please search and Link.',
 
@@ -324,10 +325,16 @@ return [
     'Parent Access Request Details Fetched Successfully!' => 'Parent Access Request Details Fetched Successfully!',
 
     'User, You want to Un-Match Not Found!'         => 'User, You want to Un-Match Not Found!',
+    'User Profile is not Linked with His/Her Parent/Gardian!'  => 'User Profile is not Linked with His/Her Parent/Gardian!',
     'You have Blocked this User!'                   =>'You have Blocked this User!',
     'You have Reported this User!'                  =>'You have Reported this User!',
     'You have Un-Matched this User!'                => 'You have Un-Matched this User!',
     'Swiped '                                       => 'Swiped ',
     'Swipe Failed!'                                 => 'Swipe Failed!',
+
+    'Message Sent!'                                 => 'Message Sent!',
+    'You have an Un-Closed Chat...'                 => 'You have an Un-Closed Chat...',
+    'Messaged Users List Fetched Successfully!'     => 'Messaged Users List Fetched Successfully!',
+    'Conversation Ended!'                           => 'Conversation Ended!',
 
 ];

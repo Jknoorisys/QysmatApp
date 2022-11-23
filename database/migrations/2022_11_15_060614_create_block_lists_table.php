@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('block_lists', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id')->default('');
+            $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->string('singleton_id')->default('');
-            $table->string('blocked_user_id')->default('');
-            $table->string('blocked_user_type')->default('');
+            $table->integer('singleton_id');
+            $table->integer('blocked_user_id');
+            $table->enum('blocked_user_type', ['singleton','parent'])->default('singleton');;
             $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');
             $table->timestamps();
         });
