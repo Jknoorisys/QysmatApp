@@ -30,14 +30,14 @@ class Dashboard extends Controller
         $data['title']               = "no_breadcrumb";
         $data['main-title']          = __("msg.Dashboard");
         $data['admin']               = $this->admin;
-        $data['singletons']          = Singleton::where([['status', '!=' ,'Deleted']])->count();
-        $data['parents']             = ParentsModel::where([['status', '!=' ,'Deleted']])->count();
+        $data['singletons']          = Singleton::where([['status', '!=' ,'Deleted'], ['is_verified', '=' ,'verified']])->count();
+        $data['parents']             = ParentsModel::where([['status', '!=' ,'Deleted'], ['is_verified', '=' ,'verified']])->count();
 
         $data['active']              = Singleton::where('status', '=' ,'Unblocked')->count() + ParentsModel::where('status', '=' ,'Unblocked')->count();
         $data['blocked']             = Singleton::where('status', '=' ,'Blocked')->count() + ParentsModel::where('status', '=' ,'Blocked')->count();
         $data['deleted']             = Singleton::where('status', '=' ,'Deleted')->count() + ParentsModel::where('status', '=' ,'Deleted')->count();
 
-        $data['records']             = Singleton::where('status', '!=' ,'Deleted')->latest()->take(5)->get();
+        $data['records']             = Singleton::where([['status', '!=' ,'Deleted'], ['is_verified', '=' ,'verified']])->latest()->take(5)->get();
         $data['parents_records']     = ParentsModel::where('status', '!=' ,'Deleted')->latest()->take(5)->get();
 
         $data['content']             = view('admin.dashboard', $data);

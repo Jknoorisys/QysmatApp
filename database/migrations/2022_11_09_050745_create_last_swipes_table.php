@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
             $table->integer('singleton_id');
             $table->integer('swiped_user_id');
-            $table->enum('swipe', ['right','left','up','down']);
+            $table->enum('swipe', ['right','left','up','down',''])->default('');
             $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');
             $table->timestamps();
         });

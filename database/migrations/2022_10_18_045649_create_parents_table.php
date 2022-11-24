@@ -42,7 +42,7 @@ return new class extends Migration
             $table->string('fcm_token');
             $table->string('device_token');
             $table->enum('status',['Blocked','Unblocked', 'Deleted'])->default('Unblocked');
-            $table->enum('is_verified',['verified', 'rejected']);
+            $table->enum('is_verified',['verified', 'rejected'])->default('rejected');
             $table->timestamps();
         });
     }
