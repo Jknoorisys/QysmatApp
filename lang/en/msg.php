@@ -272,7 +272,7 @@ return [
     'Profile Details Updated Successfully!' => 'Profile Details Updated Successfully!',
     'Child Profile Details Fetched Successfully!' => 'Child Profile Details Fetched Successfully!',
     'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
-    'Your Profile is No Linked with Your Children, Please search and Link.' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
+    'Your Profile is Not Linked with Your Children, Please search and Link.' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
 
     'Page Details Fetched Successfully!'  => 'Page Details Fetched Successfully!',
     'Page Not Found!'                     => 'Page Not Found!',

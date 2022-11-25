@@ -48,7 +48,7 @@ class Suggestions extends Controller
             if (empty($linked) || ($linked->status) != 'Linked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.Your Profile is No Linked with Your Children, Please search and Link.'),
+                    'message'   => __('msg.Your Profile is Not Linked with Your Children, Please search and Link.'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
