@@ -30,7 +30,6 @@ class WebPages extends Controller
         $data['title']               = __("msg.Manage Web Pages");
         $data['records']             =  ModelsWebPages::where('status', '!=' ,'Deleted')->paginate(10);
         $data['content']             = view('web_pages.web_pages_list', $data);
-        // return $data['records'];exit;
         return view('layouts.main',$data);
     }
 

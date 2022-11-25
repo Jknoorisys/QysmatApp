@@ -30,7 +30,6 @@ class ContactDetails extends Controller
         $data['title']               = __("msg.Manage Contact Details");
         $data['records']             =  ModelsContactDetails::where('status', '!=' ,'Deleted')->paginate(10);
         $data['content']             = view('contact_details.contact_details_list', $data);
-        // return $data['records'];exit;
         return view('layouts.main',$data);
     }
 
@@ -46,7 +45,6 @@ class ContactDetails extends Controller
 
     public function addContactFun(Request $request)
     {
-        // return $request->input();exit;
         $request->validate([
             'contact_type' => 'required',
             'details'             => 'required',
@@ -91,7 +89,6 @@ class ContactDetails extends Controller
         $data['title']               = __("msg.Update Contact Details");
         $data['records']             =  ModelsContactDetails::find($id);
         $data['content']             = view('contact_details.contact_details_update', $data);
-        // return $data['records'];exit;
         return view('layouts.main',$data);
     }
 
