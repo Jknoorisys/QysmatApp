@@ -55,8 +55,8 @@ class StaticPages extends Controller
         $page =  new ModelsStaticPages();
         $page->page_name = $request->page_name;
         $page->page_title = $request->page_title;
-        $page->short_description = $request->short_description;
-        $page->description      = $request->description;
+        $page->short_description = $request->short_description ? $request->short_description : '';
+        $page->description      = $request->description ? $request->description : '';
         $page->created_at   = date('Y-m-d H:i:s');
         $add = $page->save();
         if($add)
@@ -105,7 +105,7 @@ class StaticPages extends Controller
             'description' => 'required',
         ]);
 
-        $update =  ModelsStaticPages :: whereId($request->id)->update(['page_name' => $request->page_name,'page_title' => $request->page_title,'short_description' => $request->short_description, 'description' => $request->description, 'updated_at' => date('Y-m-d H:i:s')]);
+        $update =  ModelsStaticPages :: whereId($request->id)->update(['page_name' => $request->page_name,'page_title' => $request->page_title,'short_description' => $request->short_description ? $request->short_description : '', 'description' => $request->description ? $request->description : '', 'updated_at' => date('Y-m-d H:i:s')]);
         if($update)
         {
             return redirect()->to('static_pages')->with('success', __('msg.Page Updated!'));

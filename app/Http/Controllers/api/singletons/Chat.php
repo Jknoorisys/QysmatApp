@@ -8,6 +8,7 @@ use App\Models\ChatHistory;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\ReferredMatches;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
 use App\Models\UnMatches;
@@ -29,67 +30,7 @@ class Chat extends Controller
         App::setlocale($lang);
 
         if (isset($_POST['login_id']) && !empty($_POST['login_id']) && isset($_POST['user_type']) && !empty($_POST['user_type'])) {
-
-            if ($_POST['user_type'] == 'singleton') {
-                $user = Singleton::find($_POST['login_id']);
-                if (empty($user) || $user->status != 'Unblocked') {
-                    $response = [
-                        'status'    => 'failed',
-                        'message'   => __('msg.User Not Found!'),
-                        'status_code' => 403
-                    ];
-                    echo json_encode($response);die();
-                }
-
-                if (empty($user) || $user->is_verified != 'verified') {
-                    $response = [
-                        'status'    => 'failed',
-                        'message'   => __('msg.Profile not Verified, Please Try After Some Time...'),
-                        'status_code' => 403
-                    ];
-                    echo json_encode($response);die();
-                }
-
-                $linked = ParentChild::where('singleton_id','=',$_POST['login_id'])->first();
-                if (empty($linked) || ($linked->status) != 'Linked') {
-                    $response = [
-                        'status'    => 'failed',
-                        'message'   => __('msg.Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.'),
-                        'status_code' => 403
-                    ];
-                    echo json_encode($response);die();
-                }
-            } else {
-                $user = ParentsModel::find($_POST['login_id']);
-                if (empty($user) || $user->status != 'Unblocked') {
-                    $response = [
-                        'status'    => 'failed',
-                        'message'   => __('msg.User Not Found!'),
-                        'status_code' => 403
-                    ];
-                    echo json_encode($response);die();
-                }
-
-                if (empty($user) || $user->is_verified != 'verified') {
-                    $response = [
-                        'status'    => 'failed',
-                        'message'   => __('msg.Profile not Verified, Please Try After Some Time...'),
-                        'status_code' => 403
-                    ];
-                    echo json_encode($response);die();
-                }
-
-                $linked = ParentChild::where('parent_id','=',$_POST['login_id'])->first();
-                if (empty($linked) || ($linked->status) != 'Linked') {
-                    $response = [
-                        'status'    => 'failed',
-                        'message'   => __('msg.Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.'),
-                        'status_code' => 403
-                    ];
-                    echo json_encode($response);die();
-                }
-            }
-
+            userExist($_POST['login_id'], $_POST['user_type']);
         }
     }
 
@@ -250,13 +191,13 @@ class Chat extends Controller
         if(!$chat->isEmpty()){
             return response()->json([
                 'status'    => 'success',
-                'message'   => __('msg.Messaged Users List Fetched Successfully!'),
+                'message'   => __('msg.Message List Fetched Successfully!'),
                 'data'      => $chat
             ],200);
         }else{
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
+                'message'   => __('msg.No Message Found!'),
             ],400);
         }
     }
@@ -293,6 +234,83 @@ class Chat extends Controller
             return response()->json([
                 'status'    => 'success',
                 'message'   => __('msg.Conversation Ended!'),
+            ],200);
+        }else{
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
+            ],400);
+        }
+    }
+
+    public function startChat(Request $request)
+    {
+        # code...
+    }
+
+    public function inviteParent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'  => 'required||numeric',
+            'user_type' => [
+                'required' ,
+                Rule::in(['singleton']),
+            ],
+            'messaged_user_id'  => 'required||numeric',
+            'messaged_user_type' => [
+                'required' ,
+                Rule::in(['singleton']),
+            ],
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        $linked = ParentChild::where([['singleton_id','=',$request->login_id],['status','=','Linked']])->first();
+        if (!empty($linked)) {
+            $invite = new ReferredMatches();
+            $invite->user_id = $linked->parent_id;
+            $invite->user_type = 'parent';
+            $invite->singleton_id = $request->login_id;
+            $invite->referred_match_id = $request->messaged_user_id;
+            $send = $invite->save();
+
+            if ($send) {
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.Invitation Sent...'),
+                    'data'      => $invite
+                ],200);
+            } else {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
+                ],400);
+            }
+
+        }else{
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.'),
+            ],400);
+        }
+
+        $chat = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])->get();
+
+        if(!$chat->isEmpty()){
+            return response()->json([
+                'status'    => 'success',
+                'message'   => __('msg.Messaged Users List Fetched Successfully!'),
+                'data'      => $chat
             ],200);
         }else{
             return response()->json([

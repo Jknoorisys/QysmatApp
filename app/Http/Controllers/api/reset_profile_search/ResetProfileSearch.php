@@ -1,14 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\api\contact_us;
+namespace App\Http\Controllers\api\reset_profile_search;
 
 use App\Http\Controllers\Controller;
-use App\Models\ContactUs as ModelsContactUs;
+use App\Models\BlockList;
+use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\RecievedMatches;
+use App\Models\ReferredMatches;
 use App\Models\Singleton;
+use App\Models\UnMatches;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -16,7 +21,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=utf8");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control");
 
-class ContactUs extends Controller
+class ResetProfileSearch extends Controller
 {
     public function  __construct()
     {
@@ -24,7 +29,7 @@ class ContactUs extends Controller
         App::setlocale($lang);
 
         if (isset($_POST['login_id']) && !empty($_POST['login_id']) && isset($_POST['user_type']) && !empty($_POST['user_type'])) {
-            userFound($_POST['login_id'], $_POST['user_type']);
+            userExist($_POST['login_id'], $_POST['user_type']);
         }
     }
 
@@ -35,13 +40,11 @@ class ContactUs extends Controller
                 'required' ,
                 Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
             ],
-            'login_id'   => 'required||numeric',
+            'login_id'  => 'required||numeric',
             'user_type' => [
                 'required' ,
                 Rule::in(['singleton','parent']),
             ],
-            'title' => 'required',
-            'description' => 'required',
         ]);
 
         if($validator->fails()){
@@ -52,27 +55,17 @@ class ContactUs extends Controller
             ],400);
         }
 
-        if($request->user_type == 'singleton'){
-            $userExists = Singleton::find($request->login_id);
-        }else{
-            $userExists = ParentsModel::find($request->login_id);
-        }
+        $match = MyMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+        $unmatch = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+        $refer = ReferredMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+        $received = RecievedMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
 
-        $form = new ModelsContactUs();
-        $form->user_id      = $request->login_id;
-        $form->user_type    = $request->user_type;
-        $form->user_name    = $userExists->name;
-        $form->title        = $request->title;
-        $form->description  = $request->description;
-        $formDetails = $form->save();
-
-        if(!empty($formDetails)){
+        if($match || $unmatch || $refer || $received){
             return response()->json([
                 'status'    => 'success',
-                'message'   => __('msg.Contact Us Form Submitted Successfully!'),
-                'data'      => $form
+                'message'   => __('msg.Profile Search Reset Successfully!'),
             ],200);
-        }else{
+        }else {
             return response()->json([
                 'status'    => 'failed',
                 'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),

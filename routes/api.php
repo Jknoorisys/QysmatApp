@@ -8,14 +8,17 @@ use App\Http\Controllers\api\parents\Auth;
 use App\Http\Controllers\api\parents\BlockOrReportUser as ParentsBlockOrReportUser;
 use App\Http\Controllers\api\parents\Chat as ParentsChat;
 use App\Http\Controllers\api\parents\Matches as ParentsMatches;
+use App\Http\Controllers\api\parents\Notifications as ParentsNotifications;
 use App\Http\Controllers\api\parents\Profile as ParentsProfile;
 use App\Http\Controllers\api\parents\Suggestions as ParentsSuggestions;
 use App\Http\Controllers\api\parents\Swipes as ParentsSwipes;
 use App\Http\Controllers\api\quotes\IslamicQuotes;
+use App\Http\Controllers\api\reset_profile_search\ResetProfileSearch;
 use App\Http\Controllers\api\singletons\Auth as SingletonsAuth;
 use App\Http\Controllers\api\singletons\BlockOrReportUser;
 use App\Http\Controllers\api\singletons\Chat;
 use App\Http\Controllers\api\singletons\Matches as SingletonsMatches;
+use App\Http\Controllers\api\singletons\Notifications;
 use App\Http\Controllers\api\singletons\Profile;
 use App\Http\Controllers\api\singletons\Suggestions;
 use App\Http\Controllers\api\singletons\Swipes as SingletonsSwipes;
@@ -87,6 +90,11 @@ Route::prefix('singleton')->group(function () {
     Route::post('messaged-users-list' , [Chat::class, 'messagedUsers']);
     Route::post('chat-history' , [Chat::class, 'chatHistory']);
     Route::post('close-chat' , [Chat::class, 'closeChat']);
+    Route::post('start-chat' , [Chat::class, 'startChat']);
+    Route::post('invite-parent' , [Chat::class, 'inviteParent']);
+
+    // Notifications
+    Route::post('get-notifications' , [Notifications::class, 'index']);
 });
 
 // Parents
@@ -137,6 +145,11 @@ Route::prefix('parent')->group(function () {
     Route::post('messaged-users-list' , [ParentsChat::class, 'messagedUsers']);
     Route::post('chat-history' , [ParentsChat::class, 'chatHistory']);
     Route::post('close-chat' , [ParentsChat::class, 'closeChat']);
+    Route::post('start-chat' , [ParentsChat::class, 'startChat']);
+    Route::post('invite-child' , [ParentsChat::class, 'inviteChild']);
+
+    // Notifications
+    Route::post('get-notifications' , [ParentsNotifications::class, 'index']);
 });
 
 // Static Pages
@@ -177,3 +190,7 @@ Route::prefix('delete-account')->group(function () {
     Route::post('delete-account' , [DeleteUser::class, 'index']);
 });
 
+// Reset Profile Search
+Route::prefix('reset-profile-search')->group(function () {
+    Route::post('reset' , [ResetProfileSearch::class, 'index']);
+});

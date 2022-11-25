@@ -49,13 +49,13 @@
        <div class="card-body">
         <div class="row">
             <div class="col-10"></div>
-            <div class="col-2"><a href="{{route('addWebPage')}}" class="btn btn-qysmat mb-2">{{ __('Add Web Page')}}</a></div>
+            {{-- <div class="col-2"><a href="{{route('addWebPage')}}" class="btn btn-qysmat mb-2">{{ __('Add Web Page')}}</a></div> --}}
         </div>
             <div class="table-responsive">
                 <table class="table table-sm table-hover">
                     <thead>
                         <tr>
-                            <th class="text-center">{{ __('msg.Web Page Name')}}</th>
+                            {{-- <th class="text-center">{{ __('msg.Web Page Name')}}</th> --}}
                             <th class="text-center">{{ __('msg.Web Page Title')}}</th>
                             <th class="text-center">{{ __('msg.Status')}}</th>
                             <th class="text-center">{{ __('msg.Actions')}}</th>
@@ -65,7 +65,7 @@
                         @if (!$records->isEmpty())
                             @foreach ($records as $value)
                                 <tr>
-                                    <td class="text-center">{{$value->page_name}}</td>
+                                    {{-- <td class="text-center">{{$value->page_name}}</td> --}}
                                     <td class="text-center">{{$value->page_title}}</td>
                                     <td class="text-center">{{$value->status}}</td>
                                     <td class="text-center bt-switch">
@@ -87,13 +87,13 @@
                                                     <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()"> <i class="fas fa-edit"></i> </button>
                                                 </form>
                                             </div>
-                                            <div class="col-2">
+                                            {{-- <div class="col-2">
                                                 <form action="{{route('deleteWebPage')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat show_confirm" data-name="{{$value->page_name}}" data-id="{{$value->id}}" data-toggle="tooltip" title='Delete'> <i class="fas fa-trash"></i> </button>
                                                 </form>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-3"></div>
                                         </div>
                                     </td>

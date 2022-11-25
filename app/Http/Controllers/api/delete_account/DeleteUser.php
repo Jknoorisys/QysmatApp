@@ -24,30 +24,7 @@ class DeleteUser extends Controller
         App::setlocale($lang);
 
         if (isset($_POST['login_id']) && !empty($_POST['login_id']) && isset($_POST['user_type']) && !empty($_POST['user_type'])) {
-
-            if ($_POST['user_type'] == 'singleton') {
-                $user = Singleton::find($_POST['login_id']);
-                if (empty($user)) {
-                    $response = [
-                        'status'    => 'failed',
-                        'message'   => __('msg.User Not Found!'),
-                        'status_code' => 403
-                    ];
-                    echo json_encode($response);die();
-                }
-
-            } else {
-                $user = ParentsModel::find($_POST['login_id']);
-                if (empty($user)) {
-                    $response = [
-                        'status'    => 'failed',
-                        'message'   => __('msg.User Not Found!'),
-                        'status_code' => 403
-                    ];
-                    echo json_encode($response);die();
-                }
-            }
-
+            userFound($_POST['login_id'], $_POST['user_type']);
         }
     }
 

@@ -271,8 +271,8 @@ return [
     'Profile Details Fetched Successfully!' => 'Profile Details Fetched Successfully!',
     'Profile Details Updated Successfully!' => 'Profile Details Updated Successfully!',
     'Child Profile Details Fetched Successfully!' => 'Child Profile Details Fetched Successfully!',
-    'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
-    'Your Profile is No Linked with Your Children, Please search and Link.' => 'Your Profile is No Linked with Your Children, Please search and Link.',
+    'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+    'Your Profile is No Linked with Your Children, Please search and Link.' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
 
     'Page Details Fetched Successfully!'  => 'Page Details Fetched Successfully!',
     'Page Not Found!'                     => 'Page Not Found!',
@@ -336,5 +336,14 @@ return [
     'You have an Un-Closed Chat...'                 => 'You have an Un-Closed Chat...',
     'Messaged Users List Fetched Successfully!'     => 'Messaged Users List Fetched Successfully!',
     'Conversation Ended!'                           => 'Conversation Ended!',
+    'Invitation Sent...'                            => 'Invitation Sent...',
+
+    'Notifications List Fetched Successfully!'      => 'Notifications List Fetched Successfully!',
+    'No Notification Found!'                        => 'No Notification Found!',
+
+    'Message List Fetched Successfully!'            => 'Message List Fetched Successfully!',
+    'No Message Found!'                             => 'No Message Found!',
+
+    'Profile Search Reset Successfully!'            => 'Profile Search Reset Successfully!',
 
 ];

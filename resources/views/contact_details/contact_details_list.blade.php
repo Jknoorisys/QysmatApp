@@ -49,7 +49,7 @@
        <div class="card-body">
         <div class="row">
             <div class="col-10"></div>
-            <div class="col-2"><a href="{{route('addContact')}}" class="btn btn-qysmat mb-2">{{ __('Add Contact Details')}}</a></div>
+            {{-- <div class="col-2"><a href="{{route('addContact')}}" class="btn btn-qysmat mb-2">{{ __('Add Contact Details')}}</a></div> --}}
         </div>
             <div class="table-responsive">
                 <table class="table table-sm table-hover">
@@ -87,13 +87,13 @@
                                                     <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()"> <i class="fas fa-edit"></i> </button>
                                                 </form>
                                             </div>
-                                            <div class="col-2">
+                                            {{-- <div class="col-2">
                                                 <form action="{{route('deleteContact')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat show_confirm" data-name="{{$value->contact_type}}" data-id="{{$value->id}}" data-toggle="tooltip" title='Delete'> <i class="fas fa-trash"></i> </button>
                                                 </form>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-3"></div>
                                         </div>
                                     </td>
