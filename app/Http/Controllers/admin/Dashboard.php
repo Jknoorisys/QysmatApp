@@ -38,7 +38,7 @@ class Dashboard extends Controller
         $data['deleted']             = Singleton::where('status', '=' ,'Deleted')->count() + ParentsModel::where('status', '=' ,'Deleted')->count();
 
         $data['records']             = Singleton::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->latest()->take(5)->get();
-        $data['parents_records']     = ParentsModel::where(['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified'])->latest()->take(5)->get();
+        $data['parents_records']     = ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->latest()->take(5)->get();
 
         $data['content']             = view('admin.dashboard', $data);
         return view('layouts.main', $data);
