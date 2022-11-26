@@ -33,9 +33,9 @@ class Dashboard extends Controller
         $data['singletons']          = Singleton::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->count();
         $data['parents']             = ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->count();
 
-        $data['active']              = Singleton::where('status', '=' ,'Unblocked')->count() + ParentsModel::where('status', '=' ,'Unblocked')->count();
-        $data['blocked']             = Singleton::where('status', '=' ,'Blocked')->count() + ParentsModel::where('status', '=' ,'Blocked')->count();
-        $data['deleted']             = Singleton::where('status', '=' ,'Deleted')->count() + ParentsModel::where('status', '=' ,'Deleted')->count();
+        $data['active']              = Singleton::where([['status', '=' ,'Unblocked'],['is_email_verified', '=' ,'verified']])->count() + ParentsModel::where([['status', '=' ,'Unblocked'],['is_email_verified', '=' ,'verified']])->count();
+        $data['blocked']             = Singleton::where([['status', '=' ,'Blocked'],['is_email_verified', '=' ,'verified']])->count() + ParentsModel::where([['status', '=' ,'Blocked'],['is_email_verified', '=' ,'verified']])->count();
+        $data['deleted']             = Singleton::where([['status', '=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->count() + ParentsModel::where([['status', '=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->count();
 
         $data['records']             = Singleton::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->latest()->take(5)->get();
         $data['parents_records']     = ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->latest()->take(5)->get();
