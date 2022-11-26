@@ -262,4 +262,112 @@ class Suggestions extends Controller
         }
 
     }
+
+    public function getSuggestions(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'   => 'required||numeric',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        $linked = ParentChild::where('singleton_id','=', $request->login_id)->first();
+        if (empty($linked) || ($linked->status) != 'Linked') {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.'),
+            ],400);
+        }
+
+        $category = ModelsCategories::where('singleton_id',$request->login_id)->first();
+
+        if (!empty($category)) {
+            $gender = $category->gender ? $category->gender : '';
+            $profession = $category->profession ? $category->profession : '';
+            $location = $category->location ? $category->location : '';
+            $height = $category->height ? $category->height : '';
+            $islamic_sect = $category->islamic_sect ? $category->islamic_sect : '';
+            $age = $category->age_range ? explode('-',$category->age_range) : '';
+            $min_age = $age ? $age[0] : '' ;
+            $max_age = $age ? $age[1] : '';
+
+            $this->db = DB::table('singletons');
+
+            if(!empty($profession)){
+                $this->db->where('profession','=',$profession);
+            }
+
+            if(!empty($location)){
+                $this->db->where('location','=',$location);
+            }
+
+            if(!empty($height)){
+                $this->db->where('height','=',$height);
+            }
+
+            if(!empty($islamic_sect)){
+                $this->db->where('islamic_sect','=',$islamic_sect);
+            }
+
+            if(!empty($min_age) && !empty($max_age)){
+                $this->db->where('age','>=',$min_age);
+                $this->db->where('age','<=',$max_age);
+            }
+
+            $this->db->where('id','!=',$request->login_id);
+            $this->db->where('status','=','Unblocked');
+            $this->db->where('is_verified','=','verified');
+            $this->db->where('gender','=',$gender);
+            $suggestion = $this->db->get();
+            if(!$suggestion->isEmpty()){
+                $users = [];
+                foreach ($suggestion as $m) {
+                    $singleton_id = $m->id;
+                    $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
+                    $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton']])->first();
+                    $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['un_matched_id', '=', $singleton_id]])->first();
+                    $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['matched_id', '=', $singleton_id]])->first();
+
+                    if (empty($block) && empty($report) && empty($unMatch) && empty($Match)) {
+                        $users[] = $m;
+                    }
+                }
+
+                if(!empty($users)){
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.Suggestions Based on Singleton Categories Fetched Successfully!'),
+                        'data'      => $users
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.No Suggestions Found!'),
+                    ],400);
+                }
+
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.No Suggestions Found!'),
+                ],400);
+            }
+        } else {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Singleton Category Details Not Found!'),
+            ],400);
+        }
+
+    }
 }
