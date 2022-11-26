@@ -247,11 +247,7 @@ class Suggestions extends Controller
                     'message'   => __('msg.No Suggestions Found!'),
                 ],400);
             }
-                // return response()->json([
-                //     'status'    => 'success',
-                //     'message'   => __('msg.Suggestions Based on Singleton Categories Fetched Successfully!'),
-                //     'data'    => $suggestion
-                // ],200);
+                
             }else{
                 return response()->json([
                     'status'    => 'failed',
