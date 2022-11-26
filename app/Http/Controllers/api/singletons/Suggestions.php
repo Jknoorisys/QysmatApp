@@ -261,7 +261,7 @@ class Suggestions extends Controller
         } else {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
+                'message'   => __('msg.Singleton Category Details Not Found!'),
             ],400);
         }
 
