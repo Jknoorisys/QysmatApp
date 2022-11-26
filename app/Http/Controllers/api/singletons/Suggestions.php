@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\singletons;
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
 use App\Models\Categories as ModelsCategories;
+use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
@@ -221,16 +222,36 @@ class Suggestions extends Controller
             $this->db->where('gender','=',$gender);
             $suggestion = $this->db->get();
             if(!$suggestion->isEmpty()){
-                // $result = [];
-                // foreach ($suggestion as $sug) {
-                //     $singleton_id = $sug->id;
-                //     $block = BlockList::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton']], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'])->first();
-                // }
+                $users = [];
+            foreach ($suggestion as $m) {
+                $singleton_id = $m->id;
+                $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
+                $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton']])->first();
+                $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['un_matched_id', '=', $singleton_id]])->first();
+                $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['matched_id', '=', $singleton_id]])->first();
+
+                if (empty($block) && empty($report) && empty($unMatch) && empty($Match)) {
+                    $users[] = $m;
+                }
+            }
+
+            if(!empty($users)){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.Suggestions Based on Singleton Categories Fetched Successfully!'),
-                    'data'    => $suggestion
+                    'data'      => $users
                 ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.No Suggestions Found!'),
+                ],400);
+            }
+                // return response()->json([
+                //     'status'    => 'success',
+                //     'message'   => __('msg.Suggestions Based on Singleton Categories Fetched Successfully!'),
+                //     'data'    => $suggestion
+                // ],200);
             }else{
                 return response()->json([
                     'status'    => 'failed',
