@@ -254,6 +254,7 @@ return [
 
     // API
     'Validation Failed!'                    => 'Validation Failed!',
+    'Invalid Email...'                      => 'Invalid Email...',
     'Registration Successful!'              => 'Registration Successful!',
     'Registration OTP Sent Successfully!'   => 'Registration OTP Sent Successfully!',
     'Email Not Verified! Please Verify First...' => 'Email Not Verified! Please Verify First...',
