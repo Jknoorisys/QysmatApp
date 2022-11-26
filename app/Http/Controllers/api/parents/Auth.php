@@ -52,6 +52,15 @@ class Auth extends Controller
             ],400);
         }
 
+        $verify = detect_disposable_email($request->email);
+
+        if ($verify == 0) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Invalid Email...'),
+            ],400);
+        }
+
         $email_otp = random_int(100000, 999999);
         $parent = ParentsModel::create([
             'name'          => $request->name,
@@ -114,6 +123,15 @@ class Auth extends Controller
                 'status'    => 'failed',
                 'message'   => __('msg.Validation Failed!'),
                 'errors'    => $validator->errors()
+            ],400);
+        }
+
+        $verify = detect_disposable_email($request->email);
+
+        if ($verify == 0) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Invalid Email...'),
             ],400);
         }
 
@@ -220,6 +238,15 @@ class Auth extends Controller
             ],400);
         }
 
+        $verify = detect_disposable_email($request->email);
+
+        if ($verify == 0) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Invalid Email...'),
+            ],400);
+        }
+
         $user = ParentsModel::where([['email','=',$request->email],['status','=','Unblocked']])->first();
         if(!empty($user)){
             $email_otp = random_int(100000, 999999);
@@ -265,6 +292,15 @@ class Auth extends Controller
                 'status'    => 'failed',
                 'message'   => __('msg.Validation Failed!'),
                 'errors'    => $validator->errors()
+            ],400);
+        }
+
+        $verify = detect_disposable_email($request->email);
+
+        if ($verify == 0) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Invalid Email...'),
             ],400);
         }
 

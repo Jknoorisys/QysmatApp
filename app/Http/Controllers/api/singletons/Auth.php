@@ -59,6 +59,15 @@ class Auth extends Controller
             ],400);
         }
 
+        $verify = detect_disposable_email($request->email);
+
+        if ($verify == 0) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Invalid Email...'),
+            ],400);
+        }
+
         $email_otp = random_int(100000, 999999);
 
 
@@ -142,6 +151,15 @@ class Auth extends Controller
                 'status'    => 'failed',
                 'message'   => __('msg.Validation Failed!'),
                 'errors'    => $validator->errors()
+            ],400);
+        }
+
+        $verify = detect_disposable_email($request->email);
+
+        if ($verify == 0) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Invalid Email...'),
             ],400);
         }
 
@@ -275,6 +293,15 @@ class Auth extends Controller
                 'status'    => 'failed',
                 'message'   => __('msg.Validation Failed!'),
                 'errors'    => $validator->errors()
+            ],400);
+        }
+
+        $verify = detect_disposable_email($request->email);
+
+        if ($verify == 0) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Invalid Email...'),
             ],400);
         }
 
@@ -442,29 +469,18 @@ class Auth extends Controller
             ],400);
         }
 
+        $verify = detect_disposable_email($request->email);
+
+        if ($verify == 0) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Invalid Email...'),
+            ],400);
+        }
+
         $user = Singleton::where([['email','=',$request->email],['status','=','Unblocked']])->first();
 
         if(!empty($user)){
-            // $email_otp = random_int(100000, 999999);
-            // $otp =  Singleton :: where('email','=',$request->email)->update(['email_otp' => $email_otp]);
-            // if($otp){
-            //     $data = ['salutation' => __('msg.Hi'), 'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> 'I am pleased that you have registered with us. Now all you have to do is verify OTP to reset your password!', 'otp_msg'=> __('msg.Your OTP is')];
-            //     $user =  ['to'=> $user->email];
-            //     Mail::send('mail', $data, function ($message) use ($user) {
-            //         $message->to($user['to']);
-            //         $message->subject(__('msg.Forget Password'));
-            //     });
-            //     return response()->json([
-            //         'status'    => 'success',
-            //         'message'   => __('msg.Forget Password OTP Sent Successfully!'),
-            //     ],200);
-            // }else{
-            //     return response()->json([
-            //         'status'    => 'failed',
-            //         'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
-            //     ],400);
-            // }
-
             $token  = Str::random(40);
             $domain = URL::to('/');
             $url    = $domain.'/api/singleton/reset-password?token='.$token;
