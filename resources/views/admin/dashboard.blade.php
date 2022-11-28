@@ -185,33 +185,30 @@
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="m-r-10">
-                        <span>Average revenue generated in weekly, monthly, yearly and selectable date range</span>
-                        <h4>5769</h4>
+                        <span>{{__('msg.Number of Conversations')}}</span>
+                        <h4>{{$conversations}}</h4>
                     </div>
                     <div class="ml-auto">
-                        <div class="gaugejs-box">
-                            <canvas id="foo" class="gaugejs" height="50" width="100">guage</canvas>
-                        </div>
+                        <i class="fa-solid fa-message" style="font-size:50px;"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- column -->
     <div class="col-sm-12 col-lg-4">
         <div class="card bg-light-warning no-card-border">
             <div class="card-body">
-                <div class="d-flex">
+                <a href="{{route('reported-users')}}" class="d-flex" style="color: #575757;">
                     <div class="m-r-10">
-                        <span>Number of Reported Users</span>
-                        <h4>$3,567.53</h4>
+                        <span>{{__('msg.Number of Reported Users')}}</span>
+                        <h4>{{$reported}}</h4>
                     </div>
                     <div class="ml-auto">
-                        <div style="max-width:130px; height:15px;" class="m-b-40"><div class="chartjs-size-monitor" style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
-                            <canvas id="balance" width="130" height="65" style="display: block; width: 130px; height: 65px;" class="chartjs-render-monitor"></canvas>
-                        </div>
+                        <i class="fa-solid fa-flag" style="font-size:50px;"></i>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </div>
@@ -219,15 +216,13 @@
     <div class="col-sm-12 col-lg-4">
         <div class="card bg-light-success no-card-border">
             <div class="card-body">
-                <div class="d-flex align-items-center">
+                <div class="d-flex" style="color: #575757;">
                     <div class="m-r-10">
-                        <span>Number of Matches</span>
-                        <h4>5769</h4>
+                        <span>{{__('msg.Number of Matches')}}</span>
+                        <h4>{{$matches}}</h4>
                     </div>
                     <div class="ml-auto">
-                        <div class="gaugejs-box">
-                            <canvas id="foo" class="gaugejs" height="50" width="100">guage</canvas>
-                        </div>
+                        <i class="fa-solid fa-children" style="font-size:50px;"></i>
                     </div>
                 </div>
             </div>
@@ -237,54 +232,81 @@
 
 <div class="row">
     <!-- column -->
-    <div class="col-sm-12 col-lg-4">
+    <div class="col-sm-12 col-lg-8">
         <div class="card bg-light-info no-card-border">
             <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="m-r-10">
-                        <span>Number of Conversations via Messaging</span>
-                        <h4>$769.08</h4>
+                <div class="d-flex align-items-center text-center">
+                    <div class="m-r-0">
+                        <span>{{__('msg.Survey Results')}}</span><hr>
+                        <div class="row justify-content-center">
+                            <div class="col-3">
+                                <h5>{{__('msg.Didn’t Find the App Useful')}}</h5>
+                                <h4>{{$active}}</h4>
+                            </div>
+                            <div class="col-3">
+                                <h5>{{__('msg.Taking a Break')}}</h5>
+                                <h4>{{$blocked}}</h4>
+                            </div>
+                            <div class="col-3">
+                                <h5>{{__('msg.Met Someone/Getting Married')}}</h5>
+                                <h4>{{$deleted}}</h4>
+                            </div>
+                            <div class="col-3">
+                                <h5>{{__('msg.Other')}}</h5>
+                                <h4>{{$deleted}}</h4>
+                            </div>
+                        </div>
                     </div>
                     <div class="ml-auto">
-                        <div class="" id="ravenue"><canvas width="76" height="55" style="display: inline-block; width: 76px; height: 55px; vertical-align: top;"></canvas></div>
+                        <i class="fa-solid fa-chart-pie" style="font-size:50px;"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- column -->
     <div class="col-sm-12 col-lg-4">
         <div class="card bg-light-warning no-card-border">
             <div class="card-body">
-                <div class="d-flex">
-                    <div class="m-r-10">
-                        <span>Number of Telephone and Video Calls</span>
-                        <h4>$3,567.53</h4>
+                <div class="d-flex align-items-center text-center">
+                    <div class="m-r-0">
+                        <span>{{__('msg.Number of Telephone and Video Calls')}}</span><hr>
+                        <div class="row justify-content-center">
+                            <div class="col-6">
+                                <h5>{{__('msg.Telephone Calls')}}</h5>
+                                <h4>{{$active}}</h4>
+                            </div>
+                            <div class="col-6">
+                                <h5>{{__('msg.Video Calls')}}</h5>
+                                <h4>{{$blocked}}</h4>
+                            </div>
+                        </div>
                     </div>
                     <div class="ml-auto">
-                        <div style="max-width:130px; height:15px;" class="m-b-40"><div class="chartjs-size-monitor" style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
-                            <canvas id="balance" width="130" height="65" style="display: block; width: 130px; height: 65px;" class="chartjs-render-monitor"></canvas>
-                        </div>
+                        <i class="fa-solid fa-phone" style="font-size:50px;"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- column -->
-    <div class="col-sm-12 col-lg-4">
+</div>
+
+<div class="row">
+    <div class="col-sm-12 col-lg-12">
         <div class="card bg-light-success no-card-border">
             <div class="card-body">
-                <div class="d-flex align-items-center">
+                <a href="{{route('transactions')}}" class="d-flex align-items-center" style="color: #575757;">
                     <div class="m-r-10">
-                        <span>Survey Results-see Previous Section</span>
-                        <h4>5769</h4>
+                        <span>{{__('msg.Average Revenue')}}</span>
+                        <h4>{{$revenue}}</h4>
                     </div>
                     <div class="ml-auto">
                         <div class="gaugejs-box">
-                            <canvas id="foo" class="gaugejs" height="50" width="100">guage</canvas>
+                            <i class="fa-solid fa-wallet" style="font-size:50px;"></i>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </div>

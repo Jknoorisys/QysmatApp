@@ -4,8 +4,12 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\ChatHistory;
+use App\Models\MyMatches;
 use App\Models\ParentsModel;
+use App\Models\ReportedUsers;
 use App\Models\Singleton;
+use App\Models\Transactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -37,8 +41,15 @@ class Dashboard extends Controller
         $data['blocked']             = Singleton::where([['status', '=' ,'Blocked'],['is_email_verified', '=' ,'verified']])->count() + ParentsModel::where([['status', '=' ,'Blocked'],['is_email_verified', '=' ,'verified']])->count();
         $data['deleted']             = Singleton::where([['status', '=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->count() + ParentsModel::where([['status', '=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->count();
 
+        $data['reported']            = ReportedUsers::count();
+        $data['matches']             = MyMatches::count();
+
+        $data['conversations']       = ChatHistory::count();
+
         $data['records']             = Singleton::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->latest()->take(5)->get();
         $data['parents_records']     = ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->latest()->take(5)->get();
+
+        $data['revenue']             = Transactions::where('payment_status','=','SUCCESS')->avg('paid_amount');
 
         $data['content']             = view('admin.dashboard', $data);
         return view('layouts.main', $data);
