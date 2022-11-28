@@ -13,6 +13,18 @@ return [
     'Recently Registered Singletons'            => 'Recently Registered Singletons',
     'Recently Registered Parents'               => 'Recently Registered Parents',
     'Recently Registered Users'                 => 'Recently Registered Users',
+    'Number of Reported Users'                  => 'Number of Reported Users',
+    'Number of Matches'                         => 'Number of Matches',
+    'Survey Results'                            => 'Survey Results',
+    'Didn’t Find the App Useful'                => 'Didn’t Find the App Useful',
+    'Taking a Break'                            => 'Taking a Break',
+    'Met Someone/Getting Married'               => 'Met Someone/Getting Married',
+    'Other'                                     => 'Other',
+    'Number of Telephone and Video Calls'       => 'Number of Telephone and Video Calls',
+    'Telephone Calls'                           => 'Telephone Calls',
+    'Video Calls'                               => 'Video Calls',
+    'Number of Conversations'                   => 'Number of Conversations',
+    'Average Revenue'                           => 'Average Revenue',
 
     // Login
     'Email'                     => 'Email',
