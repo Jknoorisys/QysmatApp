@@ -21,4 +21,8 @@ return [
     'OTP Does not Match! Please Try Again...'   => 'OTP stimmt nicht überein! Bitte versuche es erneut...',
     'You want to Block '                    => 'You want to Block ',
     'You want to Unblock '                  => 'You want to Unblock ',
+
+    // Notifications
+    'has Sent you a Match Request'          => 'hat Ihnen eine Übereinstimmungsanfrage gesendet',
+    'Match Request'                         => 'Übereinstimmungsanfrage',
 ];

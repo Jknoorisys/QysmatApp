@@ -264,6 +264,12 @@ return [
     'Forget Password'           => 'Forget Password',
     'Your OTP is'               => 'Your OTP is',
 
+    // Notifications
+    'has Sent you a Match Request.'                         => 'has Sent you a Match Request.',
+    'Match Request'                                         => 'Match Request',
+    'To See His/Her Profile, Click on the Link Below'       => 'To See His/Her Profile, Click on the Link Below',
+    'Click Here'                                            => 'Click Here',
+
     // API
     'Validation Failed!'                    => 'Validation Failed!',
     'Invalid Email...'                      => 'Invalid Email...',
