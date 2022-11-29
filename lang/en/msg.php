@@ -268,6 +268,9 @@ return [
     'has Sent you a Match Request.'                         => 'has Sent you a Match Request.',
     'Match Request'                                         => 'Match Request',
     'To See His/Her Profile, Click on the Link Below'       => 'To See His/Her Profile, Click on the Link Below',
+    'has Referred a Match.'                                 => 'has Referred a Match.',
+    'Match Referred'                                        => 'Match Referred',
+    'To See Referred Match, Click on the Link Below'        => 'To See Referred Match, Click on the Link Below',
     'Click Here'                                            => 'Click Here',
 
     // API
