@@ -12,6 +12,7 @@ use App\Models\RecievedMatches;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\UnMatches;
+use App\Notifications\MatchNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -77,14 +78,6 @@ class Swipes extends Controller
             ],400);
         }
 
-        // $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->swiped_user_id]])->first();
-        // if (!empty($unMatch)) {
-        //     return response()->json([
-        //         'status'    => 'failed',
-        //         'message'   => __('msg.You have Un-Matched this User!'),
-        //     ],400);
-        // }
-
         if ($request->swipe == 'right') {
 
             $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->swiped_user_id]])->first();
@@ -116,6 +109,10 @@ class Swipes extends Controller
                 $recieved->recieved_match_id = $request->login_id;
                 $recieved->save();
             }
+
+            $user = Singleton::where([['id','=',$request->swiped_user_id],['status','!=','Deleted']])->first();
+            $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+            $user->notify(new MatchNotification($singleton, $request->user_type));
 
             $swipe = LastSwipe::updateOrCreate(
                 ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'swiped_user_id'    => $request->swiped_user_id],

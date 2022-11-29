@@ -119,6 +119,7 @@ class Matches extends Controller
                         ->where([['my_matches.user_id', '=', $request->login_id], ['my_matches.user_type', '=', $request->user_type]])
                         ->join('singletons', 'my_matches.matched_id', '=', 'singletons.id')
                         ->get(['my_matches.user_id','my_matches.user_type','singletons.*']);
+                        
         if(!$match->isEmpty()){
             $users = [];
             foreach ($match as $m) {

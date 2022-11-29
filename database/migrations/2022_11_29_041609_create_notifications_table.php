@@ -14,15 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
-            $table->integer('user_id');
-            $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->string('user_name');
-            $table->integer('singleton_id');
-            $table->string('title');
-            $table->text('message');
-            $table->text('attachment');
-            $table->enum('status',['read','unread'])->default('unread');
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->enum('user_type',['singleton','parent','admin'])->default('admin');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
     }
