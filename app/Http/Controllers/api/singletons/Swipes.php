@@ -112,7 +112,7 @@ class Swipes extends Controller
 
             $user = Singleton::where([['id','=',$request->swiped_user_id],['status','!=','Deleted']])->first();
             $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
-            $user->notify(new MatchNotification($singleton, $request->user_type));
+            $user->notify(new MatchNotification($singleton, $request->user_type, 0));
 
             $swipe = LastSwipe::updateOrCreate(
                 ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'swiped_user_id'    => $request->swiped_user_id],

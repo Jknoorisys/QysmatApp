@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\parents;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notifications as ModelsNotifications;
+use App\Models\ParentsModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -49,14 +50,27 @@ class Notifications extends Controller
             ],400);
         }
 
-        $notifications = ModelsNotifications::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id','=',$request->singleton_id],['status','=','unread']])->get();
+        // $notifications = ModelsNotifications::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id','=',$request->singleton_id],['status','=','unread']])->get();
+        $user = ParentsModel::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type]])->first();
+        $notifications = $user->notifications->where('user_type', '=', $request->user_type)->where('singleton_id', '=', $request->singleton_id);
 
         if(!$notifications->isEmpty()){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Notifications List Fetched Successfully!'),
-                'data'      => $notifications
-            ],200);
+            foreach ($notifications as $notify) {
+                $notification[] = $notify->data;
+            }
+
+            if ($notification) {
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.Notifications List Fetched Successfully!'),
+                    'data'      => $notification
+                ],200);
+            } else {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.No Notification Found!'),
+                ],400);
+            }
         }else{
             return response()->json([
                 'status'    => 'failed',
