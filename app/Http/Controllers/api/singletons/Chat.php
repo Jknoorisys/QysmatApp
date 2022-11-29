@@ -12,6 +12,7 @@ use App\Models\ReferredMatches;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
 use App\Models\UnMatches;
+use App\Notifications\ReferNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -285,6 +286,12 @@ class Chat extends Controller
             $send = $invite->save();
 
             if ($send) {
+
+                $user = ParentsModel::where([['id','=',$linked->parent_id],['status','!=','Deleted']])->first();
+                $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+                $user->notify(new ReferNotification($singleton, $user->user_type, $request->login_id));
+
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.Invitation Sent...'),

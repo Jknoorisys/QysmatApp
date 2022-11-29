@@ -114,7 +114,7 @@ class Swipes extends Controller
 
             $user = ParentsModel::where([['id','=',$parent->parent_id],['status','!=','Deleted']])->first();
             $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
-            $user->notify(new MatchNotification($parent, $request->user_type, $request->swiped_user_id));
+            $user->notify(new MatchNotification($parent, $user->user_type, $request->swiped_user_id));
 
             $swipe = LastSwipe::updateOrCreate(
                 ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'swiped_user_id'    => $request->swiped_user_id, 'singleton_id'    => $request->singleton_id],
