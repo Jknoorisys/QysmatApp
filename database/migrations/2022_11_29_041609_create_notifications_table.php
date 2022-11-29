@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('type');
             $table->morphs('notifiable');
             $table->enum('user_type',['singleton','parent','admin'])->default('admin');
+            $table->integer('singleton_id');
             $table->text('data');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();

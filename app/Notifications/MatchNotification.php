@@ -16,10 +16,11 @@ class MatchNotification extends Notification
      *
      * @return void
      */
-    public function __construct($user, $user_type)
+    public function __construct($user, $user_type, $singleton_id)
     {
-        $this->user = $user;
-        $this->user_type = $user_type;
+        $this->user         = $user;
+        $this->user_type    = $user_type;
+        $this->singleton_id = $singleton_id;
     }
 
     /**

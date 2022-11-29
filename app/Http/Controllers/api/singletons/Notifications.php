@@ -51,7 +51,7 @@ class Notifications extends Controller
 
         // $notifications = ModelsNotifications::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['status','=','unread']])->get();
         $user = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type]])->first();
-        $notifications = $user->unreadNotifications->where('user_type', '=', $request->user_type);
+        $notifications = $user->notifications->where('user_type', '=', $request->user_type);
 
         if(!$notifications->isEmpty()){
             foreach ($notifications as $notify) {
