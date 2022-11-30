@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RequestAccessNotification extends Notification
+class AccountLinkedNotification extends Notification
 {
     use Queueable;
 
@@ -16,12 +16,11 @@ class RequestAccessNotification extends Notification
      *
      * @return void
      */
-    public function __construct($user, $user_type, $singleton_id, $access_code)
+    public function __construct($user, $user_type, $singleton_id)
     {
         $this->user         = $user;
         $this->user_type    = $user_type;
         $this->singleton_id = $singleton_id;
-        $this->access_code = $access_code;
     }
 
     /**
@@ -45,9 +44,9 @@ class RequestAccessNotification extends Notification
     {
         return (new MailMessage)
                     ->greeting(__('msg.Hi').'!')
-                    ->line($this->user->name.' '.__('msg.has Sent you an Access Request.'))
-                    ->line(__('msg.Your Access Code is'))
-                    ->line(__($this->access_code.'.'), url('/'));
+                    ->line(__('msg.Your Profile is Linked with'.' '.$this->user->name))
+                    ->line(__('msg.To See His/Her Profile, Click on the Link Below'))
+                    ->action(__('msg.Click Here'), url('/'));
     }
 
     /**
@@ -63,8 +62,8 @@ class RequestAccessNotification extends Notification
             'user_type' => $this->user->user_type,
             'name'      => $this->user->name,
             'email'     => $this->user->email,
-            'title'     => __('msg.Access Request'),
-            'msg'       => $this->user->name.' '.__('msg.has Sent you an Access Request.'),
+            'title'     => __('msg.Profile Linked'),
+            'msg'       => __('msg.Your Profile is Linked with'.' '.$this->user->name),
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

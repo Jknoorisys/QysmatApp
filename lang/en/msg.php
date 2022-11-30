@@ -271,6 +271,11 @@ return [
     'has Referred a Match.'                                 => 'has Referred a Match.',
     'Match Referred'                                        => 'Match Referred',
     'To See Referred Match, Click on the Link Below'        => 'To See Referred Match, Click on the Link Below',
+    'has Sent you an Access Request.'                       => 'has Sent you an Access Request.',
+    'Access Request'                                        => 'Access Request',
+    'Your Access Code is'                                   => 'Your Access Code is',
+    'Your Profile is Linked with'                           => 'Your Profile is Linked with',
+    'Profile Linked'                                        => 'Profile Linked',
     'Click Here'                                            => 'Click Here',
 
     // API

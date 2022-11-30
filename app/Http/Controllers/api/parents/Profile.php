@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\Singleton;
+use App\Notifications\AccountLinkedNotification;
+use App\Notifications\RequestAccessNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -223,6 +225,11 @@ class Profile extends Controller
         );
 
         if($accessRequest){
+
+            $user = Singleton::where([['id','=',$request->singleton_id],['status','!=','Deleted']])->first();
+            $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+            $user->notify(new RequestAccessNotification($parent, $user->user_type, 0, $access_code));
+
             return response()->json([
                 'status'    => 'success',
                 'message'   => __('msg.Access Request Sent Successfully!'),
@@ -261,6 +268,12 @@ class Profile extends Controller
         if(!empty($accessRequest)){
             ParentChild::where([['parent_id', '=', $accessRequest->parent_id],['singleton_id', '=', $accessRequest->singleton_id],['access_code','=',$request->access_code]])->update(['status' => 'Linked']);
             Singleton::where('id','=',$accessRequest->singleton_id)->update(['parent_id' => $accessRequest->parent_id]);
+
+            $user = Singleton::where([['id','=',$request->singleton_id],['status','!=','Deleted']])->first();
+            $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+            $user->notify(new AccountLinkedNotification($parent, $user->user_type, 0));
+            $parent->notify(new AccountLinkedNotification($user, $parent->user_type, $accessRequest->singleton_id));
+
             return response()->json([
                 'status'    => 'success',
                 'message'   => __('msg.Profile Linked Successfully!'),
