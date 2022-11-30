@@ -16,9 +16,12 @@ class AdminNotification extends Notification
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($user, $user_type, $singleton_id, $details)
     {
-        //
+        $this->user         = $user;
+        $this->user_type    = $user_type;
+        $this->singleton_id = $singleton_id;
+        $this->details      = $details;
     }
 
     /**
@@ -29,21 +32,7 @@ class AdminNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        return ['database'];
     }
 
     /**
@@ -55,7 +44,13 @@ class AdminNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'user_id'   => $this->user->id,
+            'user_type' => $this->user->user_type,
+            'name'      => $this->user->name,
+            'email'     => $this->user->email,
+            'title'     => $this->details['title'],
+            'msg'       => $this->user->name.' '.$this->details['msg'],
+            'datetime'  => date('Y-m-d h:i:s'),
         ];
     }
 }

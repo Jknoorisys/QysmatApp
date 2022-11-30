@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\api\delete_account;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\DeletedUsers as ModelsDeletedUsers;
 use App\Models\ParentsModel;
 use App\Models\Singleton;
+use App\Notifications\AdminNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -76,6 +78,22 @@ class DeleteUser extends Controller
             }
 
             if ($delete) {
+
+                $admin = Admin::find(1);
+
+            if($request->user_type == 'singleton'){
+                $user = Singleton::find($request->login_id);
+            }else{
+                $user = ParentsModel::find($request->login_id);
+            }
+
+            $details = [
+                'title' => __('msg.Account Deleted'),
+                'msg'   => __('msg.has Deleted His/Her Account.'),
+            ];
+
+            $admin->notify(new AdminNotification($user, 'admin', 0, $details));
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.Account Deleted'),

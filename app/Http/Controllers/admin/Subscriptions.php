@@ -29,8 +29,8 @@ class Subscriptions extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Subscriptions");
         $data['records']             =  ModelsSubscriptions::paginate(10);
+        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
         $data['content']             = view('subscriptions.subscriptions_list', $data);
-        // return $data['records'];exit;
         return view('layouts.main',$data);
     }
 
@@ -59,14 +59,13 @@ class Subscriptions extends Controller
         $data['url']                 = route('subscriptions');
         $data['title']               = __("msg.Update Subscription Price");
         $data['records']             =  ModelsSubscriptions::find($id);
+        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
         $data['content']             = view('subscriptions.subscriptions_update', $data);
-        // return $data['records'];exit;
         return view('layouts.main',$data);
     }
 
     public function updatePriceFun(Request $request)
     {
-        // return $request->input();exit;
         $request->validate([
             'subscription_type' => 'required',
             'price'             => 'required',

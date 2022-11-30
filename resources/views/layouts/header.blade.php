@@ -196,66 +196,39 @@
                     </a>
                     <div class="dropdown-menu mailbox animated bounceInDown">
                         <span class="with-arrow">
-                            <span class="bg-primary"></span>
+                            <span class="bg-qysmat"></span>
                         </span>
                         <ul class="list-style-none">
                             <li>
-                                <div class="drop-title bg-primary text-white">
-                                    <h4 class="m-b-0 m-t-5">4 New</h4>
-                                    <span class="font-light">Notifications</span>
+                                <div class="drop-title bg-qysmat text-white">
+                                    <h4 class="m-b-0 m-t-5">{{$notifications->count().' '. __('msg.New')}}</h4>
+                                    <span class="font-light">{{__('msg.Notifications')}}</span>
                                 </div>
                             </li>
                             <li>
                                 <div class="message-center notifications">
-                                    <!-- Message -->
-                                    <a href="javascript:void(0)" class="message-item">
-                                        <span class="btn btn-danger btn-circle">
-                                            <i class="fa fa-link"></i>
-                                        </span>
-                                        <div class="mail-contnet">
-                                            <h5 class="message-title">Luanch Admin</h5>
-                                            <span class="mail-desc">Just see the my new admin!</span>
-                                            <span class="time">9:30 AM</span>
-                                        </div>
-                                    </a>
-                                    <!-- Message -->
-                                    <a href="javascript:void(0)" class="message-item">
-                                        <span class="btn btn-success btn-circle">
-                                            <i class="ti-calendar"></i>
-                                        </span>
-                                        <div class="mail-contnet">
-                                            <h5 class="message-title">Event today</h5>
-                                            <span class="mail-desc">Just a reminder that you have event</span>
-                                            <span class="time">9:10 AM</span>
-                                        </div>
-                                    </a>
-                                    <!-- Message -->
-                                    <a href="javascript:void(0)" class="message-item">
-                                        <span class="btn btn-info btn-circle">
-                                            <i class="ti-settings"></i>
-                                        </span>
-                                        <div class="mail-contnet">
-                                            <h5 class="message-title">Settings</h5>
-                                            <span class="mail-desc">You can customize this template as you want</span>
-                                            <span class="time">9:08 AM</span>
-                                        </div>
-                                    </a>
-                                    <!-- Message -->
-                                    <a href="javascript:void(0)" class="message-item">
-                                        <span class="btn btn-primary btn-circle">
-                                            <i class="ti-user"></i>
-                                        </span>
-                                        <div class="mail-contnet">
-                                            <h5 class="message-title">Pavan kumar</h5>
-                                            <span class="mail-desc">Just see the my admin!</span>
-                                            <span class="time">9:02 AM</span>
-                                        </div>
-                                    </a>
+                                    @if (!$notifications->isEmpty())
+                                        @foreach ($notifications as $notification)
+                                            <!-- Message -->
+                                            <a href="javascript:void(0)" class="message-item">
+                                                <span class="btn btn-qysmat btn-circle">
+                                                    <i class="fa fa-bell" style="font-size: 18px;"></i>
+                                                </span>
+                                                <div class="mail-contnet">
+                                                    <h5 class="message-title">{{$notification->data['title']}}</h5>
+                                                    <span class="mail-desc">{{$notification->data['msg']}}</span>
+                                                    <span class="time">{{ date('D h:m A', strtotime($notification->data['datetime'])) }}</span>
+                                                </div>
+                                            </a>
+                                        @endforeach
+                                    @else
+                                        <h3 class="text-center wrap text-qysmat" style="margin-top: 150px;">{{__('msg.No Notification Found')}}</h3>
+                                    @endif
                                 </div>
                             </li>
                             <li>
-                                <a class="nav-link text-center m-b-5" href="javascript:void(0);">
-                                    <strong>Check all notifications</strong>
+                                <a class="nav-link text-center m-b-5" href="{{route('deleteNotifications')}}">
+                                    <strong>{{__('msg.Delete all notifications')}}</strong>
                                     <i class="fa fa-angle-right"></i>
                                 </a>
                             </li>

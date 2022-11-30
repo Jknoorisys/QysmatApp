@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\api\singletons;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\ParentsModel;
 use App\Models\PasswordReset;
 use App\Models\Singleton;
+use App\Notifications\AdminNotification;
 use GrahamCampbell\ResultType\Success;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
@@ -243,16 +245,31 @@ class Auth extends Controller
         }
 
         if($request->user_type == 'singleton'){
-            $user = Singleton::where([['id','=',$request->user_id],['status','=','unblocked']])->first();
+            $user = Singleton::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
             $verified =  Singleton :: whereId($request->user_id)->update(['is_email_verified' => 'verified', 'updated_at' => date('Y-m-d H:i:s')]);
         }else{
-            $user = ParentsModel::where([['id','=',$request->user_id],['status','=','unblocked']])->first();
+            $user = ParentsModel::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
             $verified =  ParentsModel :: whereId($request->user_id)->update(['is_email_verified' => 'verified', 'updated_at' => date('Y-m-d H:i:s')]);
         }
 
         if(!empty($user)){
             if($user->email_otp == $request->otp){
                 if($verified){
+
+                    $admin = Admin::find(1);
+
+                    if($request->user_type == 'singleton'){
+                        $user = Singleton::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
+                    }else{
+                        $user = ParentsModel::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
+                    }
+
+                    $details = [
+                        'title' => __('msg.New Registration'),
+                        'msg'   => __('msg.has Registered.'),
+                    ];
+                    $admin->notify(new AdminNotification($user, 'admin', 0, $details));
+
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.Registration Successful!'),
