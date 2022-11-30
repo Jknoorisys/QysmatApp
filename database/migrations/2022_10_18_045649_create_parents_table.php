@@ -23,8 +23,6 @@ return new class extends Migration
             $table->string('password');
             $table->string('email_otp');
             $table->enum('is_email_verified',['verified', 'not verified'])->default('not verified');
-            $table->string('mobile_otp');
-            $table->enum('is_mobile_verified',['verified', 'not verified'])->default('not verified');
             $table->string('nationality');
             $table->string('ethnic_origin');
             $table->string('islamic_sect');

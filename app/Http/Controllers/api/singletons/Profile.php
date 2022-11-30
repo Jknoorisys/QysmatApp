@@ -165,11 +165,11 @@ class Profile extends Controller
                 Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
             ],
             'login_id'   => 'required||numeric',
-            'photo1'     => 'required_without_all:photo2,photo3,photo4,photo5',
-            'photo2'     => 'required_without_all:photo1,photo3,photo4,photo5',
-            'photo3'     => 'required_without_all:photo2,photo1,photo4,photo5',
-            'photo4'     => 'required_without_all:photo2,photo3,photo1,photo5',
-            'photo5'     => 'required_without_all:photo2,photo3,photo4,photo1',
+            'photo1'     => 'required_without_all:photo2,photo3,photo4,photo5||image||mimes:jpeg,png,jpg,svg||max:5000',
+            'photo2'     => 'required_without_all:photo1,photo3,photo4,photo5||image||mimes:jpeg,png,jpg,svg||max:5000',
+            'photo3'     => 'required_without_all:photo2,photo1,photo4,photo5||image||mimes:jpeg,png,jpg,svg||max:5000',
+            'photo4'     => 'required_without_all:photo2,photo3,photo1,photo5||image||mimes:jpeg,png,jpg,svg||max:5000',
+            'photo5'     => 'required_without_all:photo2,photo3,photo4,photo1||image||mimes:jpeg,png,jpg,svg||max:5000',
         ]);
 
         if($validator->fails()){
