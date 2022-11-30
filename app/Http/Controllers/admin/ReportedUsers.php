@@ -30,13 +30,7 @@ class ReportedUsers extends Controller
         $data['url']                      = route('dashboard');
         $data['title']                    = __("msg.Manage Reported Users");
         $data['records']                  = ModelsReportedUsers::paginate(10);
-        // $query1                            = DB::raw("(CASE WHEN reported_users.user_type='Singleton' THEN (singletons.name) ELSE (parents.name) END) as user_name");
-        // $query2                            = DB::raw("(CASE WHEN reported_users.user_type='Singleton' THEN (singletons.status) ELSE (parents.status) END) as user_status");
-        // $data['records']                   = DB::table('reported_users')
-        //                                     ->join('singletons', 'singletons.id', '=', 'reported_users.user_id')
-        //                                     ->join('parents', 'parents.id', '=', 'reported_users.user_id')
-        //                                     ->select('reported_users.*',$query1, $query2)
-        //                                     ->paginate(10);
+        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
         $data['content']             = view('reported_users.reported_users_list', $data);
         return view('layouts.main',$data);
     }

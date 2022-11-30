@@ -32,8 +32,8 @@ class Singletons extends Controller
         $data['title']               = __("msg.Manage Singletons");
         $data['records']             = $search ? Singleton::where([['status', '!=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->Where('name', 'LIKE', "%$search%")->orWhere('email', 'LIKE', "%$search%")->orderBy('name')->paginate('10') : Singleton::where([['status', '!=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->orderBy('name')->paginate('10');
         $data['search']              =  $request->search;
+        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
         $data['content']             = view('sigletons.sigletons_list', $data);
-        // return $data['records'];exit;
         return view('layouts.main',$data);
     }
 
@@ -41,8 +41,6 @@ class Singletons extends Controller
     {
         $id     = $request->id;
         if(!empty($id)){
-
-            // $where  = ['id' =>$id];
             $data['details']             = DB::table('singletons')
                                                 ->join('subscriptions','subscriptions.id','=','singletons.active_subscription_id')
                                                 ->where('singletons.id',$id)
@@ -52,6 +50,7 @@ class Singletons extends Controller
             $data['previous_title']      = __("msg.Manage Singletons");
             $data['url']                 = route('sigletons');
             $data['title']               = __("msg.Singleton Details");
+            $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
             $data['content']             = view('sigletons.singleton_details', $data);
             return view('layouts/main', $data);
         }else {

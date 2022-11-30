@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\api\contact_us;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\ContactUs as ModelsContactUs;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\Singleton;
+use App\Notifications\AdminNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
@@ -67,6 +69,22 @@ class ContactUs extends Controller
         $formDetails = $form->save();
 
         if(!empty($formDetails)){
+
+            $admin = Admin::find(1);
+
+            if($request->user_type == 'singleton'){
+                $user = Singleton::find($request->login_id);
+            }else{
+                $user = ParentsModel::find($request->login_id);
+            }
+
+            $details = [
+                'title' => __('msg.New Query Message'),
+                'msg'   => __('msg.has Contacted You.'),
+            ];
+
+            $admin->notify(new AdminNotification($user, 'admin', 0, $details));
+
             return response()->json([
                 'status'    => 'success',
                 'message'   => __('msg.Contact Us Form Submitted Successfully!'),

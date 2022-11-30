@@ -30,15 +30,8 @@ class DeletedUsers extends Controller
         $data['url']                      = route('dashboard');
         $data['title']                    = __("msg.Manage Deleted Users");
         $data['records']                  = ModelsDeletedUsers::paginate(10);
-
-        // $query                            = DB::raw("(CASE WHEN deleted_users.user_type='Singleton' THEN (singletons.name) ELSE (parents.name) END) as user_name");
-        // $data['records']                  = DB::table('deleted_users')
-        //                                     ->join('singletons', 'singletons.id', '=', 'deleted_users.user_id')
-        //                                     ->join('parents', 'parents.id', '=', 'deleted_users.user_id')
-        //                                     ->select('deleted_users.*',$query)
-        //                                     ->paginate(10);
-
-        $data['content']                   = view('deleted_users.deleted_users_list', $data);
+        $data['notifications']            = $this->admin->notifications->where('user_type','=','admin');
+        $data['content']                  = view('deleted_users.deleted_users_list', $data);
         return view('layouts.main',$data);
     }
 }

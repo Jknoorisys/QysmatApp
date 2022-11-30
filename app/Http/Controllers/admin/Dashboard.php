@@ -50,7 +50,7 @@ class Dashboard extends Controller
         $data['parents_records']     = ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->latest()->take(5)->get();
 
         $data['revenue']             = Transactions::where('payment_status','=','SUCCESS')->avg('paid_amount');
-
+        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
         $data['content']             = view('admin.dashboard', $data);
         return view('layouts.main', $data);
     }
@@ -60,7 +60,8 @@ class Dashboard extends Controller
         $data['admin']               = $this->admin;
         $data['previous_title']      = __("msg.Dashboard");
         $data['url']                 = route('dashboard');
-        $data['title']               = __("msg.Change Password");;
+        $data['title']               = __("msg.Change Password");
+        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
         $data['content']             = view('admin.change_password', $data);
         return view('layouts.main',$data);
     }
@@ -84,6 +85,18 @@ class Dashboard extends Controller
             return back()->with('fail', __('msg.Please Try Again....'));
            }
         }
+    }
+
+    public function deleteNotifications()
+    {
+        $notification = $this->admin->notifications->where('user_type','=','admin');
+        if ($notification) {
+            $this->admin->notifications()->where('user_type','=','admin')->delete();
+            return back()->with('success', __('msg.Notifications Deleted!'));
+        } else {
+            return back()->with('fail', __('msg.Please Try Again....'));
+        }
+
     }
 
 }

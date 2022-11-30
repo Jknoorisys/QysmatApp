@@ -26,6 +26,13 @@ return [
     'Number of Conversations'                   => 'Number of Conversations',
     'Average Revenue'                           => 'Average Revenue',
 
+    // Header
+    'New'                                       => 'New',
+    'Notifications'                             => 'Notifications',
+    'Delete all notifications'                  => 'Delete all notifications',
+    'Notifications Deleted!'                    => 'Notifications Deleted!',
+    'No Notification Found'                     => 'No Notification Found',
+
     // Login
     'Email'                     => 'Email',
     'Password'                  => 'Password',
@@ -277,6 +284,12 @@ return [
     'Your Profile is Linked with'                           => 'Your Profile is Linked with',
     'Profile Linked'                                        => 'Profile Linked',
     'Click Here'                                            => 'Click Here',
+    'New Registration'                                      => 'New Registration',
+    'has Registered.'                                       => 'has Registered.',
+    'New Query Message'                                     => 'New Query Message',
+    'has Contacted You.'                                    => 'has Contacted You.',
+    'Account Deleted'                                       => 'Account Deleted',
+    'has Deleted His/Her Account.'                          => 'has Deleted His/Her Account.',
 
     // API
     'Validation Failed!'                    => 'Validation Failed!',
