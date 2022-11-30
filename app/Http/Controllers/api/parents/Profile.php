@@ -82,7 +82,7 @@ class Profile extends Controller
             'name'              => ['required', 'string', 'min:3', 'max:255'],
             'email'             => ['required', 'email'],
             'mobile'            => 'required||unique:singletons||unique:parents',
-            'profile_pic'       => 'required',
+            'profile_pic'       => 'required||image||mimes:jpeg,png,jpg,svg||max:5000',
             'nationality'       => 'required',
             'ethnic_origin'     => 'required',
             'islamic_sect'      => 'required',

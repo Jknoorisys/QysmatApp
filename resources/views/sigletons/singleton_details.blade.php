@@ -115,7 +115,7 @@
                 <div class="tab-pane fade" id="last-month" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/big/img1.jpg'}}" class="img-fluid rounded" /></div>
+                            <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/big/img1.jpg'}}" class="img-fluid rounded" width="300" height="200" /></div>
                         </div>
                         <div class="row">
                             <div class="col-lg-4 col-md-12 m-b-20"><a href="{{asset($details->id_proof)}}" class="btn btn-qysmat image-popup-vertical-fit el-link">{{__('msg.View ID Proof')}}</a></div>
