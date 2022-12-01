@@ -100,83 +100,7 @@
             </div>
         </div>
     </div>
-    <!-- column -->
-    {{-- <div class="col-sm-12 col-lg-4">
-        <div class="card bg-light-success no-card-border">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="m-r-10">
-                        <span>Average revenue generated in weekly, monthly, yearly and selectable date range</span>
-                        <h4>5769</h4>
-                    </div>
-                    <div class="ml-auto">
-                        <div class="gaugejs-box">
-                            <canvas id="foo" class="gaugejs" height="50" width="100">guage</canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 </div>
-
-{{-- <div class="row">
-    <!-- column -->
-    <div class="col-sm-12 col-lg-4">
-        <div class="card bg-light-info no-card-border">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="m-r-10">
-                        <h6>{{__('msg.Total Number of Singletons and Parents')}}</h6>
-                        <h4 class="mt-2">{{__('msg.Singletons')}}: {{$singletons}}</h4><hr>
-                        <h4>{{__('msg.Parents')}}: {{$parents}}</h4>
-                    </div>
-                    <div class="ml-auto">
-                        <i class="fa-solid fa-users" style="font-size: 40px;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- column -->
-    <div class="col-sm-12 col-lg-4">
-        <div class="card bg-light-warning no-card-border">
-            <div class="card-body">
-                <div class="d-flex">
-                    <div class="m-r-10">
-                        <h6>{{__('msg.Total Number of Active, Blocked and Deleted Users')}}</h6>
-                        <h4 class="mt-2">{{__('msg.Active')}}: {{$active}}</h4><hr>
-                        <h4>{{__('msg.Blocked')}}: {{$blocked}}</h4><hr>
-                        <h4>{{__('msg.Deleted')}}: {{$deleted}}</h4>
-                    </div>
-                    <div class="ml-auto">
-                        <div style="max-width:130px; height:15px;" class="m-b-40">
-                            <i class="fa-solid fa-users" style="font-size: 40px;"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- column -->
-    <div class="col-sm-12 col-lg-4">
-        <div class="card bg-light-success no-card-border">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="m-r-10">
-                        <span>Estimated Sales</span>
-                        <h4>5769</h4>
-                    </div>
-                    <div class="ml-auto">
-                        <div class="gaugejs-box">
-                            <canvas id="foo" class="gaugejs" height="50" width="100">guage</canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> --}}
 
 <div class="row">
     <!-- column -->
@@ -195,7 +119,6 @@
             </div>
         </div>
     </div>
-
     <!-- column -->
     <div class="col-sm-12 col-lg-4">
         <div class="card bg-light-warning no-card-border">
@@ -241,19 +164,19 @@
                         <div class="row justify-content-center">
                             <div class="col-3">
                                 <h5>{{__('msg.Didn’t Find the App Useful')}}</h5>
-                                <h4>{{$active}}</h4>
+                                <h4>{{$app_not_usefull}}</h4>
                             </div>
                             <div class="col-3">
                                 <h5>{{__('msg.Taking a Break')}}</h5>
-                                <h4>{{$blocked}}</h4>
+                                <h4>{{$taking_break}}</h4>
                             </div>
                             <div class="col-3">
                                 <h5>{{__('msg.Met Someone/Getting Married')}}</h5>
-                                <h4>{{$deleted}}</h4>
+                                <h4>{{$met_someone}}</h4>
                             </div>
                             <div class="col-3">
                                 <h5>{{__('msg.Other')}}</h5>
-                                <h4>{{$deleted}}</h4>
+                                <h4>{{$other}}</h4>
                             </div>
                         </div>
                     </div>

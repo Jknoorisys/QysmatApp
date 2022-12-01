@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\ChatHistory;
+use App\Models\DeletedUsers;
 use App\Models\MyMatches;
 use App\Models\ParentsModel;
 use App\Models\ReportedUsers;
@@ -48,6 +49,11 @@ class Dashboard extends Controller
 
         $data['records']             = Singleton::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->latest()->take(5)->get();
         $data['parents_records']     = ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->latest()->take(5)->get();
+
+        $data['app_not_usefull']     = DeletedUsers::where('reason_type','=','Didn’t Find the App Useful')->count();
+        $data['taking_break']     = DeletedUsers::where('reason_type','=','Taking a Break')->count();
+        $data['met_someone']     = DeletedUsers::where('reason_type','=','Met Someone/Getting Married')->count();
+        $data['other']     = DeletedUsers::where('reason_type','=','Other')->count();
 
         $data['revenue']             = Transactions::where('payment_status','=','SUCCESS')->avg('paid_amount');
         $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
