@@ -227,8 +227,8 @@
                                 </div>
                             </li>
                             <li>
-                                <a class="nav-link text-center m-b-5" href="{{route('deleteNotifications')}}">
-                                    <strong>{{__('msg.Delete all notifications')}}</strong>
+                                <a class="nav-link text-center m-b-5" href="{{route('readNotifications')}}">
+                                    <strong>{{__('msg.Read all notifications')}}</strong>
                                     <i class="fa fa-angle-right"></i>
                                 </a>
                             </li>

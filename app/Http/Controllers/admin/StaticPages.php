@@ -29,7 +29,7 @@ class StaticPages extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Static Pages");
         $data['records']             =  ModelsStaticPages::where('status', '!=' ,'Deleted')->paginate(10);
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('static_pages.static_pages_list', $data);
         return view('layouts.main',$data);
     }
@@ -40,7 +40,7 @@ class StaticPages extends Controller
         $data['previous_title']      = __("msg.Manage Static Pages");
         $data['url']                 = route('static_pages');
         $data['title']               = __("msg.Add Static Page");
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('static_pages.add_static_pages', $data);
         return view('layouts.main',$data);
     }
@@ -93,7 +93,7 @@ class StaticPages extends Controller
         $data['url']                 = route('static_pages');
         $data['title']               = __("msg.Update Page");
         $data['records']             =  ModelsStaticPages::find($id);
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('static_pages.static_pages_update', $data);
         return view('layouts.main',$data);
     }

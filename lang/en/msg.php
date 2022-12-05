@@ -29,8 +29,8 @@ return [
     // Header
     'New'                                       => 'New',
     'Notifications'                             => 'Notifications',
-    'Delete all notifications'                  => 'Delete all notifications',
-    'Notifications Deleted!'                    => 'Notifications Deleted!',
+    'Read all notifications'                    => 'Read all notifications',
+    'Notifications Marked as Read!'             => 'Notifications Marked as Read!',
     'No Notification Found'                     => 'No Notification Found',
 
     // Login
