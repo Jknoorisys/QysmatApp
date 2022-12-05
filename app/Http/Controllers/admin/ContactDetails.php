@@ -29,7 +29,7 @@ class ContactDetails extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Contact Details");
         $data['records']             =  ModelsContactDetails::where('status', '!=' ,'Deleted')->paginate(10);
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('contact_details.contact_details_list', $data);
         return view('layouts.main',$data);
     }
@@ -40,7 +40,7 @@ class ContactDetails extends Controller
         $data['previous_title']      = __("msg.Manage Contact Details");
         $data['url']                 = route('contact_details');
         $data['title']               = __("msg.Add Contact Details");
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('contact_details.add_contact_details', $data);
         return view('layouts.main',$data);
     }
@@ -90,7 +90,7 @@ class ContactDetails extends Controller
         $data['url']                 = route('contact_details');
         $data['title']               = __("msg.Update Contact Details");
         $data['records']             =  ModelsContactDetails::find($id);
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('contact_details.contact_details_update', $data);
         return view('layouts.main',$data);
     }

@@ -29,7 +29,7 @@ class WebPages extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Web Pages");
         $data['records']             =  ModelsWebPages::where('status', '!=' ,'Deleted')->paginate(10);
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('web_pages.web_pages_list', $data);
         return view('layouts.main',$data);
     }
@@ -40,7 +40,7 @@ class WebPages extends Controller
         $data['previous_title']      = __("msg.Manage Web Pages");
         $data['url']                 = route('web_pages');
         $data['title']               = __("msg.Add Web Page");
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('web_pages.add_web_pages', $data);
         return view('layouts.main',$data);
     }
@@ -93,7 +93,7 @@ class WebPages extends Controller
         $data['url']                 = route('web_pages');
         $data['title']               = __("msg.Update Page");
         $data['records']             =  ModelsWebPages::find($id);
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('web_pages.web_pages_update', $data);
         return view('layouts.main',$data);
     }

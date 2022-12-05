@@ -33,7 +33,7 @@ Route::any('logout' , [Admin::class,'logout'])->name('logout');
 Route::any('dashboard' , [Dashboard::class,'index'])->middleware('isLoggedIn')->name('dashboard');
 Route::get('changePassword' , [Dashboard::class,'changePassword'])->middleware('isLoggedIn')->name('changePassword');
 Route::post('changePasswordFun' , [Dashboard::class,'changePasswordFun'])->middleware('isLoggedIn')->name('changePasswordFun');
-Route::get('deleteNotifications' , [Dashboard::class,'deleteNotifications'])->middleware('isLoggedIn')->name('deleteNotifications');
+Route::get('readNotifications' , [Dashboard::class,'readNotifications'])->middleware('isLoggedIn')->name('readNotifications');
 
 // Manage Singletons
 Route::any('sigletons' , [Singletons::class, 'index'])->middleware('isLoggedIn')->name('sigletons');

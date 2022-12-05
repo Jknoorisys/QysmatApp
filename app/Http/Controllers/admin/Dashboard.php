@@ -56,7 +56,7 @@ class Dashboard extends Controller
         $data['other']     = DeletedUsers::where('reason_type','=','Other')->count();
 
         $data['revenue']             = Transactions::where('payment_status','=','SUCCESS')->avg('paid_amount');
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('admin.dashboard', $data);
         return view('layouts.main', $data);
     }
@@ -67,7 +67,7 @@ class Dashboard extends Controller
         $data['previous_title']      = __("msg.Dashboard");
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Change Password");
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('admin.change_password', $data);
         return view('layouts.main',$data);
     }
@@ -93,12 +93,13 @@ class Dashboard extends Controller
         }
     }
 
-    public function deleteNotifications()
+    public function readNotifications()
     {
-        $notification = $this->admin->notifications->where('user_type','=','admin');
+        $notification = $this->admin->unreadNotifications->where('user_type','=','admin');
         if ($notification) {
-            $this->admin->notifications()->where('user_type','=','admin')->delete();
-            return back()->with('success', __('msg.Notifications Deleted!'));
+            // $this->admin->unreadNotifications()->where('user_type','=','admin')->delete();
+            $this->admin->unreadNotifications->where('user_type','=','admin')->markAsRead();
+            return back()->with('success', __('msg.Notifications Marked as Read!'));
         } else {
             return back()->with('fail', __('msg.Please Try Again....'));
         }

@@ -29,7 +29,7 @@ class Quotes extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Islamic Quotes");
         $data['records']             =  ModelsQuotes::where('status', '!=' ,'Deleted')->paginate(10);
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('quotes.quotes_list', $data);
         // return $data['records'];exit;
         return view('layouts.main',$data);
@@ -41,7 +41,7 @@ class Quotes extends Controller
         $data['previous_title']      = __("msg.Manage Islamic Quotes");
         $data['url']                 = route('quotes');
         $data['title']               = __("msg.Add Islamic Quotes");
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('quotes.add_quotes', $data);
         return view('layouts.main',$data);
     }
@@ -101,7 +101,7 @@ class Quotes extends Controller
         $data['url']                 = route('quotes');
         $data['title']               = __("msg.Update Islamic Quotes");
         $data['records']             =  ModelsQuotes::find($id);
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('quotes.quotes_update', $data);
         return view('layouts.main',$data);
     }

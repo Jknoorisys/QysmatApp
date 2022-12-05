@@ -39,7 +39,7 @@ class Transactions extends Controller
             $data['records']               = ModelsTransactions::paginate(10);
         }
 
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('transactions.transactions_list', $data);
         return view('layouts.main',$data);
     }
@@ -53,7 +53,7 @@ class Transactions extends Controller
             $data['previous_title']      = __("msg.Manage Transactions");
             $data['url']                 = route('transactions');
             $data['title']               = __("msg.Transaction Details");
-            $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+            $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
             $data['content']             = view('transactions.transaction_details', $data);
             return view('layouts/main', $data);
         }else {

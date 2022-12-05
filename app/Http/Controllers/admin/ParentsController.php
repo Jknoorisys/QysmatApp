@@ -33,7 +33,7 @@ class ParentsController extends Controller
         $data['title']               = __("msg.Manage Parents");
         $data['records']             = $search ? ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->Where('name', 'LIKE', "%$search%")->orWhere('email', 'LIKE', "%$search%")->orderBy('name')->paginate('10') : ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->orderBy('name')->paginate('10');
         $data['search']              =  $request->search;
-        $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('parents.parents_list', $data);
         return view('layouts.main',$data);
     }
@@ -51,7 +51,7 @@ class ParentsController extends Controller
             $data['previous_title']      = __("msg.Manage Parents");
             $data['url']                 = route('parents');
             $data['title']               = __("msg.Parent Details");
-            $data['notifications']       = $this->admin->notifications->where('user_type','=','admin');
+            $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
             $data['content']             = view('parents.parent_details', $data);
             return view('layouts/main', $data);
         }else {
