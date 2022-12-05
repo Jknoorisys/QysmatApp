@@ -203,7 +203,7 @@
                                 <div class="drop-title bg-qysmat text-white">
                                     <h4 class="m-b-0 m-t-5">{{$notifications->count().' '. __('msg.New')}}</h4>
                                     <span class="font-light">{{__('msg.Notifications')}}</span>
-                                    <a href="{{route('readNotifications')}}" class="text-light">{{__('msg.Read all notifications')}}</a>
+                                    {{-- <a href="{{route('readNotifications')}}" class="text-light">{{__('msg.Read all notifications')}}</a> --}}
                                 </div>
                             </li>
                             <li>
