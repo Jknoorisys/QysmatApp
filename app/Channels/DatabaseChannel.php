@@ -22,7 +22,7 @@ class DatabaseChannel extends IlluminateDatabaseChannel
             'user_type'     => $notification->user_type ?? '',
             'singleton_id'  => $notification->singleton_id ?? '',
             'data'          => $this->getData($notifiable, $notification),
-            'read_at'       => '',
+            'read_at'       => Null,
         ]);
     }
 }
