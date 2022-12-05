@@ -253,6 +253,12 @@ return [
     'Manage Deleted Users'              => 'Manage Deleted Users',
     'Reason'                            => 'Reason',
 
+    // Manage Notifications
+    'Manage Notifications'              => 'Manage Notifications',
+    'Title'                             => 'Title',
+    'Message'                           => 'Message',
+    'View all notifications'            => 'View all notifications',
+
     // Sweat alert
     'Are You Sure'              => 'Are You Sure',
     'You want to Reject '       => 'You want to Reject ',

@@ -203,6 +203,7 @@
                                 <div class="drop-title bg-qysmat text-white">
                                     <h4 class="m-b-0 m-t-5">{{$notifications->count().' '. __('msg.New')}}</h4>
                                     <span class="font-light">{{__('msg.Notifications')}}</span>
+                                    <a href="{{route('readNotifications')}}" class="text-light">{{__('msg.Read all notifications')}}</a>
                                 </div>
                             </li>
                             <li>
@@ -227,8 +228,8 @@
                                 </div>
                             </li>
                             <li>
-                                <a class="nav-link text-center m-b-5" href="{{route('readNotifications')}}">
-                                    <strong>{{__('msg.Read all notifications')}}</strong>
+                                <a class="nav-link text-center m-b-5" href="{{route('notifications')}}">
+                                    <strong>{{__('msg.View all notifications')}}</strong>
                                     <i class="fa fa-angle-right"></i>
                                 </a>
                             </li>

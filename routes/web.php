@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin;
 use App\Http\Controllers\admin\ContactDetails;
 use App\Http\Controllers\admin\Dashboard;
 use App\Http\Controllers\admin\DeletedUsers;
+use App\Http\Controllers\admin\Notifications;
 use App\Http\Controllers\admin\ParentsController;
 use App\Http\Controllers\admin\Quotes;
 use App\Http\Controllers\admin\ReportedUsers;
@@ -100,3 +101,6 @@ Route::any('reported-users' , [ReportedUsers::class, 'index'])->middleware('isLo
 
 // Manage Deleted Users
 Route::any('deleted-users' , [DeletedUsers::class, 'index'])->middleware('isLoggedIn')->name('deleted-users');
+
+// Manage Notifications
+Route::any('notifications' , [Notifications::class, 'index'])->middleware('isLoggedIn')->name('notifications');
