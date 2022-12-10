@@ -38,18 +38,26 @@ class IslamicQuotes extends Controller
             ],400);
         }
 
-        $page = Quotes::where('status','=','Active')->get();
-        if(!$page->isEmpty()){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Islamic Quotes Fetched Successfully!'),
-                'data'      => $page
-            ],200);
-        }else{
+        try {
+            $page = Quotes::where('status','=','Active')->get();
+            if(!$page->isEmpty()){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.islamic-quotes.success'),
+                    'data'      => $page
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.islamic-quotes.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Islamic Quotes Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 }

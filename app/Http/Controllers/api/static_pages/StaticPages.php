@@ -43,34 +43,42 @@ class StaticPages extends Controller
             ],400);
         }
 
-        if ($request->page_name == 'faqs') {
-            $page = ModelsStaticPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->get();
-            if(!$page->isEmpty()){
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.Page Details Fetched Successfully!'),
-                    'data'      => $page
-                ],200);
-            }else{
-                return response()->json([
-                    'status'    => 'failed',
-                    'message'   => __('msg.Page Not Found!'),
-                ],400);
+        try {
+            if ($request->page_name == 'faqs') {
+                $page = ModelsStaticPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->get();
+                if(!$page->isEmpty()){
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.static-pages.success'),
+                        'data'      => $page
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.static-pages.failure'),
+                    ],400);
+                }
+            } else {
+                $page = ModelsStaticPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->first();
+                if(!empty($page)){
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.static-pages.success'),
+                        'data'      => $page
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.static-pages.failure'),
+                    ],400);
+                }
             }
-        } else {
-            $page = ModelsStaticPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->first();
-            if(!empty($page)){
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.Page Details Fetched Successfully!'),
-                    'data'      => $page
-                ],200);
-            }else{
-                return response()->json([
-                    'status'    => 'failed',
-                    'message'   => __('msg.Page Not Found!'),
-                ],400);
-            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -92,18 +100,26 @@ class StaticPages extends Controller
             ],400);
         }
 
-        $page = ModelsStaticPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->first();
-        if(!empty($page)){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Page Details Fetched Successfully!'),
-                'data'      => $page
-            ],200);
-        }else{
+        try {
+            $page = ModelsStaticPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->first();
+            if(!empty($page)){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.static-pages.success'),
+                    'data'      => $page
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.static-pages.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Page Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 }

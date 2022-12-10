@@ -55,21 +55,30 @@ class ResetProfileSearch extends Controller
             ],400);
         }
 
-        $match = MyMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
-        $unmatch = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
-        $refer = ReferredMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
-        $received = RecievedMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+        try {
+            $match = MyMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+            $unmatch = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+            $refer = ReferredMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+            $received = RecievedMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
 
-        if($match || $unmatch || $refer || $received){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Profile Search Reset Successfully!'),
-            ],200);
-        }else {
+            if($match || $unmatch || $refer || $received){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.reset-profile.success'),
+                ],200);
+            }else {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.reset-profile.failure'),
+                ],400);
+            }
+
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 }

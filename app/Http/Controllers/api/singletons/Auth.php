@@ -70,53 +70,60 @@ class Auth extends Controller
             ],400);
         }
 
-        $email_otp = random_int(100000, 999999);
+        try {
+            $email_otp = random_int(100000, 999999);
 
 
-        if($request->user_type == 'singleton'){
-            $userDetails = Singleton::create([
-                'name'          => $request->name,
-                'email'         => $request->email,
-                'user_type'     => $request->user_type,
-                'email_otp'     => $email_otp,
-                'device_type'   => $request->device_type,
-                'fcm_token'     => $request->fcm_token,
-                'device_token'  => $request->device_token,
-                'password'      => Hash::make($request->password),
-            ]);
-            $user = Singleton::where('email','=',$request->email)->first();
-        }else{
-            $userDetails = ParentsModel::create([
-                'name'          => $request->name,
-                'email'         => $request->email,
-                'user_type'     => $request->user_type,
-                'email_otp'     => $email_otp,
-                'device_type'   => $request->device_type,
-                'fcm_token'     => $request->fcm_token,
-                'device_token'  => $request->device_token,
-                'password'      => Hash::make($request->password),
-            ]);
-            $user = ParentsModel::where('email','=',$request->email)->first();
-        }
+            if($request->user_type == 'singleton'){
+                $userDetails = Singleton::create([
+                    'name'          => $request->name,
+                    'email'         => $request->email,
+                    'user_type'     => $request->user_type,
+                    'email_otp'     => $email_otp,
+                    'device_type'   => $request->device_type,
+                    'fcm_token'     => $request->fcm_token,
+                    'device_token'  => $request->device_token,
+                    'password'      => Hash::make($request->password),
+                ]);
+                $user = Singleton::where('email','=',$request->email)->first();
+            }else{
+                $userDetails = ParentsModel::create([
+                    'name'          => $request->name,
+                    'email'         => $request->email,
+                    'user_type'     => $request->user_type,
+                    'email_otp'     => $email_otp,
+                    'device_type'   => $request->device_type,
+                    'fcm_token'     => $request->fcm_token,
+                    'device_token'  => $request->device_token,
+                    'password'      => Hash::make($request->password),
+                ]);
+                $user = ParentsModel::where('email','=',$request->email)->first();
+            }
 
-        if($userDetails){
-            // $user = Singleton::where('email','=',$request->email)->first();
-            $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
-            $user =  ['to'=> $user->email];
-            Mail::send('mail', $data, function ($message) use ($user) {
-                $message->to($user['to']);
-                $message->subject(__('msg.Email Verification'));
-            });
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Registration OTP Sent Successfully!'),
-                'data'    => $userDetails
-            ],200);
-        }else{
+            if($userDetails){
+                $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
+                $user =  ['to'=> $user->email];
+                Mail::send('mail', $data, function ($message) use ($user) {
+                    $message->to($user['to']);
+                    $message->subject(__('msg.Email Verification'));
+                });
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.singletons.register.success'),
+                    'data'    => $userDetails
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.register.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -165,59 +172,66 @@ class Auth extends Controller
             ],400);
         }
 
-        $email_otp = random_int(100000, 999999);
+        try {
+            $email_otp = random_int(100000, 999999);
 
 
-        if($request->user_type == 'singleton'){
-            $userDetails = Singleton::create([
-                'name'          => $request->name,
-                'email'         => $request->email,
-                'user_type'     => $request->user_type,
-                'email_otp'     => $email_otp,
-                'device_type'   => $request->device_type,
-                'fcm_token'     => $request->fcm_token,
-                'device_token'  => $request->device_token,
-                'is_social'     => $request->is_social,
-                'social_type'   => $request->social_type,
-                'social_id'     => $request->social_id,
-                // 'password' => Hash::make($request->password),
-            ]);
-            $user = Singleton::where('email','=',$request->email)->first();
-        }else{
-            $userDetails = ParentsModel::create([
-                'name'          => $request->name,
-                'email'         => $request->email,
-                'user_type'     => $request->user_type,
-                'email_otp'     => $email_otp,
-                'device_type'   => $request->device_type,
-                'fcm_token'     => $request->fcm_token,
-                'device_token'  => $request->device_token,
-                'is_social'     => $request->is_social,
-                'social_type'   => $request->social_type,
-                'social_id'     => $request->social_id,
-                // 'password' => Hash::make($request->password),
-            ]);
-            $user = ParentsModel::where('email','=',$request->email)->first();
-        }
+            if($request->user_type == 'singleton'){
+                $userDetails = Singleton::create([
+                    'name'          => $request->name,
+                    'email'         => $request->email,
+                    'user_type'     => $request->user_type,
+                    'email_otp'     => $email_otp,
+                    'device_type'   => $request->device_type,
+                    'fcm_token'     => $request->fcm_token,
+                    'device_token'  => $request->device_token,
+                    'is_social'     => $request->is_social,
+                    'social_type'   => $request->social_type,
+                    'social_id'     => $request->social_id,
+                    // 'password' => Hash::make($request->password),
+                ]);
+                $user = Singleton::where('email','=',$request->email)->first();
+            }else{
+                $userDetails = ParentsModel::create([
+                    'name'          => $request->name,
+                    'email'         => $request->email,
+                    'user_type'     => $request->user_type,
+                    'email_otp'     => $email_otp,
+                    'device_type'   => $request->device_type,
+                    'fcm_token'     => $request->fcm_token,
+                    'device_token'  => $request->device_token,
+                    'is_social'     => $request->is_social,
+                    'social_type'   => $request->social_type,
+                    'social_id'     => $request->social_id,
+                    // 'password' => Hash::make($request->password),
+                ]);
+                $user = ParentsModel::where('email','=',$request->email)->first();
+            }
 
-        if($userDetails){
-            // $user = Singleton::where('email','=',$request->email)->first();
-            $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
-            $user =  ['to'=> $user->email];
-            Mail::send('mail', $data, function ($message) use ($user) {
-                $message->to($user['to']);
-                $message->subject(__('msg.Email Verification'));
-            });
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Registration OTP Sent Successfully!'),
-                'data'    => $userDetails
-            ],200);
-        }else{
+            if($userDetails){
+                $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
+                $user =  ['to'=> $user->email];
+                Mail::send('mail', $data, function ($message) use ($user) {
+                    $message->to($user['to']);
+                    $message->subject(__('msg.Email Verification'));
+                });
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.singletons.register.success'),
+                    'data'    => $userDetails
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.register.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -244,54 +258,62 @@ class Auth extends Controller
             ],400);
         }
 
-        if($request->user_type == 'singleton'){
-            $user = Singleton::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
-            $verified =  Singleton :: whereId($request->user_id)->update(['is_email_verified' => 'verified', 'updated_at' => date('Y-m-d H:i:s')]);
-        }else{
-            $user = ParentsModel::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
-            $verified =  ParentsModel :: whereId($request->user_id)->update(['is_email_verified' => 'verified', 'updated_at' => date('Y-m-d H:i:s')]);
-        }
+        try {
+            if($request->user_type == 'singleton'){
+                $user = Singleton::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
+                $verified =  Singleton :: whereId($request->user_id)->update(['is_email_verified' => 'verified', 'updated_at' => date('Y-m-d H:i:s')]);
+            }else{
+                $user = ParentsModel::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
+                $verified =  ParentsModel :: whereId($request->user_id)->update(['is_email_verified' => 'verified', 'updated_at' => date('Y-m-d H:i:s')]);
+            }
 
-        if(!empty($user)){
-            if($user->email_otp == $request->otp){
-                if($verified){
+            if(!empty($user)){
+                if($user->email_otp == $request->otp){
+                    if($verified){
 
-                    $admin = Admin::find(1);
+                        $admin = Admin::find(1);
 
-                    if($request->user_type == 'singleton'){
-                        $user = Singleton::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
+                        if($request->user_type == 'singleton'){
+                            $user = Singleton::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
+                        }else{
+                            $user = ParentsModel::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
+                        }
+
+                        $details = [
+                            'title' => __('msg.New Registration'),
+                            'msg'   => __('msg.has Registered.'),
+                        ];
+                        $admin->notify(new AdminNotification($user, 'admin', 0, $details));
+
+                        return response()->json([
+                            'status'    => 'success',
+                            'message'   => __('msg.singletons.validate-email.success'),
+                            'data'      => $user
+                        ],200);
                     }else{
-                        $user = ParentsModel::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
+                        return response()->json([
+                            'status'    => 'failed',
+                            'message'   => __('msg.singletons.validate-email.failure'),
+                        ],400);
                     }
-
-                    $details = [
-                        'title' => __('msg.New Registration'),
-                        'msg'   => __('msg.has Registered.'),
-                    ];
-                    $admin->notify(new AdminNotification($user, 'admin', 0, $details));
-
-                    return response()->json([
-                        'status'    => 'success',
-                        'message'   => __('msg.Registration Successful!'),
-                        'data'      => $user
-                    ],200);
                 }else{
                     return response()->json([
                         'status'    => 'failed',
-                        'message'   => __('msg.Email Not Verified! Please Verify First...'),
+                        'message'   => __('msg.singletons.validate-email.invalid'),
                     ],400);
                 }
             }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.OTP Does not Match! Please Try Again...'),
+                    'message'   => __('msg.singletons.validate-email.not-found'),
                 ],400);
             }
-        }else{
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.User Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -322,33 +344,41 @@ class Auth extends Controller
             ],400);
         }
 
-        $user = Singleton::where([['email','=',$request->email],['status','=','Unblocked']])->first();
-        if(!empty($user)){
-            $email_otp = random_int(100000, 999999);
-            $singleton =  Singleton :: where('email','=',$request->email)->update(['email_otp' => $email_otp, 'updated_at' => date('Y-m-d H:i:s')]);
-            if($singleton){
-                $user = Singleton::where('email','=',$request->email)->first();
-                $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
-                $user =  ['to'=> $user->email];
-                Mail::send('mail', $data, function ($message) use ($user) {
-                    $message->to($user['to']);
-                    $message->subject(__('msg.Email Verification'));
-                });
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.Registration OTP Sent Successfully!'),
-                ],200);
+        try {
+            $user = Singleton::where([['email','=',$request->email],['status','=','Unblocked']])->first();
+            if(!empty($user)){
+                $email_otp = random_int(100000, 999999);
+                $singleton =  Singleton :: where('email','=',$request->email)->update(['email_otp' => $email_otp, 'updated_at' => date('Y-m-d H:i:s')]);
+                if($singleton){
+                    $user = Singleton::where('email','=',$request->email)->first();
+                    $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
+                    $user =  ['to'=> $user->email];
+                    Mail::send('mail', $data, function ($message) use ($user) {
+                        $message->to($user['to']);
+                        $message->subject(__('msg.Email Verification'));
+                    });
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.resend-otp.success'),
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.resend-otp.failure'),
+                    ],400);
+                }
             }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
+                    'message'   => __('msg.singletons.resend-otp.invalid'),
                 ],400);
             }
-        }else{
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.User Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -383,33 +413,41 @@ class Auth extends Controller
             ],400);
         }
 
-        $user = Singleton::where([['email','=',$request->email],['social_type','=',$request->social_type],['is_social','=',$request->is_social],['status','=','unblocked']])->first();
-        if(!empty($user)){
-            if($user->is_email_verified == 'verified'){
-                if($request->social_id == $user->social_id){
-                    Singleton::where('email','=',$request->email)->update(['device_type' => $request->device_type, 'device_token' => $request->device_token, 'fcm_token' => $request->fcm_token]);
-                    return response()->json([
-                        'status'    => 'success',
-                        'message'   => __('msg.Login Successfull!'),
-                        'data'      => $user
-                    ],200);
+        try {
+            $user = Singleton::where([['email','=',$request->email],['social_type','=',$request->social_type],['is_social','=',$request->is_social],['status','=','unblocked']])->first();
+            if(!empty($user)){
+                if($user->is_email_verified == 'verified'){
+                    if($request->social_id == $user->social_id){
+                        Singleton::where('email','=',$request->email)->update(['device_type' => $request->device_type, 'device_token' => $request->device_token, 'fcm_token' => $request->fcm_token]);
+                        return response()->json([
+                            'status'    => 'success',
+                            'message'   => __('msg.singletons.login.success'),
+                            'data'      => $user
+                        ],200);
+                    }else{
+                        return response()->json([
+                            'status'    => 'failed',
+                            'message'   => __("msg.singletons.login.invalid"),
+                        ],400);
+                    }
                 }else{
                     return response()->json([
                         'status'    => 'failed',
-                        'message'   => __("msg.Somthing Went Wrong, Please Try Again..."),
+                        'message'   => __("msg.singletons.login.failure"),
                     ],400);
                 }
             }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __("msg.The Email isn't Verified! Please Verify First..."),
+                    'message'   => __('msg.singletons.login.not-found'),
                 ],400);
             }
-        }else{
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.User Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -445,25 +483,25 @@ class Auth extends Controller
                 if(Hash::check($request->password, $user->password)){
                     return response()->json([
                         'status'    => 'success',
-                        'message'   => __('msg.Login Successfull!'),
+                        'message'   => __('msg.singletons.login.success'),
                         'data'      => $user
                     ],200);
                 }else{
                     return response()->json([
                         'status'    => 'failed',
-                        'message'   => __("msg.Password Does not Match! Please Try Again..."),
+                        'message'   => __("msg.singletons.login.invalid"),
                     ],400);
                 }
             }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __("msg.The Email isn't Verified! Please Verify First..."),
+                    'message'   => __("msg.singletons.login.failure"),
                 ],400);
             }
         }else{
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.User Not Found!'),
+                'message'   => __('msg.singletons.login.not-found'),
             ],400);
         }
     }
@@ -495,44 +533,52 @@ class Auth extends Controller
             ],400);
         }
 
-        $user = Singleton::where([['email','=',$request->email],['status','=','Unblocked']])->first();
+        try {
+            $user = Singleton::where([['email','=',$request->email],['status','=','Unblocked']])->first();
 
-        if(!empty($user)){
-            $token  = Str::random(40);
-            $domain = URL::to('/');
-            $url    = $domain.'/api/singleton/reset-password?token='.$token;
+            if(!empty($user)){
+                $token  = Str::random(40);
+                $domain = URL::to('/');
+                $url    = $domain.'/api/singleton/reset-password?token='.$token;
 
-            $password_reset = PasswordReset::updateOrCreate(
-                ['email' => $request->email],
-                [
-                    'email' => $request->email,
-                    'token' => $token,
-                    'created_at' => date('Y-m-d H:i:s'),
-                ]
-            );
+                $password_reset = PasswordReset::updateOrCreate(
+                    ['email' => $request->email],
+                    [
+                        'email' => $request->email,
+                        'token' => $token,
+                        'created_at' => date('Y-m-d H:i:s'),
+                    ]
+                );
 
-            if ($password_reset) {
-                $data = ['salutation' => __('msg.Hi'), 'name'=> $user->name,'url'=> $url, 'msg'=> __('msg.I am pleased that you have registered with us. Please Click on Below link to Reset Your Password!'), 'url_msg'=> __('msg.Click Here to Reset Password!')];
-                $user =  ['to'=> $user->email];
-                Mail::send('reset_password_mail', $data, function ($message) use ($user) {
-                    $message->to($user['to']);
-                    $message->subject(__('msg.Forget Password'));
-                });
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.Forget Password Link Sent Successfully!'),
-                ],200);
-            } else {
+                if ($password_reset) {
+                    $data = ['salutation' => __('msg.Hi'), 'name'=> $user->name,'url'=> $url, 'msg'=> __('msg.I am pleased that you have registered with us. Please Click on Below link to Reset Your Password!'), 'url_msg'=> __('msg.Click Here to Reset Password!')];
+                    $user =  ['to'=> $user->email];
+                    Mail::send('reset_password_mail', $data, function ($message) use ($user) {
+                        $message->to($user['to']);
+                        $message->subject(__('msg.Forget Password'));
+                    });
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.forget-pass.success'),
+                    ],200);
+                } else {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.forget-pass.failure'),
+                    ],400);
+                }
+            }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
+                    'message'   => __('msg.singletons.forget-pass.invalid'),
                 ],400);
             }
-        }else{
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.User Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -559,19 +605,19 @@ class Auth extends Controller
             if(!empty($user)){
                 return response()->json([
                     'status'    => 'success',
-                    'message'   => __('msg.Forget Password Token Verified Successfully!'),
+                    'message'   => __('msg.singletons.forget-pass-link.success'),
                     'data'      => $user,
                 ],200);
             }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.User Not Found!'),
+                    'message'   => __('msg.singletons.forget-pass-link.invalid'),
                 ],400);
             }
         }else {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
+                'message'   => __('msg.singletons.forget-pass-link.failure'),
             ],400);
         }
     }
@@ -595,27 +641,35 @@ class Auth extends Controller
             ],400);
         }
 
-        $user = Singleton::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
-        if(!empty($user)){
-            $verified =  Singleton :: where('id','=',$request->user_id)->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);
-            if($verified){
-                PasswordReset::where('email','=',$user->email)->delete();
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.Password Reset Successfully!'),
-                    'data'      => $user
-                ],200);
+        try {
+            $user = Singleton::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
+            if(!empty($user)){
+                $verified =  Singleton :: where('id','=',$request->user_id)->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);
+                if($verified){
+                    PasswordReset::where('email','=',$user->email)->delete();
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.set-new-pass.success'),
+                        'data'      => $user
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.set-new-pass.failure'),
+                    ],400);
+                }
             }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
+                    'message'   => __('msg.singletons.set-new-pass.invalid'),
                 ],400);
             }
-        }else{
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.User Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -639,33 +693,41 @@ class Auth extends Controller
             ],400);
         }
 
-        $user = Singleton::where([['id','=',$request->user_id],['status','=','unblocked']])->first();
-        if(!empty($user)){
-            if($user->email_otp == $request->otp){
-                $verified =  Singleton :: where('id','=',$request->user_id)->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);
-                if($verified){
-                    return response()->json([
-                        'status'    => 'success',
-                        'message'   => __('msg.Password Reset Successfully!'),
-                        'data'      => $user
-                    ],200);
+        try {
+            $user = Singleton::where([['id','=',$request->user_id],['status','=','unblocked']])->first();
+            if(!empty($user)){
+                if($user->email_otp == $request->otp){
+                    $verified =  Singleton :: where('id','=',$request->user_id)->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);
+                    if($verified){
+                        return response()->json([
+                            'status'    => 'success',
+                            'message'   => __('msg.singletons.validate-forget-pass.success'),
+                            'data'      => $user
+                        ],200);
+                    }else{
+                        return response()->json([
+                            'status'    => 'failed',
+                            'message'   => __('msg.singletons.validate-forget-pass.failure'),
+                        ],400);
+                    }
                 }else{
                     return response()->json([
                         'status'    => 'failed',
-                        'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
+                        'message'   => __('msg.singletons.validate-forget-pass.invalid'),
                     ],400);
                 }
             }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.OTP Does not Match! Please Try Again...'),
+                    'message'   => __('msg.singletons.validate-forget-pass.not-found'),
                 ],400);
             }
-        }else{
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.User Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 }

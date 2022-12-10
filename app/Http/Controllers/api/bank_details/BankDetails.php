@@ -51,18 +51,26 @@ class BankDetails extends Controller
             ],400);
         }
 
-        $account = ModelsBankDetails::where([['status','=','Active'],['user_id','=',$request->login_id],['user_type','=', $request->user_type]])->get();
-        if(!$account->isEmpty()){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Bank Account Details Fetched Successfully!'),
-                'data'      => $account
-            ],200);
-        }else{
+        try {
+            $account = ModelsBankDetails::where([['status','=','Active'],['user_id','=',$request->login_id],['user_type','=', $request->user_type]])->get();
+            if(!$account->isEmpty()){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.bank.get-details.success'),
+                    'data'      => $account
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.bank.get-details.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Bank Account Details Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -93,28 +101,36 @@ class BankDetails extends Controller
             ],400);
         }
 
-        $account = new ModelsBankDetails();
-        $account->user_id           = $request->login_id;
-        $account->user_type         = $request->user_type;
-        $account->card_holder_name  = $request->card_holder_name;
-        $account->bank_name         = $request->bank_name;
-        $account->card_number       = $request->card_number;
-        $account->month_year        = $request->month_year;
-        $account->cvv               = $request->cvv;
+        try {
+            $account = new ModelsBankDetails();
+            $account->user_id           = $request->login_id;
+            $account->user_type         = $request->user_type;
+            $account->card_holder_name  = $request->card_holder_name;
+            $account->bank_name         = $request->bank_name;
+            $account->card_number       = $request->card_number;
+            $account->month_year        = $request->month_year;
+            $account->cvv               = $request->cvv;
 
-        $account_details = $account->save();
+            $account_details = $account->save();
 
-        if($account_details){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Bank Account Details Added Successfully!'),
-                'data'    => $account
-            ],200);
-        }else{
+            if($account_details){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.bank.add.success'),
+                    'data'    => $account
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.bank.add.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -141,17 +157,25 @@ class BankDetails extends Controller
             ],400);
         }
 
-        $account = ModelsBankDetails::where([['id','=',$request->method_id],['status','=','Active'],['user_id','=',$request->login_id],['user_type','=', $request->user_type]])->delete();
-        if($account){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Bank Account Details Deleted Successfully!'),
-            ],200);
-        }else{
+        try {
+            $account = ModelsBankDetails::where([['id','=',$request->method_id],['status','=','Active'],['user_id','=',$request->login_id],['user_type','=', $request->user_type]])->delete();
+            if($account){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.bank.delete.success'),
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.bank.delete.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Bank Account Details Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 }

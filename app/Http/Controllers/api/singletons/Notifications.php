@@ -49,32 +49,39 @@ class Notifications extends Controller
             ],400);
         }
 
-        // $notifications = ModelsNotifications::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['status','=','unread']])->get();
-        $user = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type]])->first();
-        $notifications = $user->notifications->where('user_type', '=', $request->user_type);
+        try {
+            $user = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type]])->first();
+            $notifications = $user->notifications->where('user_type', '=', $request->user_type);
 
-        if(!$notifications->isEmpty()){
-            foreach ($notifications as $notify) {
-                $notification[] = $notify->data;
-            }
+            if(!$notifications->isEmpty()){
+                foreach ($notifications as $notify) {
+                    $notification[] = $notify->data;
+                }
 
-            if ($notification) {
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.Notifications List Fetched Successfully!'),
-                    'data'      => $notification
-                ],200);
-            } else {
+                if ($notification) {
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.notifications.success'),
+                        'data'      => $notification
+                    ],200);
+                } else {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.notifications.failure'),
+                    ],400);
+                }
+            }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.No Notification Found!'),
+                    'message'   => __('msg.singletons.notifications.failure'),
                 ],400);
             }
-        }else{
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.No Notification Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 }
