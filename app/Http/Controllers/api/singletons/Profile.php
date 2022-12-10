@@ -53,18 +53,26 @@ class Profile extends Controller
             ],400);
         }
 
-        $user = Singleton::where([['id','=',$request->login_id], ['status','=','unblocked'], ['is_email_verified','=','verified']])->first();
-        if(!empty($user)){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Profile Details Fetched Successfully!'),
-                'data'      => $user
-            ],200);
-        }else{
+        try {
+            $user = Singleton::where([['id','=',$request->login_id], ['status','=','unblocked'], ['is_email_verified','=','verified']])->first();
+            if(!empty($user)){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.singletons.get-profile.success'),
+                    'data'      => $user
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.get-profile.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.User Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -101,59 +109,68 @@ class Profile extends Controller
                 'errors'    => $validator->errors()
             ],400);
         }
-        $age = Carbon::parse($request->dob)->age;
-        $user = Singleton::find($request->login_id);
-        if(!empty($user)){
-            $user->name          = $request->name;
-            $user->email         = $request->email;
-            $user->mobile        = $request->mobile;
-            $user->dob           = $request->dob;
-            $user->gender        = $request->gender;
-            $user->age           = $age;
-            $user->height        = $request->height;
-            $user->profession    = $request->profession;
-            $user->nationality   = $request->nationality;
-            $user->ethnic_origin = $request->ethnic_origin;
-            $user->islamic_sect  = $request->islamic_sect;
-            $user->short_intro   = $request->short_intro;
-            $user->location      = $request->location;
-            $user->lat           = $request->lat;
-            $user->long          = $request->long;
 
-            $file1 = $request->file('live_photo');
-            if ($file1) {
-                $extension = $file1->getClientOriginalExtension();
-                $filename = time().'.'.$extension;
-                $file1->move('assets/uploads/singleton-live-photos/', $filename);
-                $user->live_photo = 'assets/uploads/singleton-live-photos/'.$filename;
+        try {
+            $age = Carbon::parse($request->dob)->age;
+            $user = Singleton::find($request->login_id);
+            if(!empty($user)){
+                $user->name          = $request->name;
+                $user->email         = $request->email;
+                $user->mobile        = $request->mobile;
+                $user->dob           = $request->dob;
+                $user->gender        = $request->gender;
+                $user->age           = $age;
+                $user->height        = $request->height;
+                $user->profession    = $request->profession;
+                $user->nationality   = $request->nationality;
+                $user->ethnic_origin = $request->ethnic_origin;
+                $user->islamic_sect  = $request->islamic_sect;
+                $user->short_intro   = $request->short_intro;
+                $user->location      = $request->location;
+                $user->lat           = $request->lat;
+                $user->long          = $request->long;
+
+                $file1 = $request->file('live_photo');
+                if ($file1) {
+                    $extension = $file1->getClientOriginalExtension();
+                    $filename = time().'.'.$extension;
+                    $file1->move('assets/uploads/singleton-live-photos/', $filename);
+                    $user->live_photo = 'assets/uploads/singleton-live-photos/'.$filename;
+                }
+
+                $file2 = $request->file('id_proof');
+                if ($file2) {
+                    $extension = $file2->getClientOriginalExtension();
+                    $filename = time().'.'.$extension;
+                    $file2->move('assets/uploads/singleton-id-proofs/', $filename);
+                    $user->id_proof = 'assets/uploads/singleton-id-proofs/'.$filename;
+                }
+
+            $userDetails =  $user->save();
+            if($userDetails){
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.update-profile.success'),
+                        'data'      => $user
+                    ],200);
+            }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.update-profile.failure'),
+                    ],400);
             }
-
-            $file2 = $request->file('id_proof');
-            if ($file2) {
-                $extension = $file2->getClientOriginalExtension();
-                $filename = time().'.'.$extension;
-                $file2->move('assets/uploads/singleton-id-proofs/', $filename);
-                $user->id_proof = 'assets/uploads/singleton-id-proofs/'.$filename;
-            }
-
-           $userDetails =  $user->save();
-           if($userDetails){
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.Profile Details Updated Successfully!'),
-                    'data'      => $user
-                ],200);
-           }else{
+            }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.Somthing Went Wrong, Please Try Again...!'),
+                    'message'   => __('msg.singletons.update-profile.invalid'),
                 ],400);
-           }
-        }else{
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.User Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -180,66 +197,74 @@ class Profile extends Controller
             ],400);
         }
 
-        $user = Singleton::find($request->login_id);
-        if(!empty($user)){
-            $file1 = $request->file('photo1');
-            if ($file1) {
-                $extension = $file1->getClientOriginalExtension();
-                $filename1 = time().'1.'.$extension;
-                $file1->move('assets/uploads/singleton-photos/', $filename1);
-                $user->photo1 = 'assets/uploads/singleton-photos/'.$filename1;
-            }
+        try {
+            $user = Singleton::find($request->login_id);
+            if(!empty($user)){
+                $file1 = $request->file('photo1');
+                if ($file1) {
+                    $extension = $file1->getClientOriginalExtension();
+                    $filename1 = time().'1.'.$extension;
+                    $file1->move('assets/uploads/singleton-photos/', $filename1);
+                    $user->photo1 = 'assets/uploads/singleton-photos/'.$filename1;
+                }
 
-            $file2 = $request->file('photo2');
-            if ($file2) {
-                $extension = $file2->getClientOriginalExtension();
-                $filename2 = time().'2.'.$extension;
-                $file2->move('assets/uploads/singleton-photos/', $filename2);
-                $user->photo2 = 'assets/uploads/singleton-photos/'.$filename2;
-            }
+                $file2 = $request->file('photo2');
+                if ($file2) {
+                    $extension = $file2->getClientOriginalExtension();
+                    $filename2 = time().'2.'.$extension;
+                    $file2->move('assets/uploads/singleton-photos/', $filename2);
+                    $user->photo2 = 'assets/uploads/singleton-photos/'.$filename2;
+                }
 
-            $file3 = $request->file('photo3');
-            if ($file3) {
-                $extension = $file3->getClientOriginalExtension();
-                $filename3 = time().'3.'.$extension;
-                $file3->move('assets/uploads/singleton-photos/', $filename3);
-                $user->photo3 = 'assets/uploads/singleton-photos/'.$filename3;
-            }
+                $file3 = $request->file('photo3');
+                if ($file3) {
+                    $extension = $file3->getClientOriginalExtension();
+                    $filename3 = time().'3.'.$extension;
+                    $file3->move('assets/uploads/singleton-photos/', $filename3);
+                    $user->photo3 = 'assets/uploads/singleton-photos/'.$filename3;
+                }
 
-            $file4 = $request->file('photo4');
-            if ($file4) {
-                $extension = $file4->getClientOriginalExtension();
-                $filename4 = time().'4.'.$extension;
-                $file4->move('assets/uploads/singleton-photos/', $filename4);
-                $user->photo4 = 'assets/uploads/singleton-photos/'.$filename4;
-            }
+                $file4 = $request->file('photo4');
+                if ($file4) {
+                    $extension = $file4->getClientOriginalExtension();
+                    $filename4 = time().'4.'.$extension;
+                    $file4->move('assets/uploads/singleton-photos/', $filename4);
+                    $user->photo4 = 'assets/uploads/singleton-photos/'.$filename4;
+                }
 
-            $file5 = $request->file('photo5');
-            if ($file5) {
-                $extension = $file5->getClientOriginalExtension();
-                $filename5 = time().'5.'.$extension;
-                $file5->move('assets/uploads/singleton-photos/', $filename5);
-                $user->photo5 = 'assets/uploads/singleton-photos/'.$filename5;
-            }
+                $file5 = $request->file('photo5');
+                if ($file5) {
+                    $extension = $file5->getClientOriginalExtension();
+                    $filename5 = time().'5.'.$extension;
+                    $file5->move('assets/uploads/singleton-photos/', $filename5);
+                    $user->photo5 = 'assets/uploads/singleton-photos/'.$filename5;
+                }
 
-            $userDetails =  $user->save();
-            if($userDetails){
-                    return response()->json([
-                        'status'    => 'success',
-                        'message'   => __('msg.Profile Details Updated Successfully!'),
-                        'data'      => $user
-                    ],200);
+                $userDetails =  $user->save();
+                if($userDetails){
+                        return response()->json([
+                            'status'    => 'success',
+                            'message'   => __('msg.singletons.upload-pictures.success'),
+                            'data'      => $user
+                        ],200);
+                }else{
+                        return response()->json([
+                            'status'    => 'failed',
+                            'message'   => __('msg.singletons.upload-pictures.failure'),
+                        ],400);
+                }
             }else{
-                    return response()->json([
-                        'status'    => 'failed',
-                        'message'   => __('msg.Somthing Went Wrong, Please Try Again...!'),
-                    ],400);
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.upload-pictures.invalid'),
+                ],400);
             }
-        }else{
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.User Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -261,26 +286,34 @@ class Profile extends Controller
             ],400);
         }
 
-        $linked = ParentChild::where('singleton_id','=', $request->login_id)->first();
-        if (empty($linked) || ($linked->status) != 'Linked') {
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.'),
-            ],400);
-        }else{
-            $parent = ParentChild::where('singleton_id','=', $request->login_id)->join('parents', 'parent_children.parent_id','=','parents.id')->first(['parent_children.access_code', 'parents.*']);
-            if(!empty($parent)){
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.Parent Access Request Details Fetched Successfully!'),
-                    'data'      => $parent
-                ],200);
-            }else{
+        try {
+            $linked = ParentChild::where('singleton_id','=', $request->login_id)->first();
+            if (empty($linked) || ($linked->status) != 'Linked') {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.Somthing Went Wrong, Please Try Again...!'),
+                    'message'   => __('msg.singletons.access-details.invalid'),
                 ],400);
+            }else{
+                $parent = ParentChild::where('singleton_id','=', $request->login_id)->join('parents', 'parent_children.parent_id','=','parents.id')->first(['parent_children.access_code', 'parents.*']);
+                if(!empty($parent)){
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.access-details.success'),
+                        'data'      => $parent
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.access-details.failure'),
+                    ],400);
+                }
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 }

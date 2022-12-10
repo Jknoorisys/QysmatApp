@@ -79,19 +79,27 @@ class Suggestions extends Controller
             ],400);
         }
 
-        $category = ModelsCategories::where([['status','=','Active'],['singleton_id','=',$request->singleton_id]])->first();
+        try {
+            $category = ModelsCategories::where([['status','=','Active'],['singleton_id','=',$request->singleton_id]])->first();
 
-        if(!empty($category)){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Singleton Category Details Fetched Successfully!'),
-                'data'      => $category
-            ],200);
-        }else{
+            if(!empty($category)){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.parents.get-category.success'),
+                    'data'      => $category
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.get-category.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Singleton Category Details Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -114,90 +122,93 @@ class Suggestions extends Controller
             ],400);
         }
 
-        $category = ModelsCategories::where('singleton_id',$request->singleton_id)->first();
+        try {
+            $category = ModelsCategories::where('singleton_id',$request->singleton_id)->first();
 
-        if (!empty($category)) {
-            $gender = $category->gender ? $category->gender : '';
-            $profession = $category->profession ? $category->profession : '';
-            $location = $category->location ? $category->location : '';
-            $height = $category->height ? $category->height : '';
-            $islamic_sect = $category->islamic_sect ? $category->islamic_sect : '';
-            $age = $category->age_range ? explode('-',$category->age_range) : '';
-            $min_age = $age ? $age[0] : '' ;
-            $max_age = $age ? $age[1] : '';
+            if (!empty($category)) {
+                $gender = $category->gender ? $category->gender : '';
+                $profession = $category->profession ? $category->profession : '';
+                $location = $category->location ? $category->location : '';
+                $height = $category->height ? $category->height : '';
+                $islamic_sect = $category->islamic_sect ? $category->islamic_sect : '';
+                $age = $category->age_range ? explode('-',$category->age_range) : '';
+                $min_age = $age ? $age[0] : '' ;
+                $max_age = $age ? $age[1] : '';
 
-            $this->db = DB::table('singletons');
+                $this->db = DB::table('singletons');
 
-            if(!empty($profession)){
-                $this->db->where('profession','=',$profession);
-            }
-
-            if(!empty($location)){
-                $this->db->where('location','=',$location);
-            }
-
-            if(!empty($height)){
-                $this->db->where('height','=',$height);
-            }
-
-            if(!empty($islamic_sect)){
-                $this->db->where('islamic_sect','=',$islamic_sect);
-            }
-
-            if(!empty($min_age) && !empty($max_age)){
-                $this->db->where('age','>=',$min_age);
-                $this->db->where('age','<=',$max_age);
-            }
-
-            $this->db->where('id','!=',$request->singleton_id);
-            $this->db->where('parent_id','!=',$request->login_id);
-            $this->db->where('status','=','Unblocked');
-            $this->db->where('is_verified','=','verified');
-            $this->db->where('gender','=',$gender);
-            $suggestion = $this->db->get();
-
-            if(!$suggestion->isEmpty()){
-                $users = [];
-                foreach ($suggestion as $m) {
-                    $singleton_id = $m->id;
-                    $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
-                    $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
-                    $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
-                    $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
-
-                    if (empty($block) && empty($report) && empty($unMatch) && empty($Match)) {
-                        $users[] = $m;
-                    }
+                if(!empty($profession)){
+                    $this->db->where('profession','=',$profession);
                 }
 
-                if(!empty($users)){
-                    return response()->json([
-                        'status'    => 'success',
-                        'message'   => __('msg.Suggestions Based on Singleton Categories Fetched Successfully!'),
-                        'data'      => $users
-                    ],200);
+                if(!empty($location)){
+                    $this->db->where('location','=',$location);
+                }
+
+                if(!empty($height)){
+                    $this->db->where('height','=',$height);
+                }
+
+                if(!empty($islamic_sect)){
+                    $this->db->where('islamic_sect','=',$islamic_sect);
+                }
+
+                if(!empty($min_age) && !empty($max_age)){
+                    $this->db->where('age','>=',$min_age);
+                    $this->db->where('age','<=',$max_age);
+                }
+
+                $this->db->where('id','!=',$request->singleton_id);
+                $this->db->where('parent_id','!=',$request->login_id);
+                $this->db->where('status','=','Unblocked');
+                $this->db->where('is_verified','=','verified');
+                $this->db->where('gender','=',$gender);
+                $suggestion = $this->db->get();
+
+                if(!$suggestion->isEmpty()){
+                    $users = [];
+                    foreach ($suggestion as $m) {
+                        $singleton_id = $m->id;
+                        $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
+                        $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
+                        $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
+                        $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
+
+                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match)) {
+                            $users[] = $m;
+                        }
+                    }
+
+                    if(!empty($users)){
+                        return response()->json([
+                            'status'    => 'success',
+                            'message'   => __('msg.parents.get-suggestions.success'),
+                            'data'      => $users
+                        ],200);
+                    }else{
+                        return response()->json([
+                            'status'    => 'failed',
+                            'message'   => __('msg.parents.get-suggestions.failure'),
+                        ],400);
+                    }
                 }else{
                     return response()->json([
                         'status'    => 'failed',
-                        'message'   => __('msg.No Suggestions Found!'),
+                        'message'   => __('msg.parents.get-suggestions.failure'),
                     ],400);
                 }
-                // return response()->json([
-                //     'status'    => 'success',
-                //     'message'   => __('msg.Suggestions Based on Singleton Categories Fetched Successfully!'),
-                //     'data'    => $suggestion
-                // ],200);
-            }else{
+            } else {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.No Suggestions Found!'),
+                    'message'   => __('msg.parents.get-suggestions.invalid'),
                 ],400);
             }
-        } else {
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
 
     }

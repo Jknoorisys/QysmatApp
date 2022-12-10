@@ -300,96 +300,433 @@ return [
     // API
     'Validation Failed!'                    => 'Validation Failed!',
     'Invalid Email...'                      => 'Invalid Email...',
-    'Registration Successful!'              => 'Registration Successful!',
-    'Registration OTP Sent Successfully!'   => 'Registration OTP Sent Successfully!',
-    'Email Not Verified! Please Verify First...' => 'Email Not Verified! Please Verify First...',
-    'User Not Found!'                       => 'User Not Found!',
-    'OTP Does not Match! Please Try Again...'  => 'OTP Does not Match! Please Try Again...',
-    "The Email isn't Verified! Please Verify First..."  => "The Email isn't Verified! Please Verify First...",
-    'Login Successfull!'                    => 'Login Successfull!',
-    'Password Does not Match! Please Try Again...' => 'Password Does not Match! Please Try Again...',
-    'Forget Password' => 'Forget Password',
-    'Forget Password Link Sent Successfully!' => 'Forget Password Link Sent Successfully!',
     'Click Here to Reset Password!'         => 'Click Here to Reset Password!',
-    'Forget Password Token Verified Successfully!' => 'Forget Password Token Verified Successfully!',
-    'Password Reset Successfully!'          => 'Password Reset Successfully!',
 
-    'Profile Details Fetched Successfully!' => 'Profile Details Fetched Successfully!',
-    'Profile Details Updated Successfully!' => 'Profile Details Updated Successfully!',
-    'Child Profile Details Fetched Successfully!' => 'Child Profile Details Fetched Successfully!',
-    'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
-    'Your Profile is Not Linked with Your Children, Please search and Link.' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
+    // APIs
 
-    'Page Details Fetched Successfully!'  => 'Page Details Fetched Successfully!',
-    'Page Not Found!'                     => 'Page Not Found!',
+    'error' => 'Somthing Went Wrong, Please Try Again...',
 
-    'Contact Details Fetched Successfully!' => 'Contact Details Fetched Successfully!',
-    'Contact Details Not Found!'            => 'Contact Details Not Found!',
+    'bank'  => [
+        'get-details' => [
+            'success' => 'Bank Account Details Fetched Successfully!',
+            'failure' => 'Bank Account Details Not Found!',
+        ],
 
-    'Subsription Details Fetched Successfully!' => 'Subsription Details Fetched Successfully!',
-    'Subsription Plan Not Found!'               => 'Subsription Plan Not Found!',
+        'add' => [
+            'success' => 'Bank Account Details Added Successfully!',
+            'failure' => 'Unable to Add Bank Account Details, Please Try Again...',
+        ],
 
-    'Islamic Quotes Fetched Successfully!'  => 'Islamic Quotes Fetched Successfully!',
-    'Islamic Quotes Not Found!'             => 'Islamic Quotes Not Found!',
-    'No Image Selected'                     => 'No Image Selected',
+        'delete' => [
+            'success' => 'Bank Account Details Deleted Successfully!',
+            'failure' => 'Unable to Delete Bank Account Details, Please Try Again...',
+        ],
+    ],
 
-    'Singleton Category Details Fetched Successfully!'  => 'Singleton Category Details Fetched Successfully!',
-    'Singleton Category Details Not Found!'             => 'Singleton Category Details Not Found!',
-    'Singleton Category Details Added Successfully!'    => 'Singleton Category Details Added Successfully!',
-    'Singleton Category Details Updated Successfully!'  => 'Singleton Category Details Updated Successfully!',
-    'Profile not Verified, Please Try After Some Time...'   => 'Profile not Verified by Admin, Please Try After Some Time...',
-    'Suggestions Based on Singleton Categories Fetched Successfully!' => 'Suggestions Based on Singleton Categories Fetched Successfully!',
-    'No Suggestions Found!'                             => 'No Suggestions Found!',
+    'contact-details' => [
+        'success' => 'Contact Details Fetched Successfully!',
+        'failure' => 'Contact Details Not Found!',
+    ],
 
-    'Contact Us Form Submitted Successfully!'      => 'Contact Us Form Submitted Successfully!',
-    'User Reported Successfully!'                  => 'User Reported Successfully!',
-    'User, You want to Report Not Found!'          => 'User, You want to Report Not Found!',
-    'Account Deleted'                              => 'Account Deleted',
+    'contact-us' => [
+        'success' => 'Contact-Us Form Submitted Successfully!',
+        'failure' => 'Unable to Submit Contact-Us Form, Please Try Again...',
+    ],
 
-    'Bank Account Details Fetched Successfully!'    => 'Bank Account Details Fetched Successfully!',
-    'Bank Account Details Not Found!'               => 'Bank Account Details Not Found!',
-    'Bank Account Details Added Successfully!'      => 'Bank Account Details Added Successfully!',
-    'Bank Account Details Deleted Successfully!'    => 'Bank Account Details Deleted Successfully!',
+    'delete-account' => [
+        'success' => 'Account Deleted!',
+        'failure' => 'Unable to Delete Account, Please Try Again...',
+        'invalid' => 'User Not Found!',
+    ],
 
-    'Singletons List Fetched Successfully!'         => 'Singletons List Fetched Successfully!',
-    'No Result Found!'                              => 'No Result Found!',
+    'islamic-quotes' => [
+        'success' => 'Islamic Quotes Fetched Successfully!',
+        'failure' => 'Islamic Quotes Not Found!',
+    ],
 
-    'Access Request Sent Successfully!'             => 'Access Request Sent Successfully!',
-    'Profile Linked Successfully!'                  => 'Profile Linked Successfully!',
-    'Linked Profile List Fetched Successfully!'     => 'Linked Profile List Fetched Successfully!',
-    'Access Code Does not Match! Please Try Again...' => 'Access Code Does not Match! Please Try Again...',
-    'No Profile Found!'                             => 'No Profile Found!',
+    'reset-profile' => [
+        'success' => 'Profile Search Reset Successfully!',
+        'failure' => 'Unable to Reset Profile Search, Please Try Again...',
+    ],
 
-    'No Match Found!'                               => 'No Match Found!',
-    'Matches List Fetched Successfully!'            => 'Matches List Fetched Successfully!',
-    'Recieved Matches List Fetched Successfully!'   => 'Recieved Matches List Fetched Successfully!',
-    'Reffered Matches List Fetched Successfully!'   => 'Reffered Matches List Fetched Successfully!',
+    'static-pages' => [
+        'success' => 'Page Details Fetched Successfully!',
+        'failure' => 'Page Not Found!',
+    ],
 
-    'User, You want to Block Not Found!'            => 'User, You want to Block Not Found!',
-    'User Blocked Successfully!'                    => 'User Blocked Successfully!',
-    'User Un-Matched Successfully!'                 => 'User Un-Matched Successfully!',
-    'Parent Access Request Details Fetched Successfully!' => 'Parent Access Request Details Fetched Successfully!',
+    'subscriptions'  => [
+        'success' => 'Subsription Details Fetched Successfully!',
+        'failure' => 'Subsription Plan Not Found!',
+    ],
 
-    'User, You want to Un-Match Not Found!'         => 'User, You want to Un-Match Not Found!',
-    'User Profile is not Linked with His/Her Parent/Gardian!'  => 'User Profile is not Linked with His/Her Parent/Gardian!',
-    'You have Blocked this User!'                   =>'You have Blocked this User!',
-    'You have Reported this User!'                  =>'You have Reported this User!',
-    'You have Un-Matched this User!'                => 'You have Un-Matched this User!',
-    'Swiped '                                       => 'Swiped ',
-    'Swipe Failed!'                                 => 'Swipe Failed!',
+    'parents' => [
+        'register' => [
+            'success' => 'Registration OTP Sent Successfully!',
+            'failure' => 'Registration Failed, Please Try Again...',
+        ],
 
-    'Message Sent!'                                 => 'Message Sent!',
-    'You have an Un-Closed Chat...'                 => 'You have an Un-Closed Chat...',
-    'Messaged Users List Fetched Successfully!'     => 'Messaged Users List Fetched Successfully!',
-    'Conversation Ended!'                           => 'Conversation Ended!',
-    'Invitation Sent...'                            => 'Invitation Sent...',
+        'validate-email' => [
+            'success' => 'Registration Successful!',
+            'failure' => 'Email Not Verified! Please Verify First...',
+            'invalid' => 'OTP Does not Match! Please Try Again...',
+            'not-found' => 'User Not Found!',
+        ],
 
-    'Notifications List Fetched Successfully!'      => 'Notifications List Fetched Successfully!',
-    'No Notification Found!'                        => 'No Notification Found!',
+        'resend-otp' => [
+            'success' => 'Registration OTP Sent Successfully!',
+            'failure' => 'Unable to Send OTP, Please Try Again...',
+            'invalid' => 'User Not Found!',
+        ],
 
-    'Message List Fetched Successfully!'            => 'Message List Fetched Successfully!',
-    'No Message Found!'                             => 'No Message Found!',
+        'forget-pass' => [
+            'success' => 'Reset Password Link Sent Successfully!',
+            'failure' => 'Unable to Send Reset Password Link, Please Try Again...',
+            'invalid' => 'User Not Found!',
+        ],
 
-    'Profile Search Reset Successfully!'            => 'Profile Search Reset Successfully!',
+        'forget-pass-link' => [
+            'success' => 'Forget Password Token Verified Successfully!',
+            'failure' => 'Unable to Verify Reset Password Link, Please Try Again...',
+            'invalid' => 'User Not Found!',
+        ],
+
+        'set-new-pass' => [
+            'success' => 'Password Reset Successfully!',
+            'failure' => 'Unable to Reset Password, Please Try Again...',
+            'invalid' => 'User Not Found!',
+        ],
+
+        'validate-forget-pass' => [
+            'success' => 'Password Reset Successfully!',
+            'failure' => 'Unable to Reset Password, Please Try Again...',
+            'invalid' => 'OTP Does not Match! Please Try Again...',
+            'not-found' => 'User Not Found!',
+        ],
+
+        'login' => [
+            'success' => 'Login Successfull!',
+            'failure' => "The Email isn't Verified! Please Verify First...",
+            'invalid' => 'Password Does not Match! Please Try Again...',
+            'not-found' => 'User Not Found!',
+        ],
+
+        'block' => [
+            'success' => 'User Blocked Successfully!',
+            'failure' => "Unable to Block User, Please Try Again...",
+            'invalid' => 'User, You want to Block Not Found!',
+        ],
+
+        'report' => [
+            'success' => 'User Reported Successfully!',
+            'failure' => "Unable to Report User, Please Try Again...",
+            'invalid' => 'User, You want to Report Not Found!',
+        ],
+
+        'send-message' => [
+            'success' => 'Message Sent!',
+            'failure' => "Unable to Send Message, Please Try Again...",
+            'invalid' => 'You have an Un-Closed Chat...',
+            'blocked' => 'You have Blocked this User!',
+            'reported' => 'You have Reported this User!',
+            'un-matched' => 'You have Un-Matched this User!',
+        ],
+
+
+        'messaged-users' => [
+            'success' => 'Messaged Users List Fetched Successfully!',
+            'failure' => "Messaged Users List Not Found!",
+        ],
+
+        'chat-history' => [
+            'success' => 'Message List Fetched Successfully!',
+            'failure' => "No Message Found!",
+        ],
+
+        'close-chat' => [
+            'success' => 'Conversation Ended!',
+            'failure' => "Unable to Close Chat, Please Try Again...",
+        ],
+
+        'invitation' => [
+            'success' => 'Invitation Sent...',
+            'failure' => "Unable to Send Invitation, Please Try Again...",
+            'invalid' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+        ],
+
+        'un-match' => [
+            'success' => 'User Un-Matched Successfully!',
+            'failure' => "Unable to Un-Match User, Please Try Again...",
+            'invalid' => 'User, You want to Un-Match Not Found!',
+            'not-found' => 'User Not Found!',
+        ],
+
+        'match' => [
+            'success' => 'Matches List Fetched Successfully!',
+            'failure' => 'No Match Found!',
+            'invalid' => 'No Suggestions Found!',
+        ],
+
+        'received-match' => [
+            'success' => 'Recieved Matches List Fetched Successfully!',
+            'failure' => 'No Match Found!',
+            'invalid' => 'No Suggestions Found!',
+        ],
+
+        'referred-match' => [
+            'success' => 'Reffered Matches List Fetched Successfully!',
+            'failure' => 'No Match Found!',
+            'invalid' => 'No Suggestions Found!',
+        ],
+
+        'notifications' => [
+            'success' => 'Notifications List Fetched Successfully!',
+            'failure' => 'No Notification Found!',
+        ],
+
+        'get-profile' => [
+            'success' => 'Profile Details Fetched Successfully!',
+            'failure' => 'User Not Found!',
+        ],
+
+        'update-profile' => [
+            'success' => 'Profile Details Updated Successfully!',
+            'failure' => 'Unable to Update Profile, Please Try Again...!',
+            'invalid' => 'User Not Found!',
+        ],
+
+        'search-child' => [
+            'success' => 'Singletons List Fetched Successfully!',
+            'failure' => 'No Result Found!',
+        ],
+
+        'access-request' => [
+            'success' => 'Access Request Sent Successfully!',
+            'failure' => 'Unable to Send Access Request, Please Try Again...',
+        ],
+
+        'verify-access-request' => [
+            'success' => 'Profile Linked Successfully!',
+            'failure' => 'Access Code Does not Match! Please Try Again...',
+        ],
+
+        'get-linked-profiles' => [
+            'success' => 'Linked Profile List Fetched Successfully!',
+            'failure' => 'No Profile Found!',
+        ],
+
+        'get-child-profile' => [
+            'success' => 'Child Profile Details Fetched Successfully!',
+            'failure' => 'No Profile Found!',
+        ],
+
+        'get-category' => [
+            'success' => 'Category Details Fetched Successfully!',
+            'failure' => 'Category Details Not Found!',
+        ],
+
+        'add-category' => [
+            'success' => 'Category Details Added Successfully!',
+            'failure' => 'Unable to Add Category Details! Please Try Again...',
+        ],
+
+        'update-category' => [
+            'success' => 'Category Details Updated Successfully!',
+            'failure' => 'Unable to Update Category Details! Please Try Again...',
+        ],
+
+        'get-suggestions' => [
+            'success' => 'Suggestions Based on Singleton Categories Fetched Successfully!',
+            'failure' => 'No Suggestions Found!',
+            'invalid' => 'Category Details Not Found!',
+            'not-linked' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+        ],
+
+        'swips' => [
+            'success' => 'Swiped ',
+            'failure' => 'Swipe Failed!',
+            'invalid' => 'Unable to Undo Last Swipe, Please Try Again...',
+            'blocked' => 'You have Blocked this User!',
+            'reported' => 'You have Reported this User!',
+            'un-matched' => 'You have Un-Matched this User!',
+            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
+        ],
+    ],
+
+    'singletons' => [
+        'register' => [
+            'success' => 'Registration OTP Sent Successfully!',
+            'failure' => 'Registration Failed, Please Try Again...',
+        ],
+
+        'validate-email' => [
+            'success' => 'Registration Successful!',
+            'failure' => 'Email Not Verified! Please Verify First...',
+            'invalid' => 'OTP Does not Match! Please Try Again...',
+            'not-found' => 'User Not Found!',
+        ],
+
+        'resend-otp' => [
+            'success' => 'Registration OTP Sent Successfully!',
+            'failure' => 'Unable to Send OTP, Please Try Again...',
+            'invalid' => 'User Not Found!',
+        ],
+
+        'forget-pass' => [
+            'success' => 'Reset Password Link Sent Successfully!',
+            'failure' => 'Unable to Send Reset Password Link, Please Try Again...',
+            'invalid' => 'User Not Found!',
+        ],
+
+        'forget-pass-link' => [
+            'success' => 'Forget Password Token Verified Successfully!',
+            'failure' => 'Unable to Verify Reset Password Link, Please Try Again...',
+            'invalid' => 'User Not Found!',
+        ],
+
+        'set-new-pass' => [
+            'success' => 'Password Reset Successfully!',
+            'failure' => 'Unable to Reset Password, Please Try Again...',
+            'invalid' => 'User Not Found!',
+        ],
+
+        'validate-forget-pass' => [
+            'success' => 'Password Reset Successfully!',
+            'failure' => 'Unable to Reset Password, Please Try Again...',
+            'invalid' => 'OTP Does not Match! Please Try Again...',
+            'not-found' => 'User Not Found!',
+        ],
+
+        'login' => [
+            'success' => 'Login Successfull!',
+            'failure' => "The Email isn't Verified! Please Verify First...",
+            'invalid' => 'Password Does not Match! Please Try Again...',
+            'not-found' => 'User Not Found!',
+        ],
+
+        'block' => [
+            'success' => 'User Blocked Successfully!',
+            'failure' => "Unable to Block User, Please Try Again...",
+            'invalid' => 'User, You want to Block Not Found!',
+        ],
+
+        'report' => [
+            'success' => 'User Reported Successfully!',
+            'failure' => "Unable to Report User, Please Try Again...",
+            'invalid' => 'User, You want to Report Not Found!',
+        ],
+
+        'send-message' => [
+            'success' => 'Message Sent!',
+            'failure' => "Unable to Send Message, Please Try Again...",
+            'invalid' => 'You have an Un-Closed Chat...',
+            'blocked' => 'You have Blocked this User!',
+            'reported' => 'You have Reported this User!',
+            'un-matched' => 'You have Un-Matched this User!',
+        ],
+
+        'messaged-users' => [
+            'success' => 'Messaged Users List Fetched Successfully!',
+            'failure' => "Messaged Users List Not Found!",
+        ],
+
+        'chat-history' => [
+            'success' => 'Message List Fetched Successfully!',
+            'failure' => "No Message Found!",
+        ],
+
+        'close-chat' => [
+            'success' => 'Conversation Ended!',
+            'failure' => "Unable to Close Chat, Please Try Again...",
+        ],
+
+        'invitation' => [
+            'success' => 'Invitation Sent...',
+            'failure' => "Unable to Send Invitation, Please Try Again...",
+            'invalid' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+        ],
+
+        'un-match' => [
+            'success' => 'User Un-Matched Successfully!',
+            'failure' => "Unable to Un-Match User, Please Try Again...",
+            'invalid' => 'User, You want to Un-Match Not Found!',
+            'not-found' => 'User Not Found!',
+        ],
+
+        'match' => [
+            'success' => 'Matches List Fetched Successfully!',
+            'failure' => 'No Match Found!',
+            'invalid' => 'No Suggestions Found!',
+        ],
+
+        'received-match' => [
+            'success' => 'Recieved Matches List Fetched Successfully!',
+            'failure' => 'No Match Found!',
+            'invalid' => 'No Suggestions Found!',
+        ],
+
+        'referred-match' => [
+            'success' => 'Reffered Matches List Fetched Successfully!',
+            'failure' => 'No Match Found!',
+            'invalid' => 'No Suggestions Found!',
+        ],
+
+        'notifications' => [
+            'success' => 'Notifications List Fetched Successfully!',
+            'failure' => 'No Notification Found!',
+        ],
+
+        'get-profile' => [
+            'success' => 'Profile Details Fetched Successfully!',
+            'failure' => 'User Not Found!',
+        ],
+
+        'update-profile' => [
+            'success' => 'Profile Details Updated Successfully!',
+            'failure' => 'Unable to Update Profile, Please Try Again...!',
+            'invalid' => 'User Not Found!',
+        ],
+
+        'upload-pictures' => [
+            'success' => 'Profile Photos Uploaded Successfully!',
+            'failure' => 'Unable to Upload Profile Photos, Please Try Again...!',
+            'invalid' => 'User Not Found!',
+        ],
+
+        'access-details' => [
+            'success' => 'Parent Access Request Details Fetched Successfully!',
+            'failure' => 'No Access Request Details Found!',
+            'invalid' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+        ],
+
+        'get-category' => [
+            'success' => 'Singleton Category Details Fetched Successfully!',
+            'failure' => 'Singleton Category Details Not Found!',
+        ],
+
+        'get-suggestions' => [
+            'success' => 'Suggestions Based on Singleton Categories Fetched Successfully!',
+            'failure' => 'No Suggestions Found!',
+            'invalid' => 'Category Details Not Found!',
+        ],
+
+        'swips' => [
+            'success' => 'Swiped ',
+            'failure' => 'Swipe Failed!',
+            'invalid' => 'Unable to Undo Last Swipe, Please Try Again...',
+            'blocked' => 'You have Blocked this User!',
+            'reported' => 'You have Reported this User!',
+            'un-matched' => 'You have Un-Matched this User!',
+            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
+        ],
+    ],
+
+    'helper' => [
+        'not-found' => 'User Not Found!',
+        'not-verified' => 'Profile not Verified, Please Try After Some Time...',
+        'singleton-not-linked' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+        'parent-not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
+        'not-found' => '',
+        'not-found' => '',
+    ],
 
 ];

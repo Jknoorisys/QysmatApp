@@ -54,47 +54,55 @@ class ContactUs extends Controller
             ],400);
         }
 
-        if($request->user_type == 'singleton'){
-            $userExists = Singleton::find($request->login_id);
-        }else{
-            $userExists = ParentsModel::find($request->login_id);
-        }
-
-        $form = new ModelsContactUs();
-        $form->user_id      = $request->login_id;
-        $form->user_type    = $request->user_type;
-        $form->user_name    = $userExists->name;
-        $form->title        = $request->title;
-        $form->description  = $request->description;
-        $formDetails = $form->save();
-
-        if(!empty($formDetails)){
-
-            $admin = Admin::find(1);
-
+        try {
             if($request->user_type == 'singleton'){
-                $user = Singleton::find($request->login_id);
+                $userExists = Singleton::find($request->login_id);
             }else{
-                $user = ParentsModel::find($request->login_id);
+                $userExists = ParentsModel::find($request->login_id);
             }
 
-            $details = [
-                'title' => __('msg.New Query Message'),
-                'msg'   => __('msg.has Contacted You.'),
-            ];
+            $form = new ModelsContactUs();
+            $form->user_id      = $request->login_id;
+            $form->user_type    = $request->user_type;
+            $form->user_name    = $userExists->name;
+            $form->title        = $request->title;
+            $form->description  = $request->description;
+            $formDetails = $form->save();
 
-            $admin->notify(new AdminNotification($user, 'admin', 0, $details));
+            if(!empty($formDetails)){
 
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Contact Us Form Submitted Successfully!'),
-                'data'      => $form
-            ],200);
-        }else{
+                $admin = Admin::find(1);
+
+                if($request->user_type == 'singleton'){
+                    $user = Singleton::find($request->login_id);
+                }else{
+                    $user = ParentsModel::find($request->login_id);
+                }
+
+                $details = [
+                    'title' => __('msg.New Query Message'),
+                    'msg'   => __('msg.has Contacted You.'),
+                ];
+
+                $admin->notify(new AdminNotification($user, 'admin', 0, $details));
+
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.contact-us.success'),
+                    'data'      => $form
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.contact-us.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 }

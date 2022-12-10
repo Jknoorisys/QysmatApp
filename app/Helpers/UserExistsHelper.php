@@ -11,7 +11,7 @@ use App\Models\Singleton;
             if (empty($user) || $user->status != 'Unblocked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.User Not Found!'),
+                    'message'   => __('msg.helper.not-found'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -20,7 +20,7 @@ use App\Models\Singleton;
             if (empty($user) || $user->is_verified != 'verified') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.Profile not Verified, Please Try After Some Time...'),
+                    'message'   => __('msg.helper.not-verified'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -30,7 +30,7 @@ use App\Models\Singleton;
             if (empty($linked) || ($linked->status) != 'Linked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.'),
+                    'message'   => __('msg.helper.singleton-not-linked'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -40,7 +40,7 @@ use App\Models\Singleton;
             if (empty($user) || $user->status != 'Unblocked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.User Not Found!'),
+                    'message'   => __('msg.helper.not-found'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -49,7 +49,7 @@ use App\Models\Singleton;
             if (empty($user) || $user->is_verified != 'verified') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.Profile not Verified, Please Try After Some Time...'),
+                    'message'   => __('msg.helper.not-verified'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -59,7 +59,7 @@ use App\Models\Singleton;
             if (empty($linked) || ($linked->status) != 'Linked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.Your Profile is Not Linked with Your Children, Please search and Link.'),
+                    'message'   => __('msg.helper.parent-not-linked'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -74,7 +74,7 @@ use App\Models\Singleton;
             if (empty($user) || $user->status != 'Unblocked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.User Not Found!'),
+                    'message'   => __('msg.helper.not-found'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -84,7 +84,7 @@ use App\Models\Singleton;
             if (empty($user) || $user->status != 'Unblocked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.User Not Found!'),
+                    'message'   => __('msg.helper.not-found'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -99,7 +99,7 @@ use App\Models\Singleton;
             if (empty($user) || $user->status != 'Unblocked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.User Not Found!'),
+                    'message'   => __('msg.helper.not-found'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -108,7 +108,7 @@ use App\Models\Singleton;
             if (empty($user) || $user->is_verified != 'verified') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.Profile not Verified, Please Try After Some Time...'),
+                    'message'   => __('msg.helper.not-verified'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -118,7 +118,7 @@ use App\Models\Singleton;
             if (empty($linked) || ($linked->status) != 'Linked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.'),
+                    'message'   => __('msg.helper.singleton-not-linked'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -128,7 +128,7 @@ use App\Models\Singleton;
             if (empty($user) || $user->status != 'Unblocked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.User Not Found!'),
+                    'message'   => __('msg.helper.not-found'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -137,7 +137,7 @@ use App\Models\Singleton;
             if (empty($user) || $user->is_verified != 'verified') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.Profile not Verified, Please Try After Some Time...'),
+                    'message'   => __('msg.helper.not-verified'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -147,7 +147,7 @@ use App\Models\Singleton;
             if (empty($linked) || ($linked->status) != 'Linked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.Your Profile is Not Linked with Your Children, Please search and Link.'),
+                    'message'   => __('msg.helper.parent-not-linked'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();

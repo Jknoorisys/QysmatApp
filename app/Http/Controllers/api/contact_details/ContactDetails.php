@@ -43,18 +43,26 @@ class ContactDetails extends Controller
             ],400);
         }
 
-        $page = ModelsContactDetails::where([['contact_type','=',$request->contact_type], ['status','=','Active']])->first();
-        if(!empty($page)){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Contact Details Fetched Successfully!'),
-                'data'      => $page
-            ],200);
-        }else{
+        try {
+            $page = ModelsContactDetails::where([['contact_type','=',$request->contact_type], ['status','=','Active']])->first();
+            if(!empty($page)){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.contact-details.success'),
+                    'data'      => $page
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.contact-details.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Contact Details Not Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 }

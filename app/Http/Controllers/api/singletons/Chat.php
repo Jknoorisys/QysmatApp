@@ -63,58 +63,66 @@ class Chat extends Controller
             ],400);
         }
 
-        $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $request->messaged_user_id], ['blocked_user_type', '=', 'singleton']])->first();
-        if (!empty($block)) {
+        try {
+            $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $request->messaged_user_id], ['blocked_user_type', '=', 'singleton']])->first();
+            if (!empty($block)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.blocked'),
+                ],400);
+            }
+
+            $report = ModelsReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $request->messaged_user_id], ['reported_user_type', '=', 'singleton']])->first();
+            if (!empty($report)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.reported'),
+                ],400);
+            }
+
+            $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->messaged_user_id]])->first();
+            if (!empty($unMatch)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.un-matched'),
+                ],400);
+            }
+
+            $chat = MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['chat_in_progress', '=', '1'],['matched_id', '!=', $request->messaged_user_id]])->first();
+            if (!empty($chat)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.invalid'),
+                ],400);
+            }
+
+            $message                     = new ChatHistory();
+            $message->user_id            = $request->login_id;
+            $message->user_type          = $request->user_type;
+            $message->messaged_user_id   = $request->messaged_user_id;
+            $message->messaged_user_type = $request->messaged_user_type;
+            $message->message            = $request->message;
+            $messaged                    = $message->save();
+
+            if (!empty($messaged)) {
+                MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['matched_id', '=', $request->messaged_user_id]])->update(['chat_in_progress' => '1', 'updated_at' => date('Y-m-d H:i:s')]);
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.singletons.send-message.success'),
+                    'data'      => $message
+                ],200);
+            } else {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.You have Blocked this User!'),
-            ],400);
-        }
-
-        $report = ModelsReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $request->messaged_user_id], ['reported_user_type', '=', 'singleton']])->first();
-        if (!empty($report)) {
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.You have Reported this User!'),
-            ],400);
-        }
-
-        $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->messaged_user_id]])->first();
-        if (!empty($unMatch)) {
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.You have Un-Matched this User!'),
-            ],400);
-        }
-
-        $chat = MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['chat_in_progress', '=', '1'],['matched_id', '!=', $request->messaged_user_id]])->first();
-        if (!empty($chat)) {
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.You have an Un-Closed Chat...'),
-            ],400);
-        }
-
-        $message                     = new ChatHistory();
-        $message->user_id            = $request->login_id;
-        $message->user_type          = $request->user_type;
-        $message->messaged_user_id   = $request->messaged_user_id;
-        $message->messaged_user_type = $request->messaged_user_type;
-        $message->message            = $request->message;
-        $messaged                    = $message->save();
-
-        if (!empty($messaged)) {
-            MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['matched_id', '=', $request->messaged_user_id]])->update(['chat_in_progress' => '1', 'updated_at' => date('Y-m-d H:i:s')]);
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Message Sent!'),
-                'data'      => $message
-            ],200);
-        } else {
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
 
     }
@@ -141,22 +149,30 @@ class Chat extends Controller
             ],400);
         }
 
-        $list = ChatHistory::where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', $request->user_type]])
+        try {
+            $list = ChatHistory::where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', $request->user_type]])
                                 ->join('singletons', 'chat_histories.messaged_user_id', '=', 'singletons.id')
                                 ->select('chat_histories.messaged_user_id','singletons.*')
                                 ->distinct()
                                 ->get();
-        if(!$list->isEmpty()){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Messaged Users List Fetched Successfully!'),
-                'data'      => $list
-            ],200);
-        }else{
+            if(!$list->isEmpty()){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.singletons.messaged-users.success'),
+                    'data'      => $list
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.messaged-users.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -187,19 +203,27 @@ class Chat extends Controller
             ],400);
         }
 
-        $chat = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])->get();
+        try {
+            $chat = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])->get();
 
-        if(!$chat->isEmpty()){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Message List Fetched Successfully!'),
-                'data'      => $chat
-            ],200);
-        }else{
+            if(!$chat->isEmpty()){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.singletons.chat-history.success'),
+                    'data'      => $chat
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.chat-history.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.No Message Found!'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -230,17 +254,25 @@ class Chat extends Controller
             ],400);
         }
 
-        $close = MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['matched_id', '=', $request->messaged_user_id], ['chat_in_progress', '=', '1']])->update(['chat_in_progress' => '0', 'updated_at' => date('Y-m-d H:i:s')]);
-        if($close){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Conversation Ended!'),
-            ],200);
-        }else{
+        try {
+            $close = MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['matched_id', '=', $request->messaged_user_id], ['chat_in_progress', '=', '1']])->update(['chat_in_progress' => '0', 'updated_at' => date('Y-m-d H:i:s')]);
+            if($close){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.singletons.close-chat.success'),
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.close-chat.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
@@ -276,54 +308,47 @@ class Chat extends Controller
             ],400);
         }
 
-        $linked = ParentChild::where([['singleton_id','=',$request->login_id],['status','=','Linked']])->first();
-        if (!empty($linked)) {
-            $invite = new ReferredMatches();
-            $invite->user_id = $linked->parent_id;
-            $invite->user_type = 'parent';
-            $invite->singleton_id = $request->login_id;
-            $invite->referred_match_id = $request->messaged_user_id;
-            $send = $invite->save();
+        try {
+            $linked = ParentChild::where([['singleton_id','=',$request->login_id],['status','=','Linked']])->first();
+            if (!empty($linked)) {
+                $invite = new ReferredMatches();
+                $invite->user_id = $linked->parent_id;
+                $invite->user_type = 'parent';
+                $invite->singleton_id = $request->login_id;
+                $invite->referred_match_id = $request->messaged_user_id;
+                $send = $invite->save();
 
-            if ($send) {
+                if ($send) {
 
-                $user = ParentsModel::where([['id','=',$linked->parent_id],['status','!=','Deleted']])->first();
-                $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
-                $user->notify(new ReferNotification($singleton, $user->user_type, $request->login_id));
+                    $user = ParentsModel::where([['id','=',$linked->parent_id],['status','!=','Deleted']])->first();
+                    $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+                    $user->notify(new ReferNotification($singleton, $user->user_type, $request->login_id));
 
 
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.Invitation Sent...'),
-                    'data'      => $invite
-                ],200);
-            } else {
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.invitation.success'),
+                        'data'      => $invite
+                    ],200);
+                } else {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.invitation.failure'),
+                    ],400);
+                }
+
+            }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
+                    'message'   => __('msg.singletons.invitation.invalid'),
                 ],400);
             }
-
-        }else{
+        } catch (\Exception $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.'),
-            ],400);
-        }
-
-        $chat = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])->get();
-
-        if(!$chat->isEmpty()){
-            return response()->json([
-                'status'    => 'success',
-                'message'   => __('msg.Messaged Users List Fetched Successfully!'),
-                'data'      => $chat
-            ],200);
-        }else{
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.Somthing Went Wrong, Please Try Again...'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 }
