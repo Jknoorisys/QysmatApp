@@ -62,11 +62,11 @@ class ContactUs extends Controller
             }
 
             $form = new ModelsContactUs();
-            $form->user_id      = $request->login_id;
-            $form->user_type    = $request->user_type;
-            $form->user_name    = $userExists->name;
-            $form->title        = $request->title;
-            $form->description  = $request->description;
+            $form->user_id      = $request->login_id ? $request->login_id : '';
+            $form->user_type    = $request->user_type ? $request->user_type : '';
+            $form->user_name    = $userExists->name ? $userExists->name : '';
+            $form->title        = $request->title ? $request->title : '';
+            $form->description  = $request->description ? $request->description : '';
             $formDetails = $form->save();
 
             if(!empty($formDetails)){

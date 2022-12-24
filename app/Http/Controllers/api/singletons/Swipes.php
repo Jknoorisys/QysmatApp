@@ -98,16 +98,16 @@ class Swipes extends Controller
                 }
 
                 $right              = new MyMatches();
-                $right->user_id     = $request->login_id;
-                $right->user_type   = $request->user_type;
-                $right->matched_id  = $request->swiped_user_id;
+                $right->user_id     = $request->login_id ? $request->login_id : '';
+                $right->user_type   = $request->user_type ? $request->user_type : '';
+                $right->matched_id  = $request->swiped_user_id ? $request->swiped_user_id : '';
                 $right->save();
 
                 if ($right){
                     $recieved = new RecievedMatches();
-                    $recieved->user_id = $request->swiped_user_id;
+                    $recieved->user_id = $request->swiped_user_id ? $request->swiped_user_id : '';
                     $recieved->user_type = 'singleton';
-                    $recieved->recieved_match_id = $request->login_id;
+                    $recieved->recieved_match_id = $request->login_id ? $request->login_id : '';
                     $recieved->save();
                 }
 
@@ -118,24 +118,24 @@ class Swipes extends Controller
                 $swipe = LastSwipe::updateOrCreate(
                     ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'swiped_user_id'    => $request->swiped_user_id],
                     [
-                        'user_id'           => $request->login_id,
-                        'user_type'         => $request->user_type,
-                        'swiped_user_id'    => $request->swiped_user_id,
+                        'user_id'           => $request->login_id ? $request->login_id : '',
+                        'user_type'         => $request->user_type ? $request->user_type : '',
+                        'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
                         'swipe'             => 'right',
                     ]
                 );
             }elseif ($request->swipe == 'left') {
                 $left                 = new UnMatches();
-                $left->user_id        = $request->login_id;
-                $left->user_type      = $request->user_type;
-                $left->un_matched_id  = $request->swiped_user_id;
+                $left->user_id        = $request->login_id ? $request->login_id : '';
+                $left->user_type      = $request->user_type ? $request->user_type : '';
+                $left->un_matched_id  = $request->swiped_user_id ? $request->swiped_user_id : '';
                 $left->save();
                 $swipe = LastSwipe::updateOrCreate(
                     ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'swiped_user_id'    => $request->swiped_user_id],
                     [
-                        'user_id'           => $request->login_id,
-                        'user_type'         => $request->user_type,
-                        'swiped_user_id'    => $request->swiped_user_id,
+                        'user_id'           => $request->login_id ? $request->login_id : '',
+                        'user_type'         => $request->user_type ? $request->user_type : '',
+                        'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
                         'swipe'             => 'left',
                     ]
                 );
@@ -143,9 +143,9 @@ class Swipes extends Controller
                 $swipe = LastSwipe::updateOrCreate(
                     ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'swiped_user_id'    => $request->swiped_user_id],
                     [
-                        'user_id'           => $request->login_id,
-                        'user_type'         => $request->user_type,
-                        'swiped_user_id'    => $request->swiped_user_id,
+                        'user_id'           => $request->login_id ? $request->login_id : '',
+                        'user_type'         => $request->user_type ? $request->user_type : '',
+                        'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
                         'swipe'             => 'up',
                     ]
                 );
@@ -157,9 +157,9 @@ class Swipes extends Controller
                         $swipe = LastSwipe::updateOrCreate(
                             ['user_id' => $request->login_id, 'user_type' => $request->user_type],
                             [
-                                'user_id'           => $request->login_id,
-                                'user_type'         => $request->user_type,
-                                'swiped_user_id'    => $request->swiped_user_id,
+                                'user_id'           => $request->login_id ? $request->login_id : '',
+                                'user_type'         => $request->user_type ? $request->user_type : '',
+                                'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
                                 'swipe'             => '',
                             ]
                         );
@@ -168,9 +168,9 @@ class Swipes extends Controller
                         $swipe = LastSwipe::updateOrCreate(
                             ['user_id' => $request->login_id, 'user_type' => $request->user_type],
                             [
-                                'user_id'           => $request->login_id,
-                                'user_type'         => $request->user_type,
-                                'swiped_user_id'    => $request->swiped_user_id,
+                                'user_id'           => $request->login_id ? $request->login_id : '',
+                                'user_type'         => $request->user_type ? $request->user_type : '',
+                                'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
                                 'swipe'             => '',
                             ]
                         );
@@ -178,9 +178,9 @@ class Swipes extends Controller
                         $swipe = LastSwipe::updateOrCreate(
                             ['user_id' => $request->login_id, 'user_type' => $request->user_type],
                             [
-                                'user_id'           => $request->login_id,
-                                'user_type'         => $request->user_type,
-                                'swiped_user_id'    => $request->swiped_user_id,
+                                'user_id'           => $request->login_id ? $request->login_id : '',
+                                'user_type'         => $request->user_type ? $request->user_type : '',
+                                'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
                                 'swipe'             => '',
                             ]
                         );

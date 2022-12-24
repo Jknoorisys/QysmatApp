@@ -114,21 +114,21 @@ class Profile extends Controller
             $age = Carbon::parse($request->dob)->age;
             $user = Singleton::find($request->login_id);
             if(!empty($user)){
-                $user->name          = $request->name;
-                $user->email         = $request->email;
-                $user->mobile        = $request->mobile;
-                $user->dob           = $request->dob;
-                $user->gender        = $request->gender;
-                $user->age           = $age;
-                $user->height        = $request->height;
-                $user->profession    = $request->profession;
-                $user->nationality   = $request->nationality;
-                $user->ethnic_origin = $request->ethnic_origin;
-                $user->islamic_sect  = $request->islamic_sect;
-                $user->short_intro   = $request->short_intro;
-                $user->location      = $request->location;
-                $user->lat           = $request->lat;
-                $user->long          = $request->long;
+                $user->name          = $request->name ? $request->name : '';
+                $user->email         = $request->email ? $request->email : '';
+                $user->mobile        = $request->mobile ? $request->mobile : '';
+                $user->dob           = $request->dob ? $request->dob : '';
+                $user->gender        = $request->gender ? $request->gender : '';
+                $user->age           = $age ? $age : '';
+                $user->height        = $request->height ? $request->height : '';
+                $user->profession    = $request->profession ? $request->profession : '';
+                $user->nationality   = $request->nationality ? $request->nationality : '';
+                $user->ethnic_origin = $request->ethnic_origin ? $request->ethnic_origin : '';
+                $user->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
+                $user->short_intro   = $request->short_intro ? $request->short_intro : '';
+                $user->location      = $request->location ? $request->location : '';
+                $user->lat           = $request->lat ? $request->lat : '';
+                $user->long          = $request->long ? $request->long : '';
 
                 $file1 = $request->file('live_photo');
                 if ($file1) {

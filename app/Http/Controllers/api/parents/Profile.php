@@ -112,15 +112,15 @@ class Profile extends Controller
         try {
             $user = ParentsModel::find($request->login_id);
             if(!empty($user)){
-                $user->name          = $request->name;
-                $user->email         = $request->email;
-                $user->mobile        = $request->mobile;
-                $user->nationality   = $request->nationality;
-                $user->ethnic_origin = $request->ethnic_origin;
-                $user->islamic_sect  = $request->islamic_sect;
-                $user->location      = $request->location;
-                $user->lat           = $request->lat;
-                $user->long          = $request->long;
+                $user->name          = $request->name ? $request->name : '';
+                $user->email         = $request->email ? $request->email : '';
+                $user->mobile        = $request->mobile ? $request->mobile : '';
+                $user->nationality   = $request->nationality ? $request->nationality : '';
+                $user->ethnic_origin = $request->ethnic_origin ? $request->ethnic_origin : '';
+                $user->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
+                $user->location      = $request->location ? $request->location : '';
+                $user->lat           = $request->lat ? $request->lat : '';
+                $user->long          = $request->long ? $request->long : '';
 
                 $file = $request->file('profile_pic');
                 if ($file) {
@@ -241,9 +241,9 @@ class Profile extends Controller
             $accessRequest = ParentChild::updateOrCreate(
                 ['parent_id' => $request->login_id, 'singleton_id' => $request->singleton_id],
                 [
-                    'parent_id'    => $request->login_id,
-                    'singleton_id' => $request->singleton_id,
-                    'access_code'  => $access_code,
+                    'parent_id'    => $request->login_id ? $request->login_id : '',
+                    'singleton_id' => $request->singleton_id ? $request->singleton_id : '',
+                    'access_code'  => $access_code ? $access_code : '',
                     'status'       => 'Unlinked',
                     'created_at'   => date('Y-m-d H:i:s'),
                 ]
