@@ -103,13 +103,13 @@ class BankDetails extends Controller
 
         try {
             $account = new ModelsBankDetails();
-            $account->user_id           = $request->login_id;
-            $account->user_type         = $request->user_type;
-            $account->card_holder_name  = $request->card_holder_name;
-            $account->bank_name         = $request->bank_name;
-            $account->card_number       = $request->card_number;
-            $account->month_year        = $request->month_year;
-            $account->cvv               = $request->cvv;
+            $account->user_id           = $request->login_id ? $request->login_id : '';
+            $account->user_type         = $request->user_type ? $request->user_type : '';
+            $account->card_holder_name  = $request->card_holder_name ? $request->card_holder_name : '';
+            $account->bank_name         = $request->bank_name ? $request->bank_name : '';
+            $account->card_number       = $request->card_number ? $request->card_number : '';
+            $account->month_year        = $request->month_year ? $request->month_year : '';
+            $account->cvv               = $request->cvv ? $request->cvv : '';
 
             $account_details = $account->save();
 

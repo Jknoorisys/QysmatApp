@@ -73,11 +73,11 @@ class BlockOrReportUser extends Controller
             }
 
             $user = new BlockList();
-            $user->blocked_user_id           = $request->blocked_user_id;
-            $user->blocked_user_type         = $request->blocked_user_type;
-            $user->user_id                   = $request->login_id;
-            $user->user_type                 = $request->user_type;
-            $user->singleton_id              = $request->singleton_id;
+            $user->blocked_user_id           = $request->blocked_user_id ? $request->blocked_user_id : '';
+            $user->blocked_user_type         = $request->blocked_user_type ? $request->blocked_user_type : '';
+            $user->user_id                   = $request->login_id ? $request->login_id : '';
+            $user->user_type                 = $request->user_type ? $request->user_type : '';
+            $user->singleton_id              = $request->singleton_id ? $request->singleton_id : '';
             $user_details                    = $user->save();
 
             if($user_details){
@@ -143,12 +143,12 @@ class BlockOrReportUser extends Controller
             }
 
             $user = new ModelsReportedUsers();
-            $user->user_id           = $request->login_id;
-            $user->user_type         = $request->user_type;
-            $user->singleton_id      = $request->singleton_id;
-            $user->reported_user_name         = $userExists->name;
-            $user->reported_user_id  = $request->reported_user_id;
-            $user->reported_user_type = $request->reported_user_type;
+            $user->user_id           = $request->login_id ? $request->login_id : '';
+            $user->user_type         = $request->user_type ? $request->user_type : '';
+            $user->singleton_id      = $request->singleton_id ? $request->singleton_id : '';
+            $user->reported_user_name         = $userExists->name ? $userExists->name : '';
+            $user->reported_user_id  = $request->reported_user_id ? $request->reported_user_id : '';
+            $user->reported_user_type = $request->reported_user_type ? $request->reported_user_type : '';
             $user_details = $user->save();
 
             if($user_details){

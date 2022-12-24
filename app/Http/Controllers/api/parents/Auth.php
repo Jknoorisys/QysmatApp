@@ -64,13 +64,13 @@ class Auth extends Controller
         try {
             $email_otp = random_int(100000, 999999);
             $parent = ParentsModel::create([
-                'name'          => $request->name,
-                'email'         => $request->email,
+                'name'          => $request->name ? $request->name : '',
+                'email'         => $request->email ? $request->email : '',
                 'user_type'     => 'Parent',
-                'email_otp'     => $email_otp,
-                'device_type'   => $request->device_type,
-                'fcm_token'     => $request->fcm_token,
-                'device_token'  => $request->device_token,
+                'email_otp'     => $email_otp ? $email_otp : '',
+                'device_type'   => $request->device_type ? $request->device_type : '',
+                'fcm_token'     => $request->fcm_token ? $request->fcm_token : '',
+                'device_token'  => $request->device_token ? $request->device_token : '',
                 'password' => Hash::make($request->password),
             ]);
 
@@ -145,21 +145,21 @@ class Auth extends Controller
 
         try {
             $email_otp = random_int(100000, 999999);
-            $singleton = ParentsModel::create([
-                'name'          => $request->name,
-                'email'         => $request->email,
+            $parent = ParentsModel::create([
+                'name'          => $request->name ? $request->name : '',
+                'email'         => $request->email ? $request->email : '',
                 'user_type'     => 'Parent',
-                'email_otp'     => $email_otp,
-                'device_type'   => $request->device_type,
-                'fcm_token'     => $request->fcm_token,
-                'device_token'  => $request->device_token,
-                'is_social'     => $request->is_social,
-                'social_type'   => $request->social_type,
-                'social_id'     => $request->social_id,
+                'email_otp'     => $email_otp ? $email_otp : '',
+                'device_type'   => $request->device_type ? $request->device_type : '',
+                'fcm_token'     => $request->fcm_token ? $request->fcm_token : '',
+                'device_token'  => $request->device_token ? $request->device_token : '',
+                'is_social'     => $request->is_social ? $request->is_social : '',
+                'social_type'   => $request->social_type ? $request->social_type : '',
+                'social_id'     => $request->social_id ? $request->social_id : '',
                 'password' => Hash::make($request->password),
             ]);
 
-            if($singleton){
+            if($parent){
                 $user = ParentsModel::where('email','=',$request->email)->first();
                 $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
                 $user =  ['to'=> $user->email];
@@ -170,7 +170,7 @@ class Auth extends Controller
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.register.success'),
-                    'data'    => $singleton
+                    'data'    => $parent
                 ],200);
             }else{
                 return response()->json([

@@ -97,12 +97,12 @@ class Chat extends Controller
             }
 
             $message                     = new ChatHistory();
-            $message->user_id            = $request->login_id;
-            $message->user_type          = $request->user_type;
-            $message->singleton_id       = $request->singleton_id;
-            $message->messaged_user_id   = $request->messaged_user_id;
-            $message->messaged_user_type = $request->messaged_user_type;
-            $message->message            = $request->message;
+            $message->user_id            = $request->login_id ? $request->login_id : '';
+            $message->user_type          = $request->user_type ? $request->user_type : '';
+            $message->singleton_id       = $request->singleton_id ? $request->singleton_id : '';
+            $message->messaged_user_id   = $request->messaged_user_id ? $request->messaged_user_id : '';
+            $message->messaged_user_type = $request->messaged_user_type ? $request->messaged_user_type : '';
+            $message->message            = $request->message ? $request->message : '';
             $messaged                    = $message->save();
 
             if (!empty($messaged)) {
@@ -319,10 +319,10 @@ class Chat extends Controller
             $linked = ParentChild::where([['parent_id','=',$request->login_id],['singleton_id','=',$request->singleton_id],['status','=','Linked']])->first();
             if (!empty($linked)) {
                 $invite = new ReferredMatches();
-                $invite->user_id = $linked->singleton_id;
+                $invite->user_id = $linked->singleton_id ? $linked->singleton_id : '';
                 $invite->user_type = 'singleton';
-                $invite->singleton_id = $request->singleton_id;
-                $invite->referred_match_id = $request->messaged_user_singleton_id;
+                $invite->singleton_id = $request->singleton_id ? $request->singleton_id : '';
+                $invite->referred_match_id = $request->messaged_user_singleton_id ? $request->messaged_user_singleton_id : '';
                 $send = $invite->save();
 
                 if ($send) {

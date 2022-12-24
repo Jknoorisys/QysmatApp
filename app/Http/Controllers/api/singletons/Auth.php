@@ -76,25 +76,25 @@ class Auth extends Controller
 
             if($request->user_type == 'singleton'){
                 $userDetails = Singleton::create([
-                    'name'          => $request->name,
-                    'email'         => $request->email,
-                    'user_type'     => $request->user_type,
-                    'email_otp'     => $email_otp,
-                    'device_type'   => $request->device_type,
-                    'fcm_token'     => $request->fcm_token,
-                    'device_token'  => $request->device_token,
+                    'name'          => $request->name ? $request->name : '',
+                    'email'         => $request->email ? $request->email : '',
+                    'user_type'     => $request->user_type ? $request->user_type : '',
+                    'email_otp'     => $email_otp ? $email_otp : '',
+                    'device_type'   => $request->device_type ? $request->device_type : '',
+                    'fcm_token'     => $request->fcm_token ? $request->fcm_token : '',
+                    'device_token'  => $request->device_token ? $request->device_token : '',
                     'password'      => Hash::make($request->password),
                 ]);
                 $user = Singleton::where('email','=',$request->email)->first();
             }else{
                 $userDetails = ParentsModel::create([
-                    'name'          => $request->name,
-                    'email'         => $request->email,
-                    'user_type'     => $request->user_type,
-                    'email_otp'     => $email_otp,
-                    'device_type'   => $request->device_type,
-                    'fcm_token'     => $request->fcm_token,
-                    'device_token'  => $request->device_token,
+                    'name'          => $request->name ? $request->name : '',
+                    'email'         => $request->email ? $request->email : '',
+                    'user_type'     => $request->user_type ? $request->user_type : '',
+                    'email_otp'     => $email_otp ? $email_otp : '',
+                    'device_type'   => $request->device_type ? $request->device_type : '',
+                    'fcm_token'     => $request->fcm_token ? $request->fcm_token : '',
+                    'device_token'  => $request->device_token ? $request->device_token : '',
                     'password'      => Hash::make($request->password),
                 ]);
                 $user = ParentsModel::where('email','=',$request->email)->first();
@@ -178,31 +178,31 @@ class Auth extends Controller
 
             if($request->user_type == 'singleton'){
                 $userDetails = Singleton::create([
-                    'name'          => $request->name,
-                    'email'         => $request->email,
-                    'user_type'     => $request->user_type,
-                    'email_otp'     => $email_otp,
-                    'device_type'   => $request->device_type,
-                    'fcm_token'     => $request->fcm_token,
-                    'device_token'  => $request->device_token,
-                    'is_social'     => $request->is_social,
-                    'social_type'   => $request->social_type,
-                    'social_id'     => $request->social_id,
+                    'name'          => $request->name ? $request->name : '',
+                    'email'         => $request->email ? $request->email : '',
+                    'user_type'     => $request->user_type ? $request->user_type : '',
+                    'email_otp'     => $email_otp ? $email_otp : '',
+                    'device_type'   => $request->device_type ? $request->device_type : '',
+                    'fcm_token'     => $request->fcm_token ? $request->fcm_token : '',
+                    'device_token'  => $request->device_token ? $request->device_token : '',
+                    'is_social'     => $request->is_social ? $request->is_social : '',
+                    'social_type'   => $request->social_type ? $request->social_type : '',
+                    'social_id'     => $request->social_id ? $request->social_id : '',
                     // 'password' => Hash::make($request->password),
                 ]);
                 $user = Singleton::where('email','=',$request->email)->first();
             }else{
                 $userDetails = ParentsModel::create([
-                    'name'          => $request->name,
-                    'email'         => $request->email,
-                    'user_type'     => $request->user_type,
-                    'email_otp'     => $email_otp,
-                    'device_type'   => $request->device_type,
-                    'fcm_token'     => $request->fcm_token,
-                    'device_token'  => $request->device_token,
-                    'is_social'     => $request->is_social,
-                    'social_type'   => $request->social_type,
-                    'social_id'     => $request->social_id,
+                    'name'          => $request->name ? $request->name : '',
+                    'email'         => $request->email ? $request->email : '',
+                    'user_type'     => $request->user_type ? $request->user_type : '',
+                    'email_otp'     => $email_otp ? $email_otp : '',
+                    'device_type'   => $request->device_type ? $request->device_type : '',
+                    'fcm_token'     => $request->fcm_token ? $request->fcm_token : '',
+                    'device_token'  => $request->device_token ? $request->device_token : '',
+                    'is_social'     => $request->is_social ? $request->is_social : '',
+                    'social_type'   => $request->social_type ? $request->social_type : '',
+                    'social_id'     => $request->social_id ? $request->social_id : '',
                     // 'password' => Hash::make($request->password),
                 ]);
                 $user = ParentsModel::where('email','=',$request->email)->first();

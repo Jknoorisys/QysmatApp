@@ -11,6 +11,7 @@ use App\Notifications\AdminNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -84,8 +85,46 @@ class DeleteUser extends Controller
 
                     if($request->user_type == 'singleton'){
                         $user = Singleton::find($request->login_id);
+                        // if (File::exists($user->photo1)) {
+                        //     File::delete($user->photo1);
+                        // }
+
+                        // if (File::exists($user->photo2)) {
+                        //     File::delete($user->photo2);
+                        // }
+
+                        // if (File::exists($user->photo3)) {
+                        //     File::delete($user->photo3);
+                        // }
+
+                        // if (File::exists($user->photo4)) {
+                        //     File::delete($user->photo4);
+                        // }
+
+                        // if (File::exists($user->photo5)) {
+                        //     File::delete($user->photo5);
+                        // }
+
+                        // if (File::exists($user->live_photo)) {
+                        //     File::delete($user->live_photo);
+                        // }
+
+                        // if (File::exists($user->id_proof)) {
+                        //     File::delete($user->id_proof);
+                        // }
                     }else{
                         $user = ParentsModel::find($request->login_id);
+                        // if (File::exists($user->profile_pic)) {
+                        //     File::delete($user->profile_pic);
+                        // }
+
+                        // if (File::exists($user->live_photo)) {
+                        //     File::delete($user->live_photo);
+                        // }
+
+                        // if (File::exists($user->id_proof)) {
+                        //     File::delete($user->id_proof);
+                        // }
                     }
 
                     $details = [
