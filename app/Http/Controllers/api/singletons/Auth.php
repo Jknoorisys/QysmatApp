@@ -416,7 +416,7 @@ class Auth extends Controller
         try {
             $user = Singleton::where([['email','=',$request->email],['social_type','=',$request->social_type],['is_social','=',$request->is_social],['status','=','unblocked']])->first();
             if(!empty($user)){
-                // if($user->is_email_verified == 'verified'){
+                if($user->is_email_verified == 'verified'){
                     if($request->social_id == $user->social_id){
                         Singleton::where('email','=',$request->email)->update(['device_type' => $request->device_type, 'device_token' => $request->device_token, 'fcm_token' => $request->fcm_token]);
                         return response()->json([
@@ -430,12 +430,13 @@ class Auth extends Controller
                             'message'   => __("msg.singletons.login.invalid"),
                         ],400);
                     }
-                // }else{
-                //     return response()->json([
-                //         'status'    => 'failed',
-                //         'message'   => __("msg.singletons.login.failure"),
-                //     ],400);
-                // }
+                }else{
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __("msg.singletons.login.failure"),
+                        'data'      => $user
+                    ],200);
+                }
             }else{
                 return response()->json([
                     'status'    => 'failed',
@@ -478,7 +479,7 @@ class Auth extends Controller
 
         $user = Singleton::where([['email','=',$request->email],['status','=','unblocked']])->first();
         if(!empty($user)){
-            // if($user->is_email_verified == 'verified'){
+            if($user->is_email_verified == 'verified'){
                 Singleton::where('email','=',$request->email)->update(['device_type' => $request->device_type, 'device_token' => $request->device_token, 'fcm_token' => $request->fcm_token]);
                 if(Hash::check($request->password, $user->password)){
                     return response()->json([
@@ -492,12 +493,13 @@ class Auth extends Controller
                         'message'   => __("msg.singletons.login.invalid"),
                     ],400);
                 }
-            // }else{
-            //     return response()->json([
-            //         'status'    => 'failed',
-            //         'message'   => __("msg.singletons.login.failure"),
-            //     ],400);
-            // }
+            }else{
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __("msg.singletons.login.failure"),
+                    'data'      => $user
+                ],200);
+            }
         }else{
             return response()->json([
                 'status'    => 'failed',
