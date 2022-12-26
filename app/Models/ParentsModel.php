@@ -41,8 +41,7 @@ class ParentsModel extends Model
     protected $hidden = [
         'password',
         'remember_token',
-        'email_otp',
-        'mobile_otp',
+        // 'email_otp',
     ];
 
     /**
