@@ -23,7 +23,7 @@ class Notifications extends Controller
         App::setlocale($lang);
 
         if (isset($_POST['login_id']) && !empty($_POST['login_id']) && isset($_POST['user_type']) && !empty($_POST['user_type']) && isset($_POST['singleton_id']) && !empty($_POST['singleton_id'])) {
-            parentExist($_POST['login_id'], $_POST['user_type'], $_POST['singleton_id']);
+            userFound($_POST['login_id'], $_POST['user_type'], $_POST['singleton_id']);
         }
     }
 

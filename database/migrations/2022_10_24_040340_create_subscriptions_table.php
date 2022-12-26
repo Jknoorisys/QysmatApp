@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('subscription_type');
             $table->string('price');
             $table->string('currency');
+            $table->longText('details');
             $table->enum('status', ['Active','Inactive','Deleted'])->default('Active');
             $table->timestamps();
         });
