@@ -50,7 +50,7 @@
         <!-- ============================================================== -->
         <!-- Login box.scss -->
         <!-- ============================================================== -->
-        <div class="auth-wrapper d-flex no-block justify-content-center align-items-center" style="background:linear-gradient(0deg, rgba(1, 23, 81, 0.7), rgba(1, 23, 81, 0.7)), url(assets/images/big/bg.jpg) no-repeat center center;">
+        <div class="auth-wrapper d-flex no-block justify-content-center align-items-center" style="background:linear-gradient(0deg, rgba(1, 23, 81, 0.7), rgba(1, 23, 81, 0.7)), url({{asset("assets/images/big/bg.jpg")}}) no-repeat center center;">
             <div class="auth-box">
                 <div id="loginform">
                     <div class="logo">
