@@ -19,10 +19,18 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    {{-- <style>
-        body{background:linear-gradient(0deg, rgba(1, 23, 81, 0.7), rgba(1, 23, 81, 0.7)), url(nathan-dumlao-w5hhoYM_JsU-unsplash.jpg);
-        mix-blend-mode: luminosity;}
-    </style> --}}
+    <style>
+        .auth-wrapper{
+            justify-content: left !important;
+            padding-left: 5%;
+        }
+
+        .auth-wrapper .auth-box {
+            background: transparent;
+            color: white;
+            border: 0.5px solid white;
+        }
+    </style>
 </head>
 
 <body>
@@ -42,7 +50,7 @@
         <!-- ============================================================== -->
         <!-- Login box.scss -->
         <!-- ============================================================== -->
-        <div class="auth-wrapper d-flex no-block justify-content-center align-items-center" style="background:url(assets/images/big/auth-bg.jpg) no-repeat center center;">
+        <div class="auth-wrapper d-flex no-block justify-content-center align-items-center" style="background:linear-gradient(0deg, rgba(1, 23, 81, 0.7), rgba(1, 23, 81, 0.7)), url(assets/images/big/bg.jpg) no-repeat center center;">
             <div class="auth-box">
                 <div id="loginform">
                     <div class="logo">
