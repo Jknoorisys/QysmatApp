@@ -408,6 +408,7 @@ return [
             'failure' => "The Email isn't Verified! Please Verify First...",
             'invalid' => 'Password Does not Match! Please Try Again...',
             'not-found' => 'User Not Found!',
+            'not-social' => 'Social Account Not Found! Please Try Again...'
         ],
 
         'block' => [
