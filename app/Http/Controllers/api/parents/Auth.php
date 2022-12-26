@@ -44,10 +44,17 @@ class Auth extends Controller
             'device_token'  => 'required',
         ]);
 
+        $errors = [];
+        foreach ($validator->errors()->messages() as $key => $value) {
+            if($key == 'email')
+                $key = 'error_message';
+                $errors[$key] = is_array($value) ? implode(',', $value) : $value;
+        }
+
         if($validator->fails()){
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Validation Failed!'),
+                'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
                 'errors'    => $validator->errors()
             ],400);
         }
@@ -126,10 +133,17 @@ class Auth extends Controller
             'social_id'     => 'required',
         ]);
 
+        $errors = [];
+        foreach ($validator->errors()->messages() as $key => $value) {
+            if($key == 'email')
+                $key = 'error_message';
+                $errors[$key] = is_array($value) ? implode(',', $value) : $value;
+        }
+
         if($validator->fails()){
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Validation Failed!'),
+                'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
                 'errors'    => $validator->errors()
             ],400);
         }
@@ -566,10 +580,17 @@ class Auth extends Controller
             'social_id'     => 'required',
         ]);
 
+        $errors = [];
+        foreach ($validator->errors()->messages() as $key => $value) {
+            if($key == 'email')
+                $key = 'error_message';
+                $errors[$key] = is_array($value) ? implode(',', $value) : $value;
+        }
+
         if($validator->fails()){
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Validation Failed!'),
+                'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
                 'errors'    => $validator->errors()
             ],400);
         }
@@ -630,10 +651,17 @@ class Auth extends Controller
             'device_token'  => 'required',
         ]);
 
+        $errors = [];
+        foreach ($validator->errors()->messages() as $key => $value) {
+            if($key == 'email')
+                $key = 'error_message';
+                $errors[$key] = is_array($value) ? implode(',', $value) : $value;
+        }
+
         if($validator->fails()){
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Validation Failed!'),
+                'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
                 'errors'    => $validator->errors()
             ],400);
         }
