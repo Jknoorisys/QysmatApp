@@ -55,7 +55,7 @@ class Auth extends Controller
 
         $errors = [];
         foreach ($validator->errors()->messages() as $key => $value) {
-            if($key == 'email')
+            // if($key == 'email')
                 $key = 'error_message';
                 $errors[$key] = is_array($value) ? implode(',', $value) : $value;
         }
@@ -64,7 +64,7 @@ class Auth extends Controller
             return response()->json([
                 'status'    => 'failed',
                 'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
-                'errors'    => $validator->errors()
+                // 'errors'    => $validator->errors()
             ],400);
         }
 
@@ -164,7 +164,7 @@ class Auth extends Controller
 
         $errors = [];
         foreach ($validator->errors()->messages() as $key => $value) {
-            if($key == 'email')
+            // if($key == 'email')
                 $key = 'error_message';
                 $errors[$key] = is_array($value) ? implode(',', $value) : $value;
         }
@@ -173,7 +173,7 @@ class Auth extends Controller
             return response()->json([
                 'status'    => 'failed',
                 'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
-                'errors'    => $validator->errors()
+                // 'errors'    => $validator->errors()
             ],400);
         }
 
@@ -421,7 +421,7 @@ class Auth extends Controller
 
         $errors = [];
         foreach ($validator->errors()->messages() as $key => $value) {
-            if($key == 'email')
+            // if($key == 'email')
                 $key = 'error_message';
                 $errors[$key] = is_array($value) ? implode(',', $value) : $value;
         }
@@ -430,7 +430,7 @@ class Auth extends Controller
             return response()->json([
                 'status'    => 'failed',
                 'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
-                'errors'    => $validator->errors()
+                // 'errors'    => $validator->errors()
             ],400);
         }
 
@@ -492,7 +492,7 @@ class Auth extends Controller
 
         $errors = [];
         foreach ($validator->errors()->messages() as $key => $value) {
-            if($key == 'email')
+            // if($key == 'email')
                 $key = 'error_message';
                 $errors[$key] = is_array($value) ? implode(',', $value) : $value;
         }
@@ -501,7 +501,7 @@ class Auth extends Controller
             return response()->json([
                 'status'    => 'failed',
                 'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
-                'errors'    => $validator->errors()
+                // 'errors'    => $validator->errors()
             ],400);
         }
 
