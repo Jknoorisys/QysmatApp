@@ -193,6 +193,7 @@ class Chat extends Controller
                 'required' ,
                 Rule::in(['singleton']),
             ],
+            'page_number'  => 'required||numeric',
         ]);
 
         if($validator->fails()){
@@ -204,13 +205,25 @@ class Chat extends Controller
         }
 
         try {
-            $chat = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])->get();
+
+            $per_page = 10;
+            $page_number = $request->input(key:'page_number', default:1);
+            $total = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])
+                                ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
+                                ->count();
+
+            $chat = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])
+                                ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
+                                ->offset(($page_number - 1) * $per_page)
+                                ->limit($per_page)
+                                ->get();
 
             if(!$chat->isEmpty()){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.chat-history.success'),
-                    'data'      => $chat
+                    'data'      => $chat,
+                    'total'     => $total
                 ],200);
             }else{
                 return response()->json([
