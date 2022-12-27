@@ -113,6 +113,7 @@ class Matches extends Controller
                 'required' ,
                 Rule::in(['singleton']),
             ],
+            'page_number'  => 'required||numeric',
         ]);
 
         if($validator->fails()){
@@ -124,9 +125,19 @@ class Matches extends Controller
         }
 
         try {
+
+            $per_page = 10;
+            $page_number = $request->input(key:'page_number', default:1);
+            $total = DB::table('my_matches')
+                        ->where([['my_matches.user_id', '=', $request->login_id], ['my_matches.user_type', '=', $request->user_type]])
+                        ->join('singletons', 'my_matches.matched_id', '=', 'singletons.id')
+                        ->count();
+
             $match = DB::table('my_matches')
                         ->where([['my_matches.user_id', '=', $request->login_id], ['my_matches.user_type', '=', $request->user_type]])
                         ->join('singletons', 'my_matches.matched_id', '=', 'singletons.id')
+                        ->offset(($page_number - 1) * $per_page)
+                        ->limit($per_page)
                         ->get(['my_matches.user_id','my_matches.user_type','singletons.*']);
 
             if(!$match->isEmpty()){
@@ -146,7 +157,8 @@ class Matches extends Controller
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.match.success'),
-                        'data'      => $users
+                        'data'      => $users,
+                        'total'     => $total
                     ],200);
                 }else{
                     return response()->json([
@@ -181,6 +193,7 @@ class Matches extends Controller
                 'required' ,
                 Rule::in(['singleton']),
             ],
+            'page_number'  => 'required||numeric',
         ]);
 
         if($validator->fails()){
@@ -192,9 +205,19 @@ class Matches extends Controller
         }
 
         try {
+
+            $per_page = 10;
+            $page_number = $request->input(key:'page_number', default:1);
+            $total = DB::table('recieved_matches')
+                        ->where([['recieved_matches.user_id', '=', $request->login_id], ['recieved_matches.user_type', '=', $request->user_type]])
+                        ->join('singletons','recieved_matches.recieved_match_id','=','singletons.id')
+                        ->count();
+
             $match = DB::table('recieved_matches')
                         ->where([['recieved_matches.user_id', '=', $request->login_id], ['recieved_matches.user_type', '=', $request->user_type]])
                         ->join('singletons','recieved_matches.recieved_match_id','=','singletons.id')
+                        ->offset(($page_number - 1) * $per_page)
+                        ->limit($per_page)
                         ->get(['recieved_matches.user_id','recieved_matches.user_type','recieved_matches.singleton_id','singletons.*']);
             if(!$match->isEmpty()){
                 $users = [];
@@ -213,7 +236,8 @@ class Matches extends Controller
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.received-match.success'),
-                        'data'      => $users
+                        'data'      => $users,
+                        'total'     => $total
                     ],200);
                 }else{
                     return response()->json([
@@ -248,6 +272,7 @@ class Matches extends Controller
                 'required' ,
                 Rule::in(['singleton']),
             ],
+            'page_number'  => 'required||numeric',
         ]);
 
         if($validator->fails()){
@@ -259,9 +284,18 @@ class Matches extends Controller
         }
 
         try {
+            $per_page = 10;
+            $page_number = $request->input(key:'page_number', default:1);
+            $total = DB::table('referred_matches')
+                        ->where([['referred_matches.user_id', '=', $request->login_id], ['referred_matches.user_type', '=', $request->user_type]])
+                        ->join('singletons', 'referred_matches.referred_match_id', '=', 'singletons.id')
+                        ->count();
+                        
             $match = DB::table('referred_matches')
                         ->where([['referred_matches.user_id', '=', $request->login_id], ['referred_matches.user_type', '=', $request->user_type]])
                         ->join('singletons', 'referred_matches.referred_match_id', '=', 'singletons.id')
+                        ->offset(($page_number - 1) * $per_page)
+                        ->limit($per_page)
                         ->get(['referred_matches.user_id','referred_matches.user_type','referred_matches.singleton_id','singletons.*']);
             if(!$match->isEmpty()){
                 $users = [];
@@ -280,7 +314,8 @@ class Matches extends Controller
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.referred-match.success'),
-                        'data'      => $users
+                        'data'      => $users,
+                        'total'     => $total
                     ],200);
                 }else{
                     return response()->json([

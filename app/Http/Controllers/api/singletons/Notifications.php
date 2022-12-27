@@ -39,6 +39,7 @@ class Notifications extends Controller
                 'required' ,
                 Rule::in(['singleton']),
             ],
+            'page_number'  => 'required||numeric',
         ]);
 
         if($validator->fails()){
@@ -50,8 +51,16 @@ class Notifications extends Controller
         }
 
         try {
+
+            $per_page = 10;
+            $page_number = $request->input(key:'page_number', default:1);
+
             $user = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type]])->first();
-            $notifications = $user->notifications->where('user_type', '=', $request->user_type);
+            $notifications = $user->unreadNotifications()->where('user_type', '=', $request->user_type)
+                                    ->offset(($page_number - 1) * $per_page)
+                                    ->limit($per_page)
+                                    ->get();
+            $total = $user->notifications->where('user_type', '=', $request->user_type)->count();
 
             if(!$notifications->isEmpty()){
                 foreach ($notifications as $notify) {
@@ -62,7 +71,8 @@ class Notifications extends Controller
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.notifications.success'),
-                        'data'      => $notification
+                        'data'      => $notification,
+                        'total'     => $total
                     ],200);
                 } else {
                     return response()->json([

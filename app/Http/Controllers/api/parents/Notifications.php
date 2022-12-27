@@ -40,6 +40,7 @@ class Notifications extends Controller
                 Rule::in(['parent']),
             ],
             'singleton_id'  => 'required||numeric',
+            'page_number'   => 'required||numeric',
         ]);
 
         if($validator->fails()){
@@ -51,8 +52,17 @@ class Notifications extends Controller
         }
 
         try {
+
+            $per_page = 10;
+            $page_number = $request->input(key:'page_number', default:1);
+
             $user = ParentsModel::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type]])->first();
-            $notifications = $user->notifications->where('user_type', '=', $request->user_type)->where('singleton_id', '=', $request->singleton_id);
+            $total = $user->notifications->where('user_type', '=', $request->user_type)->where('singleton_id', '=', $request->singleton_id)->count();
+            $notifications = $user->unreadNotifications()
+                                    ->where('user_type', '=', $request->user_type)->where('singleton_id', '=', $request->singleton_id)
+                                    ->offset(($page_number - 1) * $per_page)
+                                    ->limit($per_page)
+                                    ->get();
 
             if(!$notifications->isEmpty()){
                 foreach ($notifications as $notify) {
@@ -63,7 +73,8 @@ class Notifications extends Controller
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.parents.notifications.success'),
-                        'data'      => $notification
+                        'data'      => $notification,
+                        'total'     => $total
                     ],200);
                 } else {
                     return response()->json([

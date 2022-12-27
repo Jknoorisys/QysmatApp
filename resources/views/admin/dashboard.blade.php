@@ -337,14 +337,14 @@
                                                 </form>
                                             </div>
                                             <div class="col-2">
-                                                <form action="{{route('viewSingleton')}}" method="post">
+                                                <form action="{{route('viewParent')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()"> <i class="fas fa-eye"></i> </button>
                                                 </form>
                                             </div>
                                             <div class="col-2">
-                                                <form action="{{route('deleteSingleton')}}" method="post">
+                                                <form action="{{route('deleteParent')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat show_confirm" data-name="{{$value->name}}" data-id="{{$value->id}}" data-toggle="tooltip" title='Delete'> <i class="fas fa-trash"></i> </button>
