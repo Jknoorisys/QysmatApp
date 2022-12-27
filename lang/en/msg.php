@@ -698,6 +698,11 @@ return [
             'invalid' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         ],
 
+        'add-category' => [
+            'success' => 'Category Details Added Successfully!',
+            'failure' => 'Unable to Add Category Details! Please Try Again...',
+        ],
+
         'get-category' => [
             'success' => 'Singleton Category Details Fetched Successfully!',
             'failure' => 'Singleton Category Details Not Found!',
