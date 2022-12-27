@@ -275,14 +275,19 @@ class Auth extends Controller
         try {
             if($request->user_type == 'singleton'){
                 $user = Singleton::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
-                $verified =  Singleton :: whereId($request->user_id)->update(['is_email_verified' => 'verified', 'updated_at' => date('Y-m-d H:i:s')]);
             }else{
                 $user = ParentsModel::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
-                $verified =  ParentsModel :: whereId($request->user_id)->update(['is_email_verified' => 'verified', 'updated_at' => date('Y-m-d H:i:s')]);
             }
 
             if(!empty($user)){
                 if($user->email_otp == $request->otp){
+
+                    if($request->user_type == 'singleton'){
+                        $verified =  Singleton :: whereId($request->user_id)->update(['is_email_verified' => 'verified', 'updated_at' => date('Y-m-d H:i:s')]);
+                    }else{
+                        $verified =  ParentsModel :: whereId($request->user_id)->update(['is_email_verified' => 'verified', 'updated_at' => date('Y-m-d H:i:s')]);
+                    }
+                    
                     if($verified){
 
                         $admin = Admin::find(1);

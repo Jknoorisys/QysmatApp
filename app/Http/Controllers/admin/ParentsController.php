@@ -47,6 +47,14 @@ class ParentsController extends Controller
                                                 ->where('parents.id',$id)
                                                 ->select('parents.*','subscriptions.subscription_type','subscriptions.price','subscriptions.currency')
                                                 ->first();
+
+            if ($data['details']->subscription_type == 'Basic') {
+                $features = [__("msg.Only 5 Profile Views per day"), __("msg.Unrestricted profile search criteria")];
+            }else {
+                $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant message  (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
+            }
+            $data['details']->features= !empty($features) ? $features : "";
+            
             $data['admin']               = $this->admin;
             $data['previous_title']      = __("msg.Manage Parents");
             $data['url']                 = route('parents');
