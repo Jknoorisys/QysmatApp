@@ -708,6 +708,11 @@ return [
             'failure' => 'Singleton Category Details Not Found!',
         ],
 
+        'update-category' => [
+            'success' => 'Category Details Updated Successfully!',
+            'failure' => 'Unable to Update Category Details! Please Try Again...',
+        ],
+
         'get-suggestions' => [
             'success' => 'Suggestions Based on Singleton Categories Fetched Successfully!',
             'failure' => 'No Suggestions Found!',
