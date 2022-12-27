@@ -64,9 +64,12 @@
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Single User</li>
+                        {{-- <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Single User</li>
                         <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Unlimited Test</li>
-                        <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Community Access</li>
+                        <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Community Access</li> --}}
+                        @foreach ($value->features as $feature)
+                        <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{$feature}}</li>
+                        @endforeach
                         <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i><span>{{__('msg.Status')}} : {{$value->status}}</span>
 
                                 <form action="{{route('changeSubscriptionStatus')}}" method="post" class="text-center">
