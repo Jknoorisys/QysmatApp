@@ -25,4 +25,14 @@ return [
     // Notifications
     'has Sent you a Match Request'          => 'hat Ihnen eine Übereinstimmungsanfrage gesendet',
     'Match Request'                         => 'Übereinstimmungsanfrage',
+
+    // Subscriptions
+    'Only 5 Profile Views per day'                  => 'Nur 5 Profilansichten pro Tag',
+    'Unrestricted profile search criteria'          => 'Uneingeschränkte Profilsuchkriterien',
+    'Unlimited swipes per day'                      => 'Unbegrenzte Wischvorgänge pro Tag',
+    'Send instant message  (3 per week)'            => 'Sofortnachricht senden (3 pro Woche)',
+    'In-app telephone and video calls'              => 'Telefon- und Videoanrufe in der App',
+    'Refer profiles to friends and family'          => 'Verweisen Sie Profile an Freunde und Familie',
+    'Undo last swipe'                               => 'Letztes Wischen rückgängig machen',
+    'Reset profile search and start again once a month'  => 'Profilsuche zurücksetzen und einmal im Monat neu starten',
 ];
