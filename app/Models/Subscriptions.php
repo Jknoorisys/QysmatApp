@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Subscriptions extends Model
 {
     use HasFactory;
+    protected $hidden = [
+        'details',
+    ];
 }

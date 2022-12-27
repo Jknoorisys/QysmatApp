@@ -46,12 +46,22 @@ class SubscriptionPlans extends Controller
         }
 
         try {
-            $page = Subscriptions::where('status','=','Active')->get();
-            if(!empty($page)){
+            $pages = Subscriptions::where('status','=','Active')->get();
+            $features = [];
+            foreach ($pages as $page) {
+                if ($page->subscription_type == 'Basic') {
+                    $features = [__("msg.Only 5 Profile Views per day"), __("msg.Unrestricted profile search criteria")];
+                }else {
+                    $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant message  (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
+                }
+                $page->features= !empty($features) ? $features : "";
+            }
+
+            if(!empty($pages)){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.subscriptions.success'),
-                    'data'      => $page
+                    'data'      => $pages
                 ],200);
             }else{
                 return response()->json([
