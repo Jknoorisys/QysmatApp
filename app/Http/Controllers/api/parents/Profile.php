@@ -97,8 +97,8 @@ class Profile extends Controller
             'location'          => 'required',
             'lat'               => 'required',
             'long'              => 'required',
-            'live_photo'        => 'required',
-            'id_proof'          => 'required',
+            // 'live_photo'        => 'required',
+            // 'id_proof'          => 'required',
         ]);
 
         if($validator->fails()){
