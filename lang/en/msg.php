@@ -537,7 +537,7 @@ return [
             'success' => 'Suggestions Based on Singleton Categories Fetched Successfully!',
             'failure' => 'No Suggestions Found!',
             'invalid' => 'Category Details Not Found!',
-            'not-linked' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+            'not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
         ],
 
         'swips' => [
@@ -717,6 +717,7 @@ return [
             'success' => 'Suggestions Based on Singleton Categories Fetched Successfully!',
             'failure' => 'No Suggestions Found!',
             'invalid' => 'Category Details Not Found!',
+            'not-linked' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         ],
 
         'swips' => [
