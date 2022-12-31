@@ -218,6 +218,7 @@ class Chat extends Controller
 
             $chat = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type],['singleton_id', '=', $request->singleton_id]])
                                     ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type],['singleton_id', '=', $request->messaged_user_singleton_id]])
+                                    ->orderBy('id', 'desc')
                                     ->offset(($page_number - 1) * $per_page)
                                     ->limit($per_page)
                                     ->get();
