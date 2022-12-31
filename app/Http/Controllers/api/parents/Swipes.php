@@ -81,7 +81,7 @@ class Swipes extends Controller
             }
 
             $parent = Singleton::where([['id', '=', $request->swiped_user_id], ['status','=', 'Unblocked'], ['is_verified', '=', 'verified']])->first();
-            if (empty($parent)) {
+            if (empty($parent) || ($parent->parent_id == 0)) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.swips.not-linked'),
