@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('mobile');
             $table->string('profile_pic');
             $table->string('password');
+            $table->string('relation_with_singleton');
             $table->string('email_otp');
             $table->enum('is_email_verified',['verified', 'not verified'])->default('not verified');
             $table->string('nationality');

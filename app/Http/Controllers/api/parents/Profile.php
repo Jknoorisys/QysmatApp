@@ -89,7 +89,9 @@ class Profile extends Controller
             'login_id'          => 'required||numeric',
             'name'              => ['required', 'string', 'min:3', 'max:255'],
             'email'             => ['required', 'email'],
-            'mobile'            => 'required||unique:singletons||unique:parents',
+            // 'mobile'            => 'required||unique:singletons||unique:parents',
+            'mobile'            => 'required',
+            'relation_with_singleton' => 'required',
             'profile_pic'       => 'required||image||mimes:jpeg,png,jpg,svg||max:5000',
             'nationality'       => 'required',
             'ethnic_origin'     => 'required',
@@ -101,11 +103,26 @@ class Profile extends Controller
             // 'id_proof'          => 'required',
         ]);
 
+        // if($validator->fails()){
+        //     return response()->json([
+        //         'status'    => 'failed',
+        //         'message'   => __('msg.Validation Failed!'),
+        //         'errors'    => $validator->errors()
+        //     ],400);
+        // }
+
+        $errors = [];
+        foreach ($validator->errors()->messages() as $key => $value) {
+            // if($key == 'email')
+                $key = 'error_message';
+                $errors[$key] = is_array($value) ? implode(',', $value) : $value;
+        }
+
         if($validator->fails()){
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Validation Failed!'),
-                'errors'    => $validator->errors()
+                'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
+                // 'errors'    => $validator->errors()
             ],400);
         }
 
@@ -121,6 +138,7 @@ class Profile extends Controller
                 $user->location      = $request->location ? $request->location : '';
                 $user->lat           = $request->lat ? $request->lat : '';
                 $user->long          = $request->long ? $request->long : '';
+                $user->relation_with_singleton          = $request->relation_with_singleton ? $request->relation_with_singleton : '';
 
                 $file = $request->file('profile_pic');
                 if ($file) {

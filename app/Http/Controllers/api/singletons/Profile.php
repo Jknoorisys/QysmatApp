@@ -86,7 +86,8 @@ class Profile extends Controller
             'login_id'          => 'required||numeric',
             'name'              => ['required', 'string', 'min:3', 'max:255'],
             'email'             => ['required', 'email'],
-            'mobile'            => 'required||unique:singletons||unique:parents',
+            // 'mobile'            => 'required||unique:singletons||unique:parents',
+            'mobile'            => 'required',
             'dob'               => 'required',
             'gender'            => 'required',
             'height'            => 'required',
@@ -102,11 +103,26 @@ class Profile extends Controller
             // 'id_proof'          => 'required',
         ]);
 
+        // if($validator->fails()){
+        //     return response()->json([
+        //         'status'    => 'failed',
+        //         'message'   => __('msg.Validation Failed!'),
+        //         'errors'    => $validator->errors()
+        //     ],400);
+        // }
+
+        $errors = [];
+        foreach ($validator->errors()->messages() as $key => $value) {
+            // if($key == 'email')
+                $key = 'error_message';
+                $errors[$key] = is_array($value) ? implode(',', $value) : $value;
+        }
+
         if($validator->fails()){
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.Validation Failed!'),
-                'errors'    => $validator->errors()
+                'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
+                // 'errors'    => $validator->errors()
             ],400);
         }
 
