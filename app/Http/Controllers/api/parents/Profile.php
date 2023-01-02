@@ -92,7 +92,7 @@ class Profile extends Controller
             // 'mobile'            => 'required||unique:singletons||unique:parents',
             'mobile'            => 'required',
             'relation_with_singleton' => 'required',
-            'profile_pic'       => 'required||image||mimes:jpeg,png,jpg,svg||max:5000',
+            'profile_pic'       => 'image||mimes:jpeg,png,jpg,svg||max:5000',
             'nationality'       => 'required',
             'ethnic_origin'     => 'required',
             'islamic_sect'      => 'required',
