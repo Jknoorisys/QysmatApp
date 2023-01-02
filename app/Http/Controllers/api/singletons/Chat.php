@@ -155,11 +155,24 @@ class Chat extends Controller
                                 ->select('chat_histories.messaged_user_id','singletons.*')
                                 ->distinct()
                                 ->get();
+
+            foreach ($list as $key => $value) {
+                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', $request->user_type]])
+                                        ->join('singletons', 'chat_histories.messaged_user_id', '=', 'singletons.id')
+                                        ->select('chat_histories.message')
+                                        // ->orderBy('chat_histories.created_at', 'desc')
+                                        // ->latest('chat_histories.created_at')
+                                        // ->first();
+                                        ->get()->last();
+
+                $list[$key]->last_message = $last_message->message;
+            }
+
             if(!$list->isEmpty()){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.messaged-users.success'),
-                    'data'      => $list
+                    'data'      => $list,
                 ],200);
             }else{
                 return response()->json([
