@@ -295,6 +295,9 @@ return [
     'Account Deleted'                                       => 'Account Deleted',
     'has Deleted His/Her Account.'                          => 'has Deleted His/Her Account.',
 
+    // FCM Notifications
+    'New Message'                                           => 'New Message',
+
     // API
     'Validation Failed!'                    => 'Validation Failed!',
     'Invalid Email...'                      => 'Invalid Email...',

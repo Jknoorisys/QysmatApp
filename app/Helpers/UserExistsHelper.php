@@ -3,6 +3,7 @@
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\Singleton;
+use Illuminate\Support\Facades\Config;
 
     function userExist($login_id, $user_type)
     {
@@ -734,5 +735,41 @@ use App\Models\Singleton;
            return 1;
         }
 
+    }
+
+    if (!function_exists('sendFCMNotification')) {
+        function sendFCMNotification(array $message, array $fcm_regid, $role)
+        {
+
+          $fields = array();
+
+          $url = 'https://fcm.googleapis.com/fcm/send';
+          $headers = array('Authorization: key=' . Config::get('constants.FCM_KEY'), 'Content-Type: application/json');
+
+          $fields = array(
+            'registration_ids' => $fcm_regid,
+            'data' => $message,
+            "priority" => "high",
+            'notification' => array(
+              "title" => $message['title'],
+              "body"  =>  $message['message'],
+            )
+          );
+          // echo json_encode($fields);exit;
+          $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $url);
+          curl_setopt($ch, CURLOPT_POST, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+          curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+          $result = curl_exec($ch);
+          if ($result) {
+            curl_close($ch);
+            return true;
+          }
+          curl_close($ch);
+          return false;
+        }
     }
 ?>
