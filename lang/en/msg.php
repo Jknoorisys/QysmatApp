@@ -360,6 +360,11 @@ return [
         'failure' => 'Subsription Plan Not Found!',
     ],
 
+    'subscribe'  => [
+        'success' => 'Subsribed Successfully!',
+        'failure' => 'Unable to Subsribe, Please Try Again...',
+    ],
+
     'parents' => [
         'register' => [
             'success' => 'Registration OTP Sent Successfully!',

@@ -22,6 +22,7 @@ use App\Http\Controllers\api\singletons\Notifications;
 use App\Http\Controllers\api\singletons\Profile;
 use App\Http\Controllers\api\singletons\Suggestions;
 use App\Http\Controllers\api\singletons\Swipes as SingletonsSwipes;
+use App\Http\Controllers\api\singletons\ZoomAPI;
 use App\Http\Controllers\api\static_pages\StaticPages;
 use App\Http\Controllers\api\subscriptions\SubscriptionPlans;
 use Illuminate\Http\Request;
@@ -95,6 +96,9 @@ Route::prefix('singleton')->group(function () {
 
     // Notifications
     Route::post('get-notifications' , [Notifications::class, 'index']);
+
+    // Zoom API
+    Route::post('video-call' , [ZoomAPI::class, 'index']);
 });
 
 // Parents
@@ -166,6 +170,7 @@ Route::prefix('contact-details')->group(function () {
 Route::prefix('subscriptions')->group(function () {
     Route::post('get-subscription-plans' , [SubscriptionPlans::class, 'index']);
     Route::post('get-active-subscription' , [SubscriptionPlans::class, 'activeSubscription']);
+    Route::post('subscribe' , [SubscriptionPlans::class, 'subscribe']);
 });
 
 // Islamic Quotes
