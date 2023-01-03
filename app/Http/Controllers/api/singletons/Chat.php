@@ -105,6 +105,21 @@ class Chat extends Controller
             $messaged                    = $message->save();
 
             if (!empty($messaged)) {
+                $title = __('msg.New Message');
+                $reciever = Singleton::where([['id', '=', $request->messaged_user_id], ['status', '=', 'Unblocked']])->first();
+                if (isset($reciever) && !empty($reciever)) {
+                    $fcm_regid[] = $reciever->fcm_token;
+                    $notification = array(
+                        'title'         => $title,
+                        'message'       => $request->message,
+                        'click_action'  => 'FLUTTER_NOTIFICATION_CLICK',
+                        'date'          => date('Y-m-d H:i'),
+                        'type'          => 'chat',
+                        'response'      => ''
+                    );
+                    $result = sendFCMNotification($notification, $fcm_regid, 'chat');
+                }
+
                 MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['matched_id', '=', $request->messaged_user_id]])->update(['chat_in_progress' => '1', 'updated_at' => date('Y-m-d H:i:s')]);
                 return response()->json([
                     'status'    => 'success',
