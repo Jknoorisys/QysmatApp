@@ -354,6 +354,7 @@ return [
         'success' => 'Profile Search Reset Successfully!',
         'failure' => 'Unable to Reset Profile Search, Please Try Again...',
         'invalid' => 'No User found in Your Un-Match List, Please Try Again...',
+        'premium' => 'Premium Feature',
     ],
 
     'static-pages' => [
@@ -562,6 +563,7 @@ return [
             'reported' => 'You have Reported this User!',
             'un-matched' => 'You have Un-Matched this User!',
             'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
+            'premium' => 'Premium Feature',
         ],
     ],
 
@@ -756,6 +758,7 @@ return [
             'reported' => 'You have Reported this User!',
             'un-matched' => 'You have Un-Matched this User!',
             'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
+            'premium' => 'Premium Feature',
         ],
     ],
 

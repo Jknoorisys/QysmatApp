@@ -155,56 +155,67 @@ class Swipes extends Controller
                         'swipe'             => 'up',
                     ]
                 );
-            }else {
-                $last_swipe = LastSwipe::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['swiped_user_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id]])->first();
-                if(!empty($last_swipe)){
-                    if ($last_swipe->swipe == 'right') {
-                        MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['matched_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id]])->delete();
-                        $swipe = LastSwipe::updateOrCreate(
-                            ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'singleton_id' => $request->singleton_id],
-                            [
-                                'user_id'           => $request->login_id ? $request->login_id : '',
-                                'user_type'         => $request->user_type ? $request->user_type : '',
-                                'singleton_id'      => $request->singleton_id ? $request->singleton_id : '',
-                                'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
-                                'swipe'             => '',
-                            ]
-                        );
-                    }elseif ($last_swipe->swipe == 'left') {
-                        UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id]])->delete();
-                        $swipe = LastSwipe::updateOrCreate(
-                            ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'singleton_id' => $request->singleton_id],
-                            [
-                                'user_id'           => $request->login_id ? $request->login_id : '',
-                                'user_type'         => $request->user_type ? $request->user_type : '',
-                                'singleton_id'      => $request->singleton_id ? $request->singleton_id : '',
-                                'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
-                                'swipe'             => '',
-                            ]
-                        );
-                    }elseif ($last_swipe->swipe == 'up') {
-                        $swipe = LastSwipe::updateOrCreate(
-                            ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'singleton_id' => $request->singleton_id],
-                            [
-                                'user_id'           => $request->login_id ? $request->login_id : '',
-                                'user_type'         => $request->user_type ? $request->user_type : '',
-                                'singleton_id'      => $request->singleton_id ? $request->singleton_id : '',
-                                'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
-                                'swipe'             => '',
-                            ]
-                        );
-                    } else {
+            }elseif ($request->swipe == 'down') {
+                
+
+                $premium = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+                if ($premium->active_subscription_id != '1') {
+                    $last_swipe = LastSwipe::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['swiped_user_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id]])->first();
+                    if(!empty($last_swipe)){
+                        if ($last_swipe->swipe == 'right') {
+                            MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['matched_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id]])->delete();
+                            $swipe = LastSwipe::updateOrCreate(
+                                ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'singleton_id' => $request->singleton_id],
+                                [
+                                    'user_id'           => $request->login_id ? $request->login_id : '',
+                                    'user_type'         => $request->user_type ? $request->user_type : '',
+                                    'singleton_id'      => $request->singleton_id ? $request->singleton_id : '',
+                                    'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
+                                    'swipe'             => '',
+                                ]
+                            );
+                        }elseif ($last_swipe->swipe == 'left') {
+                            UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id]])->delete();
+                            $swipe = LastSwipe::updateOrCreate(
+                                ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'singleton_id' => $request->singleton_id],
+                                [
+                                    'user_id'           => $request->login_id ? $request->login_id : '',
+                                    'user_type'         => $request->user_type ? $request->user_type : '',
+                                    'singleton_id'      => $request->singleton_id ? $request->singleton_id : '',
+                                    'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
+                                    'swipe'             => '',
+                                ]
+                            );
+                        }elseif ($last_swipe->swipe == 'up') {
+                            $swipe = LastSwipe::updateOrCreate(
+                                ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'singleton_id' => $request->singleton_id],
+                                [
+                                    'user_id'           => $request->login_id ? $request->login_id : '',
+                                    'user_type'         => $request->user_type ? $request->user_type : '',
+                                    'singleton_id'      => $request->singleton_id ? $request->singleton_id : '',
+                                    'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
+                                    'swipe'             => '',
+                                ]
+                            );
+                        } else {
+                            return response()->json([
+                                'status'    => 'failed',
+                                'message'   => __('msg.error'),
+                            ],400);
+                        }
+                    }else{
                         return response()->json([
                             'status'    => 'failed',
-                            'message'   => __('msg.error'),
+                            'message'   => __('msg.parents.swips.invalid'),
                         ],400);
                     }
-                }else{
+                } else {
                     return response()->json([
                         'status'    => 'failed',
-                        'message'   => __('msg.parents.swips.invalid'),
+                        'message'   => __('msg.parents.swips.premium'),
                     ],400);
                 }
+                
             }
 
             if(!empty($swipe)){
