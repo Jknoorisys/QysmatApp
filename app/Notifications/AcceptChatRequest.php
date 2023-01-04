@@ -43,8 +43,8 @@ class AcceptChatRequest extends Notification
     {
         return (new MailMessage)
                     ->greeting(__('msg.Hi').'!')
-                    ->line(__('msg.Your Chat Request is Accepted By'.' '.$this->user->name))
-                    ->line(__('msg.To See His/Her Profile, Click on the Link Below'))
+                    ->line( __('msg.Your Chat Request is Accepted By').' '.$this->user->name)
+                    ->line( __('msg.To See His/Her Profile, Click on the Link Below'))
                     ->action(__('msg.Click Here'), url('/'));
     }
 
@@ -62,7 +62,7 @@ class AcceptChatRequest extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Chat Request Accepted'),
-            'msg'       => __('msg.Your Chat Request is Accepted By'.' '.$this->user->name),
+            'msg'       => __('msg.Your Chat Request is Accepted By').' '.$this->user->name,
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

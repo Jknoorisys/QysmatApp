@@ -43,7 +43,7 @@ class ChatRequest extends Notification
     {
         return (new MailMessage)
                     ->greeting(__('msg.Hi').'!')
-                    ->line(__('msg.You Have a Chat Request From'.' '.$this->user->name))
+                    ->line(__('msg.You Have a Chat Request From').' '.$this->user->name)
                     ->line(__('msg.To Accept His/Her Chat Request, Click on the Link Below'))
                     ->action(__('msg.Click Here'), url('/'));
     }
@@ -62,7 +62,7 @@ class ChatRequest extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Chat Request'),
-            'msg'       => __('msg.You have a Chat Request From'.' '.$this->user->name),
+            'msg'       => __('msg.You have a Chat Request From').' '.$this->user->name,
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }
