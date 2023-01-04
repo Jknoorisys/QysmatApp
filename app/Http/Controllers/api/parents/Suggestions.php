@@ -163,6 +163,7 @@ class Suggestions extends Controller
                 $this->db->where('status','=','Unblocked');
                 $this->db->where('is_verified','=','verified');
                 $this->db->where('gender','=',$gender);
+                $this->db->where('parent_id', '!=', $request->login_id);
                 $suggestion = $this->db->get();
 
                 if(!$suggestion->isEmpty()){
@@ -173,10 +174,16 @@ class Suggestions extends Controller
                         $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                         $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
                         $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
+                        $not_linked = ParentChild ::where([['singleton_id','=', $singleton_id], ['status', '=', 'Linked']])->first();
 
-                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match)) {
+                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && !empty($not_linked)) {
                             $users[] = $m;
                         }
+                    }
+
+                    $premium = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+                    if ($premium->active_subscription_id == '1') {
+                        $users = array_slice($users, 0, 5, true);
                     }
 
                     if(!empty($users)){
