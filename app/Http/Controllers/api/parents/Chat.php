@@ -8,6 +8,7 @@ use App\Models\ChatHistory;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\RecievedMatches;
 use App\Models\ReferredMatches;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
@@ -89,13 +90,16 @@ class Chat extends Controller
                 ],400);
             }
 
-            // $chat = MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['chat_in_progress', '=', '1'],['matched_id', '!=', $request->messaged_user_singleton_id],['singleton_id', '=', $request->singleton_id]])->first();
-            // if (!empty($chat)) {
-            //     return response()->json([
-            //         'status'    => 'failed',
-            //         'message'   => __('msg.parents.send-message.invalid'),
-            //     ],400);
-            // }
+            $not_in_list1 = MyMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['matched_id', '=', $request->messaged_user_singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
+            $not_in_list2 = ReferredMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['referred_match_id', '=', $request->messaged_user_singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
+            $not_in_list3 = RecievedMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['recieved_match_id', '=', $request->messaged_user_singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
+
+            if (empty($not_in_list1) && empty($not_in_list2) && empty($not_in_list3)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.failure'),
+                ],400);
+            }
 
             $message                     = new ChatHistory();
             $message->user_id            = $request->login_id ? $request->login_id : '';
