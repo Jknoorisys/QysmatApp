@@ -294,6 +294,11 @@ return [
     'has Contacted You.'                                    => 'has Contacted You.',
     'Account Deleted'                                       => 'Account Deleted',
     'has Deleted His/Her Account.'                          => 'has Deleted His/Her Account.',
+    'You have a Chat Request From'                          => 'You have a Chat Request From',
+    'To Accept His/Her Chat Request, Click on the Link Below' => 'To Accept His/Her Chat Request, Click on the Link Below',
+    'Chat Request'                                          => 'Chat Request',
+    'Your Chat Request is Accepted By'                      => 'Your Chat Request is Accepted By',
+    'Chat Request Accepted'                                 => 'Chat Request Accepted',
 
     // FCM Notifications
     'New Message'                                           => 'New Message',
@@ -632,6 +637,19 @@ return [
             'reported' => 'You have Reported this User!',
             'un-matched' => 'You have Un-Matched this User!',
             'not-accepted' => 'Chat Request Not Accepted!'
+        ],
+
+        'start-chat' => [
+            'success' => 'Chat Invitation Sent!',
+            'failure' => "Unable to Send Chat Invitation, Please Try Again...",
+            'invalid' => 'You have an Un-Closed Chat...',
+        ],
+
+        'accept-chat-request' => [
+            'success' => 'Chat Invitation Accepted!',
+            'failure' => "Unable to Accept Chat Invitation, Please Try Again...",
+            'invalid' => 'No Chat Invitation Found!',
+            'accepted' => 'Chat Invitation Alraedy Accepted!'
         ],
 
         'messaged-users' => [
