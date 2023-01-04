@@ -294,7 +294,7 @@ return [
     'has Contacted You.'                                    => 'has Contacted You.',
     'Account Deleted'                                       => 'Account Deleted',
     'has Deleted His/Her Account.'                          => 'has Deleted His/Her Account.',
-    'You have a Chat Request From'                          => 'You have a Chat Request From',
+    'You Have a Chat Request From'                          => 'You Have a Chat Request From',
     'To Accept His/Her Chat Request, Click on the Link Below' => 'To Accept His/Her Chat Request, Click on the Link Below',
     'Chat Request'                                          => 'Chat Request',
     'Your Chat Request is Accepted By'                      => 'Your Chat Request is Accepted By',
