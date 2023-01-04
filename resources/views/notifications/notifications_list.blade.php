@@ -32,6 +32,7 @@
                         @endif
                     </tbody>
                 </table>
+                {!!$records->withQueryString()->links('pagination::bootstrap-5')!!}
             </div>
        </div>
     </div>
