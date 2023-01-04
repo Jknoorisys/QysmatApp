@@ -402,7 +402,7 @@ class Chat extends Controller
             if (empty($not_in_list1) && empty($not_in_list2) && empty($not_in_list3)) {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.singletons.send-message.failure'),
+                    'message'   => __('msg.singletons.start-chat.failure'),
                 ],400);
             }
 
