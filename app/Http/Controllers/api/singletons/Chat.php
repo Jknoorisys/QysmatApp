@@ -165,20 +165,19 @@ class Chat extends Controller
         }
 
         try {
-            $list = ChatHistory::where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', $request->user_type]])
-                                ->join('singletons', 'chat_histories.messaged_user_id', '=', 'singletons.id')
-                                ->select('chat_histories.messaged_user_id','singletons.*')
+            $list = ChatHistory::leftJoin('singletons', 'chat_histories.messaged_user_id', '=', 'singletons.id')
+                                ->where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', $request->user_type]])
+                                ->select('chat_histories.messaged_user_id','singletons.*','chat_histories.user_id')
+                                ->orderBy('chat_histories.id', 'desc')
                                 ->distinct()
                                 ->get();
 
             foreach ($list as $key => $value) {
-                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', $request->user_type]])
-                                        ->join('singletons', 'chat_histories.messaged_user_id', '=', 'singletons.id')
+                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'singleton']])
+                                        ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', $request->user_type]])                        
                                         ->select('chat_histories.message')
-                                        // ->orderBy('chat_histories.created_at', 'desc')
-                                        // ->latest('chat_histories.created_at')
-                                        // ->first();
-                                        ->get()->last();
+                                        ->orderBy('chat_histories.id', 'desc')
+                                        ->first();
 
                 $list[$key]->last_message = $last_message->message;
             }

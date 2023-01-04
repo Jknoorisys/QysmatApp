@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('singleton_id');
             $table->integer('matched_id');
             $table->enum('chat_in_progress',['0','1'])->default(0);
+            $table->enum('accept_chat',['yes','no'])->default('no');
             $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');
             $table->timestamps();
         });
