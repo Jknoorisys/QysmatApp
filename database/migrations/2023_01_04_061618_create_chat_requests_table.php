@@ -13,14 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('referred_matches', function (Blueprint $table) {
+        Schema::create('chat_requests', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->integer('singleton_id');
-            $table->integer('referred_match_id');
-            $table->enum('chat_in_progress',['0','1'])->default(0);
-            $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');
+            $table->integer('requested_user_id');
+            $table->enum('status',['pending','accepted','rejected'])->default('pending');
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('referred_matches');
+        Schema::dropIfExists('chat_requests');
     }
 };

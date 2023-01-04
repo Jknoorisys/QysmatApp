@@ -5,13 +5,17 @@ namespace App\Http\Controllers\api\singletons;
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
 use App\Models\ChatHistory;
+use App\Models\ChatRequest as ModelsChatRequest;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\RecievedMatches;
 use App\Models\ReferredMatches;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
 use App\Models\UnMatches;
+use App\Notifications\AcceptChatRequest;
+use App\Notifications\ChatRequest;
 use App\Notifications\ReferNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -88,11 +92,33 @@ class Chat extends Controller
                 ],400);
             }
 
+            $not_in_list1 = MyMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['matched_id', '=', $request->messaged_user_id]])->first();
+            $not_in_list2 = ReferredMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['referred_match_id', '=', $request->messaged_user_id]])->first();
+            $not_in_list3 = RecievedMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['recieved_match_id', '=', $request->messaged_user_id]])->first();
+
+            if (empty($not_in_list1) && empty($not_in_list2) && empty($not_in_list3)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.failure'),
+                ],400);
+            }
+
             $chat = MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['chat_in_progress', '=', '1'],['matched_id', '!=', $request->messaged_user_id]])->first();
-            if (!empty($chat)) {
+            $chat1 = ReferredMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['chat_in_progress', '=', '1'],['referred_match_id', '!=', $request->messaged_user_id]])->first();
+            $chat2 = RecievedMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['chat_in_progress', '=', '1'],['recieved_match_id', '!=', $request->messaged_user_id]])->first();
+            if (!empty($chat) || !empty($chat1) || !empty($chat2)) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.send-message.invalid'),
+                ],400);
+            }
+
+            $not_accepted = ModelsChatRequest ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['requested_user_id', '=', $request->messaged_user_id], ['status', '!=', 'accepted']])->first();
+            
+            if (!empty($not_accepted)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.not-accepted'),
                 ],400);
             }
 
@@ -319,7 +345,106 @@ class Chat extends Controller
 
     public function startChat(Request $request)
     {
-        # code...
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'  => 'required||numeric',
+            'user_type' => [
+                'required' ,
+                Rule::in(['singleton']),
+            ],
+            'messaged_user_id'  => 'required||numeric',
+            'messaged_user_type' => [
+                'required' ,
+                Rule::in(['singleton']),
+            ]
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+            $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $request->messaged_user_id], ['blocked_user_type', '=', 'singleton']])->first();
+            if (!empty($block)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.blocked'),
+                ],400);
+            }
+
+            $report = ModelsReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $request->messaged_user_id], ['reported_user_type', '=', 'singleton']])->first();
+            if (!empty($report)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.reported'),
+                ],400);
+            }
+
+            $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->messaged_user_id]])->first();
+            if (!empty($unMatch)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.un-matched'),
+                ],400);
+            }
+
+            $not_in_list1 = MyMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['matched_id', '=', $request->messaged_user_id]])->first();
+            $not_in_list2 = ReferredMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['referred_match_id', '=', $request->messaged_user_id]])->first();
+            $not_in_list3 = RecievedMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['recieved_match_id', '=', $request->messaged_user_id]])->first();
+
+            if (empty($not_in_list1) && empty($not_in_list2) && empty($not_in_list3)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.failure'),
+                ],400);
+            }
+
+            $chat = MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['chat_in_progress', '=', '1'],['matched_id', '!=', $request->messaged_user_id]])->first();
+            $chat1 = ReferredMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['chat_in_progress', '=', '1'],['referred_match_id', '!=', $request->messaged_user_id]])->first();
+            $chat2 = RecievedMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['chat_in_progress', '=', '1'],['recieved_match_id', '!=', $request->messaged_user_id]])->first();
+            if (!empty($chat) || !empty($chat1) || !empty($chat2)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.send-message.invalid'),
+                ],400);
+            }
+
+            $data = [
+                'user_id' => $request->login_id,
+                'user_type' => $request->user_type,
+                'requested_user_id' => $request->messaged_user_id
+            ];
+
+            $insert = DB::table('chat_requests')->insert($data);
+            if ($insert) {
+                $user = Singleton::where([['id','=',$request->messaged_user_id],['status','=','Unblocked']])->first();
+                $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+                $user->notify(new ChatRequest($singleton, $user->user_type));
+
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.singletons.start-chat.success'),
+                ],200);
+            } else {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.start-chat.failure'),
+                ],400);
+            }
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
     }
 
     public function inviteParent(Request $request)
@@ -385,6 +510,67 @@ class Chat extends Controller
                 ],400);
             }
         } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function acceptChatRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'  => 'required||numeric',
+            'requested_user_id'  => 'required||numeric',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+            $requested = DB::table('chat_requests')->where([['user_id', '=', $request->requested_user_id], ['user_type', '=', 'singleton'], ['requested_user_id', '=', $request->login_id]])->first();
+            if (!empty($requested)) {
+                if ($requested->status != 'accepted') {
+                    $update = DB::table('chat_requests')->where([['user_id', '=', $request->requested_user_id], ['user_type', '=', 'singleton'], ['requested_user_id', '=', $request->login_id]])->update(['status' => 'accepted']);
+
+                   if ($update) {
+                        $user = Singleton::where([['id','=', $request->login_id],['status','=','Unblocked']])->first();
+                        $singleton = Singleton::where([['id','=', $request->requested_user_id],['status','=','Unblocked']])->first();
+                        $user->notify(new AcceptChatRequest($singleton, $user->user_type));
+
+                        return response()->json([
+                            'status'    => 'success',
+                            'message'   => __('msg.singletons.accept-chat-request.success'),
+                        ],200);
+                   } else {
+                        return response()->json([
+                            'status'    => 'failed',
+                            'message'   => __('msg.singletons.accept-chat-request.failure'),
+                        ],400);
+                   }
+                } else {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.accept-chat-request.accepted'),
+                    ],400);
+                }
+            } else {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.accept-chat-request.invalid'),
+                ],400);
+            }
+        } catch (\Throwable $e) {
             return response()->json([
                 'status'    => 'failed',
                 'message'   => __('msg.error'),
