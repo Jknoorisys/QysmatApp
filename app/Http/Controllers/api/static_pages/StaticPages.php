@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\static_pages;
 
 use App\Http\Controllers\Controller;
+use App\Models\Faqs;
 use App\Models\StaticPages as ModelsStaticPages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -45,7 +46,7 @@ class StaticPages extends Controller
 
         try {
             if ($request->page_name == 'faqs') {
-                $page = ModelsStaticPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->get();
+                $page = Faqs::where('status','=','Active')->get();
                 if(!$page->isEmpty()){
                     return response()->json([
                         'status'    => 'success',
