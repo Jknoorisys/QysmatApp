@@ -56,6 +56,20 @@ class ResetProfileSearch extends Controller
         }
 
         try {
+
+            if ($request->user_type == 'singleton') {
+                $premium = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+            } else {
+                $premium = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+            }
+
+            if ($premium->active_subscription_id == '1') {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.reset-profile.premium'),
+                ],400);
+            }
+            
             // $match = MyMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
             $unmatch = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->get();
             // $refer = ReferredMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
