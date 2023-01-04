@@ -56,20 +56,28 @@ class ResetProfileSearch extends Controller
         }
 
         try {
-            $match = MyMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
-            $unmatch = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
-            $refer = ReferredMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
-            $received = RecievedMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+            // $match = MyMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+            $unmatch = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->get();
+            // $refer = ReferredMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+            // $received = RecievedMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
 
-            if($match || $unmatch || $refer || $received){
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.reset-profile.success'),
-                ],200);
+            if(!$unmatch->isEmpty()){
+                $delete = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+                if ($delete) {
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.reset-profile.success'),
+                    ],200);
+                } else {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.reset-profile.failure'),
+                    ],400);
+                }
             }else {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.reset-profile.failure'),
+                    'message'   => __('msg.reset-profile.invalid'),
                 ],400);
             }
 
