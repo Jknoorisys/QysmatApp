@@ -424,7 +424,7 @@ class Chat extends Controller
 
             $insert = DB::table('chat_requests')->insert($data);
             if ($insert) {
-                $user = Singleton::where([['id','=',$request->messaged_user_id],['status','=','Unblocked']])->first();
+                $user = Singleton::where([['id','=', $request->messaged_user_id],['status','!=','Deleted']])->first();
                 $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
                 $user->notify(new ChatRequest($singleton, $user->user_type));
 
@@ -544,8 +544,8 @@ class Chat extends Controller
                     $update = DB::table('chat_requests')->where([['user_id', '=', $request->requested_user_id], ['user_type', '=', 'singleton'], ['requested_user_id', '=', $request->login_id]])->update(['status' => 'accepted']);
 
                    if ($update) {
-                        $user = Singleton::where([['id','=', $request->login_id],['status','=','Unblocked']])->first();
-                        $singleton = Singleton::where([['id','=', $request->requested_user_id],['status','=','Unblocked']])->first();
+                        $user = Singleton::where([['id','=', $request->requested_user_id],['status','!=','Deleted']])->first();
+                        $singleton = Singleton::where([['id','=', $request->login_id],['status','=','Unblocked']])->first();
                         $user->notify(new AcceptChatRequest($singleton, $user->user_type));
 
                         return response()->json([
