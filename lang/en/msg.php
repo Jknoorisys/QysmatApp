@@ -348,6 +348,7 @@ return [
     'reset-profile' => [
         'success' => 'Profile Search Reset Successfully!',
         'failure' => 'Unable to Reset Profile Search, Please Try Again...',
+        'invalid' => 'No User found in Your Un-Match List, Please Try Again...',
     ],
 
     'static-pages' => [
@@ -630,6 +631,7 @@ return [
             'blocked' => 'You have Blocked this User!',
             'reported' => 'You have Reported this User!',
             'un-matched' => 'You have Un-Matched this User!',
+            'not-accepted' => 'Chat Request Not Accepted!'
         ],
 
         'messaged-users' => [
