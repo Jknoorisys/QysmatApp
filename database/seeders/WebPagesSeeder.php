@@ -76,56 +76,6 @@ class WebPagesSeeder extends Seeder
                 'page_title' => 'iOS App Store',
                 'created_at' => date('Y-m-d H:i:s')
             ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
         ]);
     }
 }

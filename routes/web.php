@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin;
 use App\Http\Controllers\admin\ContactDetails;
 use App\Http\Controllers\admin\Dashboard;
 use App\Http\Controllers\admin\DeletedUsers;
+use App\Http\Controllers\admin\FAQS;
 use App\Http\Controllers\admin\Notifications;
 use App\Http\Controllers\admin\ParentsController;
 use App\Http\Controllers\admin\Quotes;
@@ -86,6 +87,16 @@ Route::any('addWebPage' , [WebPages::class, 'addWebPage'])->middleware('isLogged
 Route::post('addWebPageFun' , [WebPages::class, 'addWebPageFun'])->middleware('isLoggedIn')->name('addWebPageFun');
 Route::post('updateWebPage' , [WebPages::class, 'updateWebPage'])->middleware('isLoggedIn')->name('updateWebPage');
 Route::post('updateWebPageFun' , [WebPages::class, 'updateWebPageFun'])->middleware('isLoggedIn')->name('updateWebPageFun');
+
+// Manage FAQs
+Route::any('faqs' , [FAQS::class, 'index'])->middleware('isLoggedIn')->name('faqs');
+Route::post('changeFAQStatus' , [FAQS::class, 'changeFAQStatus'])->middleware('isLoggedIn')->name('changeFAQStatus');
+Route::post('deletePage' , [FAQS::class, 'deletePage'])->middleware('isLoggedIn')->name('deletePage');
+Route::any('addFAQ' , [FAQS::class, 'addFAQ'])->middleware('isLoggedIn')->name('addFAQ');
+Route::post('addFAQFun' , [FAQS::class, 'addFAQFun'])->middleware('isLoggedIn')->name('addFAQFun');
+Route::post('updateFAQ' , [FAQS::class, 'updateFAQ'])->middleware('isLoggedIn')->name('updateFAQ');
+Route::post('updateFAQFun' , [FAQS::class, 'updateFAQFun'])->middleware('isLoggedIn')->name('updateFAQFun');
+Route::any('deleteFAQ' , [FAQS::class, 'deleteFAQ'])->middleware('isLoggedIn')->name('deleteFAQ');
 
 // Manage Quotes
 Route::any('quotes' , [Quotes::class, 'index'])->middleware('isLoggedIn')->name('quotes');
