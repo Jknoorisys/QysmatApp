@@ -63,6 +63,7 @@ class ChatRequest extends Notification
             'email'     => $this->user->email,
             'title'     => __('msg.Chat Request'),
             'msg'       => __('msg.You have a Chat Request From').' '.$this->user->name,
+            'status'    => 'Pending',
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

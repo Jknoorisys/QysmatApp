@@ -63,6 +63,7 @@ class AcceptChatRequest extends Notification
             'email'     => $this->user->email,
             'title'     => __('msg.Chat Request Accepted'),
             'msg'       => __('msg.Your Chat Request is Accepted By').' '.$this->user->name,
+            'status'    => 'Accepted',
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }
