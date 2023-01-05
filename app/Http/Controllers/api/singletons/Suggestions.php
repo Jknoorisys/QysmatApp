@@ -33,7 +33,7 @@ class Suggestions extends Controller
             if (empty($user) || $user->status != 'Unblocked') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.User Not Found!'),
+                    'message'   => __('msg.helper.not-found'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -42,7 +42,7 @@ class Suggestions extends Controller
             if (empty($user) || $user->is_verified != 'verified') {
                 $response = [
                     'status'    => 'failed',
-                    'message'   => __('msg.Profile not Verified, Please Try After Some Time...'),
+                    'message'   => __('msg.helper.not-verified'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -255,7 +255,7 @@ class Suggestions extends Controller
                     }
 
                     $premium = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-                    if ($premium->active_subscription_id == '1') {
+                    if (!empty($premium) && $premium->active_subscription_id == '1') {
                         $users = array_slice($users, 0, 5, true);
                     }
 

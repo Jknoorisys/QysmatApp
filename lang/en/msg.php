@@ -784,8 +784,6 @@ return [
         'not-verified' => 'Profile not Verified, Please Try After Some Time...',
         'singleton-not-linked' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         'parent-not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
-        'not-found' => '',
-        'not-found' => '',
     ],
 
 ];
