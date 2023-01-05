@@ -126,7 +126,7 @@
 
                 <li class="sidebar-item">
                     <a class="sidebar-link waves-effect waves-dark" href="{{route('faqs')}}" aria-expanded="false">
-                        <i class="fas fa-newspaper"></i>
+                        <i class="fa-solid fa-person-circle-question"></i>
                         <span class="hide-menu sidebar-title"> {{__('msg.Manage FAQs')}} </span>
                     </a>
                 </li>
