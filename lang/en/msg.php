@@ -205,6 +205,23 @@ return [
     'Description'                        => 'Description',
     'Short Description'                  => 'Short Description',
 
+    // Manage FAQs
+    'Manage FAQs'                        => 'Manage FAQs',
+    'Question'                           => 'Question',
+    'Answer'                             => 'Answer',
+    'Add Web Page'                       => 'Add Web Page',
+    'Enter Question'                     => 'Enter Question',
+    'Enter Answer'                       => 'Enter Answer',
+    'FAQ Inactivated'                    => 'FAQ Inactivated',
+    'FAQ Activated'                      => 'FAQ Activated',
+    'Update FAQ'                         => 'Update FAQ',
+    'Add FAQ'                            => 'Add FAQ',
+    'Question is Required'               => 'Question is Required',
+    'Answer is Required'                 => 'Answer is Required',
+    'FAQ Added!'                         => 'FAQ Added!',
+    'FAQ Updated!'                       => 'FAQ Updated!',
+    'FAQ Deleted!'                       => 'FAQ Deleted!',
+
     // Subscription Plans
     'Only 5 Profile Views per day'                  => 'Only 5 Profile Views per day',
     'Unrestricted profile search criteria'          => 'Unrestricted profile search criteria',

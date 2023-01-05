@@ -31,56 +31,6 @@ class StaticPagesSeeder extends Seeder
                 'page_title' => 'Terms And Conditions',
                 'created_at' => date('Y-m-d H:i:s')
             ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'faqs',
-                'page_title' => 'FAQs',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
     ]);
     }
 }
