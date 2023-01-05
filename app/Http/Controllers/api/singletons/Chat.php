@@ -271,13 +271,16 @@ class Chat extends Controller
                                 ->offset(($page_number - 1) * $per_page)
                                 ->limit($per_page)
                                 ->get();
+            
+            $status = ModelsChatRequest::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_user_id', '=', $request->messaged_user_id]])->first();
 
             if(!$chat->isEmpty()){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.chat-history.success'),
                     'data'      => $chat,
-                    'total'     => $total
+                    'total'     => $total,
+                    'request_status'    => $status ? $status->status : 'No Request Found!',
                 ],200);
             }else{
                 return response()->json([
