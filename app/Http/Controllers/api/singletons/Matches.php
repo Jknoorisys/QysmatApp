@@ -7,6 +7,8 @@ use App\Models\BlockList;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\RecievedMatches;
+use App\Models\ReferredMatches;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\UnMatches;
@@ -65,10 +67,23 @@ class Matches extends Controller
                 ],400);
             }
 
-            $matchExists = MyMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['matched_id', '=', $request->un_matched_id]])->first();
+            $matchExists = MyMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', '0'],['matched_id', '=', $request->un_matched_id]])->first();
+            $receievdMatchExists = RecievedMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', '0'],['recieved_match_id', '=', $request->un_matched_id]])->first();
+            $referredMatchExists = ReferredMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', '0'],['referred_match_id', '=', $request->un_matched_id]])->first();
 
-            if(!empty($matchExists)){
-                MyMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['matched_id', '=', $request->un_matched_id]])->delete();
+            if(!empty($matchExists) || !empty($receievdMatchExists) || !empty($referredMatchExists)){
+                if (!empty($matchExists)) {
+                    MyMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', '0'],['matched_id', '=', $request->un_matched_id]])->delete();
+                }
+
+                if (!empty($receievdMatchExists)) {
+                    RecievedMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', '0'],['recieved_match_id', '=', $request->un_matched_id]])->delete();
+                }
+
+                if (!empty($referredMatchExists)) {
+                    ReferredMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', '0'],['referred_match_id', '=', $request->un_matched_id]])->delete();
+                }
+
                 $user = new UnMatches();
                 $user->un_matched_id             = $request->un_matched_id;
                 $user->user_id                   = $request->login_id;
