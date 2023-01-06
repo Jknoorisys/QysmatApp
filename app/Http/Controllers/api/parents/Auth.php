@@ -7,6 +7,7 @@ use App\Models\ParentsModel;
 use App\Models\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -601,6 +602,17 @@ class Auth extends Controller
                 if($request->social_id == $user->social_id){
                     if($user->is_email_verified == 'verified'){
                         ParentsModel::where('email','=',$request->email)->update(['device_type' => $request->device_type, 'device_token' => $request->device_token, 'fcm_token' => $request->fcm_token]);
+                        $profiles = DB::table('parent_children')
+                                        ->where([['parent_id','=',$user->id], ['status', '=', 'Linked']])
+                                        ->get(['parent_children.singleton_id']);
+
+                        if (!$profiles->isEmpty()) {
+                            foreach ($profiles as $key => $value) {
+                                $singleton_id[] = $value->singleton_id;
+                            }
+                            $user['linked_singleton_ids'] = $singleton_id;
+                        }
+
                         return response()->json([
                             'status'    => 'success',
                             'message'   => __('msg.parents.login.success'),
@@ -672,6 +684,17 @@ class Auth extends Controller
                 if(Hash::check($request->password, $user->password)){
                     if($user->is_email_verified == 'verified'){
                         ParentsModel::where('email','=',$request->email)->update(['device_type' => $request->device_type, 'device_token' => $request->device_token, 'fcm_token' => $request->fcm_token]);
+                        $profiles = DB::table('parent_children')
+                                        ->where([['parent_id','=',$user->id], ['status', '=', 'Linked']])
+                                        ->get(['parent_children.singleton_id']);
+                                        
+                        if (!$profiles->isEmpty()) {
+                            foreach ($profiles as $key => $value) {
+                                $singleton_id[] = $value->singleton_id;
+                            }
+                            $user['linked_singleton_ids'] = $singleton_id;
+                        }
+
                         return response()->json([
                             'status'    => 'success',
                             'message'   => __('msg.parents.login.success'),

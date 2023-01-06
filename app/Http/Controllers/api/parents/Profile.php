@@ -364,7 +364,7 @@ class Profile extends Controller
 
         try {
             $profiles = DB::table('parent_children')
-                        ->where('parent_children.parent_id','=',$request->login_id)
+                        ->where([['parent_children.parent_id','=',$request->login_id], ['parent_children.status', '=', 'Linked']])
                         ->join('singletons', 'singletons.id', '=', 'parent_children.singleton_id')
                         ->select('singletons.*')
                         ->get();
@@ -413,6 +413,7 @@ class Profile extends Controller
             $profiles = DB::table('parent_children')
                         ->where('parent_children.parent_id','=',$request->login_id)
                         ->where('singletons.id','=',$request->singleton_id)
+                        ->where('parent_children.status','=', 'Linked')
                         ->join('singletons', 'singletons.id', '=', 'parent_children.singleton_id')
                         ->select('singletons.*')
                         ->first();
