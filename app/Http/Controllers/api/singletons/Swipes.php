@@ -113,6 +113,22 @@ class Swipes extends Controller
 
                 $user = Singleton::where([['id','=',$request->swiped_user_id],['status','!=','Deleted']])->first();
                 $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+
+                if (isset($user) && !empty($user)) {
+                    $title = __('msg.New Message');
+                    $message = __('msg.You hav a New Match Request!');
+                    $fcm_regid[] = $user->fcm_token;
+                    $notification = array(
+                        'title'         => $title,
+                        'message'       => $message,
+                        'click_action'  => 'FLUTTER_NOTIFICATION_CLICK',
+                        'date'          => date('Y-m-d H:i'),
+                        'type'          => 'verification',
+                        'response'      => ''
+                    );
+                    $result = sendFCMNotification($notification, $fcm_regid, 'verification');
+                }
+
                 $user->notify(new MatchNotification($singleton, $user->user_type, 0));
 
                 $swipe = LastSwipe::updateOrCreate(

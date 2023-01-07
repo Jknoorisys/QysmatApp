@@ -73,6 +73,21 @@ class Singletons extends Controller
         $verified =  Singleton :: whereId($id)->update(['is_verified' => $is_verified, 'updated_at' => date('Y-m-d H:i:s')]);
         if ($verified) {
             if ($is_verified == 'verified') {
+                $reciever = Singleton::where([['id', '=', $id], ['status', '=', 'Unblocked']])->first();
+                if (isset($reciever) && !empty($reciever)) {
+                    $title = __('msg.New Message');
+                    $message = __('msg.Your Profile is Verified by Admin Successfully!');
+                    $fcm_regid[] = $reciever->fcm_token;
+                    $notification = array(
+                        'title'         => $title,
+                        'message'       => $message,
+                        'click_action'  => 'FLUTTER_NOTIFICATION_CLICK',
+                        'date'          => date('Y-m-d H:i'),
+                        'type'          => 'verification',
+                        'response'      => ''
+                    );
+                    $result = sendFCMNotification($notification, $fcm_regid, 'verification');
+                }
                 return redirect()->to('sigletons')->with('success', __('msg.Singleton Profile Verified Successfully'));
             } else {
                 return redirect()->to('sigletons')->with('success', __('msg.Singleton Profile Rejected Successfully'));
