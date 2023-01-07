@@ -74,6 +74,21 @@ class ParentsController extends Controller
         $verified =  ParentsModel :: whereId($id)->update(['is_verified' => $is_verified, 'updated_at' => date('Y-m-d H:i:s')]);
         if ($verified) {
             if ($is_verified == 'verified') {
+                $reciever = ParentsModel::where([['id', '=', $id], ['status', '=', 'Unblocked']])->first();
+                if (isset($reciever) && !empty($reciever)) {
+                    $title = __('msg.New Message');
+                    $message = __('msg.Your Profile is Verified by Admin Successfully!');
+                    $fcm_regid[] = $reciever->fcm_token;
+                    $notification = array(
+                        'title'         => $title,
+                        'message'       => $message,
+                        'click_action'  => 'FLUTTER_NOTIFICATION_CLICK',
+                        'date'          => date('Y-m-d H:i'),
+                        'type'          => 'verification',
+                        'response'      => ''
+                    );
+                    $result = sendFCMNotification($notification, $fcm_regid, 'verification');
+                }
                 return redirect()->to('parents')->with('success', __('msg.Parents Profile Verified Successfully'));
             } else {
                 return redirect()->to('parents')->with('success', __('msg.Parents Profile Rejected Successfully'));

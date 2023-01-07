@@ -319,6 +319,8 @@ return [
 
     // FCM Notifications
     'New Message'                                           => 'New Message',
+    'Your Profile is Verified by Admin Successfully!'       => 'Your Profile is Verified by Admin Successfully!',
+    'You hav a New Match Request!'                          => 'You hav a New Match Request!',
 
     // API
     'Validation Failed!'                    => 'Validation Failed!',

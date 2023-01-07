@@ -115,6 +115,21 @@ class Swipes extends Controller
 
                 $user = ParentsModel::where([['id','=',$parent->parent_id],['status','!=','Deleted']])->first();
                 $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+                if (isset($user) && !empty($user)) {
+                    $title = __('msg.New Message');
+                    $message = __('msg.You hav a New Match Request!');
+                    $fcm_regid[] = $user->fcm_token;
+                    $notification = array(
+                        'title'         => $title,
+                        'message'       => $message,
+                        'click_action'  => 'FLUTTER_NOTIFICATION_CLICK',
+                        'date'          => date('Y-m-d H:i'),
+                        'type'          => 'verification',
+                        'response'      => ''
+                    );
+                    $result = sendFCMNotification($notification, $fcm_regid, 'verification');
+                }
+
                 $user->notify(new MatchNotification($parent, $user->user_type, $request->swiped_user_id));
 
                 $swipe = LastSwipe::updateOrCreate(
