@@ -283,9 +283,11 @@ class Chat extends Controller
                     'request_status'    => $status ? $status->status : 'No Request Found!',
                 ],200);
             }else{
+                $status = ModelsChatRequest::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_user_id', '=', $request->messaged_user_id]])->first();
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.chat-history.failure'),
+                    'request_status'    => $status ? $status->status : 'No Request Found!',
                 ],400);
             }
         } catch (\Exception $e) {
