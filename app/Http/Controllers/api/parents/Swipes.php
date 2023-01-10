@@ -215,7 +215,7 @@ class Swipes extends Controller
                         } else {
                             return response()->json([
                                 'status'    => 'failed',
-                                'message'   => __('msg.parents.swipes.down'),
+                                'message'   => __('msg.parents.swips.down'),
                             ],400);
                         }
                     }else{
