@@ -205,7 +205,7 @@ class Swipes extends Controller
                         } else {
                             return response()->json([
                                 'status'    => 'failed',
-                                'message'   => __('msg.singletons.swips.invalid'),
+                                'message'   => __('msg.singletons.swips.down'),
                             ],400);
                         }
                     }else{
