@@ -155,20 +155,21 @@ class Matches extends Controller
             $match = DB::table('my_matches')
                             ->where([['my_matches.user_id', '=', $request->login_id], ['my_matches.user_type', '=', $request->user_type], ['my_matches.singleton_id', '=', $request->singleton_id]])
                             ->join('singletons', 'my_matches.matched_id', '=', 'singletons.id')
+                            ->join('parents', 'singletons.parent_id', '=', 'parents.id')
                             ->offset(($page_number - 1) * $per_page)
                             ->limit($per_page)
-                            ->get(['my_matches.user_id','my_matches.user_type','singletons.*']);
+                            ->get(['my_matches.user_id','my_matches.user_type','singletons.*','parents.name as parent_name', 'parents.profile_pic as parent_profile_pic', 'parents.relation_with_singleton']);
 
             if(!$match->isEmpty()){
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
+
                     $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                     $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                     $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
-                    $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
 
-                    if (empty($block) && empty($report) && empty($unMatch) && empty($Match)) {
+                    if (empty($block) && empty($report) && empty($unMatch) ) {
                         $users[] = $m;
                     }
                 }
@@ -237,9 +238,10 @@ class Matches extends Controller
             $match = DB::table('recieved_matches')
                         ->where([['recieved_matches.user_id', '=', $request->login_id], ['recieved_matches.user_type', '=', $request->user_type], ['recieved_matches.singleton_id', '=', $request->singleton_id]])
                         ->join('singletons','recieved_matches.recieved_match_id','=','singletons.id')
+                        ->join('parents', 'singletons.parent_id', '=', 'parents.id')
                         ->offset(($page_number - 1) * $per_page)
                         ->limit($per_page)
-                        ->get(['recieved_matches.user_id','recieved_matches.user_type','recieved_matches.singleton_id','singletons.*']);
+                        ->get(['recieved_matches.user_id','recieved_matches.user_type','recieved_matches.singleton_id','singletons.*','parents.name as parent_name', 'parents.profile_pic as parent_profile_pic', 'parents.relation_with_singleton']);
 
             if(!$match->isEmpty()){
                 $users = [];
@@ -248,9 +250,8 @@ class Matches extends Controller
                     $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                     $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                     $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
-                    $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
 
-                    if (empty($block) && empty($report) && empty($unMatch) && empty($Match)) {
+                    if (empty($block) && empty($report) && empty($unMatch)) {
                         $users[] = $m;
                     }
                 }
@@ -319,9 +320,10 @@ class Matches extends Controller
             $match = DB::table('referred_matches')
                     ->where([['referred_matches.user_id', '=', $request->login_id], ['referred_matches.user_type', '=', $request->user_type], ['referred_matches.singleton_id', '=', $request->singleton_id]])
                     ->join('singletons', 'referred_matches.referred_match_id', '=', 'singletons.id')
+                    ->join('parents', 'singletons.parent_id', '=', 'parents.id')
                     ->offset(($page_number - 1) * $per_page)
                     ->limit($per_page)
-                    ->get(['referred_matches.user_id','referred_matches.user_type','referred_matches.singleton_id','singletons.*']);
+                    ->get(['referred_matches.user_id','referred_matches.user_type','referred_matches.singleton_id','singletons.*','parents.name as parent_name', 'parents.profile_pic as parent_profile_pic', 'parents.relation_with_singleton']);
 
             if(!$match->isEmpty()){
                 $users = [];
@@ -330,9 +332,8 @@ class Matches extends Controller
                     $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                     $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                     $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
-                    $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
 
-                    if (empty($block) && empty($report) && empty($unMatch) && empty($Match)) {
+                    if (empty($block) && empty($report) && empty($unMatch)) {
                         $users[] = $m;
                     }
                 }
