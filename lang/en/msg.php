@@ -583,6 +583,7 @@ return [
             'un-matched' => 'You have Un-Matched this User!',
             'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
             'premium' => 'Premium Feature',
+            'down'    => 'Down Swipe within Down swipe is not Applicable!'
         ],
     ],
 
@@ -778,6 +779,7 @@ return [
             'un-matched' => 'You have Un-Matched this User!',
             'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
             'premium' => 'Premium Feature',
+            'down'    => 'Down Swipe within Down swipe is not Applicable!'
         ],
     ],
 
