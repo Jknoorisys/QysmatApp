@@ -705,19 +705,19 @@ return [
         'match' => [
             'success' => 'Matches List Fetched Successfully!',
             'failure' => 'No Match Found!',
-            'invalid' => 'No Suggestions Found!',
+            'invalid' => 'No Record Found!',
         ],
 
         'received-match' => [
             'success' => 'Recieved Matches List Fetched Successfully!',
             'failure' => 'No Match Found!',
-            'invalid' => 'No Suggestions Found!',
+            'invalid' => 'No Record Found!',
         ],
 
         'referred-match' => [
             'success' => 'Reffered Matches List Fetched Successfully!',
             'failure' => 'No Match Found!',
-            'invalid' => 'No Suggestions Found!',
+            'invalid' => 'No Record Found!',
         ],
 
         'notifications' => [
