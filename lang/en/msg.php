@@ -483,7 +483,7 @@ return [
         'invitation' => [
             'success' => 'Invitation Sent...',
             'failure' => "Unable to Send Invitation, Please Try Again...",
-            'invalid' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+            'invalid' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         ],
 
         'un-match' => [
@@ -786,7 +786,7 @@ return [
     'helper' => [
         'not-found' => 'User Not Found!',
         'not-verified' => 'Profile not Verified, Please Try After Some Time...',
-        'singleton-not-linked' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+        'singleton-not-linked' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         'parent-not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
     ],
 
