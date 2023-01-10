@@ -180,6 +180,10 @@ class Chat extends Controller
                                 ->get();
 
             foreach ($list as $key => $value) {
+                $block = BlockList::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['singleton_id', '=', $request->singleton_id],['blocked_user_id', '=', $value->messaged_user_id],['blocked_user_type', '=', 'parent']])->first();
+                $report = ModelsReportedUsers::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['singleton_id', '=', $request->singleton_id],['reported_user_id', '=', $value->messaged_user_id],['reported_user_type', '=', 'parent']])->first();
+                $unMatch = UnMatches::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['singleton_id', '=', $request->singleton_id],['un_matched_id', '=', $value->messaged_user_singleton_id]])->first();
+
                 $last_message = ChatHistory::join('parents', 'chat_histories.messaged_user_id', '=', 'parents.id')
                                             ->where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.singleton_id', '=', $request->singleton_id],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'parent']])
                                             ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', $request->user_type],['chat_histories.singleton_id', '=', $value->messaged_user_singleton_id],])                        
@@ -188,6 +192,11 @@ class Chat extends Controller
                                             ->first();
 
                 $list[$key]->last_message = $last_message->message;
+                if (!empty($block) || !empty($report) || !empty($unMatch)) {
+                    $list[$key]->chat_status = 'disabled';
+                }else{
+                    $list[$key]->chat_status = 'enabled';
+                }
             }
 
             if(!$list->isEmpty()){

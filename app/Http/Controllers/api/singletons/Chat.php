@@ -197,8 +197,13 @@ class Chat extends Controller
                                 ->orderBy('chat_histories.id', 'desc')
                                 ->distinct()
                                 ->get();
+                                // return $list;exit;
 
             foreach ($list as $key => $value) {
+                $block = BlockList::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['blocked_user_id', '=', $value->messaged_user_id],['blocked_user_type', '=', 'singleton']])->first();
+                $report = ModelsReportedUsers::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['reported_user_id', '=', $value->messaged_user_id],['reported_user_type', '=', 'singleton']])->first();
+                $unMatch = UnMatches::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['un_matched_id', '=', $value->messaged_user_id]])->first();
+
                 $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'singleton']])
                                         ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', $request->user_type]])                        
                                         ->select('chat_histories.message')
@@ -206,7 +211,14 @@ class Chat extends Controller
                                         ->first();
 
                 $list[$key]->last_message = $last_message->message;
-            }
+                
+                if (!empty($block) || !empty($report) || !empty($unMatch)) {
+                    $list[$key]->chat_status = 'disabled';
+                }else{
+                    $list[$key]->chat_status = 'enabled';
+                }
+            }                
+
 
             if(!$list->isEmpty()){
                 return response()->json([
