@@ -72,11 +72,11 @@ class DeleteUser extends Controller
 
             if($user_details){
                 if($request->user_type == 'singleton'){
-                    $delete =  Singleton :: whereId($request->login_id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
-                    // $delete =  Singleton :: whereId($request->login_id)->delete();
+                    // $delete =  Singleton :: whereId($request->login_id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
+                    $delete =  Singleton :: whereId($request->login_id)->delete();
                 }else{
-                    $delete =  ParentsModel :: whereId($request->login_id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
-                    // $delete =  ParentsModel :: whereId($request->login_id)->delete();
+                    // $delete =  ParentsModel :: whereId($request->login_id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
+                    $delete =  ParentsModel :: whereId($request->login_id)->delete();
                 }
 
                 if ($delete) {
