@@ -72,9 +72,11 @@ class DeleteUser extends Controller
 
             if($user_details){
                 if($request->user_type == 'singleton'){
+                    $user = Singleton::find($request->login_id);
                     // $delete =  Singleton :: whereId($request->login_id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
                     $delete =  Singleton :: whereId($request->login_id)->delete();
                 }else{
+                    $user = ParentsModel::find($request->login_id);
                     // $delete =  ParentsModel :: whereId($request->login_id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
                     $delete =  ParentsModel :: whereId($request->login_id)->delete();
                 }
@@ -82,50 +84,6 @@ class DeleteUser extends Controller
                 if ($delete) {
 
                     $admin = Admin::find(1);
-
-                    if($request->user_type == 'singleton'){
-                        $user = Singleton::find($request->login_id);
-                        // if (File::exists($user->photo1)) {
-                        //     File::delete($user->photo1);
-                        // }
-
-                        // if (File::exists($user->photo2)) {
-                        //     File::delete($user->photo2);
-                        // }
-
-                        // if (File::exists($user->photo3)) {
-                        //     File::delete($user->photo3);
-                        // }
-
-                        // if (File::exists($user->photo4)) {
-                        //     File::delete($user->photo4);
-                        // }
-
-                        // if (File::exists($user->photo5)) {
-                        //     File::delete($user->photo5);
-                        // }
-
-                        // if (File::exists($user->live_photo)) {
-                        //     File::delete($user->live_photo);
-                        // }
-
-                        // if (File::exists($user->id_proof)) {
-                        //     File::delete($user->id_proof);
-                        // }
-                    }else{
-                        $user = ParentsModel::find($request->login_id);
-                        // if (File::exists($user->profile_pic)) {
-                        //     File::delete($user->profile_pic);
-                        // }
-
-                        // if (File::exists($user->live_photo)) {
-                        //     File::delete($user->live_photo);
-                        // }
-
-                        // if (File::exists($user->id_proof)) {
-                        //     File::delete($user->id_proof);
-                        // }
-                    }
 
                     $details = [
                         'title' => __('msg.Account Deleted'),
