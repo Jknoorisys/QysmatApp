@@ -8,7 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Subscriptions extends Model
 {
     use HasFactory;
-    protected $hidden = [
-        'details',
+    protected $fillable = [
+        'id',
+        'subscription_type',
+        'price',
+        'currency',
+        'stripe_plan_id',
+        'status',
+        'created_at',
+        'updated_at'
     ];
 }

@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Laravel\Cashier\Subscription;
+use Stripe\Stripe;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=utf8");
@@ -51,6 +53,7 @@ class SubscriptionPlans extends Controller
             $features = [];
             foreach ($pages as $page) {
                 if ($page->subscription_type == 'Basic') {
+                    $page->price = 'Free';
                     $features = [__("msg.Only 5 Profile Views per day"), __("msg.Unrestricted profile search criteria")];
                 }else {
                     $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant message  (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
@@ -110,6 +113,7 @@ class SubscriptionPlans extends Controller
 
             if(!empty($page)){
                 if ($page->subscription_type == 'Basic') {
+                    $page->price = 'Free';
                     $features = [__("msg.Only 5 Profile Views per day"), __("msg.Unrestricted profile search criteria")];
                 }else {
                     $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant message  (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
@@ -230,4 +234,5 @@ class SubscriptionPlans extends Controller
             ],500);
         }
     }
+
 }

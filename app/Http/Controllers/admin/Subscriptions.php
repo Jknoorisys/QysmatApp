@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Subscriptions as ModelsSubscriptions;
 use Illuminate\Http\Request;
+use Stripe\Plan;
+use Stripe\Stripe;
 
 class Subscriptions extends Controller
 {
@@ -34,6 +36,7 @@ class Subscriptions extends Controller
         $features = [];
         foreach ($data['records'] as $page) {
             if ($page->subscription_type == 'Basic') {
+                $page->price = 'Free';
                 $features = [__("msg.Only 5 Profile Views per day"), __("msg.Unrestricted profile search criteria")];
             }else {
                 $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant message  (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
@@ -85,6 +88,22 @@ class Subscriptions extends Controller
         $update =  ModelsSubscriptions :: whereId($request->id)->update(['subscription_type' => $request->subscription_type, 'price' => $request->price, 'updated_at' => date('Y-m-d H:i:s')]);
         if($update)
         {
+            Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+            $plan = Plan::create(
+                [
+                    'amount' => $request->price * 100,
+                    'currency' => env('STRIPE_CURRENCY'),
+                    'interval' => 'month',
+                    'product'  => [
+                        'name' => strtolower($request->subscription_type)
+                        ]
+                ]
+            );
+
+            if ($plan) {
+                ModelsSubscriptions :: whereId($request->id)->update(['stripe_plan_id' => $plan->id]);
+            }             
+
             return redirect()->to('subscriptions')->with('success', __('msg.Subscription Price Updated!'));
         }else{
             return back()->with('fail', __('msg.Please Try Again....'));
