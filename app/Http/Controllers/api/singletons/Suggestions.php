@@ -204,11 +204,15 @@ class Suggestions extends Controller
                 $gender = $category->gender ? $category->gender : '';
                 $profession = $category->profession ? $category->profession : '';
                 $location = $category->location ? $category->location : '';
-                $height = $category->height ? $category->height : '';
+                // $height = $category->height ? $category->height : '';
                 $islamic_sect = $category->islamic_sect ? $category->islamic_sect : '';
                 $age = $category->age_range ? explode('-',$category->age_range) : '';
                 $min_age = $age ? $age[0] : '' ;
                 $max_age = $age ? $age[1] : '';
+
+                $height = $category->height ? explode('-',$category->height) : '';
+                $min_height = $height ? $height[0] : '' ;
+                $max_height = $height ? $height[1] : '';
 
                 $this->db = DB::table('singletons');
 
@@ -220,8 +224,13 @@ class Suggestions extends Controller
                     $this->db->where('location','=',$location);
                 }
 
-                if(!empty($height)){
-                    $this->db->where('height','=',$height);
+                // if(!empty($height)){
+                //     $this->db->where('height','=',$height);
+                // }
+
+                if(!empty($min_height) && !empty($max_height)){
+                    $this->db->where('height','>=',$min_height);
+                    $this->db->where('height','<=',$max_height);
                 }
 
                 if(!empty($islamic_sect)){

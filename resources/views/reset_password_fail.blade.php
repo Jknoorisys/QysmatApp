@@ -54,7 +54,7 @@
             <div class="auth-box">
                 <div id="loginform">
                     <div class="logo">
-                        <span class="db"><img src="assets/uploads/logo/logo.png" width="120px" height="100px"  alt="logo" /></span>
+                        <span class="db"><img src="{{asset('assets/uploads/logo/logo.png')}}" width="120px" height="100px"  alt="logo" /></span>
                         <h3 class="font-medium m-b-0" style="font-family: 'Times New Roman'; color:#8F7C5C">Qysmat</h3>
                     </div>
                     <!-- Form -->
