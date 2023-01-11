@@ -156,7 +156,9 @@ class Suggestions extends Controller
                 if(!empty($min_height) && !empty($max_height)){
                     // $this->db->where('height','>=',$min_height);
                     // $this->db->where('height','<=',$max_height);
-                    $this->db->whereBetween('age', [$min_height, $max_height]);
+                    // $this->db->whereBetween('height', [$min_height, $max_height]);
+                    $this->db->where('height', 'LIKE', "%$min_height%");
+                    $this->db->orWhere('height', 'LIKE', "%$max_height%");
                 }
 
                 if(!empty($islamic_sect)){
