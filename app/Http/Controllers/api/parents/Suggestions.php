@@ -142,11 +142,11 @@ class Suggestions extends Controller
                 $this->db = DB::table('singletons');
 
                 if(!empty($profession)){
-                    $this->db->where('profession','=',$profession);
+                    $this->db->where('profession','LIKE',"%$profession%");
                 }
 
                 if(!empty($location)){
-                    $this->db->where('location','=',$location);
+                    $this->db->where('location','LIKE',"%$location%");
                 }
 
                 // if(!empty($height)){
@@ -154,11 +154,7 @@ class Suggestions extends Controller
                 // }
 
                 if(!empty($min_height) && !empty($max_height)){
-                    // $this->db->where('height','>=',$min_height);
-                    // $this->db->where('height','<=',$max_height);
-                    // $this->db->whereBetween('height', [$min_height, $max_height]);
-                    $this->db->where('height', 'LIKE', "%$min_height%");
-                    $this->db->orWhere('height', 'LIKE', "%$max_height%");
+                    $this->db->whereBetween('height', [$min_height, $max_height]);
                 }
 
                 if(!empty($islamic_sect)){
@@ -166,8 +162,6 @@ class Suggestions extends Controller
                 }
 
                 if(!empty($min_age) && !empty($max_age)){
-                    // $this->db->where('age','>=',$min_age);
-                    // $this->db->where('age','<=',$max_age);
                     $this->db->whereBetween('age', [$min_age, $max_age]);
                 }
 

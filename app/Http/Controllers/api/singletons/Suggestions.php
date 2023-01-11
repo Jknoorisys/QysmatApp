@@ -100,7 +100,7 @@ class Suggestions extends Controller
                 Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
             ],
             'login_id'   => 'required||numeric',
-            'gender'     => 'required',
+            // 'gender'     => 'required',
         ]);
 
         if($validator->fails()){
@@ -115,8 +115,9 @@ class Suggestions extends Controller
             $categoryExists = ModelsCategories::where('singleton_id',$request->login_id)->first();
 
             if (!empty($categoryExists)) {
+                $user = Singleton::where('id',$request->login_id)->first();
                 $category = ModelsCategories::where('singleton_id',$request->login_id)->first();
-                $category->gender        = $request->gender ? $request->gender : '';
+                $category->gender        = $user->gender == 'Male' ? 'Female' : 'Male';
                 $category->age_range     = $request->age_range ? $request->age_range : '';
                 $category->profession    = $request->profession ? $request->profession : '';
                 $category->location      = $request->location ? $request->location : '';
@@ -217,11 +218,11 @@ class Suggestions extends Controller
                 $this->db = DB::table('singletons');
 
                 if(!empty($profession)){
-                    $this->db->where('profession','=',$profession);
+                    $this->db->where('profession','LIKE',"%$profession%");
                 }
 
                 if(!empty($location)){
-                    $this->db->where('location','=',$location);
+                    $this->db->where('location','LIKE',"%$location%");
                 }
 
                 // if(!empty($height)){
@@ -229,11 +230,7 @@ class Suggestions extends Controller
                 // }
 
                 if(!empty($min_height) && !empty($max_height)){
-                    // $this->db->where('height','>=',$min_height);
-                    // $this->db->where('height','<=',$max_height);
-                    // $this->db->whereBetween('height', [$min_height, $max_height]);
-                    $this->db->where('height', 'LIKE', "%$min_height%");
-                    $this->db->orWhere('height', 'LIKE', "%$max_height%");
+                    $this->db->whereBetween('height', [$min_height, $max_height]);
                 }
 
                 if(!empty($islamic_sect)){
@@ -241,8 +238,6 @@ class Suggestions extends Controller
                 }
 
                 if(!empty($min_age) && !empty($max_age)){
-                    // $this->db->where('age','>=',$min_age);
-                    // $this->db->where('age','<=',$max_age);
                     $this->db->whereBetween('age', [$min_age, $max_age]);
                 }
 
