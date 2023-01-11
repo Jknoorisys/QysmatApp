@@ -37,6 +37,8 @@ Route::get('changePassword' , [Dashboard::class,'changePassword'])->middleware('
 Route::post('changePasswordFun' , [Dashboard::class,'changePasswordFun'])->middleware('isLoggedIn')->name('changePasswordFun');
 Route::get('readNotifications' , [Dashboard::class,'readNotifications'])->middleware('isLoggedIn')->name('readNotifications');
 
+Route::post('reset-password' , [Admin::class, 'setUserNewPassword'])->name('reset-password');
+
 // Manage Singletons
 Route::any('sigletons' , [Singletons::class, 'index'])->middleware('isLoggedIn')->name('sigletons');
 Route::post('viewSingleton' , [Singletons::class, 'viewSingleton'])->middleware('isLoggedIn')->name('viewSingleton');

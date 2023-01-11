@@ -634,26 +634,27 @@ class Auth extends Controller
                 'errors'    => $validator->errors()
             ],400);
         }
-        $resetData = PasswordReset::where('token',$request->token)->first();
-        if (!empty($resetData)) {
-            $user = Singleton::where([['email','=',$resetData->email],['status','=','Unblocked']])->first();
-            if(!empty($user)){
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.singletons.forget-pass-link.success'),
-                    'data'      => $user,
-                ],200);
-            }else{
-                return response()->json([
-                    'status'    => 'failed',
-                    'message'   => __('msg.singletons.forget-pass-link.invalid'),
-                ],400);
+
+        try {
+            $resetData = PasswordReset::where('token',$request->token)->first();
+            if (!empty($resetData)) {
+                $user = Singleton::where([['email','=',$resetData->email],['status','=','Unblocked']])->first();
+                if(!empty($user)){
+                    $data['user'] = $user;
+                    return view('reset_password', $data);
+                    // return view('password_reset', $data);
+                }else{
+                    return view('reset_password_fail');
+                }
+            }else {
+                return view('reset_password_fail');
             }
-        }else {
+        } catch (\Throwable $e) {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.singletons.forget-pass-link.failure'),
-            ],400);
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
         }
     }
 
