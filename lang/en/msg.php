@@ -61,6 +61,9 @@ return [
     'Old Password Do Not Match!'=> 'Old Password Do Not Match!',
     'Please Try Again....'      => 'Please Try Again....',
     'Password Changed!'         => 'Password Changed!',
+    'SUBMIT'                    => 'SUBMIT',
+    'Confirm Password Do Not Match!' => 'Confirm Password Do Not Match!',
+    'Unable to Reset Password! Please Try Again...' => 'Unable to Reset Password! Please Try Again...',
 
     // Manage Singletons
     'Manage Singletons'         => 'Manage Singletons',

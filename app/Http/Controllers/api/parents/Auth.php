@@ -423,22 +423,13 @@ class Auth extends Controller
             if (!empty($resetData)) {
                 $user = ParentsModel::where([['email','=',$resetData->email],['status','=','Unblocked']])->first();
                 if(!empty($user)){
-                    return response()->json([
-                        'status'    => 'success',
-                        'message'   => __('msg.parents.forget-pass-link.success'),
-                        'data'      => $user,
-                    ],200);
+                    $data['user'] = $user;
+                    return view('reset_password', $data);
                 }else{
-                    return response()->json([
-                        'status'    => 'failed',
-                        'message'   => __('msg.parents.forget-pass-link.invalid'),
-                    ],400);
+                    return view('reset_password_fail');
                 }
             }else {
-                return response()->json([
-                    'status'    => 'failed',
-                    'message'   => __('msg.parents.forget-pass-link.failure'),
-                ],400);
+                return view('reset_password_fail');
             }
         } catch (\Exception $e) {
             return response()->json([
