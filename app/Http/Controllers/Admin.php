@@ -61,7 +61,6 @@ class Admin extends Controller
 
     public function setUserNewPassword(Request $request)
     {
-        return $request->all();exit;
         $request->validate([
             'password' => 'required|min:5|max:12',
             'cnfm_password' => 'required|min:5|max:12'
