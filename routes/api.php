@@ -24,6 +24,7 @@ use App\Http\Controllers\api\singletons\Suggestions;
 use App\Http\Controllers\api\singletons\Swipes as SingletonsSwipes;
 use App\Http\Controllers\api\singletons\ZoomAPI;
 use App\Http\Controllers\api\static_pages\StaticPages;
+use App\Http\Controllers\api\stripe\StripeSubscription;
 use App\Http\Controllers\api\subscriptions\SubscriptionPlans;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -172,6 +173,7 @@ Route::prefix('subscriptions')->group(function () {
     Route::post('get-subscription-plans' , [SubscriptionPlans::class, 'index']);
     Route::post('get-active-subscription' , [SubscriptionPlans::class, 'activeSubscription']);
     Route::post('subscribe' , [SubscriptionPlans::class, 'subscribe']);
+
 });
 
 // Islamic Quotes
@@ -199,4 +201,9 @@ Route::prefix('delete-account')->group(function () {
 // Reset Profile Search
 Route::prefix('reset-profile-search')->group(function () {
     Route::post('reset' , [ResetProfileSearch::class, 'index']);
+});
+
+// Stripe Subscription
+Route::prefix('stripe')->group(function () {
+    Route::post('subscribe' , [StripeSubscription::class, 'index']);
 });

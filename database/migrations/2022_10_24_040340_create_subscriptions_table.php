@@ -16,9 +16,10 @@ return new class extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->string('subscription_type');
-            $table->string('price');
+            $table->string('name');
+            $table->float('price');
             $table->string('currency');
-            // $table->longText('details');
+            $table->string('stripe_plan_id')->unique();
             $table->enum('status', ['Active','Inactive','Deleted'])->default('Active');
             $table->timestamps();
         });

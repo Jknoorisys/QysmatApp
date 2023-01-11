@@ -64,9 +64,6 @@
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
-                        {{-- <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Single User</li>
-                        <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Unlimited Test</li>
-                        <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Community Access</li> --}}
                         @foreach ($value->features as $feature)
                         <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{$feature}}</li>
                         @endforeach
@@ -81,77 +78,6 @@
 
                         </li>
                     </ul>
-                    {{-- @if ($value->subscription_type == 'Basic')
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__('msg.Only 5 Profile Views per Day')}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__('msg.Unrestricted Profile Search Criteria ( age/height/location, profession )')}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__('msg.Parent Can Search with only 1 Singleton Profile at a Time, however, can Register more than one Child')}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__('msg.Pay for Additional Premium Features')}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i><span>{{__('msg.Status')}} : {{$value->status}}</span>
-
-                                    <form action="{{route('changeSubscriptionStatus')}}" method="post" class="text-center">
-                                        @csrf
-                                        <input type="hidden" name="id" value="{{$value->id}}">
-                                        <input type="hidden" name="status" value="{{$value->status == 'Active' ? 'Inactive' : 'Active' }}">
-                                        <button type="submit" data-status="{{$value->status == 'Active' ? 'Active' : 'Inactive'}}" data-id="{{$value->id}}" data-name="{{$value->subscription_type}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Inactive' ? '' : 'checked'}} /><label for="switch">Toggle</label></button>
-                                    </form>
-
-                            </li>
-                        </ul>
-                    @elseif ($value->subscription_type == 'Premium')
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__("msg.Unlimited Swipes per Day")}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__("msg.Send Instant Message  (3/week)")}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__("msg.In-app Telephone and Video Calls")}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__("msg.Refer Profiles to Friends and Family")}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__("msg.Undo Last Swipe")}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__("msg.Reset Profile Search and Start again once a month (allows users to go back and review profiles they have passed and be seen by them again")}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__("msg.If Parents have Multiple Children Registered, and Wish to Upgrade their Accounts to Premium, Each Additional Child will Incur a Discounted Fee.")}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{__("msg.")}}</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i><span>{{__('msg.Status')}} : {{$value->status}}</span>
-
-                                    <form action="{{route('changeSubscriptionStatus')}}" method="post" class="text-center">
-                                        @csrf
-                                        <input type="hidden" name="id" value="{{$value->id}}">
-                                        <input type="hidden" name="status" value="{{$value->status == 'Active' ? 'Inactive' : 'Active' }}">
-                                        <button type="submit" data-status="{{$value->status == 'Active' ? 'Active' : 'Inactive'}}" data-id="{{$value->id}}" data-name="{{$value->subscription_type}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Inactive' ? '' : 'checked'}} /><label for="switch">Toggle</label></button>
-                                    </form>
-
-                            </li>
-                        </ul>
-                    @elseif ($value->subscription_type == 'Joint Subscription')
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Single User</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Unlimited Test</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Community Access</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i><span>{{__('msg.Status')}} : {{$value->status}}</span>
-
-                                    <form action="{{route('changeSubscriptionStatus')}}" method="post" class="text-center">
-                                        @csrf
-                                        <input type="hidden" name="id" value="{{$value->id}}">
-                                        <input type="hidden" name="status" value="{{$value->status == 'Active' ? 'Inactive' : 'Active' }}">
-                                        <button type="submit" data-status="{{$value->status == 'Active' ? 'Active' : 'Inactive'}}" data-id="{{$value->id}}" data-name="{{$value->subscription_type}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Inactive' ? '' : 'checked'}} /><label for="switch">Toggle</label></button>
-                                    </form>
-
-                            </li>
-                        </ul>
-                    @else
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Single User</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Unlimited Test</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>Community Access</li>
-                            <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i><span>{{__('msg.Status')}} : {{$value->status}}</span>
-
-                                    <form action="{{route('changeSubscriptionStatus')}}" method="post" class="text-center">
-                                        @csrf
-                                        <input type="hidden" name="id" value="{{$value->id}}">
-                                        <input type="hidden" name="status" value="{{$value->status == 'Active' ? 'Inactive' : 'Active' }}">
-                                        <button type="submit" data-status="{{$value->status == 'Active' ? 'Active' : 'Inactive'}}" data-id="{{$value->id}}" data-name="{{$value->subscription_type}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Inactive' ? '' : 'checked'}} /><label for="switch">Toggle</label></button>
-                                    </form>
-
-                            </li>
-                        </ul>
-                    @endif --}}
                     <div class="d-grid mt-3">
                         <form action="{{route('updatePrice')}}" method="post" class="text-center">
                             @csrf

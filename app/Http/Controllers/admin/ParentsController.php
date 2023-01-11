@@ -49,6 +49,7 @@ class ParentsController extends Controller
                                                 ->first();
 
             if ($data['details']->subscription_type == 'Basic') {
+                $data['details']->price = 'Free';
                 $features = [__("msg.Only 5 Profile Views per day"), __("msg.Unrestricted profile search criteria")];
             }else {
                 $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant message  (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
