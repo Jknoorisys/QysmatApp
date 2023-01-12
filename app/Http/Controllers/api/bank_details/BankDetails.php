@@ -88,7 +88,7 @@ class BankDetails extends Controller
             'login_id'              => 'required||numeric',
             'card_holder_name'      => 'required',
             'bank_name'             => 'required',
-            'card_number'           => 'required||unique:bank_details',
+            'card_number'           => 'required',
             'month_year'            => 'required',
             'cvv'                   => 'required',
         ]);
@@ -102,22 +102,25 @@ class BankDetails extends Controller
         }
 
         try {
-            $account = new ModelsBankDetails();
-            $account->user_id           = $request->login_id ? $request->login_id : '';
-            $account->user_type         = $request->user_type ? $request->user_type : '';
-            $account->card_holder_name  = $request->card_holder_name ? $request->card_holder_name : '';
-            $account->bank_name         = $request->bank_name ? $request->bank_name : '';
-            $account->card_number       = $request->card_number ? $request->card_number : '';
-            $account->month_year        = $request->month_year ? $request->month_year : '';
-            $account->cvv               = $request->cvv ? $request->cvv : '';
-
-            $account_details = $account->save();
+            
+            $account_details = ModelsBankDetails::updateOrCreate(
+                ['user_id' => $request->login_id, 'user_type' => $request->user_type],
+                [
+                    'user_id'   => $request->login_id ? $request->login_id : '', 
+                    'user_type' => $request->user_type ,
+                    'card_holder_name' => $request->card_holder_name ? $request->card_holder_name : '',
+                    'bank_name' => $request->bank_name ? $request->bank_name : '',
+                    'card_number' => $request->card_number ? $request->card_number : '',
+                    'month_year' => $request->month_year ? $request->month_year : '',
+                    'cvv' => $request->cvv ? $request->cvv : ''
+                ]
+            );
 
             if($account_details){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.bank.add.success'),
-                    'data'    => $account
+                    'data'    => $account_details
                 ],200);
             }else{
                 return response()->json([

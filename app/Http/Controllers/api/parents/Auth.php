@@ -591,6 +591,13 @@ class Auth extends Controller
             $user = ParentsModel::where([['email','=',$request->email],['is_social','=',$request->is_social],['social_type','=',$request->social_type],['status','=','unblocked']])->first();
             if(!empty($user)){
                 if($request->social_id == $user->social_id){
+
+                    if ($user->mobile == '') {
+                        $user->register_profile = 0;
+                    }else {
+                        $user->register_profile = 1;
+                    }
+
                     if($user->is_email_verified == 'verified'){
                         ParentsModel::where('email','=',$request->email)->update(['device_type' => $request->device_type, 'device_token' => $request->device_token, 'fcm_token' => $request->fcm_token]);
                         $profiles = DB::table('parent_children')
@@ -673,6 +680,13 @@ class Auth extends Controller
             $user = ParentsModel::where([['email','=',$request->email],['status','=','unblocked']])->first();
             if(!empty($user)){
                 if(Hash::check($request->password, $user->password)){
+
+                    if ($user->mobile == '') {
+                        $user->register_profile = 0;
+                    }else {
+                        $user->register_profile = 1;
+                    }
+                    
                     if($user->is_email_verified == 'verified'){
                         ParentsModel::where('email','=',$request->email)->update(['device_type' => $request->device_type, 'device_token' => $request->device_token, 'fcm_token' => $request->fcm_token]);
                         $profiles = DB::table('parent_children')
