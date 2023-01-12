@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\singletons;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Categories;
 use App\Models\ParentsModel;
 use App\Models\PasswordReset;
 use App\Models\Singleton;
@@ -443,6 +444,25 @@ class Auth extends Controller
             $user = Singleton::where([['email','=',$request->email],['social_type','=',$request->social_type],['is_social','=',$request->is_social],['status','=','unblocked']])->first();
             if(!empty($user)){
                 if($request->social_id == $user->social_id){
+                    if ($user->mobile == '') {
+                        $user->register_profile = 0;
+                    }else {
+                        $user->register_profile = 1;
+                    }
+        
+                    if ($user->photo1 == '' && $user->photo2 == '' && $user->photo3 == '' && $user->photo4 == '' && $user->photo5 == '') {
+                        $user->photo_uploaded = 0;
+                    }else {
+                        $user->photo_uploaded = 1;
+                    }
+        
+                    $category = Categories::where('singleton_id',$user->id)->first();
+                    if (empty($category)) {
+                        $user->category_exists = 0;
+                    }else{
+                        $user->category_exists = 1;
+                    }
+
                     if($user->is_email_verified == 'verified'){
                         Singleton::where('email','=',$request->email)->update(['device_type' => $request->device_type, 'device_token' => $request->device_token, 'fcm_token' => $request->fcm_token]);
                         return response()->json([
@@ -513,6 +533,25 @@ class Auth extends Controller
         $user = Singleton::where([['email','=',$request->email],['status','=','unblocked']])->first();
         if(!empty($user)){
             if(Hash::check($request->password, $user->password)){
+                if ($user->mobile == '') {
+                    $user->register_profile = 0;
+                }else {
+                    $user->register_profile = 1;
+                }
+    
+                if ($user->photo1 == '' || $user->photo2 == '' || $user->photo3 == '' || $user->photo4 == '' || $user->photo5 == '') {
+                    $user->photo_uploaded = 0;
+                }else {
+                    $user->photo_uploaded = 1;
+                }
+    
+                $category = Categories::where('singleton_id',$user->id)->first();
+                if (empty($category)) {
+                    $user->category_exists = 0;
+                }else{
+                    $user->category_exists = 1;
+                }
+                
                 if($user->is_email_verified == 'verified'){
                     Singleton::where('email','=',$request->email)->update(['device_type' => $request->device_type, 'device_token' => $request->device_token, 'fcm_token' => $request->fcm_token]);
                     return response()->json([
