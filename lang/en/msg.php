@@ -64,6 +64,7 @@ return [
     'SUBMIT'                    => 'SUBMIT',
     'Confirm Password Do Not Match!' => 'Confirm Password Do Not Match!',
     'Unable to Reset Password! Please Try Again...' => 'Unable to Reset Password! Please Try Again...',
+    'Reset Password Link Expired! Please Try Again...' => 'Reset Password Link Expired! Please Try Again...',
 
     // Manage Singletons
     'Manage Singletons'         => 'Manage Singletons',
@@ -788,9 +789,15 @@ return [
 
     'helper' => [
         'not-found' => 'User Not Found!',
-        'not-verified' => 'Profile not Verified, Please Try After Some Time...',
+        'not-verified' => 'Profile not Verified By Admin, Please Try After Some Time...',
         'singleton-not-linked' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         'parent-not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
+    ],
+
+    'stripe' => [
+        'success' => 'Subscribed Successfully!',
+        'failure' => 'Unable to Subscribe, Please Try Again...',
+        'invalid' => 'Something Went Wrong, Please Try Again...',
     ],
 
 ];

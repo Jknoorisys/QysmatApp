@@ -58,7 +58,7 @@
                         <h3 class="font-medium m-b-0" style="font-family: 'Times New Roman'; color:#8F7C5C">Qysmat</h3>
                     </div>
                     <!-- Form -->
-                    <div class="row">
+                    <div class="row justify-content-center">
                         <div class="col-12 mt-4">
                             @if (Session::has('success'))
                                 <div class="alert alert-success">
@@ -82,8 +82,11 @@
                                 </div>
                             @endif
 
-                            <h1>{{__('msg.Unable to Reset Password! Please Try Again...')}}</h1>
+                            
                         </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <h1>{{$msg}}</h1>
                     </div>
                 </div>
             </div>
