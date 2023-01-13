@@ -330,6 +330,7 @@ return [
     'Validation Failed!'                    => 'Validation Failed!',
     'Invalid Email...'                      => 'Invalid Email...',
     'Click Here to Reset Password!'         => 'Click Here to Reset Password!',
+    'Click Here...'                         => 'Click Here...',
 
     // APIs
 
