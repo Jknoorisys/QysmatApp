@@ -678,15 +678,17 @@ class Auth extends Controller
             $resetData = PasswordReset::where('token',$request->token)->first();
             if (!empty($resetData)) {
                 $user = Singleton::where([['email','=',$resetData->email],['status','=','Unblocked']])->first();
+                $user->token = $request->token;
                 if(!empty($user)){
                     $data['user'] = $user;
                     return view('reset_password', $data);
-                    // return view('password_reset', $data);
                 }else{
-                    return view('reset_password_fail');
+                    $data['msg'] = __('msg.Unable to Reset Password! Please Try Again...');
+                    return view('reset_password_fail', $data);
                 }
             }else {
-                return view('reset_password_fail');
+                $data['msg'] = __('msg.Reset Password Link Expired! Please Try Again...');
+                return view('reset_password_fail', $data);
             }
         } catch (\Throwable $e) {
             return response()->json([

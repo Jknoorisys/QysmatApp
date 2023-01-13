@@ -426,10 +426,12 @@ class Auth extends Controller
                     $data['user'] = $user;
                     return view('reset_password', $data);
                 }else{
-                    return view('reset_password_fail');
+                    $data['msg'] = __('msg.Unable to Reset Password! Please Try Again...');
+                    return view('reset_password_fail', $data);
                 }
             }else {
-                return view('reset_password_fail');
+                $data['msg'] = __('msg.Reset Password Link Expired! Please Try Again...');
+                return view('reset_password_fail', $data);
             }
         } catch (\Exception $e) {
             return response()->json([

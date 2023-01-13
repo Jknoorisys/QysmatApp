@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin as AdminModel;
 use App\Models\ParentsModel;
+use App\Models\PasswordReset;
 use App\Models\Singleton;
 use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
@@ -66,21 +67,21 @@ class Admin extends Controller
             'cnfm_password' => 'required|min:5|max:12'
         ]);
 
-        if ($request->password != $request->cnfm_password) {
-            return back()->with('fail', __('msg.Confirm Password Do Not Match!'));
+        
+        if ($request->user_type == 'singleton') {
+            $password =  Singleton :: where([['id', '=', $request->id], ['email', '=', $request->email]])->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);
         } else {
-            if ($request->user_type == 'singleton') {
-                $password =  Singleton :: where([['id', '=', $request->id], ['email', '=', $request->email]])->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);
-            } else {
-                $password =  ParentsModel :: where([['id', '=', $request->id], ['email', '=', $request->email]])->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);
-            }
+            $password =  ParentsModel :: where([['id', '=', $request->id], ['email', '=', $request->email]])->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);
+        }
 
-           if($password)
-           {
-            return back()->with('success', __('msg.Password Changed!'));
-           }else{
-            return back()->with('fail', __('msg.Please Try Again....'));
-           }
+        if($password)
+        {
+            PasswordReset::where('email','=',$request->email)->delete();
+            $data['msg'] = __('msg.Password Changed!');
+            return view('reset_password_fail', $data);
+        }else{
+            $data['msg'] = __('msg.Please Try Again....');
+            return view('reset_password_fail', $data);
         }
     }
 }
