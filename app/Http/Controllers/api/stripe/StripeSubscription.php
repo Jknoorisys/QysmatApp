@@ -247,8 +247,8 @@ class StripeSubscription extends Controller
     public function webhookHandler(Request $request)
     {
 
-        $endpoint_secret = 'whsec_nwYWMuE5oxYi23CGvXKdzY0Dej3ZSGa2';
-        // $endpoint_secret = env('STRIPE_WEBHOOK_SECRET ');
+        // $endpoint_secret = 'whsec_nwYWMuE5oxYi23CGvXKdzY0Dej3ZSGa2';
+        $endpoint_secret = env('STRIPE_WEBHOOK_SECRET ');
 
         $payload = $request->getContent();
         $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
