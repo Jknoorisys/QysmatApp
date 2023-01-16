@@ -32,8 +32,8 @@ class Transactions extends Controller
         $data['url']                      = route('dashboard');
         $data['title']                    = __("msg.Manage Transactions");
         if(!empty($data['from_date']) && !empty($data['to_date'])){
-            $data['records']              = ModelsTransactions::where('transaction_datetime', '>=', $data['from_date'])
-                                                ->where('transaction_datetime', '<=', $data['to_date'])
+            $data['records']              = ModelsTransactions::whereDate('transaction_datetime', '>=', $data['from_date'])
+                                                ->whereDate('transaction_datetime', '<=', $data['to_date'])
                                                 ->paginate(10);
         }else{
             $data['records']               = ModelsTransactions::paginate(10);

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
             $table->string('card_holder_name');
             $table->string('bank_name');
-            $table->string('card_number')->unique();
+            $table->string('card_number');
             $table->string('month_year');
             $table->string('cvv');
             $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');

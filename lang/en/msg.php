@@ -129,6 +129,8 @@ return [
     'From Date'                 => 'From Date',
     'To Date'                   => 'To Date',
     'Reset'                     => 'Reset',
+    'Subscription Started at'   => 'Subscription Started at',
+    'Subscription End at'       => 'Subscription End at',
 
     // Manage Subscription Plan and Price
     'Manage Subscription Plan and Price' => 'Manage Subscription Plan and Price',
