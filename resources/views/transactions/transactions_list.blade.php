@@ -50,7 +50,7 @@
                                 <tr>
                                     <td class="text-center">{{$value->user_name}}</td>
                                     <td class="text-center">{{$value->user_type}}</td>
-                                    <td class="text-center">{{$value->payment_status}}</td>
+                                    <td class="text-center">{{$value->status}}</td>
                                     <td class="text-center">{{date('d-m-Y',strtotime($value->transaction_datetime))}}<br>{{date('h:i:s A', strtotime($value->transaction_datetime))}}</td>
                                     <td class="text-center bt-switch">
                                         <form action="{{route('viewTransaction')}}" method="post">

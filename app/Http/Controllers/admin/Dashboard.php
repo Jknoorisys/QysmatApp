@@ -55,7 +55,8 @@ class Dashboard extends Controller
         $data['met_someone']     = DeletedUsers::where('reason_type','=','Met Someone/Getting Married')->count();
         $data['other']     = DeletedUsers::where('reason_type','=','Other')->count();
 
-        $data['revenue']             = Transactions::where('payment_status','=','SUCCESS')->avg('paid_amount');
+        // $data['revenue']             = Transactions::where('payment_status','=','SUCCESS')->avg('paid_amount');
+        $data['revenue']             = 200;
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('admin.dashboard', $data);
         return view('layouts.main', $data);

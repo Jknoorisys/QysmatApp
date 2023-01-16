@@ -206,4 +206,5 @@ Route::prefix('reset-profile-search')->group(function () {
 // Stripe Subscription
 Route::prefix('stripe')->group(function () {
     Route::post('subscribe' , [StripeSubscription::class, 'index']);
+    Route::post('webhook' , [StripeSubscription::class, 'webhookHandler']);
 });
