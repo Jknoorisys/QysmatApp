@@ -297,6 +297,16 @@ return [
     'Email Verification'        => 'Email Verification',
     'Forget Password'           => 'Forget Password',
     'Your OTP is'               => 'Your OTP is',
+    'Welcome on Qysmat App'     => 'Welcome on Qysmat App',
+    'Let’s get you Registered with us!' => 'Let’s get you Registered with us!',
+    'Your One time Password to Complete your Registrations is' => 'Your One time Password to Complete your Registrations is',
+    'Find us'                   => 'Find us',
+    'About Us'                  => 'About Us',
+    'Privacy Policy'            => 'Privacy Policy',
+    'Terms & Conditions'        => 'Terms & Conditions',
+    'Need to reset your password?' => 'Need to reset your password?',
+    'No problem! Just click on the button below and you’ll be on yor way.' => 'No problem! Just click on the button below and you’ll be on yor way.',
+    'Reset Your Password'       => 'Reset Your Password',
 
     // Notifications
     'has Sent you a Match Request.'                         => 'has Sent you a Match Request.',
@@ -801,6 +811,7 @@ return [
         'success' => 'Subscribed Successfully!',
         'failure' => 'Unable to Subscribe, Please Try Again...',
         'invalid' => 'Something Went Wrong, Please Try Again...',
+        'card'    => 'Card Details Not Found, Please Try Again...',
     ],
 
 ];

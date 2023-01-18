@@ -77,7 +77,7 @@ class StripeSubscription extends Controller
 
         try {
             $stripe = Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-            $token = $request->stripe_token;
+            // $token = $request->stripe_token;
             $email = $request->stripe_email;
             $user_id = $request->login_id;
             $user_type = $request->user_type;
@@ -106,19 +106,24 @@ class StripeSubscription extends Controller
                         "number" => $card->card_number,
                         "exp_month" => $month,
                         "exp_year" => $year,
-                        "cvc" => $card->cvv
+                        "cvc" => $card->cvv,
+                        'name'  => $card->card_holder_name,
                         )
                     ));
 
                     $customer = \Stripe\Customer::create([
                         'name'  => $card->card_holder_name,
                         'email' => $email,
+                        'phone'  => $user->mobile,
                         'source'  => $token,
                     ]);
                     $customer_id = $customer->id;
+                }else {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.stripe.card'),
+                    ],400);
                 }
-
-                
             }
 
             $subscription = \Stripe\Subscription::create(array(
@@ -146,6 +151,7 @@ class StripeSubscription extends Controller
     
                 $sub_booking_data = [
                     'user_id' => $user_id,
+                    'user_type' => $user_type,
                     'user_name' => $user_name,
                     'user_email' => $user_email,
                     'payment_method' => "stripe",
@@ -170,6 +176,7 @@ class StripeSubscription extends Controller
                     $sub_data = [
                         'booking_id' => $booking_id,
                         'user_id' => $user_id,
+                        'user_type' => $user_type,
                         'user_name' => $user_name,
                         'user_email' => $user_email,
                         'payment_method' => "stripe",
@@ -194,9 +201,8 @@ class StripeSubscription extends Controller
                     
                     $to = $user_email;
                     $subject = "Invoice for your subscription";
-                    $file = $invoice->invoice_pdf;
+                    $file = $invoice->hosted_invoice_url;
                     $message = "Please find the attached invoice for your subscription. You can download it from ".$file;
-
 
                     Mail::send([], [], function ($m) use ($to, $subject, $message, $file) {
                         $m->to($to)
@@ -247,8 +253,7 @@ class StripeSubscription extends Controller
     public function webhookHandler(Request $request)
     {
 
-        // $endpoint_secret = 'whsec_nwYWMuE5oxYi23CGvXKdzY0Dej3ZSGa2';
-        $endpoint_secret = env('STRIPE_WEBHOOK_SECRET ');
+        $endpoint_secret = env('STRIPE_WEBHOOK_SECRET');
 
         $payload = $request->getContent();
         $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
@@ -344,6 +349,7 @@ class StripeSubscription extends Controller
     
                 //     } 
                 // }
+               
                 
                 echo json_encode($charge_data);die();
                 break;
@@ -374,8 +380,6 @@ class StripeSubscription extends Controller
                 $paid_status = $paymentMethod->paid;
                 $status = $paymentMethod->status;
                 $seller_message = $paymentMethod->outcome['seller_message'];
-
-
 
                 if ($status == 'succeeded') {
                     $charge_data = [
@@ -414,22 +418,14 @@ class StripeSubscription extends Controller
                 break;
             case 'subscription_schedule.created':
                 $externalAccount = $event->data->object;
-
             case 'account.updated':
                 $account = $event->data->object;
-            case 'account.external_account.created':
-                $externalAccount = $event->data->object;
-            case 'account.external_account.deleted':
-                $externalAccount = $event->data->object;
-            case 'account.external_account.updated':
-                $externalAccount = $event->data->object;
             case 'customer.created':
                 $customer = $event->data->object;
             case 'customer.deleted':
                 $customer = $event->data->object;
             case 'customer.updated':
                 $customer = $event->data->object;
-           
             case 'customer.subscription.created':
                 $subscription = $event->data->object;
             case 'customer.subscription.deleted':
@@ -437,8 +433,6 @@ class StripeSubscription extends Controller
             case 'customer.subscription.pending_update_applied':
                 $subscription = $event->data->object;
             case 'customer.subscription.pending_update_expired':
-                $subscription = $event->data->object;
-            case 'customer.subscription.trial_will_end':
                 $subscription = $event->data->object;
             case 'customer.subscription.updated':
                 $paymentMethod = $event->data->object;
@@ -460,12 +454,13 @@ class StripeSubscription extends Controller
 
                 $sub_table_id = $user_sub_data['id'];
                 $user_id =  $user_sub_data['user_id'];
+                $user_type =  $user_sub_data['user_type'];
                 $user_name =    $user_sub_data['user_name'];
                 $user_email =    $user_sub_data['user_email'];
 
-
                 $sub_master_data = [
                     'user_id' => $user_id,
+                    'user_type' => $user_type,
                     'user_name' => $user_name,
                     'user_email' => $user_email,
                     'payment_method' => "stripe",
@@ -493,22 +488,21 @@ class StripeSubscription extends Controller
 
                     $update_time = Transactions::where('id', '=',  $sub_table_id)->update($update_status);
                 }else{
-                    // $update_sub_data = ['active_subscription_id' => '1'];
-                    // $a = $UsersModel->update($user_id, $update_sub_data);
+                    $update_sub_data = ['active_subscription_id' => '1'];
+                    if ($user_type == 'singleton') {
+                        Singleton::where([['id','=',$user_id],['status','=','Unblocked']])->update($update_sub_data);
+                    } else {
+                        ParentsModel::where([['id','=',$user_id],['status','=','Unblocked']])->update($update_sub_data);
+                    }
 
-                    // if($a = !null)
-                    // {
+                    if($a = !null)
+                    {
                         $inactive = ['status' => 'inactive'];
                         $a = Transactions::where('id', '=',  $sub_table_id)->update($inactive);
     
-                    // }
+                    }
                 }   
-            case 'customer.tax_id.created':
-                $taxId = $event->data->object;
-            case 'customer.tax_id.deleted':
-                $taxId = $event->data->object;
-            case 'customer.tax_id.updated':
-                $taxId = $event->data->object;
+
             case 'invoice.created':
                 $invoice = $event->data->object;
             case 'invoice.deleted':
@@ -535,12 +529,6 @@ class StripeSubscription extends Controller
                 $invoice = $event->data->object;
             case 'invoice.voided':
                 $invoice = $event->data->object;
-            case 'invoiceitem.created':
-                $invoiceitem = $event->data->object;
-            case 'invoiceitem.deleted':
-                $invoiceitem = $event->data->object;
-            case 'invoiceitem.updated':
-                $invoiceitem = $event->data->object;
             case 'payment_intent.amount_capturable_updated':
                 $paymentIntent = $event->data->object;
             case 'payment_intent.canceled':
@@ -557,34 +545,7 @@ class StripeSubscription extends Controller
                 $paymentIntent = $event->data->object;
             case 'payment_intent.succeeded':
                 $paymentIntent = $event->data->object;
-            case 'plan.created':
-                $plan = $event->data->object;
-            case 'plan.deleted':
-                $plan = $event->data->object;
-            case 'plan.updated':
-                $plan = $event->data->object;
-            case 'price.created':
-                $price = $event->data->object;
-            case 'price.deleted':
-                $price = $event->data->object;
-            case 'price.updated':
-                $price = $event->data->object;
-            case 'product.created':
-                $product = $event->data->object;
-            case 'product.deleted':
-                $product = $event->data->object;
-            case 'product.updated':
-                $product = $event->data->object;
-            case 'setup_intent.canceled':
-                $setupIntent = $event->data->object;
-            case 'setup_intent.created':
-                $setupIntent = $event->data->object;
-            case 'setup_intent.requires_action':
-                $setupIntent = $event->data->object;
-            case 'setup_intent.setup_failed':
-                $setupIntent = $event->data->object;
-            case 'setup_intent.succeeded':
-                $setupIntent = $event->data->object;
+
             // ... handle other event types
             default:
                 echo 'Received unknown event type ' . $event->type;
