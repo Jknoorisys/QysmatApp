@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Models\ContactDetails as ModelsContactDetails;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=utf8");
@@ -681,10 +682,9 @@ class Auth extends Controller
         }
 
         try {
-            $resetData = PasswordReset::where('token', '=', $request->token)->first();
+            $resetData = DB::table('password_resets')->where('token', '=', $request->token)->first();
             if (!empty($resetData)) {
                 $user = Singleton::where([['email','=',$resetData->email],['status','=','Unblocked']])->first();
-                $user->token = $request->token;
                 if(!empty($user)){
                     $data['user'] = $user;
                     return view('reset_password', $data);

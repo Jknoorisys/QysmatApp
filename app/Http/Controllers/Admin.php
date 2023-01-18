@@ -66,14 +66,12 @@ class Admin extends Controller
             'password' => 'required',
             'cnfm_password' => 'required'
         ]);
-
         
         if ($request->user_type == 'singleton') {
             $password =  Singleton :: where([['id', '=', $request->id], ['email', '=', $request->email]])->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);
         } else {
             $password =  ParentsModel :: where([['id', '=', $request->id], ['email', '=', $request->email]])->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);
         }
-
         if($password)
         {
             PasswordReset::where('email','=',$request->email)->delete();
