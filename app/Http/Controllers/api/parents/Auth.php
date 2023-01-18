@@ -84,9 +84,11 @@ class Auth extends Controller
 
             if($parent){
                 $user = ParentsModel::where('email','=',$request->email)->first();
-                $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
+                // $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
+                $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.Let’s get you Registered with us!'), 'otp_msg'=> __('msg.Your One time Password to Complete your Registrations is')];
+
                 $user =  ['to'=> $user->email];
-                Mail::send('mail', $data, function ($message) use ($user) {
+                Mail::send('email_template', $data, function ($message) use ($user) {
                     $message->to($user['to']);
                     $message->subject(__('msg.Email Verification'));
                 });
@@ -176,9 +178,11 @@ class Auth extends Controller
 
             if($parent){
                 $user = ParentsModel::where('email','=',$request->email)->first();
-                $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
+                // $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
+                $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.Let’s get you Registered with us!'), 'otp_msg'=> __('msg.Your One time Password to Complete your Registrations is')];
+
                 $user =  ['to'=> $user->email];
-                Mail::send('mail', $data, function ($message) use ($user) {
+                Mail::send('email_template', $data, function ($message) use ($user) {
                     $message->to($user['to']);
                     $message->subject(__('msg.Email Verification'));
                 });
@@ -293,9 +297,11 @@ class Auth extends Controller
                 $singleton =  ParentsModel :: where('email','=',$request->email)->update(['email_otp' => $email_otp, 'updated_at' => date('Y-m-d H:i:s')]);
                 if($singleton){
                     $user = ParentsModel::where('email','=',$request->email)->first();
-                    $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
+                    // $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
+                    $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.Let’s get you Registered with us!'), 'otp_msg'=> __('msg.Your One time Password to Complete your Registrations is')];
+
                     $user =  ['to'=> $user->email];
-                    Mail::send('mail', $data, function ($message) use ($user) {
+                    Mail::send('email_template', $data, function ($message) use ($user) {
                         $message->to($user['to']);
                         $message->subject(__('msg.Email Verification'));
                     });
@@ -369,7 +375,7 @@ class Auth extends Controller
                 );
 
                 if ($password_reset) {
-                    $data = ['salutation' => __('msg.Hi'), 'name'=> $user->name,'url'=> $url, 'msg'=> __('msg.I am pleased that you have registered with us. Please Click on Below link to Reset Your Password!'), 'url_msg'=> __('msg.Click Here...')];
+                    $data = ['salutation' => __('msg.Hi'), 'name'=> $user->name,'url'=> $url, 'msg'=> __('msg.Need to reset your password?'), 'url_msg'=> __('msg.No problem! Just click on the button below and you’ll be on yor way.')];
                     $user =  ['to'=> $user->email];
                     Mail::send('reset_password_mail', $data, function ($message) use ($user) {
                         $message->to($user['to']);
