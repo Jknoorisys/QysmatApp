@@ -84,12 +84,9 @@
                             @endif
 
                             <form class="form-horizontal m-t-20" method="POST" action="{{route('set-new-password')}}" id="login_form">
-                                @csrf
-
                                 <input type="hidden" name="id" id="id" value="{{$user->id}}">
                                 <input type="hidden" name="user_type" id="user_type" value="{{$user->user_type}}">
                                 <input type="hidden" name="email" id="email" value="{{$user->email}}">
-                                {{-- <input type="hidden" name="token" id="token" value="{{$user->token}}"> --}}
 
                                 <div class="col-md-12">
                                     <label for="password" class="form-label">{{__('msg.Password')}}</label>
@@ -163,44 +160,7 @@
                 if (valid) {
                     form.submit();
                 }
-            });
-
-            // $("#login_form").on('submit', function(e) {
-            //     var password = $('#password').val();
-            //     var cnfm_password = $('#cnfm_password').val();
-            //     var id = $('#id').val();
-            //     var email = $('#email').val();
-            //     var user_type = $('#user_type').val();
-            //     var token = $('#token').val();
-            //     console.log(password, cnfm_password, id, email, user_type, token)
-            //     $.ajax({
-            //         type: "POST",
-            //         url: "{{route('set-new-password')}}",
-            //         data: {
-            //             "_token": "{{ csrf_token() }}",
-            //             password:password, 
-            //             cnfm_password:cnfm_password, 
-            //             id:id, 
-            //             email:email, 
-            //             user_type:user_type,
-            //             token:token
-            //         },
-            //         success: function (response) {
-            //             // swal({
-            //             //     title: "{{__('msg.Success')}}",
-            //             //     text: "{{__('msg.Password Reset Successfully')}}",
-            //             //     icon: "success",
-            //             //     buttons: ["{{__('msg.Ok')}}"],
-            //             //     dangerMode: false,
-            //             // })
-            //             alert('success');
-            //         },
-            //         error: function(response) {
-            //             // location.reload;
-            //             alert('fail');
-            //         },
-            //     });
-            // });            
+            });          
 
             var password = document.getElementById("password")
             , cnfm_password = document.getElementById("cnfm_password");
