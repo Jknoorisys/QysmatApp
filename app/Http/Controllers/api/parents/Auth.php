@@ -425,7 +425,7 @@ class Auth extends Controller
         }
 
         try {
-            $resetData = PasswordReset::where('token',$request->token)->first();
+            $resetData = PasswordReset::where('token', '=', $request->token)->first();
             if (!empty($resetData)) {
                 $user = ParentsModel::where([['email','=',$resetData->email],['status','=','Unblocked']])->first();
                 if(!empty($user)){

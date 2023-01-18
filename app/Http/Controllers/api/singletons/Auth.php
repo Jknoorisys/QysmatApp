@@ -681,7 +681,7 @@ class Auth extends Controller
         }
 
         try {
-            $resetData = PasswordReset::where('token',$request->token)->first();
+            $resetData = PasswordReset::where('token', '=', $request->token)->first();
             if (!empty($resetData)) {
                 $user = Singleton::where([['email','=',$resetData->email],['status','=','Unblocked']])->first();
                 $user->token = $request->token;
