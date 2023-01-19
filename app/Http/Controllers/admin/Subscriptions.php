@@ -95,8 +95,9 @@ class Subscriptions extends Controller
                     'currency' => env('STRIPE_CURRENCY'),
                     'interval' => 'month',
                     'product'  => [
-                        'name' => strtolower($request->subscription_type)
-                        ]
+                        'name' => strtolower($request->subscription_type),
+                        'unit_label' => 'person'
+                    ]
                 ]
             );
 

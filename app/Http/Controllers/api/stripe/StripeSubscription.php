@@ -33,7 +33,7 @@ class StripeSubscription extends Controller
         App::setlocale($lang);
 
         if (isset($_POST['login_id']) && !empty($_POST['login_id']) && isset($_POST['user_type']) && !empty($_POST['user_type'])) {
-            userExist($_POST['login_id'], $_POST['user_type']);
+            userFound($_POST['login_id'], $_POST['user_type']);
         }
     }
 
@@ -81,6 +81,8 @@ class StripeSubscription extends Controller
             $email = $request->stripe_email;
             $user_id = $request->login_id;
             $user_type = $request->user_type;
+            $other_user_ids  = explode(',',$request->other_user_id);
+            $other_user_type = $request->other_user_type;
 
             if ($user_type == 'singleton') {
                 $user = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
@@ -126,14 +128,27 @@ class StripeSubscription extends Controller
                 }
             }
 
-            $subscription = \Stripe\Subscription::create(array(
-                "customer" =>  $customer_id,
-                "items" => array(
-                    array(
-                        "price" => $request->stripe_plan_id,
+            if ($request->plan_id == 3) {
+                $quantity = count($other_user_ids);
+                $subscription = \Stripe\Subscription::create(array(
+                    "customer" =>  $customer_id,
+                    "items" => array(
+                        array(
+                            "price" => $request->stripe_plan_id,
+                            "quantity" => $quantity
+                        ),
                     ),
-                ),
-            ));
+                ));
+            } else {
+                $subscription = \Stripe\Subscription::create(array(
+                    "customer" =>  $customer_id,
+                    "items" => array(
+                        array(
+                            "price" => $request->stripe_plan_id,
+                        ),
+                    ),
+                ));
+            }
 
             if (!empty($subscription)) {
                 $status = $subscription->status;
@@ -154,6 +169,8 @@ class StripeSubscription extends Controller
                     'user_type' => $user_type,
                     'user_name' => $user_name,
                     'user_email' => $user_email,
+                    'other_user_id' => $request->other_user_id ? $request->other_user_id : '',
+                    'other_user_type' => $other_user_type ? $other_user_type : '',
                     'payment_method' => "stripe",
                     'stripe_subscription_id' => $stripe_subscription_id,
                     'stripe_customer_id' => $stripe_customer_id,
@@ -179,6 +196,8 @@ class StripeSubscription extends Controller
                         'user_type' => $user_type,
                         'user_name' => $user_name,
                         'user_email' => $user_email,
+                        'other_user_id' => $request->other_user_id ? $request->other_user_id : '',
+                        'other_user_type' => $other_user_type ? $other_user_type : '',
                         'payment_method' => "stripe",
                         'stripe_subscription_id' => $stripe_subscription_id,
                         'stripe_customer_id' => $stripe_customer_id,
@@ -214,7 +233,7 @@ class StripeSubscription extends Controller
                         });
     
                     $update_sub_data = [
-                        'stripe_id' => $stripe_customer_id,
+                        'stripe_id'              => $stripe_customer_id,
                         'active_subscription_id' => $request->plan_id,
                         'stripe_plan_id'         => $request->stripe_plan_id,
                     ];
@@ -224,6 +243,18 @@ class StripeSubscription extends Controller
                     } else {
                         ParentsModel::where([['id','=',$user_id],['status','=','Unblocked']])->update($update_sub_data);
                     }
+
+                    if ($request->plan_id == 3) {
+                        if ($other_user_type == 'singleton') {
+                            foreach ($other_user_ids as $id) {
+                                Singleton::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                            }
+                        } else {
+                            foreach ($other_user_ids as $id) {
+                                ParentsModel::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                            }
+                        }
+                    } 
 
                     return response()->json([
                         'status'    => 'success',
@@ -453,16 +484,20 @@ class StripeSubscription extends Controller
                 $user_sub_data= Transactions::where('stripe_subscription_id', $sub_id)->first();
 
                 $sub_table_id = $user_sub_data['id'];
-                $user_id =  $user_sub_data['user_id'];
-                $user_type =  $user_sub_data['user_type'];
-                $user_name =    $user_sub_data['user_name'];
-                $user_email =    $user_sub_data['user_email'];
+                $user_id   = $user_sub_data['user_id'];
+                $user_type = $user_sub_data['user_type'];
+                $user_name = $user_sub_data['user_name'];
+                $user_email = $user_sub_data['user_email'];
+                $other_user_id = $user_sub_data['other_user_id'];
+                $other_user_type = $user_sub_data['other_user_type'];
 
                 $sub_master_data = [
                     'user_id' => $user_id,
                     'user_type' => $user_type,
                     'user_name' => $user_name,
                     'user_email' => $user_email,
+                    'other_user_id' => $other_user_id ? $other_user_id : '',
+                    'other_user_type' => $other_user_type ? $other_user_type : '',
                     'payment_method' => "stripe",
                     'stripe_subscription_id' => $sub_id,
                     'stripe_customer_id' => $customer_id,
@@ -477,6 +512,7 @@ class StripeSubscription extends Controller
                     'status' => $status,
                     'updated_at' => date('Y-m-d h:i:s')
                 ];
+
                 $query = DB::table('bookings')->insert($sub_master_data);
 
                 if ($status == 'active') {
@@ -489,17 +525,30 @@ class StripeSubscription extends Controller
                     $update_time = Transactions::where('id', '=',  $sub_table_id)->update($update_status);
                 }else{
                     $update_sub_data = ['active_subscription_id' => '1'];
+
                     if ($user_type == 'singleton') {
-                        Singleton::where([['id','=',$user_id],['status','=','Unblocked']])->update($update_sub_data);
+                       $update = Singleton::where([['id','=',$user_id],['status','=','Unblocked']])->update($update_sub_data);
                     } else {
-                        ParentsModel::where([['id','=',$user_id],['status','=','Unblocked']])->update($update_sub_data);
+                        $update = ParentsModel::where([['id','=',$user_id],['status','=','Unblocked']])->update($update_sub_data);
                     }
 
-                    if($a = !null)
+                    if ($other_user_id) {
+                        $other_user_ids  = explode(',',$other_user_id);
+                        if ($other_user_type == 'singleton') {
+                            foreach ($other_user_ids as $id) {
+                                Singleton::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                            }
+                        } else {
+                            foreach ($other_user_ids as $id) {
+                                ParentsModel::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                            }
+                        }
+                    }
+
+                    if($update)
                     {
                         $inactive = ['status' => 'inactive'];
-                        $a = Transactions::where('id', '=',  $sub_table_id)->update($inactive);
-    
+                        Transactions::where('id', '=',  $sub_table_id)->update($inactive);
                     }
                 }   
 

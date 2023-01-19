@@ -59,8 +59,15 @@
         <div class="col-4">
             <div class="card">
                 <div class="card-header bg-qysmat">
-                    <h5 class="card-title text-uppercase text-center">{{$value->subscription_type}}</h5>
-                    <h6 class="card-price text-white text-center">{{$value->price}} {{$value->currency}}<span class="term"></span></h6>
+                    <h4 class="card-title text-uppercase text-center">{{$value->subscription_type}}</h4>
+                    <h6 class="card-price text-white text-center">{{ $value->id !=1 ? $value->currency : ''}}{{$value->price}}
+                        @if ($value->id == 2)
+                            <p style="font-size:14px;">per month</p>
+                        @elseif ($value->id == 3)
+                            <p style="font-size:14px;">per month per person</p>
+                        @endif
+                        <span class="term"></span>
+                    </h6>
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
