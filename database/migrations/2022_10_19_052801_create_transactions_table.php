@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
             $table->string('user_name');
             $table->string('user_email');
-            $table->integer('other_user_id');
+            $table->string('other_user_id');
             $table->enum('other_user_type', ['singleton','parent'])->default('singleton');
             // $table->string('paid_by');
             // $table->string('paid_amount');

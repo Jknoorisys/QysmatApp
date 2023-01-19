@@ -90,8 +90,15 @@
                         <div class="col-6">
                             <div class="card" style="border: 1px solid #e7e0d6; border-radius:15px;">
                                 <div class="card-header bg-qysmat">
-                                    <h5 class="card-title text-uppercase text-center">{{$details->subscription_type}}</h5>
-                                    <h6 class="card-price text-white text-center">{{$details->price}} {{$details->currency}}<span class="term"></span></h6>
+                                    <h4 class="card-title text-uppercase text-center">{{$details->subscription_type}}</h4>
+                                    <h6 class="card-price text-white text-center">{{ $details->active_subscription_id !=1 ? $details->currency : ''}}{{$details->price}}
+                                        @if ($details->active_subscription_id == 2)
+                                            <p style="font-size:14px;">per month</p>
+                                        @elseif ($details->active_subscription_id == 3)
+                                            <p style="font-size:14px;">per month per person</p>
+                                        @endif
+                                        <span class="term"></span>
+                                    </h6>
                                 </div>
                                 <div class="card-body">
                                     <ul class="list-group list-group-flush">

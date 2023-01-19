@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\agora\Call;
 use App\Http\Controllers\api\bank_details\BankDetails;
 use App\Http\Controllers\api\contact_details\ContactDetails;
 use App\Http\Controllers\api\contact_us\ContactUs;
@@ -207,4 +208,11 @@ Route::prefix('reset-profile-search')->group(function () {
 Route::prefix('stripe')->group(function () {
     Route::post('subscribe' , [StripeSubscription::class, 'index']);
     Route::post('webhook' , [StripeSubscription::class, 'webhookHandler']);
+});
+
+// Agora Audio Video Call
+Route::prefix('agora')->group(function () {
+    Route::post('create-call' , [Call::class, 'createCall']);
+    Route::post('accept-call' , [Call::class, 'acceptCall']);
+    Route::post('reject-call' , [Call::class, 'rejectCall']);
 });
