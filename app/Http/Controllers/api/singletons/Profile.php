@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\api\singletons;
 
 use App\Http\Controllers\Controller;
+use App\Models\Categories;
 use App\Models\ParentChild;
 use App\Models\Singleton;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -164,6 +166,13 @@ class Profile extends Controller
 
             $userDetails =  $user->save();
             if($userDetails){
+                DB::table('categories')->updateOrInsert(
+                    ['singleton_id' => $request->login_id],
+                    [
+                        'singleton_id' => $request->login_id,
+                        'gender'       => $request->gender == 'Male' ? 'Female' : 'Male'
+                    ]
+                );
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.update-profile.success'),

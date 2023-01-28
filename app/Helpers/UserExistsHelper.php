@@ -36,6 +36,15 @@ use Illuminate\Support\Facades\Config;
                 ];
                 echo json_encode($response);die();
             }
+
+            if (empty($user) || $user->chat_status != 'available') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.busy'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
         } elseif ($user_type == 'parent') {
             $user = ParentsModel::find($login_id);
             if (empty($user) || $user->status != 'Unblocked') {
@@ -120,6 +129,15 @@ use Illuminate\Support\Facades\Config;
                 $response = [
                     'status'    => 'failed',
                     'message'   => __('msg.helper.singleton-not-linked'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
+            if (empty($user) || $user->chat_status != 'available') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.busy'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
