@@ -19,7 +19,6 @@ return new class extends Migration
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
             $table->integer('singleton_id');
             $table->integer('matched_id');
-            $table->enum('chat_in_progress',['0','1'])->default(0);
             $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');
             $table->timestamps();
         });

@@ -81,9 +81,11 @@ Route::prefix('singleton')->group(function () {
 
     // Matches
     Route::post('un-match-user' , [SingletonsMatches::class, 'index']);
+    Route::post('re-match-user' , [SingletonsMatches::class, 'reMatch']);
     Route::post('my-matches' , [SingletonsMatches::class, 'myMatches']);
     Route::post('reffered-matches' , [SingletonsMatches::class, 'RefferedMatches']);
     Route::post('recieved-matches' , [SingletonsMatches::class, 'RecievedMatches']);
+    Route::post('mutual-matches' , [SingletonsMatches::class, 'MutualMatches']);
 
     // Swipes
     Route::post('swipe' , [SingletonsSwipes::class, 'index']);
@@ -143,6 +145,7 @@ Route::prefix('parent')->group(function () {
     Route::post('my-matches' , [ParentsMatches::class, 'myMatches']);
     Route::post('reffered-matches' , [ParentsMatches::class, 'RefferedMatches']);
     Route::post('recieved-matches' , [ParentsMatches::class, 'RecievedMatches']);
+    Route::post('mutual-matches' , [ParentsMatches::class, 'MutualMatches']);
 
     // Swipes
     Route::post('swipe' , [ParentsSwipes::class, 'index']);
@@ -210,9 +213,3 @@ Route::prefix('stripe')->group(function () {
     Route::post('webhook' , [StripeSubscription::class, 'webhookHandler']);
 });
 
-// Agora Audio Video Call
-Route::prefix('agora')->group(function () {
-    Route::post('create-call' , [Call::class, 'createCall']);
-    Route::post('accept-call' , [Call::class, 'acceptCall']);
-    Route::post('reject-call' , [Call::class, 'rejectCall']);
-});

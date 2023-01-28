@@ -52,8 +52,9 @@ return new class extends Migration
             $table->enum('device_type',['android','ios']);
             $table->string('fcm_token');
             $table->string('device_token');
-            $table->enum('status',['Blocked','Unblocked', 'Deleted'])->default('Unblocked');
             $table->enum('is_verified',['verified', 'rejected'])->default('rejected');
+            $table->enum('chat_status',['available', 'busy'])->default('available');
+            $table->enum('status',['Blocked','Unblocked', 'Deleted'])->default('Unblocked');
             $table->timestamps();
         });
     }

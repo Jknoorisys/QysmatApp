@@ -719,6 +719,15 @@ return [
             'not-found' => 'User Not Found!',
         ],
 
+        're-match' => [
+            'success' => 'User Re-Matched Successfully!',
+            'failure' => "Unable to Re-Match User, Please Try Again...",
+            'invalid' => 'User, You want to Re-Match Not Found!',
+            'not-found' => 'User Not Found!',
+            'rematched' => 'You Already Rematched this User...',
+            'premium' => 'Only for Premium Users'
+        ],
+
         'match' => [
             'success' => 'Matches List Fetched Successfully!',
             'failure' => 'No Match Found!',
@@ -794,6 +803,7 @@ return [
             'blocked' => 'You have Blocked this User!',
             'reported' => 'You have Reported this User!',
             'un-matched' => 'You have Un-Matched this User!',
+            'matched'    => 'You have already Matched Someone!',
             'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
             'premium' => 'Premium Feature',
             'down'    => 'Down Swipe within Down swipe is not Applicable!'
@@ -805,6 +815,7 @@ return [
         'not-verified' => 'Profile not Verified By Admin, Please Try After Some Time...',
         'singleton-not-linked' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         'parent-not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
+        'busy' => 'Chat in Progress...',
     ],
 
     'stripe' => [

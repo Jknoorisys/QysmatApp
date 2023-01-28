@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\parents;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
+use App\Models\Matches as ModelsMatches;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
@@ -71,8 +72,12 @@ class Matches extends Controller
             $matchExists = MyMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['matched_id', '=', $request->un_matched_id]])->first();
             $receievdMatchExists = RecievedMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['recieved_match_id', '=', $request->un_matched_id]])->first();
             $referredMatchExists = ReferredMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['referred_match_id', '=', $request->un_matched_id]])->first();
+            $matched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->un_matched_id], ['match_type', '=', 'matched'],['singleton_id', '=', $request->singleton_id]])
+                                        ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->un_matched_id], ['match_type', '=', 'matched']])
+                                        ->first();
+            
 
-            if(!empty($matchExists) || !empty($receievdMatchExists) || !empty($referredMatchExists)){
+            if(!empty($matchExists) || !empty($receievdMatchExists) || !empty($referredMatchExists) || !empty($matched)){
 
                 $user = new UnMatches();
                 $user->un_matched_id             = $request->un_matched_id;
@@ -82,6 +87,13 @@ class Matches extends Controller
                 $user_details                    = $user->save();
 
                 if($user_details){
+
+                    if (!empty($matched)) {
+                        ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->un_matched_id], ['match_type', '=', 'matched'],['singleton_id', '=', $request->singleton_id]])
+                                        ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->un_matched_id], ['match_type', '=', 'matched']])
+                                        ->update(['match_type' => 'un-matched', 'updated_at' => date('Y-m-d H:i:s'), 'status' => 'available']);
+                    }
+
                     if (!empty($matchExists)) {
                         MyMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['matched_id', '=', $request->un_matched_id]])->delete();
                     }
@@ -355,6 +367,104 @@ class Matches extends Controller
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.referred-match.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function MutualMatches(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'  => 'required||numeric',
+            'user_type' => [
+                'required' ,
+                Rule::in(['parent']),
+            ],
+            'singleton_id'    => 'required||numeric',
+            'page_number'  => 'required||numeric',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+        try {
+
+            $per_page = 10;
+            $singleton_id = $request->singleton_id;
+            $page_number = $request->input(key:'page_number', default:1);
+            $total = DB::table('matches')
+                        ->where([['matches.user_id', '=', $request->login_id], ['matches.user_type', '=', $request->user_type], ['matches.singleton_id', '=', $request->singleton_id]])
+                        ->orWhere([['matches.matched_parent_id', '=', $request->login_id],['matches.user_type', '=', 'parent'], ['matches.match_id', '=', $request->singleton_id]])
+                        ->where(function($query) {
+                            $query->where('match_type', '=', 'matched')
+                                ->orWhere('match_type', '=', 'un-matched')
+                                ->orWhere('match_type', '=', 're-matched');
+                        })
+                        ->count();
+            $match = DB::table('matches')
+                        ->leftjoin('singletons', function($join) use ($singleton_id) {
+                            $join->on('singletons.id','=','matches.match_id')
+                                 ->where('matches.match_id','!=',$singleton_id);
+                            $join->orOn('singletons.id','=','matches.singleton_id')
+                                 ->where('matches.singleton_id','!=',$singleton_id);
+                        })
+                        ->where([['matches.user_id', '=', $request->login_id], ['matches.user_type', '=', $request->user_type], ['matches.singleton_id', '=', $request->singleton_id]])
+                        ->orWhere([['matches.matched_parent_id', '=', $request->login_id],['matches.user_type', '=', 'parent'], ['matches.match_id', '=', $request->singleton_id]])
+                        ->where(function($query) {
+                            $query->where('match_type', '=', 'matched')
+                                  ->orWhere('match_type', '=', 'un-matched')
+                                  ->orWhere('match_type', '=', 're-matched');
+                        })
+                        ->offset(($page_number - 1) * $per_page)
+                        ->limit($per_page)
+                        ->get(['matches.user_id','matches.user_type','matches.match_type','matches.is_rematched','singletons.*']);
+            if(!$match->isEmpty()){
+                $users = [];
+                foreach ($match as $m) {
+                    $singleton_id = $m->id;
+                    $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
+                    $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton']])->first();
+                    // $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
+                    // if (empty($block) && empty($report) && empty($unMatch)) {
+                    //     $users[] = $m;
+                    // }
+
+                    if (empty($block) && empty($report)) {
+                        $users[] = $m;
+                    }
+                }
+
+                if(!empty($users)){
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.match.success'),
+                        'data'      => $users,
+                        'total'     => $total
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.match.failure'),
+                    ],400);
+                }
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.match.invalid'),
                 ],400);
             }
         } catch (\Exception $e) {

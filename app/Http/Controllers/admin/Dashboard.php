@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\ChatHistory;
 use App\Models\DeletedUsers;
+use App\Models\Matches;
 use App\Models\MyMatches;
 use App\Models\ParentsModel;
 use App\Models\ReportedUsers;
@@ -43,7 +44,7 @@ class Dashboard extends Controller
         $data['deleted']             = Singleton::where([['status', '=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->count() + ParentsModel::where([['status', '=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->count();
 
         $data['reported']            = ReportedUsers::count();
-        $data['matches']             = MyMatches::count();
+        $data['matches']             = Matches::where('match_type', '=', 'matched')->orWhere('match_type', '=', 're-matched')->count();
 
         $data['conversations']       = ChatHistory::count();
 
