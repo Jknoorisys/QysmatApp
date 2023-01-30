@@ -404,10 +404,13 @@ class Matches extends Controller
 
             $per_page = 10;
             $singleton_id = $request->singleton_id;
+            $login_id = $request->login_id;
             $page_number = $request->input(key:'page_number', default:1);
             $total = DB::table('matches')
-                        ->where([['matches.user_id', '=', $request->login_id], ['matches.user_type', '=', $request->user_type], ['matches.singleton_id', '=', $request->singleton_id]])
-                        ->orWhere([['matches.matched_parent_id', '=', $request->login_id],['matches.user_type', '=', 'parent'], ['matches.match_id', '=', $request->singleton_id]])
+                        ->where(function($query) use ($login_id, $singleton_id) {
+                            $query->where([['matches.user_id', '=', $login_id], ['matches.user_type', '=', 'parent'], ['matches.singleton_id', '=', $singleton_id]])
+                            ->orWhere([['matches.matched_parent_id', '=', $login_id],['matches.user_type', '=', 'parent'], ['matches.match_id', '=', $singleton_id]]);
+                        })
                         ->where(function($query) {
                             $query->where('match_type', '=', 'matched')
                                 ->orWhere('match_type', '=', 'un-matched')
@@ -421,8 +424,10 @@ class Matches extends Controller
                             $join->orOn('singletons.id','=','matches.singleton_id')
                                  ->where('matches.singleton_id','!=',$singleton_id);
                         })
-                        ->where([['matches.user_id', '=', $request->login_id], ['matches.user_type', '=', $request->user_type], ['matches.singleton_id', '=', $request->singleton_id]])
-                        ->orWhere([['matches.matched_parent_id', '=', $request->login_id],['matches.user_type', '=', 'parent'], ['matches.match_id', '=', $request->singleton_id]])
+                        ->where(function($query) use ($login_id, $singleton_id) {
+                            $query->where([['matches.user_id', '=', $login_id], ['matches.user_type', '=', 'parent'], ['matches.singleton_id', '=', $singleton_id]])
+                            ->orWhere([['matches.matched_parent_id', '=', $login_id],['matches.user_type', '=', 'parent'], ['matches.match_id', '=', $singleton_id]]);
+                        })
                         ->where(function($query) {
                             $query->where('match_type', '=', 'matched')
                                   ->orWhere('match_type', '=', 'un-matched')
