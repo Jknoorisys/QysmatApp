@@ -18,7 +18,6 @@ return new class extends Migration
             $table->integer('user_id');
             $table->enum('user_type',['singleton','parent'])->default('singleton');
             $table->integer('match_id');
-            $table->integer('matched_parent_id');
             $table->integer('singleton_id');
             $table->integer('matched_parent_id');
             $table->enum('match_type',['liked', 'matched', 'un-matched', 're-matched', 'rejected', 'hold'])->default('liked');
