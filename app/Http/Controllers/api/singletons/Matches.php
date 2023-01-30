@@ -540,6 +540,8 @@ class Matches extends Controller
         }
 
         try {
+            $singleton_id = $request->login_id;
+            $re_matched_id = $request->re_matched_id;
             $premium = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
             if ($premium->active_subscription_id == '1') {
                 return response()->json([
@@ -567,29 +569,52 @@ class Matches extends Controller
                 ],400);
             }
 
-            $unmatched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id], ['match_type', '=', 'un-matched']])
-                                        ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['match_type', '=', 'un-matched']])
+            $unmatched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id], ['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
+                                        ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
                                         ->first();
+
             if(!empty($unmatched)){
                
-                // $queue = ModelsMatches::leftJoin('singletons','matches.match_id','=','singletons.id')->where('singletons.chat_status', '=','available')
-                //                         ->where([['matches.user_id', '=', $request->login_id], ['matches.user_type', '=', $request->user_type], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available']])
-                //                         ->orWhere([['matches.match_id', '=', $request->login_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available']])
-                //                         ->orderBy('matches.queue')->first();
-
                 $matched = ModelsMatches::where([['matches.user_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched'], ['matches.status', '=', 'available']])
                                         ->orWhere([['matches.match_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched'], ['matches.status', '=', 'available']])
                                         ->first(['matches.*']);
-                
-                $queue = ModelsMatches::leftJoin('singletons','matches.match_id','=','singletons.id')->where('singletons.chat_status', '=','available')
-                                        ->where([['matches.user_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.status', '=', 'available']])
-                                        ->orWhere([['matches.match_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.status', '=', 'available']])
-                                        ->orderBy('matches.queue', 'DESC')->first();
 
-                $other_queue =  ModelsMatches::leftJoin('singletons','matches.match_id','=','singletons.id')->where('singletons.chat_status', '=','available')
-                                                ->where([['matches.user_id', '=', $request->login_id], ['matches.user_type', '=', $request->user_type], ['matches.status', '=', 'available']])
-                                                ->orWhere([['matches.match_id', '=', $request->login_id], ['matches.user_type', '=', 'singleton'], ['matches.status', '=', 'available']])
-                                                ->orderBy('matches.queue', 'DESC')->first();
+                $queue = ModelsMatches::leftjoin('singletons', function($join) use ($re_matched_id) {
+                                            $join->on('singletons.id','=','matches.match_id')
+                                                ->where('matches.match_id','!=',$re_matched_id);
+                                            $join->orOn('singletons.id','=','matches.user_id')
+                                                ->where('matches.user_id','!=',$re_matched_id);
+                                        })
+                                        ->where('singletons.chat_status', '=','available')
+                                        ->where(function($query) use ($re_matched_id){
+                                            $query->where([['matches.user_id', '=', $re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']])
+                                                  ->orWhere([['matches.match_id', '=', $re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']]);
+                                        })
+                                        ->orderBy('matches.queue', 'DESC')->first(['matches.*']);
+
+                $other_queue = ModelsMatches::
+                                        leftjoin('singletons', function($join) use ($singleton_id) {
+                                            $join->on('singletons.id','=','matches.match_id')
+                                                ->where('matches.match_id','!=',$singleton_id);
+                                            $join->orOn('singletons.id','=','matches.user_id')
+                                                ->where('matches.user_id','!=',$singleton_id);
+                                        })
+                                        ->where('singletons.chat_status', '=','available')
+                                        ->where(function($query) use ($singleton_id){
+                                            $query->where([['matches.user_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']])
+                                                  ->orWhere([['matches.match_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']]);
+                                        })
+                                        ->orderBy('matches.queue', 'DESC')->first(['matches.*']);
+
+                // $queue = ModelsMatches::leftJoin('singletons','matches.match_id','=','singletons.id')->where('singletons.chat_status', '=','available')
+                //                         ->where([['matches.user_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.status', '=', 'available']])
+                //                         ->orWhere([['matches.match_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.status', '=', 'available']])
+                //                         ->orderBy('matches.queue', 'DESC')->first();
+
+                // $other_queue =  ModelsMatches::leftJoin('singletons','matches.match_id','=','singletons.id')->where('singletons.chat_status', '=','available')
+                //                                 ->where([['matches.user_id', '=', $request->login_id], ['matches.user_type', '=', $request->user_type], ['matches.status', '=', 'available']])
+                //                                 ->orWhere([['matches.match_id', '=', $request->login_id], ['matches.user_type', '=', 'singleton'], ['matches.status', '=', 'available']])
+                //                                 ->orderBy('matches.queue', 'DESC')->first();
 
                 if (empty($matched)) {
                     $queue_no = 0;
@@ -609,7 +634,10 @@ class Matches extends Controller
                 
                 
                 if($re_matched){
-                    UnMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->re_matched_id]])->delete();
+                    UnMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->re_matched_id]])
+                                ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['un_matched_id', '=', $request->login_id]])
+                                ->delete();
+                                
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.re-match.success'),

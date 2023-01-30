@@ -74,8 +74,7 @@ class Matches extends Controller
             $referredMatchExists = ReferredMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['referred_match_id', '=', $request->un_matched_id]])->first();
             $matched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->un_matched_id], ['match_type', '=', 'matched'],['singleton_id', '=', $request->singleton_id]])
                                         ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->un_matched_id], ['match_type', '=', 'matched']])
-                                        ->first();
-            
+                                        ->first();            
 
             if(!empty($matchExists) || !empty($receievdMatchExists) || !empty($referredMatchExists) || !empty($matched)){
 
@@ -465,6 +464,97 @@ class Matches extends Controller
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.match.invalid'),
+                ],400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function reMatch(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'  => 'required||numeric',
+            'user_type' => [
+                'required' ,
+                Rule::in(['parent']),
+            ],
+            'singleton_id'    => 'required||numeric',
+            're_matched_id'   => 'required||numeric',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+
+            $premium = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+            if ($premium->active_subscription_id == '1') {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.re-match.premium'),
+                ],400);
+            }
+
+            $userExists = Singleton::find($request->re_matched_id);
+            if(empty($userExists) || $userExists->staus == 'Deleted' || $userExists->staus == 'Blocked'){
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.re-match.invalid'),
+                ],400);
+            }
+
+            $rematched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id],['singleton_id', '=', $request->singleton_id]])
+                                        ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->re_matched_id]])
+                                        ->first();   
+
+            if(!empty($rematched) && $rematched->is_rematched == 'yes'){
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.re-match.rematched'),
+                ],400);
+            }
+
+            $unmatched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id], ['is_rematched', '=', 'no'],['singleton_id', '=', $request->singleton_id], ['match_type', '=', 'un-matched']])
+                                        ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->re_matched_id], ['is_rematched', '=', 'no'], ['match_type', '=', 'un-matched']])
+                                        ->first();
+            if(!empty($unmatched)){
+               
+                $re_matched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id], ['is_rematched', '=', 'no'],['singleton_id', '=', $request->singleton_id], ['match_type', '=', 'un-matched']])
+                                            ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->re_matched_id], ['is_rematched', '=', 'no'], ['match_type', '=', 'un-matched']])
+                                            ->update(['match_type' => 'matched','is_rematched' => 'yes', 'updated_at' => date('Y-m-d H:i:s')]);
+                
+                if($re_matched){
+                    UnMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->re_matched_id]])
+                                ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $request->singleton_id]])
+                                ->delete();
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.parents.re-match.success'),
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.parents.re-match.failure'),
+                    ],400);
+                }
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.re-match.not-found'),
                 ],400);
             }
         } catch (\Exception $e) {

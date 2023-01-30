@@ -142,6 +142,7 @@ Route::prefix('parent')->group(function () {
 
     // Matches
     Route::post('un-match-user' , [ParentsMatches::class, 'index']);
+    Route::post('re-match-user' , [ParentsMatches::class, 'reMatch']);
     Route::post('my-matches' , [ParentsMatches::class, 'myMatches']);
     Route::post('reffered-matches' , [ParentsMatches::class, 'RefferedMatches']);
     Route::post('recieved-matches' , [ParentsMatches::class, 'RecievedMatches']);
