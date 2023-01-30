@@ -522,7 +522,7 @@ return [
         'match' => [
             'success' => 'Matches List Fetched Successfully!',
             'failure' => 'No Match Found!',
-            'invalid' => 'No Suggestions Found!',
+            'invalid' => 'No Record Found!',
         ],
 
         'received-match' => [
