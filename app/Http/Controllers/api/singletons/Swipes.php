@@ -321,7 +321,9 @@ class Swipes extends Controller
 
                 if (!empty($mutual)) {
                     // $busy = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['status', 'busy']])->first();
-                    $matched = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['match_type', 'matched']])->first();
+                    $matched = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['match_type', 'matched']])
+                                        ->orWhere([['match_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
+                                        ->first();
                     if (!empty($matched)) {
                         $queue_no = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton']])
                                 ->orderBy('queue','desc')
