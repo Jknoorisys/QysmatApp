@@ -451,20 +451,20 @@ class Matches extends Controller
                 if(!empty($users)){
                     return response()->json([
                         'status'    => 'success',
-                        'message'   => __('msg.singletons.match.success'),
+                        'message'   => __('msg.parents.match.success'),
                         'data'      => $users,
                         'total'     => $total
                     ],200);
                 }else{
                     return response()->json([
                         'status'    => 'failed',
-                        'message'   => __('msg.singletons.match.failure'),
+                        'message'   => __('msg.parents.match.failure'),
                     ],400);
                 }
             }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.singletons.match.invalid'),
+                    'message'   => __('msg.parents.match.invalid'),
                 ],400);
             }
         } catch (\Exception $e) {

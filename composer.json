@@ -28,8 +28,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/UserExistsHelper.php",
-            "app/Helpers/ZoomHelper.php"
+            "app/Helpers/UserExistsHelper.php"
         ]
     },
     "autoload-dev": {

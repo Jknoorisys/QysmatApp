@@ -321,19 +321,6 @@ class Swipes extends Controller
                                     ->first();
 
                 if (!empty($mutual)) {
-                    // $busy = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['status', 'busy']])->first();
-                    // $matched = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['match_type', 'matched']])->first();
-                    // if (!empty($matched)) {
-                    //     $queue_no = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton']])
-                    //             ->orderBy('queue','desc')
-                    //             ->first();
-                    //     $queue = $queue_no->queue + 1;
-                    //     $match_type = 'hold';
-                    // }else{
-                    //     $queue = 0;
-                    //     $match_type = 'matched';
-                    // }
-
                     Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id], ['is_rematched', '=', 'no']])
                             ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])
                             ->update(['match_type' => 'matched', 'updated_at' => date('Y-m-d H:i:s')]);
