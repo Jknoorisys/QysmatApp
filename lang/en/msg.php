@@ -510,6 +510,15 @@ return [
             'not-found' => 'User Not Found!',
         ],
 
+        're-match' => [
+            'success' => 'User Re-Matched Successfully!',
+            'failure' => "Unable to Re-Match User, Please Try Again...",
+            'invalid' => 'User, You want to Re-Match Not Found!',
+            'not-found' => 'User Not Found!',
+            'rematched' => 'You Already Rematched this User...',
+            'premium' => 'Only for Premium Users'
+        ],
+
         'match' => [
             'success' => 'Matches List Fetched Successfully!',
             'failure' => 'No Match Found!',
