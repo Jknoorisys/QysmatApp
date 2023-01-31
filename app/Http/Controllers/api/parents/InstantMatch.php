@@ -222,7 +222,7 @@ class InstantMatch extends Controller
         }
 
         try {
-            $requests = InstantMatchRequest::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id], ['request_type', '=', 'pending']])->get();
+            $requests = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id], ['request_type', '=', 'pending']])->get();
 
             if(!$requests->isEmpty()){
                 return response()->json([
