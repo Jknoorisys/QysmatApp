@@ -226,7 +226,7 @@ class InstantMatch extends Controller
                                             $join->on('parents.id', '=', 'instant_match_requests.user_id')
                                                 ->where('instant_match_requests.user_type', '=', 'parent');
                                             })    
-                                            ->where([['instant_match_requests.requested_id', '=', $request->login_id], ['instant_match_requests.user_type', '=', $request->user_type], ['instant_match_requests.singleton_id', '=', $request->singleton_id], ['instant_match_requests.request_type', '=', 'pending']])
+                                            ->where([['instant_match_requests.singleton_id', '=', $request->login_id], ['instant_match_requests.user_type', '=', $request->user_type], ['instant_match_requests.request_type', '=', 'pending']])
                                             ->get();
 
             if(!$requests->isEmpty()){
