@@ -8,6 +8,7 @@ use App\Http\Controllers\api\delete_account\DeleteUser;
 use App\Http\Controllers\api\parents\Auth;
 use App\Http\Controllers\api\parents\BlockOrReportUser as ParentsBlockOrReportUser;
 use App\Http\Controllers\api\parents\Chat as ParentsChat;
+use App\Http\Controllers\api\parents\InstantMatch;
 use App\Http\Controllers\api\parents\Matches as ParentsMatches;
 use App\Http\Controllers\api\parents\Notifications as ParentsNotifications;
 use App\Http\Controllers\api\parents\Profile as ParentsProfile;
@@ -18,6 +19,7 @@ use App\Http\Controllers\api\reset_profile_search\ResetProfileSearch;
 use App\Http\Controllers\api\singletons\Auth as SingletonsAuth;
 use App\Http\Controllers\api\singletons\BlockOrReportUser;
 use App\Http\Controllers\api\singletons\Chat;
+use App\Http\Controllers\api\singletons\InstantMatch as SingletonsInstantMatch;
 use App\Http\Controllers\api\singletons\Matches as SingletonsMatches;
 use App\Http\Controllers\api\singletons\Notifications;
 use App\Http\Controllers\api\singletons\Profile;
@@ -87,6 +89,11 @@ Route::prefix('singleton')->group(function () {
     Route::post('recieved-matches' , [SingletonsMatches::class, 'RecievedMatches']);
     Route::post('mutual-matches' , [SingletonsMatches::class, 'MutualMatches']);
 
+    // Instant Match Request
+    Route::post('send-request' , [SingletonsInstantMatch::class, 'sendInstantRequest']);
+    Route::post('change-request-status' , [SingletonsInstantMatch::class, 'changeRequestStatus']);
+    Route::post('request-list' , [SingletonsInstantMatch::class, 'requestList']);
+
     // Swipes
     Route::post('swipe' , [SingletonsSwipes::class, 'index']);
 
@@ -95,8 +102,8 @@ Route::prefix('singleton')->group(function () {
     Route::post('messaged-users-list' , [Chat::class, 'messagedUsers']);
     Route::post('chat-history' , [Chat::class, 'chatHistory']);
     Route::post('close-chat' , [Chat::class, 'closeChat']);
-    Route::post('send-chat-request' , [Chat::class, 'startChat']);
-    Route::post('accept-chat-request' , [Chat::class, 'acceptChatRequest']);
+    // Route::post('send-chat-request' , [Chat::class, 'startChat']);
+    // Route::post('accept-chat-request' , [Chat::class, 'acceptChatRequest']);
     Route::post('invite-parent' , [Chat::class, 'inviteParent']);
 
     // Notifications
@@ -148,6 +155,11 @@ Route::prefix('parent')->group(function () {
     Route::post('recieved-matches' , [ParentsMatches::class, 'RecievedMatches']);
     Route::post('mutual-matches' , [ParentsMatches::class, 'MutualMatches']);
 
+    // Instant Match Request
+    Route::post('send-request' , [InstantMatch::class, 'sendInstantRequest']);
+    Route::post('change-request-status' , [InstantMatch::class, 'changeRequestStatus']);
+    Route::post('request-list' , [InstantMatch::class, 'requestList']);
+
     // Swipes
     Route::post('swipe' , [ParentsSwipes::class, 'index']);
 
@@ -155,8 +167,8 @@ Route::prefix('parent')->group(function () {
     Route::post('send-message' , [ParentsChat::class, 'index']);
     Route::post('messaged-users-list' , [ParentsChat::class, 'messagedUsers']);
     Route::post('chat-history' , [ParentsChat::class, 'chatHistory']);
-    Route::post('close-chat' , [ParentsChat::class, 'closeChat']);
-    Route::post('start-chat' , [ParentsChat::class, 'startChat']);
+    // Route::post('close-chat' , [ParentsChat::class, 'closeChat']);
+    // Route::post('start-chat' , [ParentsChat::class, 'startChat']);
     Route::post('invite-child' , [ParentsChat::class, 'inviteChild']);
 
     // Notifications

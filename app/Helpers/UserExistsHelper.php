@@ -3,6 +3,7 @@
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\Singleton;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Config;
 
     function userExist($login_id, $user_type)
@@ -77,6 +78,69 @@ use Illuminate\Support\Facades\Config;
         }
     }
 
+    function userExistWithoutChat($login_id, $user_type)
+    {
+        if ($user_type == 'singleton') {
+            $user = Singleton::find($login_id);
+            if (empty($user) || $user->status != 'Unblocked') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
+            if (empty($user) || $user->is_verified != 'verified') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-verified'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
+            $linked = ParentChild::where('singleton_id','=',$login_id)->first();
+            if (empty($linked) || ($linked->status) != 'Linked') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.singleton-not-linked'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }            
+        } elseif ($user_type == 'parent') {
+            $user = ParentsModel::find($login_id);
+            if (empty($user) || $user->status != 'Unblocked') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
+            if (empty($user) || $user->is_verified != 'verified') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-verified'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
+            $linked = ParentChild::where('parent_id','=',$login_id)->first();
+            if (empty($linked) || ($linked->status) != 'Linked') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.parent-not-linked'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+        }
+    }
+
     function userFound($login_id, $user_type)
     {
         if ($user_type == 'singleton') {
@@ -95,6 +159,69 @@ use Illuminate\Support\Facades\Config;
                 $response = [
                     'status'    => 'failed',
                     'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+        }
+    }
+
+    function parentExistWithoutChat($login_id, $user_type, $singleton_id)
+    {
+        if ($user_type == 'singleton') {
+            $user = Singleton::find($login_id);
+            if (empty($user) || $user->status != 'Unblocked') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
+            if (empty($user) || $user->is_verified != 'verified') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-verified'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
+            $linked = ParentChild::where('singleton_id','=',$login_id)->first();
+            if (empty($linked) || ($linked->status) != 'Linked') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.singleton-not-linked'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+        } elseif ($user_type == 'parent') {
+            $user = ParentsModel::find($login_id);
+            if (empty($user) || $user->status != 'Unblocked') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
+            if (empty($user) || $user->is_verified != 'verified') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-verified'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
+            $linked = ParentChild::where([['parent_id','=',$login_id], ['singleton_id','=',$singleton_id]])->first();
+            if (empty($linked) || ($linked->status) != 'Linked') {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.parent-not-linked'),
                     'status_code' => 403
                 ];
                 echo json_encode($response);die();
@@ -789,5 +916,25 @@ use Illuminate\Support\Facades\Config;
           curl_close($ch);
           return false;
         }
+    }
+
+    function sendFCMNotifications($token, $title, $body, $data)
+    {
+        $client = new Client();
+        $response = $client->post("https://fcm.googleapis.com/fcm/send", [
+            'headers' => [
+                'Authorization' => 'key=' . Config::get('constants.FCM_KEY'),
+                'Content-Type' => 'application/json'
+            ],
+            'json' => [
+                'to' => $token,
+                'notification' => [
+                    'title' => $title,
+                    'body' => $body
+                ],
+                'data' => $data
+            ]
+        ]);
+        return $response->getBody()->getContents();
     }
 ?>
