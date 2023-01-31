@@ -115,6 +115,7 @@ class InstantMatch extends Controller
                 'user_id' => $request->login_id,
                 'user_type' => $request->user_type,
                 'requested_id' => $request->requested_id,
+                'requested_parent_id' => $userExists->parent_id,
                 'created_at' => Carbon::now(),
             ];
 

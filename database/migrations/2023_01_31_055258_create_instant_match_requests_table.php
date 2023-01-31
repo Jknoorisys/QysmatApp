@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('user_type',['singleton','parent'])->default('singleton');
             $table->integer('requested_id');
             $table->integer('singleton_id');
-            // $table->integer('requested_parent_id');
+            $table->integer('requested_parent_id');
             $table->enum('request_type',['pending', 'un-matched', 'matched', 'rejected'])->default('pending');
             $table->enum('status',['active', 'inactive'])->default('active');
             $table->timestamps();
