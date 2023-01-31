@@ -124,9 +124,9 @@ class InstantMatch extends Controller
             $sender = Singleton::where([['id', '=', $request->singleton_id], ['status', '=', 'Unblocked']])->first();
             $reciever = ParentsModel::where([['id', '=', $userExists->parent_id], ['status', '=', 'Unblocked']])->first();
 
-            $request = InstantMatchRequest::insert($data);
+            $requests = InstantMatchRequest::insert($data);
 
-            if($request){
+            if($requests){
                 $title = __('msg.Instant Match Request');
                 $body = __('msg.You have a Instant Match Request from').' '.$premium->name;
 
@@ -189,7 +189,47 @@ class InstantMatch extends Controller
         }
 
         try {
-            //code...
+            $login_id = $request->login_id;
+            $singleton_id = $request->singleton_id;
+            $match_id = $request->requested_id;
+            $status = $request->status;
+
+            $requests = InstantMatchRequest::where([['requested_parent_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_id', '=', $request->singleton_id], ['request_type', '=', 'pending']])->first();
+            if (empty($requests)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.change-request-status.invalid'),
+                ],400);
+            }
+
+            if ($status == 'rejected') {
+                $update = InstantMatchRequest::where([['requested_parent_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_id', '=', $request->singleton_id], ['request_type', '=', 'pending']])
+                                    ->update(['request_type' => 'rejected', 'updated_at' => Carbon::now()]);
+            }elseif ($status == 'un-matched') {
+                $update = InstantMatchRequest::where([['requested_parent_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_id', '=', $request->singleton_id], ['request_type', '=', 'pending']])
+                                    ->update(['request_type' => 'un-matched', 'updated_at' => Carbon::now()]);
+                if ($update) {
+                    UnMatches::insert();
+                }
+            }elseif ($status == 'matched') {
+                $update = InstantMatchRequest::where([['requested_parent_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_id', '=', $request->singleton_id], ['request_type', '=', 'pending']])
+                                    ->update(['request_type' => 'matched', 'updated_at' => Carbon::now()]);
+                if ($update) {
+                    # code...
+                }
+            }
+
+            if ($update) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.change-request-status.success'),
+                ],400);
+            } else {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.change-request-status.failure'),
+                ],400);
+            }
         } catch (\Throwable $e) {
             return response()->json([
                 'status'    => 'failed',
@@ -228,7 +268,7 @@ class InstantMatch extends Controller
                                                 ->where('instant_match_requests.user_type', '=', 'parent');
                                             })    
                                             ->where([['instant_match_requests.requested_parent_id', '=', $request->login_id], ['instant_match_requests.user_type', '=', $request->user_type], ['instant_match_requests.requested_id', '=', $request->singleton_id], ['instant_match_requests.request_type', '=', 'pending']])
-                                            ->get(['instant_match_requests.id as request_id', 'parents.*']);
+                                            ->get(['instant_match_requests.id as request_id','instant_match_requests.singleton_id', 'parents.*']);
 
             if(!$requests->isEmpty()){
                 return response()->json([
