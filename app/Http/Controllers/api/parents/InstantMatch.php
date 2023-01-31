@@ -228,7 +228,7 @@ class InstantMatch extends Controller
                                                 ->where('instant_match_requests.user_type', '=', 'parent');
                                             })    
                                             ->where([['instant_match_requests.requested_parent_id', '=', $request->login_id], ['instant_match_requests.user_type', '=', $request->user_type], ['instant_match_requests.requested_id', '=', $request->singleton_id], ['instant_match_requests.request_type', '=', 'pending']])
-                                            ->get();
+                                            ->get(['instant_match_requests.id as request_id', 'parents.*']);
 
             if(!$requests->isEmpty()){
                 return response()->json([

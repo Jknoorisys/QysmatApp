@@ -219,14 +219,12 @@ class InstantMatch extends Controller
         }
 
         try {
-            // $requests = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])->get();
-
             $requests = InstantMatchRequest::leftJoin('singletons', function($join) {
                     $join->on('singletons.id', '=', 'instant_match_requests.user_id')
                         ->where('instant_match_requests.user_type', '=', 'singleton');
                     })
                     ->where([['instant_match_requests.requested_id', '=', $request->login_id], ['instant_match_requests.user_type', '=', $request->user_type], ['instant_match_requests.request_type', '=', 'pending']])
-                    ->get();
+                    ->get(['instant_match_requests.id as request_id', 'singletons.*']);
 
             if(!$requests->isEmpty()){
                 return response()->json([
