@@ -543,7 +543,7 @@ return [
 
         'requests-list' => [
             'success' => 'Instant Match Request List Fetched Successfully!',
-            'failure' => "No Instant Match Request List Found, Please Try Again...",
+            'failure' => "No Instant Match Request Found, Please Try Again...",
         ],
 
         'match' => [
@@ -786,7 +786,7 @@ return [
 
         'requests-list' => [
             'success' => 'Instant Match Request List Fetched Successfully!',
-            'failure' => "No Instant Match Request List Found, Please Try Again...",
+            'failure' => "No Instant Match Request Found, Please Try Again...",
         ],
 
         'match' => [
