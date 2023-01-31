@@ -13,17 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('matches', function (Blueprint $table) {
+        Schema::create('instant_match_requests', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
             $table->enum('user_type',['singleton','parent'])->default('singleton');
-            $table->integer('match_id');
+            $table->integer('requested_id');
             $table->integer('singleton_id');
-            $table->integer('matched_parent_id');
-            $table->enum('match_type',['liked', 'matched', 'un-matched', 're-matched', 'hold'])->default('liked');
-            $table->integer('queue');
-            $table->enum('is_rematched',['no', 'yes'])->default('no');
-            $table->enum('status',['available', 'busy'])->default('available');
+            // $table->integer('requested_parent_id');
+            $table->enum('request_type',['pending', 'un-matched', 'matched', 'rejected'])->default('pending');
+            $table->enum('status',['active', 'inactive'])->default('active');
             $table->timestamps();
         });
     }
@@ -35,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('matches');
+        Schema::dropIfExists('instant_match_requests');
     }
 };

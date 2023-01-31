@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api\parents;
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
 use App\Models\ChatHistory;
+use App\Models\Matches;
+use App\Models\MessagedUsers;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
@@ -93,12 +95,60 @@ class Chat extends Controller
             $not_in_list1 = MyMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['matched_id', '=', $request->messaged_user_singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
             $not_in_list2 = ReferredMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['referred_match_id', '=', $request->messaged_user_singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
             $not_in_list3 = RecievedMatches ::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['recieved_match_id', '=', $request->messaged_user_singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
+            $not_in_list4 = Matches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['match_id', '=', $request->messaged_user_singleton_id],['match_type', '=', 'matched'], ['singleton_id', '=', $request->singleton_id]])
+                                    ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id],['match_type', '=', 'matched'], ['singleton_id', '=', $request->messaged_user_singleton_id]])
+                                    ->first();
 
-            if (empty($not_in_list1) && empty($not_in_list2) && empty($not_in_list3)) {
+            if (empty($not_in_list2) && empty($not_in_list4)) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.send-message.failure'),
                 ],400);
+            }
+
+
+            $conversation = MessagedUsers::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type], ['messaged_user_singleton_id', '=', $request->messaged_user_singleton_id]])
+                                            ->orWhere([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type], ['messaged_user_singleton_id', '=', $request->singleton_id],['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type], ['singleton_id', '=', $request->messaged_user_singleton_id]])
+                                            ->first();
+           
+            if (!empty($conversation)) {
+                $data = [
+                    'conversation' => 'yes',
+                    'updated_at'   => date('Y-m-d H:i:s')
+                ];
+
+                $reply = MessagedUsers::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type], ['messaged_user_singleton_id', '=', $request->messaged_user_singleton_id]])
+                                        ->orWhere([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type], ['messaged_user_singleton_id', '=', $request->singleton_id],['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type], ['singleton_id', '=', $request->messaged_user_singleton_id]])
+                                        ->update($data);
+
+                if ($reply) {
+                    $busy = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked'],['chat_status', '=', 'busy']])
+                                   ->orWhere([['id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['status', '=', 'Unblocked'],['chat_status', '=', 'busy']])
+                                   ->first();
+
+                    if (empty($busy)) {
+                        Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked']])
+                                    ->orWhere([['id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['status', '=', 'Unblocked']])
+                                    ->update(['chat_status' => 'busy']);
+
+                        Matches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['match_id', '=', $request->messaged_user_id],['match_type', '=', 'matched']])
+                                ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['match_id', '=', $request->login_id],['match_type', '=', 'matched']])
+                                ->update([
+                                    'status' => 'busy',
+                                    'updated_at'   => date('Y-m-d H:i:s')
+                                ]);
+                    }
+                }
+            } else {
+                $data = [
+                    'user_id' => $request->login_id,
+                    'user_type' => $request->user_type,
+                    'singleton_id' => $request->singleton_id,
+                    'messaged_user_id' => $request->messaged_user_id,
+                    'messaged_user_type' => $request->messaged_user_type,
+                    'messaged_user_singleton_id' => $request->messaged_user_singleton_id
+                ];
+                MessagedUsers::insert($data);
             }
 
             $message                     = new ChatHistory();
@@ -126,7 +176,7 @@ class Chat extends Controller
                     );
                     $result = sendFCMNotification($notification, $fcm_regid, 'chat');
                 }
-                MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['matched_id', '=', $request->messaged_user_id],['singleton_id', '=', $request->singleton_id]])->update(['chat_in_progress' => '1', 'updated_at' => date('Y-m-d H:i:s')]);
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.send-message.success'),
@@ -172,12 +222,33 @@ class Chat extends Controller
         }
 
         try {
-            $list = ChatHistory::join('parents', 'chat_histories.messaged_user_id', '=', 'parents.id')
+            $parent_id = $request->login_id;
+            $list = ChatHistory::leftjoin('parents', function($join) use ($parent_id) {
+                                    $join->on('parents.id','=','chat_histories.messaged_user_id')
+                                        ->where('chat_histories.messaged_user_id','!=',$parent_id);
+                                    $join->orOn('parents.id','=','chat_histories.user_id')
+                                        ->where('chat_histories.user_id','!=',$parent_id);
+                                })
+                                // ->join('parents', 'chat_histories.messaged_user_id', '=', 'parents.id')
                                 ->where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.singleton_id', '=', $request->singleton_id]])
+                                ->orWhere([['chat_histories.messaged_user_id', '=', $request->login_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.messaged_user_singleton_id', '=', $request->singleton_id]])
                                 ->select('chat_histories.messaged_user_id','parents.*','chat_histories.user_id','chat_histories.messaged_user_singleton_id')
                                 ->orderBy('chat_histories.id', 'desc')
                                 ->distinct()
                                 ->get();
+
+
+            // $list = MessagedUsers::leftjoin('parents', function($join) use ($parent_id) {
+            //                             $join->on('parents.id','=','messaged_users.messaged_user_id')
+            //                                 ->where('messaged_users.messaged_user_id','!=',$parent_id);
+            //                             $join->orOn('parents.id','=','messaged_users.user_id')
+            //                                 ->where('messaged_users.user_id','!=',$parent_id);
+            //                         })
+            //                         ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type], ['messaged_users.singleton_id', '=', $request->singleton_id]])
+            //                         ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type], ['messaged_users.messaged_user_singleton_id', '=', $request->singleton_id]])
+            //                         ->select('messaged_users.messaged_user_id','parents.*','messaged_users.user_id','messaged_users.messaged_user_singleton_id')
+            //                         ->orderBy('messaged_users.id', 'desc')
+            //                         ->get();          
 
             foreach ($list as $key => $value) {
                 $block = BlockList::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['singleton_id', '=', $request->singleton_id],['blocked_user_id', '=', $value->messaged_user_id],['blocked_user_type', '=', 'parent']])->first();
@@ -287,97 +358,6 @@ class Chat extends Controller
         }
     }
 
-    public function startChat(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'language' => [
-                'required' ,
-                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
-            ],
-            'login_id'  => 'required||numeric',
-            'user_type' => [
-                'required' ,
-                Rule::in(['parent']),
-            ],
-            'singleton_id'       => 'required||numeric',
-            'messaged_user_id'   => 'required||numeric',
-            'messaged_user_type' => [
-                'required' ,
-                Rule::in(['parent']),
-            ],
-            'message'   => 'required',
-        ]);
-
-        if($validator->fails()){
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.Validation Failed!'),
-                'errors'    => $validator->errors()
-            ],400);
-        }
-
-        try {
-            //code...
-        } catch (\Throwable $e) {
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.error'),
-                'error'     => $e->getMessage()
-            ],500);
-        }
-    }
-
-    public function closeChat(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'language' => [
-                'required' ,
-                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
-            ],
-            'login_id'  => 'required||numeric',
-            'user_type' => [
-                'required' ,
-                Rule::in(['parent']),
-            ],
-            'singleton_id'  => 'required||numeric',
-            'messaged_user_id'  => 'required||numeric',
-            'messaged_user_type' => [
-                'required' ,
-                Rule::in(['parent']),
-            ],
-            'messaged_user_singleton_id'   => 'required||numeric',
-        ]);
-
-        if($validator->fails()){
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.Validation Failed!'),
-                'errors'    => $validator->errors()
-            ],400);
-        }
-
-        try {
-            $close = MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['matched_id', '=', $request->messaged_user_singleton_id], ['chat_in_progress', '=', '1']])->update(['chat_in_progress' => '0', 'updated_at' => date('Y-m-d H:i:s')]);
-            if($close){
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.parents.close-chat.success'),
-                ],200);
-            }else{
-                return response()->json([
-                    'status'    => 'failed',
-                    'message'   => __('msg.parents.close-chat.failure'),
-                ],400);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.error'),
-                'error'     => $e->getMessage()
-            ],500);
-        }
-    }
-
     public function inviteChild(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -449,4 +429,95 @@ class Chat extends Controller
             ],500);
         }
     }
+
+    // public function startChat(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'language' => [
+    //             'required' ,
+    //             Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+    //         ],
+    //         'login_id'  => 'required||numeric',
+    //         'user_type' => [
+    //             'required' ,
+    //             Rule::in(['parent']),
+    //         ],
+    //         'singleton_id'       => 'required||numeric',
+    //         'messaged_user_id'   => 'required||numeric',
+    //         'messaged_user_type' => [
+    //             'required' ,
+    //             Rule::in(['parent']),
+    //         ],
+    //         'message'   => 'required',
+    //     ]);
+
+    //     if($validator->fails()){
+    //         return response()->json([
+    //             'status'    => 'failed',
+    //             'message'   => __('msg.Validation Failed!'),
+    //             'errors'    => $validator->errors()
+    //         ],400);
+    //     }
+
+    //     try {
+    //         //code...
+    //     } catch (\Throwable $e) {
+    //         return response()->json([
+    //             'status'    => 'failed',
+    //             'message'   => __('msg.error'),
+    //             'error'     => $e->getMessage()
+    //         ],500);
+    //     }
+    // }
+
+    // public function closeChat(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'language' => [
+    //             'required' ,
+    //             Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+    //         ],
+    //         'login_id'  => 'required||numeric',
+    //         'user_type' => [
+    //             'required' ,
+    //             Rule::in(['parent']),
+    //         ],
+    //         'singleton_id'  => 'required||numeric',
+    //         'messaged_user_id'  => 'required||numeric',
+    //         'messaged_user_type' => [
+    //             'required' ,
+    //             Rule::in(['parent']),
+    //         ],
+    //         'messaged_user_singleton_id'   => 'required||numeric',
+    //     ]);
+
+    //     if($validator->fails()){
+    //         return response()->json([
+    //             'status'    => 'failed',
+    //             'message'   => __('msg.Validation Failed!'),
+    //             'errors'    => $validator->errors()
+    //         ],400);
+    //     }
+
+    //     try {
+    //         $close = MyMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['matched_id', '=', $request->messaged_user_singleton_id], ['chat_in_progress', '=', '1']])->update(['chat_in_progress' => '0', 'updated_at' => date('Y-m-d H:i:s')]);
+    //         if($close){
+    //             return response()->json([
+    //                 'status'    => 'success',
+    //                 'message'   => __('msg.parents.close-chat.success'),
+    //             ],200);
+    //         }else{
+    //             return response()->json([
+    //                 'status'    => 'failed',
+    //                 'message'   => __('msg.parents.close-chat.failure'),
+    //             ],400);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status'    => 'failed',
+    //             'message'   => __('msg.error'),
+    //             'error'     => $e->getMessage()
+    //         ],500);
+    //     }
+    // }
 }

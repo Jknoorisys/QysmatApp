@@ -337,6 +337,8 @@ return [
     'New Message'                                           => 'New Message',
     'Your Profile is Verified by Admin Successfully!'       => 'Your Profile is Verified by Admin Successfully!',
     'You hav a New Match Request!'                          => 'You hav a New Match Request!',
+    'Instant Match Request'                                 => 'Instant Match Request',
+    'You have a Instant Match Request from'                 => 'You have a Instant Match Request from',
 
     // API
     'Validation Failed!'                    => 'Validation Failed!',
@@ -517,6 +519,31 @@ return [
             'not-found' => 'User Not Found!',
             'rematched' => 'You Already Rematched this User...',
             'premium' => 'Only for Premium Users'
+        ],
+
+        'send-request' => [
+            'success' => 'Request Sent Successfully!',
+            'failure' => "Unable to Send Request, Please Try Again...",
+            'invalid' => 'User, You want to Send Request Not Found!',
+            'match-list'   => 'User, You want to Send Request Not Found in Match-List',
+            'premium' => 'Only for Premium Users',
+            'limit'   => 'You have already Sent the 3 Requests for this week, Please Try Again Next Week...',
+            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!'
+        ],
+
+        'change-request-status' => [
+            'success' => 'Request Status Changed Successfully!',
+            'failure' => "Unable to Change Request Status, Please Try Again...",
+            'invalid' => 'Requested User Not Found!',
+            'match-list'   => 'User, You want to Send Request Not Found in Match-List',
+            'premium' => 'Only for Premium Users',
+            'limit'   => 'You have already Sent the 3 Requests for this week, Please Try Again Next Week...',
+            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!'
+        ],
+
+        'requests-list' => [
+            'success' => 'Instant Match Request List Fetched Successfully!',
+            'failure' => "No Instant Match Request List Found, Please Try Again...",
         ],
 
         'match' => [
@@ -735,6 +762,31 @@ return [
             'not-found' => 'User Not Found!',
             'rematched' => 'You Already Rematched this User...',
             'premium' => 'Only for Premium Users'
+        ],
+
+        'send-request' => [
+            'success' => 'Request Sent Successfully!',
+            'failure' => "Unable to Send Request, Please Try Again...",
+            'invalid' => 'User, You want to Send Request Not Found!',
+            'match-list'   => 'User, You want to Send Request Not Found in Match-List',
+            'premium' => 'Only for Premium Users',
+            'limit'   => 'You have already Sent the 3 Requests for this week, Please Try Again Next Week...',
+            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!'
+        ],
+
+        'change-request-status' => [
+            'success' => 'Request Status Changed Successfully!',
+            'failure' => "Unable to Change Request Status, Please Try Again...",
+            'invalid' => 'Requested User Not Found!',
+            'match-list'   => 'User, You want to Send Request Not Found in Match-List',
+            'premium' => 'Only for Premium Users',
+            'limit'   => 'You have already Sent the 3 Requests for this week, Please Try Again Next Week...',
+            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!'
+        ],
+
+        'requests-list' => [
+            'success' => 'Instant Match Request List Fetched Successfully!',
+            'failure' => "No Instant Match Request List Found, Please Try Again...",
         ],
 
         'match' => [

@@ -506,11 +506,11 @@ class Matches extends Controller
 
         try {
 
-            $premium = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+            $premium = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
             if ($premium->active_subscription_id == '1') {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.singletons.re-match.premium'),
+                    'message'   => __('msg.parents.re-match.premium'),
                 ],400);
             }
 
@@ -518,7 +518,7 @@ class Matches extends Controller
             if(empty($userExists) || $userExists->staus == 'Deleted' || $userExists->staus == 'Blocked'){
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.singletons.re-match.invalid'),
+                    'message'   => __('msg.parents.re-match.invalid'),
                 ],400);
             }
 

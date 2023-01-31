@@ -13,12 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('chat_requests', function (Blueprint $table) {
+        Schema::create('messaged_users', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->integer('requested_user_id');
-            $table->enum('status',['pending','accepted','rejected'])->default('pending');
+            $table->integer('singleton_id');
+            $table->integer('messaged_user_id');
+            $table->enum('messaged_user_type', ['singleton','parent'])->default('singleton');
+            $table->integer('messaged_user_singleton_id');
+            $table->enum('conversation',['no','yes'])->default('no');
+            $table->enum('status',['active','inactive'])->default('active');
             $table->timestamps();
         });
     }
@@ -30,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('chat_requests');
+        Schema::dropIfExists('messaged_users');
     }
 };
