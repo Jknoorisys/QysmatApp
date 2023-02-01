@@ -188,6 +188,13 @@ class Chat extends Controller
                         'response'      => ''
                     );
                     $result = sendFCMNotification($notification, $fcm_regid, 'chat');
+
+                    // $body = $request->message;
+                    // $token = $reciever->fcm_token;
+                    // $data = array(
+                    //     'notType' => "chat",
+                    // );
+                    // $result = sendFCMNotifications($token, $title, $body, $data);
                 }
 
                 return response()->json([
@@ -464,7 +471,14 @@ class Chat extends Controller
                 $invite->user_type = 'parent';
                 $invite->singleton_id = $request->login_id ? $request->login_id : '';
                 $invite->referred_match_id = $request->messaged_user_id ? $request->messaged_user_id : '';
-                $send = $invite->save();
+
+                $sent = DB::table('referred_matches')->where([['user_id', '=', $linked->parent_id], ['user_type', '=', 'parent'], ['singleton_id', '=', $request->login_id], ['referred_match_id', '=', $request->messaged_user_id]])->first();
+                if (!empty($sent)) {
+                    $send = DB::table('referred_matches')->where([['user_id', '=', $linked->parent_id], ['user_type', '=', 'parent'], ['singleton_id', '=', $request->login_id], ['referred_match_id', '=', $request->messaged_user_id]])->update(['updated_at' => date('Y-m-d H:i:s')]);
+                }else{
+                    $invite->created_at  = date('Y-m-d H:i:s');
+                    $send = $invite->save();
+                }
 
                 if ($send) {
 
