@@ -270,9 +270,9 @@ class InstantMatch extends Controller
 
             if ($update) {
                 return response()->json([
-                    'status'    => 'failed',
+                    'status'    => 'success',
                     'message'   => __('msg.parents.change-request-status.success'),
-                ],400);
+                ],200);
             } else {
                 return response()->json([
                     'status'    => 'failed',
