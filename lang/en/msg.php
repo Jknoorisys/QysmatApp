@@ -534,10 +534,7 @@ return [
         'change-request-status' => [
             'success' => 'Request Status Changed Successfully!',
             'failure' => "Unable to Change Request Status, Please Try Again...",
-            'invalid' => 'Requested User Not Found!',
-            'match-list'   => 'User, You want to Send Request Not Found in Match-List',
-            'premium' => 'Only for Premium Users',
-            'limit'   => 'You have already Sent the 3 Requests for this week, Please Try Again Next Week...',
+            'invalid' => 'No Such Request Found!',
             'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!'
         ],
 

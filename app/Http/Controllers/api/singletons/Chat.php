@@ -5,7 +5,6 @@ namespace App\Http\Controllers\api\singletons;
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
 use App\Models\ChatHistory;
-use App\Models\ChatRequest as ModelsChatRequest;
 use App\Models\Matches;
 use App\Models\MessagedUsers;
 use App\Models\MyMatches;
@@ -108,8 +107,11 @@ class Chat extends Controller
                 ],400);
             }
 
-            $chat = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked'],['chat_status', '=', 'busy']])
+            $chat1 = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked'],['chat_status', '=', 'busy']])
                             //    ->orWhere([['id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['status', '=', 'Unblocked'],['chat_status', '=', 'busy']])
+                               ->first();
+            $chat = Matches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['match_id', '!=', $request->messaged_user_id],['status', '=', 'busy']])
+                               ->orWhere([['user_id', '!=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['match_id', '=', $request->login_id],['status', '=', 'busy']])
                                ->first();
 
             if (!empty($chat)) {
@@ -119,35 +121,38 @@ class Chat extends Controller
                 ],400);
             }
 
-            $conversation = MessagedUsers::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type]])
+            $conversation = MessagedUsers::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])
                                             ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
                                             ->first();
            
             if (!empty($conversation)) {
-                $data = [
-                    'conversation' => 'yes',
-                    'updated_at'   => date('Y-m-d H:i:s')
-                ];
-
-                $reply = MessagedUsers::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type]])
-                                        ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
-                                        ->update($data);
-                if ($reply) {
-                    $busy = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked'],['chat_status', '=', 'busy']])
-                                   ->orWhere([['id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['status', '=', 'Unblocked'],['chat_status', '=', 'busy']])
-                                   ->first();
-
-                    if (empty($busy)) {
-                        Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked']])
-                                    ->orWhere([['id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['status', '=', 'Unblocked']])
-                                    ->update(['chat_status' => 'busy']);
-
-                        Matches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['match_id', '=', $request->messaged_user_id],['match_type', '=', 'matched']])
-                                ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['match_id', '=', $request->login_id],['match_type', '=', 'matched']])
-                                ->update([
-                                    'status' => 'busy',
-                                    'updated_at'   => date('Y-m-d H:i:s')
-                                ]);
+                $sender = MessagedUsers:: where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])->first();
+                if (empty($sender)) {
+                    $data = [
+                        'conversation' => 'yes',
+                        'updated_at'   => date('Y-m-d H:i:s')
+                    ];
+    
+                    $reply = MessagedUsers::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type]])
+                                            ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
+                                            ->update($data);
+                    if ($reply) {
+                        $busy = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked'],['chat_status', '=', 'busy']])
+                                       ->orWhere([['id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['status', '=', 'Unblocked'],['chat_status', '=', 'busy']])
+                                       ->first();
+    
+                        if (empty($busy)) {
+                            Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked']])
+                                        ->orWhere([['id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['status', '=', 'Unblocked']])
+                                        ->update(['chat_status' => 'busy']);
+    
+                            Matches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['match_id', '=', $request->messaged_user_id],['match_type', '=', 'matched']])
+                                    ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['match_id', '=', $request->login_id],['match_type', '=', 'matched']])
+                                    ->update([
+                                        'status' => 'busy',
+                                        'updated_at'   => date('Y-m-d H:i:s')
+                                    ]);
+                        }
                     }
                 }
             } else {
@@ -230,18 +235,30 @@ class Chat extends Controller
 
         try {
             $singleton_id = $request->login_id;
-            $list = ChatHistory::leftjoin('singletons', function($join) use ($singleton_id) {
-                                    $join->on('singletons.id','=','chat_histories.messaged_user_id')
-                                        ->where('chat_histories.messaged_user_id','!=',$singleton_id);
-                                    $join->orOn('singletons.id','=','chat_histories.user_id')
-                                        ->where('chat_histories.user_id','!=',$singleton_id);
-                                })
-                                ->where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', $request->user_type]])
-                                ->orWhere([['chat_histories.messaged_user_id', '=', $request->login_id],['chat_histories.user_type', '=', 'singleton']])
-                                ->select('chat_histories.messaged_user_id','singletons.*','chat_histories.user_id')
-                                ->orderBy('chat_histories.id', 'desc')
-                                ->distinct()
-                                ->get();
+            // $list = ChatHistory::leftjoin('singletons', function($join) use ($singleton_id) {
+            //                         $join->on('singletons.id','=','chat_histories.messaged_user_id')
+            //                             ->where('chat_histories.messaged_user_id','!=',$singleton_id);
+            //                         $join->orOn('singletons.id','=','chat_histories.user_id')
+            //                             ->where('chat_histories.user_id','!=',$singleton_id);
+            //                     })
+            //                     ->where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', $request->user_type]])
+            //                     ->orWhere([['chat_histories.messaged_user_id', '=', $request->login_id],['chat_histories.user_type', '=', 'singleton']])
+            //                     ->select('chat_histories.messaged_user_id','singletons.*','chat_histories.user_id')
+            //                     ->orderBy('chat_histories.id', 'desc')
+            //                     ->distinct()
+            //                     ->get();
+            
+            $list = MessagedUsers::leftjoin('singletons', function($join) use ($singleton_id) {
+                                        $join->on('singletons.id','=','messaged_users.messaged_user_id')
+                                            ->where('messaged_users.messaged_user_id','!=',$singleton_id);
+                                        $join->orOn('singletons.id','=','messaged_users.user_id')
+                                            ->where('messaged_users.user_id','!=',$singleton_id);
+                                    })
+                                    ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type]])
+                                    ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type]])
+                                    ->select('messaged_users.messaged_user_id','singletons.*','messaged_users.user_id')
+                                    ->orderBy('messaged_users.id', 'desc')
+                                    ->get(); 
 
             foreach ($list as $key => $value) {
                 $block = BlockList::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['blocked_user_id', '=', $value->messaged_user_id],['blocked_user_type', '=', 'singleton']])->first();
@@ -328,22 +345,17 @@ class Chat extends Controller
                                 ->limit($per_page)
                                 ->get();
             
-            $status = ModelsChatRequest::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_user_id', '=', $request->messaged_user_id]])->first();
-
             if(!$chat->isEmpty()){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.chat-history.success'),
                     'data'      => $chat,
                     'total'     => $total,
-                    'request_status'    => $status ? $status->status : 'No Request Found!',
                 ],200);
             }else{
-                $status = ModelsChatRequest::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_user_id', '=', $request->messaged_user_id]])->first();
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.chat-history.failure'),
-                    'request_status'    => $status ? $status->status : 'No Request Found!',
                 ],400);
             }
         } catch (\Exception $e) {
