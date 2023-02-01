@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\singletons;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\ParentChild;
+use App\Models\ParentsModel;
 use App\Models\Singleton;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -56,7 +57,12 @@ class Profile extends Controller
         }
 
         try {
-            $user = Singleton::where([['id','=',$request->login_id], ['status','=','unblocked'], ['is_email_verified','=','verified']])->first();
+            $user = Singleton::where([['id','=',$request->login_id], ['status','=','Unblocked'], ['is_email_verified','=','verified']])->first();
+            if ($user->parent_id && $user->parent_id != 0) {
+                $parent = ParentsModel::where('id','=',$user->parent_id)->first();
+                $user->parent_name = $parent->name;
+            }
+            
             if(!empty($user)){
                 return response()->json([
                     'status'    => 'success',

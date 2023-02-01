@@ -177,7 +177,15 @@ class Chat extends Controller
                         'type'          => 'chat',
                         'response'      => ''
                     );
+                    
                     $result = sendFCMNotification($notification, $fcm_regid, 'chat');
+                    
+                    // $body = $request->message;
+                    // $token = $reciever->fcm_token;
+                    // $data = array(
+                    //     'notType' => "chat",
+                    // );
+                    // $result = sendFCMNotifications($token, $title, $body, $data);
                 }
 
                 return response()->json([
@@ -249,18 +257,17 @@ class Chat extends Controller
                                     })
                                     ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type], ['messaged_users.singleton_id', '=', $request->singleton_id]])
                                     ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type], ['messaged_users.messaged_user_singleton_id', '=', $request->singleton_id]])
-                                    ->select('messaged_users.messaged_user_id','parents.*','messaged_users.user_id','messaged_users.messaged_user_singleton_id')
+                                    ->select('messaged_users.user_id','messaged_users.singleton_id','messaged_users.messaged_user_id','messaged_users.messaged_user_singleton_id','parents.*')
                                     ->orderBy('messaged_users.id', 'desc')
-                                    ->get();          
+                                    ->get();
 
             foreach ($list as $key => $value) {
                 $block = BlockList::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['singleton_id', '=', $request->singleton_id],['blocked_user_id', '=', $value->messaged_user_id],['blocked_user_type', '=', 'parent']])->first();
                 $report = ModelsReportedUsers::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['singleton_id', '=', $request->singleton_id],['reported_user_id', '=', $value->messaged_user_id],['reported_user_type', '=', 'parent']])->first();
                 $unMatch = UnMatches::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['singleton_id', '=', $request->singleton_id],['un_matched_id', '=', $value->messaged_user_singleton_id]])->first();
 
-                $last_message = ChatHistory::join('parents', 'chat_histories.messaged_user_id', '=', 'parents.id')
-                                            ->where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.singleton_id', '=', $request->singleton_id],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'parent']])
-                                            ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', $request->user_type],['chat_histories.singleton_id', '=', $value->messaged_user_singleton_id],])                        
+                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=','parent'],['chat_histories.singleton_id', '=', $value->singleton_id],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'parent']])
+                                            ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', 'parent'],['chat_histories.singleton_id', '=', $value->messaged_user_singleton_id],])                        
                                             ->select('chat_histories.message')
                                             ->orderBy('chat_histories.id', 'desc')
                                             ->first();
@@ -396,12 +403,18 @@ class Chat extends Controller
                 $invite = new ReferredMatches();
                 $invite->user_id = $linked->singleton_id ? $linked->singleton_id : '';
                 $invite->user_type = 'singleton';
-                $invite->singleton_id = $request->singleton_id ? $request->singleton_id : '';
+                // $invite->singleton_id = $request->singleton_id ? $request->singleton_id : '';
                 $invite->referred_match_id = $request->messaged_user_singleton_id ? $request->messaged_user_singleton_id : '';
-                $send = $invite->save();
+
+                $sent = DB::table('referred_matches')->where([['user_id', '=', $linked->singleton_id], ['user_type', '=', 'singleton'], ['referred_match_id', '=', $request->messaged_user_singleton_id]])->first();
+                if (!empty($sent)) {
+                    $send = DB::table('referred_matches')->where([['user_id', '=', $linked->singleton_id], ['user_type', '=', 'singleton'], ['referred_match_id', '=', $request->messaged_user_singleton_id]])->update(['updated_at' => date('Y-m-d H:i:s')]);
+                }else{
+                    $invite->created_at  = date('Y-m-d H:i:s');
+                    $send = $invite->save();
+                }
 
                 if ($send) {
-
                     $user = Singleton::where([['id','=',$linked->singleton_id],['status','!=','Deleted']])->first();
                     $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
                     $user->notify(new ReferNotification($parent, $user->user_type, 0));
