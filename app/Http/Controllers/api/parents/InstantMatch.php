@@ -5,7 +5,6 @@ namespace App\Http\Controllers\api\parents;
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
 use App\Models\ChatHistory;
-use App\Models\ChatRequest as ModelsChatRequest;
 use App\Models\InstantMatchRequest;
 use App\Models\Matches;
 use App\Models\MessagedUsers;
@@ -173,7 +172,7 @@ class InstantMatch extends Controller
                 Rule::in(['parent']),
             ],
             'singleton_id'    => 'required||numeric',
-            'requested_id'    => 'required||numeric',
+            'swiped_user_id'    => 'required||numeric',
             'status'          => [
                 'required' ,
                 Rule::in(['matched','un-matched','rejected']),
@@ -189,10 +188,15 @@ class InstantMatch extends Controller
         }
 
         try {
-            $login_id = $request->login_id;
-            $singleton_id = $request->singleton_id;
-            $match_id = $request->requested_id;
             $status = $request->status;
+
+            $parent = Singleton::where([['id', '=', $request->swiped_user_id], ['status','=', 'Unblocked'], ['is_verified', '=', 'verified']])->first();
+            if (empty($parent) || ($parent->parent_id == 0)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.change-request-status.not-linked'),
+                ],400);
+            }
 
             $requests = InstantMatchRequest::where([['requested_parent_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_id', '=', $request->singleton_id], ['request_type', '=', 'pending']])->first();
             if (empty($requests)) {
@@ -209,13 +213,58 @@ class InstantMatch extends Controller
                 $update = InstantMatchRequest::where([['requested_parent_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_id', '=', $request->singleton_id], ['request_type', '=', 'pending']])
                                     ->update(['request_type' => 'un-matched', 'updated_at' => Carbon::now()]);
                 if ($update) {
-                    UnMatches::insert();
+                    Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id]])
+                                    ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->swiped_user_id]])
+                                    ->delete();
+
+                    UnMatches::insert([
+                        'user_id'       => $request->login_id,
+                        'user_type'     => $request->user_type,
+                        'singleton_id'  => $request->singleton_id,
+                        'un_matched_id' => $request->swiped_user_id,
+                        'created_at'    => date('Y-m-d H:i:s'),
+                    ]);
                 }
             }elseif ($status == 'matched') {
                 $update = InstantMatchRequest::where([['requested_parent_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_id', '=', $request->singleton_id], ['request_type', '=', 'pending']])
                                     ->update(['request_type' => 'matched', 'updated_at' => Carbon::now()]);
                 if ($update) {
-                    # code...
+                    $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id]])
+                                    ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->swiped_user_id]])
+                                    ->first();
+                    if (!empty($mutual)) {
+                        Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id], ['is_rematched', '=', 'no']])
+                                ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])
+                                ->update(['match_type' => 'matched', 'updated_at' => date('Y-m-d H:i:s')]);
+                    }else{
+                        $data = [
+                            'user_id'           => $request->login_id,
+                            'user_type'         => $request->user_type,
+                            'match_id'          => $request->swiped_user_id,
+                            'singleton_id'      => $request->singleton_id,
+                            'matched_parent_id' => $parent->parent_id,
+                            'match_type'        => 'matched',
+                            'created_at'        => date('Y-m-d H:i:s')
+                        ];
+    
+                        DB::table('matches')->insert($data);
+                    }
+                }
+
+                $right               = new MyMatches();
+                $right->user_id      = $request->login_id ? $request->login_id : '';
+                $right->user_type    = $request->user_type ? $request->user_type : '';
+                $right->singleton_id = $request->singleton_id ? $request->singleton_id : '';
+                $right->matched_id   = $request->swiped_user_id ? $request->swiped_user_id : '';
+                $right->save();
+
+                if ($right){
+                    $recieved = new RecievedMatches();
+                    $recieved->user_id = $parent->parent_id ? $parent->parent_id : '';
+                    $recieved->user_type = 'parent';
+                    $recieved->singleton_id = $request->swiped_user_id ? $request->swiped_user_id : '';
+                    $recieved->recieved_match_id = $request->singleton_id ? $request->singleton_id : '';
+                    $recieved->save();
                 }
             }
 

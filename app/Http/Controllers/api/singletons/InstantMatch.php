@@ -5,7 +5,6 @@ namespace App\Http\Controllers\api\singletons;
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
 use App\Models\ChatHistory;
-use App\Models\ChatRequest as ModelsChatRequest;
 use App\Models\InstantMatchRequest;
 use App\Models\Matches;
 use App\Models\MessagedUsers;
@@ -122,9 +121,9 @@ class InstantMatch extends Controller
             $sender = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
             $reciever = Singleton::where([['id', '=', $request->requested_id], ['status', '=', 'Unblocked']])->first();
 
-            $request = InstantMatchRequest::insert($data);
+            $requests = InstantMatchRequest::insert($data);
 
-            if($request){
+            if($requests){
                 $title = __('msg.Instant Match Request');
                 $body = __('msg.You have a Instant Match Request from').' '.$sender->name;
 
@@ -170,7 +169,7 @@ class InstantMatch extends Controller
                 'required' ,
                 Rule::in(['singleton']),
             ],
-            'requested_id'   => 'required||numeric',
+            'swiped_user_id'   => 'required||numeric',
             'status'          => [
                 'required' ,
                 Rule::in(['matched','un-matched','rejected']),
@@ -186,7 +185,116 @@ class InstantMatch extends Controller
         }
 
         try {
-            //code...
+            $status = $request->status;
+
+            $parent = Singleton::where([['id', '=', $request->swiped_user_id], ['status','=', 'Unblocked'], ['is_verified', '=', 'verified']])->first();
+            if (empty($parent) || ($parent->parent_id == 0)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.change-request-status.not-linked'),
+                ],400);
+            }
+
+            $requests = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])->first();
+            if (empty($requests)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.change-request-status.invalid'),
+                ],400);
+            }
+
+            if ($status == 'rejected') {
+                $update = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])
+                                    ->update(['request_type' => 'rejected', 'updated_at' => Carbon::now()]);
+            }elseif ($status == 'un-matched') {
+                $update = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])
+                                    ->update(['request_type' => 'un-matched', 'updated_at' => Carbon::now()]);
+                if ($update) {
+                    Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id]])
+                                ->orWhere([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id]])
+                                ->delete();
+
+                    UnMatches::insert([
+                        'user_id'       => $request->login_id,
+                        'user_type'     => $request->user_type,
+                        'un_matched_id' => $request->swiped_user_id,
+                        'created_at'    => date('Y-m-d H:i:s'),
+                    ]);
+                }
+            }elseif ($status == 'matched') {
+                $update = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])
+                                                ->update(['request_type' => 'matched', 'updated_at' => Carbon::now()]);
+                if ($update) {
+                    $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id]])
+                                    ->orWhere([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id]])
+                                    ->first();
+                                    
+                    if (!empty($mutual)) {
+                        // $busy = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['status', 'busy']])->first();
+                        $matched = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['match_type', 'matched']])
+                                            ->orWhere([['match_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
+                                            ->first();
+
+                        if (!empty($matched)) {
+                            $hold = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['match_type', 'hold'], ['match_id', '=', $request->login_id]])
+                                            ->orWhere([['user_id', '=', $request->login_id],['match_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'hold']])
+                                            ->first();
+                            if (empty($hold)) {
+                                $queue_no = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton']])
+                                    ->orderBy('queue','desc')
+                                    ->first();
+                                $queue = $queue_no->queue + 1;
+                                $match_type = 'hold';
+                            } else{
+                                $queue = $hold->queue;
+                                $match_type = 'hold';
+                            }
+                        }else{
+                            $queue = 0;
+                            $match_type = 'matched';
+                        }
+
+                        Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])
+                                ->orWhere([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['is_rematched', '=', 'no']])
+                                ->update(['match_type' => $match_type, 'queue' => $queue, 'updated_at' => date('Y-m-d H:i:s')]);
+                    }else{
+                        $data = [
+                            'user_id' => $request->login_id,
+                            'user_type' => $request->user_type,
+                            'match_id' => $request->swiped_user_id,
+                            'matched_parent_id' => $parent->parent_id,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ];
+                        DB::table('matches')->insert($data);
+                    }
+
+                    $right              = new MyMatches();
+                    $right->user_id     = $request->login_id ? $request->login_id : '';
+                    $right->user_type   = $request->user_type ? $request->user_type : '';
+                    $right->matched_id  = $request->swiped_user_id ? $request->swiped_user_id : '';
+                    $right->save();
+
+                    if ($right){
+                        $recieved = new RecievedMatches();
+                        $recieved->user_id = $request->swiped_user_id ? $request->swiped_user_id : '';
+                        $recieved->user_type = 'singleton';
+                        $recieved->recieved_match_id = $request->login_id ? $request->login_id : '';
+                        $recieved->save();
+                    }
+                }
+            }
+
+            if ($update) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.change-request-status.success'),
+                ],400);
+            } else {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.change-request-status.failure'),
+                ],400);
+            }
         } catch (\Throwable $e) {
             return response()->json([
                 'status'    => 'failed',
