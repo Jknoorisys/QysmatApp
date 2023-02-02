@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('reported_user_id');
             $table->enum('reported_user_type', ['singleton','parent'])->default('singleton');
             $table->string('reported_user_name');
+            $table->string('reason');
             $table->timestamps();
         });
     }

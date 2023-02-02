@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\singletons;
 
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
+use App\Models\Matches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\Singleton;
@@ -60,7 +61,8 @@ class Profile extends Controller
             $user = Singleton::where([['id','=',$request->login_id], ['status','=','Unblocked'], ['is_email_verified','=','verified']])->first();
             if ($user->parent_id && $user->parent_id != 0) {
                 $parent = ParentsModel::where('id','=',$user->parent_id)->first();
-                $user->parent_name = $parent->name;
+                $user->parent_name = $parent ? $parent->name : '';
+                $user->parent_profile = $parent ? $parent->profile_pic : '';
             }
             
             if(!empty($user)){
@@ -338,6 +340,59 @@ class Profile extends Controller
                         'message'   => __('msg.singletons.access-details.failure'),
                     ],400);
                 }
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function chatInProgress(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'   => 'required||numeric',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+            $busy = Singleton::where([['id', '=', $request->login_id], ['chat_status', '=','busy']])->first();
+            if (!empty($busy)) {
+                $singleton_id = $request->login_id;
+                $mutual = Matches ::leftjoin('singletons', function($join) use ($singleton_id) {
+                                        $join->on('singletons.id','=','matches.match_id')
+                                            ->where('matches.match_id','!=',$singleton_id);
+                                        $join->orOn('singletons.id','=','matches.user_id')
+                                            ->where('matches.user_id','!=',$singleton_id);
+                                    })
+                                    ->where(function($query) use ($singleton_id) {
+                                        $query->where([['matches.user_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched'], ['matches.status','=', 'busy']])
+                                              ->orWhere([['matches.match_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched'], ['matches.status','=', 'busy']]);
+                                    })
+                                    ->first(['singletons.id','singletons.name','singletons.photo1']);
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.helper.busy'),
+                    'data'      => $mutual ? $mutual: '',
+                ],200);
+            } else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.available'),
+                ],400);
             }
         } catch (\Exception $e) {
             return response()->json([

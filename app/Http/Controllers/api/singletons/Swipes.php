@@ -379,6 +379,13 @@ class Swipes extends Controller
                 //         'response'      => ''
                 //     );
                 //     $result = sendFCMNotification($notification, $fcm_regid, 'verification');
+
+                    // $body = __('msg.You hav a New Match Request!');
+                    // $token = $user->fcm_token;
+                    // $data = array(
+                    //     'notType' => "match_request",
+                    // );
+                    // $result = sendFCMNotifications($token, $title, $body, $data);
                 // }
 
                 // $user->notify(new MatchNotification($singleton, $user->user_type, 0));

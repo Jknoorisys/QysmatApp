@@ -78,6 +78,13 @@ class BlockOrReportUser extends Controller
             $user->user_type                 = $request->user_type ? $request->user_type : '';
             $user_details                    = $user->save();
 
+            // DB::table('block_lists')->updateOrInsert(
+            //     ['user_id' => $request->login_id],
+            //     [
+
+            //     ]
+            // );
+
             if($user_details){
                 return response()->json([
                     'status'    => 'success',
@@ -115,6 +122,7 @@ class BlockOrReportUser extends Controller
                 'required' ,
                 Rule::in(['singleton','parent']),
             ],
+            'reason' => 'required',
         ]);
 
         if($validator->fails()){
@@ -145,6 +153,7 @@ class BlockOrReportUser extends Controller
             $user->reported_user_name         = $userExists->name ? $userExists->name : '';
             $user->reported_user_id  = $request->reported_user_id ? $request->reported_user_id : '';
             $user->reported_user_type = $request->reported_user_type ? $request->reported_user_type : '';
+            $user->reason = $request->reason ? $request->reason : '';
             $user_details = $user->save();
 
             if($user_details){

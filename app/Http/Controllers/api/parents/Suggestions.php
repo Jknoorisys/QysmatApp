@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\parents;
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
 use App\Models\Categories as ModelsCategories;
+use App\Models\Matches;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
@@ -183,8 +184,11 @@ class Suggestions extends Controller
                         $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
                         $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
                         $not_linked = ParentChild ::where([['singleton_id','=', $singleton_id], ['status', '=', 'Linked']])->first();
+                        $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id], ['match_type', '!=', 'liked']])
+                                            ->orWhere([['user_id', '=', $m->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $singleton_id], ['match_type', '!=', 'liked']])
+                                            ->first();
 
-                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && !empty($not_linked)) {
+                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && !empty($not_linked) && empty($mutaul)) {
                             $users[] = $m;
                         }
                     }
