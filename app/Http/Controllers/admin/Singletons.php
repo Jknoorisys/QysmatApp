@@ -77,8 +77,8 @@ class Singletons extends Controller
             if ($is_verified == 'verified') {
                 $reciever = Singleton::where([['id', '=', $id], ['status', '=', 'Unblocked']])->first();
                 if (isset($reciever) && !empty($reciever)) {
-                    $title = __('msg.New Message');
-                    $message = __('msg.Your Profile is Verified by Admin Successfully!');
+                    $title = __('msg.Profile Verified');
+                    $message = __('msg.Your Profile is Verified by Admin');
                     $fcm_regid[] = $reciever->fcm_token;
                     $notification = array(
                         'title'         => $title,
@@ -89,6 +89,13 @@ class Singletons extends Controller
                         'response'      => ''
                     );
                     $result = sendFCMNotification($notification, $fcm_regid, 'verification');
+
+                    // $body = __('msg.Your Profile is Verified by Admin');
+                    // $token = $reciever->fcm_token;
+                    // $data = array(
+                    //     'notType' => "profile_verified",
+                    // );
+                    // $result = sendFCMNotifications($token, $title, $body, $data);
                 }
                 return redirect()->to('sigletons')->with('success', __('msg.Singleton Profile Verified Successfully'));
             } else {

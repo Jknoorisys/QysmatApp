@@ -69,6 +69,7 @@ Route::prefix('singleton')->group(function () {
     Route::post('update-profile' , [Profile::class, 'updateProfile']);
     Route::post('upload-photos' , [Profile::class, 'uploadPhotos']);
     Route::post('get-access-details' , [Profile::class, 'getAccessDetails']);
+    Route::post('busy' , [Profile::class, 'chatInProgress']);
 
     // Singleton Categories
     Route::post('get-categories' , [Suggestions::class, 'index']);

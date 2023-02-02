@@ -335,7 +335,8 @@ return [
 
     // FCM Notifications
     'New Message'                                           => 'New Message',
-    'Your Profile is Verified by Admin Successfully!'       => 'Your Profile is Verified by Admin Successfully!',
+    'Your Profile is Verified by Admin'                     => 'Your Profile is Verified by Admin',
+    'Profile Verified'                                      => 'Profile Verified',
     'You hav a New Match Request!'                          => 'You hav a New Match Request!',
     'Instant Match Request'                                 => 'Instant Match Request',
     'You have a Instant Match Request from'                 => 'You have a Instant Match Request from',
@@ -874,6 +875,7 @@ return [
         'singleton-not-linked' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         'parent-not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
         'busy' => 'Chat in Progress...',
+        'available' => 'No Chat in Progress...',
     ],
 
     'stripe' => [
