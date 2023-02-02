@@ -211,7 +211,7 @@ class Matches extends Controller
                         ->get(['my_matches.user_id','my_matches.user_type','singletons.*']);
 
             if(!$match->isEmpty()){
-                $users = [];
+                // $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
                     $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
@@ -219,27 +219,35 @@ class Matches extends Controller
                     $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
 
                     if (empty($block) && empty($report) && empty($unMatch)) {
-                        $users[] = $m;
+                        // $users[] = $m;
+                        $m->visibility = 'enabled';
+                    }else{
+                        $m->visibility = 'disabled';
                     }
+
+                    // empty($block) ? $m->blocked = '' : 'Blocked';
+                    // empty($report) ? $m->Reported = '' : 'Reported';
+                    // empty($unMatch) ? $m->Unmatched = '' : 'Unmatched';
+
                 }
 
-                if(!empty($users)){
+                // if(!empty($match)){
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.match.success'),
-                        'data'      => $users,
+                        'data'      => $match,
                         'total'     => $total
                     ],200);
-                }else{
-                    return response()->json([
-                        'status'    => 'failed',
-                        'message'   => __('msg.singletons.match.failure'),
-                    ],400);
-                }
+                // }else{
+                //     return response()->json([
+                //         'status'    => 'failed',
+                //         'message'   => __('msg.singletons.match.failure'),
+                //     ],400);
+                // }
             }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.singletons.match.invalid'),
+                    'message'   => __('msg.singletons.match.failure'),
                 ],400);
             }
         } catch (\Exception $e) {
@@ -290,7 +298,7 @@ class Matches extends Controller
                         ->limit($per_page)
                         ->get(['recieved_matches.user_id','recieved_matches.user_type','recieved_matches.singleton_id','singletons.*']);
             if(!$match->isEmpty()){
-                $users = [];
+                // $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
                     $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
@@ -298,27 +306,34 @@ class Matches extends Controller
                     $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
 
                     if (empty($block) && empty($report) && empty($unMatch)) {
-                        $users[] = $m;
+                        // $users[] = $m;
+                        $m->visibility = 'enabled';
+                    }else{
+                        $m->visibility = 'disabled';
                     }
+
+                    // empty($block) ? $m->blocked = '' : 'Blocked';
+                    // empty($report) ? $m->Reported = '' : 'Reported';
+                    // empty($unMatch) ? $m->Unmatched = '' : 'Unmatched';
                 }
 
-                if(!empty($users)){
+                // if(!empty($users)){
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.received-match.success'),
-                        'data'      => $users,
+                        'data'      => $match,
                         'total'     => $total
                     ],200);
-                }else{
-                    return response()->json([
-                        'status'    => 'failed',
-                        'message'   => __('msg.singletons.received-match.failure'),
-                    ],400);
-                }
+                // }else{
+                //     return response()->json([
+                //         'status'    => 'failed',
+                //         'message'   => __('msg.singletons.received-match.failure'),
+                //     ],400);
+                // }
             }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.singletons.received-match.invalid'),
+                    'message'   => __('msg.singletons.received-match.failure'),
                 ],400);
             }
         } catch (\Exception $e) {
@@ -368,7 +383,7 @@ class Matches extends Controller
                         ->limit($per_page)
                         ->get(['referred_matches.user_id','referred_matches.user_type','referred_matches.singleton_id','singletons.*']);
             if(!$match->isEmpty()){
-                $users = [];
+                // $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
                     $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
@@ -376,23 +391,30 @@ class Matches extends Controller
                     $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
 
                     if (empty($block) && empty($report) && empty($unMatch)) {
-                        $users[] = $m;
+                        // $users[] = $m;
+                        $m->visibility = 'enabled';
+                    }else{
+                        $m->visibility = 'disabled';
                     }
+
+                    // empty($block) ? $m->blocked = '' : 'Blocked';
+                    // empty($report) ? $m->Reported = '' : 'Reported';
+                    // empty($unMatch) ? $m->Unmatched = '' : 'Unmatched';
                 }
 
-                if(!empty($users)){
+                // if(!empty($users)){
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.referred-match.success'),
-                        'data'      => $users,
+                        'data'      => $match,
                         'total'     => $total
                     ],200);
-                }else{
-                    return response()->json([
-                        'status'    => 'failed',
-                        'message'   => __('msg.singletons.referred-match.failure'),
-                    ],400);
-                }
+                // }else{
+                //     return response()->json([
+                //         'status'    => 'failed',
+                //         'message'   => __('msg.singletons.referred-match.failure'),
+                //     ],400);
+                // }
             }else{
                 return response()->json([
                     'status'    => 'failed',
@@ -473,7 +495,7 @@ class Matches extends Controller
                         ->get(['matches.user_id','matches.user_type','matches.match_type','matches.is_rematched','singletons.*']);
 
             if(!$match->isEmpty()){
-                $users = [];
+                // $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
                     $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
@@ -483,24 +505,31 @@ class Matches extends Controller
                     //     $users[] = $m;
                     // }
 
-                    if (empty($block) && empty($report)) {
-                        $users[] = $m;
+                    if (empty($block) && empty($report) && empty($unMatch)) {
+                        // $users[] = $m;
+                        $m->visibility = 'enabled';
+                    }else{
+                        $m->visibility = 'disabled';
                     }
+
+                    // empty($block) ? $m->blocked = '' : 'Blocked';
+                    // empty($report) ? $m->Reported = '' : 'Reported';
+                    // empty($unMatch) ? $m->Unmatched = '' : 'Unmatched';
                 }
 
-                if(!empty($users)){
+                // if(!empty($users)){
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.match.success'),
-                        'data'      => $users,
+                        'data'      => $match,
                         'total'     => $total
                     ],200);
-                }else{
-                    return response()->json([
-                        'status'    => 'failed',
-                        'message'   => __('msg.singletons.match.failure'),
-                    ],400);
-                }
+                // }else{
+                //     return response()->json([
+                //         'status'    => 'failed',
+                //         'message'   => __('msg.singletons.match.failure'),
+                //     ],400);
+                // }
             }else{
                 return response()->json([
                     'status'    => 'failed',
