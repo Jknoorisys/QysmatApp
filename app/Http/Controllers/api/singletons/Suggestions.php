@@ -260,10 +260,10 @@ class Suggestions extends Controller
                         $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['un_matched_id', '=', $singleton_id]])->first();
                         $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['matched_id', '=', $singleton_id]])->first();
                         $not_linked = ParentChild ::where([['singleton_id','=', $singleton_id], ['status', '=', 'Linked']])->first();
-                        $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $singleton_id],['match_type', '!=', 'liked']])
-                                            ->orWhere([['user_id', '=', $singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id],['match_type', '!=', 'liked']])
+                        $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $singleton_id],['match_type', '=', 'liked']])
+                                            ->orWhere([['user_id', '=', $singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id],['match_type', '=', 'liked']])
                                             ->first();
-                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && !empty($not_linked) && empty($mutual)) {
+                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && !empty($not_linked) && !empty($mutual)) {
                             $users[] = $m;
                         }
                     }
