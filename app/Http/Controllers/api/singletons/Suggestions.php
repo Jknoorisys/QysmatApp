@@ -263,7 +263,7 @@ class Suggestions extends Controller
                         $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $singleton_id],['match_type', '!=', 'liked']])
                                             ->orWhere([['user_id', '=', $singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id],['match_type', '!=', 'liked']])
                                             ->first();
-                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && !empty($not_linked) && empty($mutaul)) {
+                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && !empty($not_linked) && empty($mutual)) {
                             $users[] = $m;
                         }
                     }

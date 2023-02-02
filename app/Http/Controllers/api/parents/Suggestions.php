@@ -188,7 +188,7 @@ class Suggestions extends Controller
                                             ->orWhere([['user_id', '=', $m->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $singleton_id], ['match_type', '!=', 'liked']])
                                             ->first();
 
-                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && !empty($not_linked) && empty($mutaul)) {
+                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && !empty($not_linked) && empty($mutual)) {
                             $users[] = $m;
                         }
                     }
