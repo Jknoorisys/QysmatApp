@@ -54,7 +54,7 @@ class StripeSubscription extends Controller
                 'required' ,
                 Rule::in(['1','2','3']),
             ],
-            // 'stripe_token' => 'required',
+            'stripe_token' => 'required',
             'payment_method'   => [
                     'required' ,
                     Rule::in(['stripe','in-app']),
@@ -77,7 +77,7 @@ class StripeSubscription extends Controller
 
         try {
             $stripe = Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-            // $token = $request->stripe_token;
+            $token = $request->stripe_token;
             $email = $request->stripe_email;
             $user_id = $request->login_id;
             $user_type = $request->user_type;
@@ -97,35 +97,35 @@ class StripeSubscription extends Controller
             if (!empty($user->stripe_id) && $user->stripe_id != null) {
                 $customer_id = $user->stripe_id;
             } else {
-                $card = BankDetails::where([['user_id', '=', $user_id],['user_type', '=', $user_type]])->first();
+                // $card = BankDetails::where([['user_id', '=', $user_id],['user_type', '=', $user_type]])->first();
             
-                if (!empty($card)) {
-                    $month_year = explode('/',$card->month_year,2);
-                    $month = $month_year[0];
-                    $year = $month_year[1];
-                    $token = \Stripe\Token::create(array(
-                        "card" => array(
-                        "number" => $card->card_number,
-                        "exp_month" => $month,
-                        "exp_year" => $year,
-                        "cvc" => $card->cvv,
-                        'name'  => $card->card_holder_name,
-                        )
-                    ));
+                // if (!empty($card)) {
+                //     $month_year = explode('/',$card->month_year,2);
+                //     $month = $month_year[0];
+                //     $year = $month_year[1];
+                //     $token = \Stripe\Token::create(array(
+                //         "card" => array(
+                //         "number" => $card->card_number,
+                //         "exp_month" => $month,
+                //         "exp_year" => $year,
+                //         "cvc" => $card->cvv,
+                //         'name'  => $card->card_holder_name,
+                //         )
+                //     ));
 
                     $customer = \Stripe\Customer::create([
-                        'name'  => $card->card_holder_name,
+                        'name'  => $user_name,
                         'email' => $email,
                         'phone'  => $user->mobile,
                         'source'  => $token,
                     ]);
                     $customer_id = $customer->id;
-                }else {
-                    return response()->json([
-                        'status'    => 'failed',
-                        'message'   => __('msg.stripe.card'),
-                    ],400);
-                }
+                // }else {
+                //     return response()->json([
+                //         'status'    => 'failed',
+                //         'message'   => __('msg.stripe.card'),
+                //     ],400);
+                // }
             }
 
             if ($request->plan_id == 3) {

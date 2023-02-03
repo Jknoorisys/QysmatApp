@@ -99,7 +99,7 @@ class Chat extends Controller
                                     ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id],['match_type', '=', 'matched'], ['singleton_id', '=', $request->messaged_user_singleton_id]])
                                     ->first();
 
-            if (empty($not_in_list2) && empty($not_in_list4)) {
+            if (empty($not_in_list4)) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.send-message.failure'),
@@ -418,6 +418,49 @@ class Chat extends Controller
                     $user = Singleton::where([['id','=',$linked->singleton_id],['status','!=','Deleted']])->first();
                     $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
                     $user->notify(new ReferNotification($parent, $user->user_type, 0));
+
+                    DB::table('my_matches')->updateORInsert(
+                        ['user_id' => $linked->singleton_id, 'user_type' => 'singleton', 'matched_id' => $request->messaged_user_singleton_id],
+                        [
+                            'user_id' => $linked->singleton_id, 
+                            'user_type' => 'singleton', 
+                            'matched_id' => $request->messaged_user_singleton_id
+                        ]
+                    );
+                    
+                    $mutual = Matches ::where([['user_id', '=', $linked->singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->messaged_user_singleton_id]])
+                                        ->orWhere([['user_id', '=', $request->messaged_user_singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $linked->singleton_id]])
+                                        ->first();
+
+                    if (!empty($mutual)) {
+                        // $busy = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['status', 'busy']])->first();
+                        $matched = Matches::where([['user_id', '=', $request->messaged_user_singleton_id], ['user_type', '=', 'singleton'],['match_type', 'matched']])
+                                            ->orWhere([['match_id', '=', $request->messaged_user_singleton_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
+                                            ->first();
+                        if (!empty($matched)) {
+                            $queue_no = Matches::where([['user_id', '=', $request->messaged_user_singleton_id], ['user_type', '=', 'singleton']])
+                                    ->orderBy('queue','desc')
+                                    ->first();
+                            $queue = $queue_no->queue + 1;
+                            $match_type = 'hold';
+                        }else{
+                            $queue = 0;
+                            $match_type = 'matched';
+                        }
+
+                        Matches::where([['user_id', '=', $request->messaged_user_singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $linked->singleton_id], ['is_rematched', '=', 'no']])
+                                ->orWhere([['user_id', '=', $linked->singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->messaged_user_singleton_id], ['is_rematched', '=', 'no']])
+                                ->update(['match_type' => $match_type, 'queue' => $queue, 'updated_at' => date('Y-m-d H:i:s')]);
+                    }else{
+                        $data = [
+                            'user_id' => $linked->singleton_id,
+                            'user_type' => 'singleton',
+                            'match_id' => $request->messaged_user_singleton_id,
+                            'matched_parent_id' => $request->messaged_user_id,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ];
+                        DB::table('matches')->insert($data);
+                    }
 
                     return response()->json([
                         'status'    => 'success',

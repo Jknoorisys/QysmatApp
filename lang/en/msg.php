@@ -529,7 +529,8 @@ return [
             'match-list'   => 'User, You want to Send Request Not Found in Match-List',
             'premium' => 'Only for Premium Users',
             'limit'   => 'You have already Sent the 3 Requests for this week, Please Try Again Next Week...',
-            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!'
+            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
+            'duplicate' => 'You have already Sent Request to this User'
         ],
 
         'change-request-status' => [
@@ -769,7 +770,8 @@ return [
             'match-list'   => 'User, You want to Send Request Not Found in Match-List',
             'premium' => 'Only for Premium Users',
             'limit'   => 'You have already Sent the 3 Requests for this week, Please Try Again Next Week...',
-            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!'
+            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
+            'duplicate' => 'You have already Sent Request to this User'
         ],
 
         'change-request-status' => [

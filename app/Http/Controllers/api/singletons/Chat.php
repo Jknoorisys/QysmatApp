@@ -100,7 +100,7 @@ class Chat extends Controller
                                     ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['match_id', '=', $request->login_id],['match_type', '=', 'matched']])
                                     ->first();
 
-            if (empty($not_in_list4) && empty($not_in_list2)) {
+            if (empty($not_in_list4)) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.send-message.failure'),
@@ -481,6 +481,39 @@ class Chat extends Controller
                 }
 
                 if ($send) {
+                    DB::table('my_matches')->updateORInsert(
+                        ['user_id' => $linked->parent_id, 'user_type' => 'parent', 'singleton_id' => $request->login_id, 'matched_id' => $request->messaged_user_id],
+                        [
+                            'user_id' => $linked->parent_id, 
+                            'user_type' => 'parent', 
+                            'singleton_id' => $request->login_id, 
+                            'matched_id' => $request->messaged_user_id
+                        ]
+                    );
+
+                    $parent = Singleton:: where([['id', '=', $request->messaged_user_id], ['status','=', 'Unblocked'], ['is_verified', '=', 'verified']])->first();
+                    $mutual = Matches  :: where([['user_id', '=', $linked->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->messaged_user_id], ['singleton_id', '=', $request->login_id]])
+                                        ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->login_id], ['singleton_id', '=', $request->messaged_user_id]])
+                                        ->first();
+
+                    if (!empty($mutual)) {
+                        // Matches::where([['user_id', '=', $linked->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->messaged_user_id], ['singleton_id', '=', $request->login_id], ['is_rematched', '=', 'no']])
+                        //         ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->login_id], ['singleton_id', '=', $request->messaged_user_id], ['is_rematched', '=', 'no']])
+                        //         ->update(['match_type' => 'matched', 'updated_at' => date('Y-m-d H:i:s')]);
+                        Matches::where([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->login_id], ['singleton_id', '=', $request->messaged_user_id], ['is_rematched', '=', 'no'], ['match_type', '=', 'liked']])
+                                ->update(['match_type' => 'matched', 'updated_at' => date('Y-m-d H:i:s')]);
+                    }else{
+                        $data = [
+                            'user_id' => $linked->parent_id,
+                            'user_type' => 'parent',
+                            'match_id' => $request->messaged_user_id,
+                            'singleton_id' => $request->login_id,
+                            'matched_parent_id' => $parent->parent_id,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ];
+
+                        DB::table('matches')->insert($data);
+                    }
 
                     $user = ParentsModel::where([['id','=',$linked->parent_id],['status','!=','Deleted']])->first();
                     $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();

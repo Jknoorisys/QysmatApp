@@ -321,8 +321,8 @@ class Swipes extends Controller
                                     ->first();
 
                 if (!empty($mutual)) {
-                    Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id], ['is_rematched', '=', 'no']])
-                            ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])
+                    Matches::where([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])
+                            // ->orWhere([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id], ['is_rematched', '=', 'no']])
                             ->update(['match_type' => 'matched', 'updated_at' => date('Y-m-d H:i:s')]);
                 }else{
                     $data = [
@@ -418,8 +418,6 @@ class Swipes extends Controller
                     ]
                 );
             }elseif ($request->swipe == 'down') {
-                
-
                 $premium = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
                 if ($premium->active_subscription_id != '1') {
                     $last_swipe = LastSwipe::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id]])->first();
