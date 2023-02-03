@@ -123,6 +123,14 @@ class InstantMatch extends Controller
             $sender = Singleton::where([['id', '=', $request->singleton_id], ['status', '=', 'Unblocked']])->first();
             $reciever = ParentsModel::where([['id', '=', $userExists->parent_id], ['status', '=', 'Unblocked']])->first();
 
+            $from = InstantMatchRequest::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['requested_parent_id', '=', $userExists->parent_id], ['requested_id', '=', $request->requested_id], ['request_type', '=', 'pending']])->first();
+            if (!empty($from)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.send-request.duplicate'),
+                ],400);
+            }
+
             $requests = InstantMatchRequest::insert($data);
 
             if($requests){

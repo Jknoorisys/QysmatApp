@@ -172,7 +172,7 @@ class Matches extends Controller
                             ->get(['my_matches.user_id','my_matches.user_type','singletons.*','parents.name as parent_name', 'parents.profile_pic as parent_profile_pic', 'parents.relation_with_singleton']);
 
             if(!$match->isEmpty()){
-                // $users = [];
+                $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
 
@@ -180,31 +180,31 @@ class Matches extends Controller
                     $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                     $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
 
-                    if (empty($block) && empty($report) && empty($unMatch)) {
+                    if (empty($block) && empty($report)) {
                         // $users[] = $m;
                         $m->visibility = 'enabled';
                     }else{
                         $m->visibility = 'disabled';
                     }
 
-                    // empty($block) ? $m->blocked = '' : 'Blocked';
-                    // empty($report) ? $m->Reported = '' : 'Reported';
-                    // empty($unMatch) ? $m->Unmatched = '' : 'Unmatched';
+                    if (empty($unMatch)) {
+                        $users[] = $m;
+                    }
                 }
 
-                // if(!empty($users)){
+                if(!empty($users)){
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.parents.match.success'),
-                        'data'      => $match,
+                        'data'      => $users,
                         'total'     => $total
                     ],200);
-                // }else{
-                //     return response()->json([
-                //         'status'    => 'failed',
-                //         'message'   => __('msg.parents.match.invalid'),
-                //     ],400);
-                // }
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.parents.match.invalid'),
+                    ],400);
+                }
             }else{
                 return response()->json([
                 'status'    => 'failed',
@@ -262,38 +262,37 @@ class Matches extends Controller
                         ->get(['recieved_matches.user_id','recieved_matches.user_type','recieved_matches.singleton_id','singletons.*','parents.name as parent_name', 'parents.profile_pic as parent_profile_pic', 'parents.relation_with_singleton']);
 
             if(!$match->isEmpty()){
-                // $users = [];
+                $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
                     $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                     $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                     $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
 
-                    if (empty($block) && empty($report) && empty($unMatch)) {
-                        // $users[] = $m;
+                    if (empty($block) && empty($report)) {
                         $m->visibility = 'enabled';
                     }else{
                         $m->visibility = 'disabled';
                     }
 
-                    // empty($block) ? $m->blocked = '' : 'Blocked';
-                    // empty($report) ? $m->Reported = '' : 'Reported';
-                    // empty($unMatch) ? $m->Unmatched = '' : 'Unmatched';
+                    if (empty($unMatch)) {
+                        $users[] = $m;
+                    }
                 }
 
-                // if(!empty($users)){
+                if(!empty($users)){
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.parents.received-match.success'),
-                        'data'      => $match,
+                        'data'      => $users,
                         'total'     => $total
                     ],200);
-                // }else{
-                //     return response()->json([
-                //         'status'    => 'failed',
-                //         'message'   => __('msg.parents.received-match.invalid'),
-                //     ],400);
-                // }
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.parents.received-match.invalid'),
+                    ],400);
+                }
             }else{
                 return response()->json([
                     'status'    => 'failed',
@@ -351,38 +350,38 @@ class Matches extends Controller
                     ->get(['referred_matches.user_id','referred_matches.user_type','referred_matches.singleton_id','singletons.*','parents.name as parent_name', 'parents.profile_pic as parent_profile_pic', 'parents.relation_with_singleton']);
 
             if(!$match->isEmpty()){
-                // $users = [];
+                $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
                     $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                     $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                     $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
 
-                    if (empty($block) && empty($report) && empty($unMatch)) {
+                    if (empty($block) && empty($report)) {
                         // $users[] = $m;
                         $m->visibility = 'enabled';
                     }else{
                         $m->visibility = 'disabled';
                     }
 
-                    // empty($block) ? $m->blocked = '' : 'Blocked';
-                    // empty($report) ? $m->Reported = '' : 'Reported';
-                    // empty($unMatch) ? $m->Unmatched = '' : 'Unmatched';
+                    if (empty($unMatch)) {
+                        $users[] = $m;
+                    }
                 }
 
-                // if(!empty($users)){
+                if(!empty($users)){
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.parents.referred-match.success'),
-                        'data'      => $match,
+                        'data'      => $users,
                         'total'     => $total
                     ],200);
-                // }else{
-                //     return response()->json([
-                //         'status'    => 'failed',
-                //         'message'   => __('msg.parents.referred-match.invalid'),
-                //     ],400);
-                // }
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.parents.referred-match.invalid'),
+                    ],400);
+                }
             }else{
                 return response()->json([
                     'status'    => 'failed',
@@ -460,24 +459,20 @@ class Matches extends Controller
             if(!$match->isEmpty()){
                 // $users = [];
                 foreach ($match as $m) {
-                    $singleton_id = $m->id;
-                    $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
-                    $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton']])->first();
-                    // $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
+                    $singleton_ids = $m->id;
+                    $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_ids], ['blocked_user_type', '=', 'singleton']])->first();
+                    $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $singleton_ids], ['reported_user_type', '=', 'singleton']])->first();
+                    // $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_ids]])->first();
                     // if (empty($block) && empty($report) && empty($unMatch)) {
                     //     $users[] = $m;
                     // }
 
-                    if (empty($block) && empty($report) && empty($unMatch)) {
+                    if (empty($block) && empty($report)) {
                         // $users[] = $m;
                         $m->visibility = 'enabled';
                     }else{
                         $m->visibility = 'disabled';
                     }
-
-                    // empty($block) ? $m->blocked = '' : 'Blocked';
-                    // empty($report) ? $m->Reported = '' : 'Reported';
-                    // empty($unMatch) ? $m->Unmatched = '' : 'Unmatched';
                 }
 
                 // if(!empty($users)){
