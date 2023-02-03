@@ -190,7 +190,7 @@ Route::prefix('contact-details')->group(function () {
 Route::prefix('subscriptions')->group(function () {
     Route::post('get-subscription-plans' , [SubscriptionPlans::class, 'index']);
     Route::post('get-active-subscription' , [SubscriptionPlans::class, 'activeSubscription']);
-    Route::post('subscribe' , [SubscriptionPlans::class, 'subscribe']);
+    Route::post('premium' , [SubscriptionPlans::class, 'isPremium']);
 
 });
 
