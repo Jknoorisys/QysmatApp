@@ -140,7 +140,7 @@ class SubscriptionPlans extends Controller
         }
     }
 
-    public function Subscribe(Request $request)
+    public function isPremium(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'language' => [
@@ -150,21 +150,6 @@ class SubscriptionPlans extends Controller
             'login_id'   => 'required||numeric',
             'user_type' => [
                 'required' ,
-                Rule::in(['singleton','parent']),
-            ],
-            'price'     => 'required',
-            'plan_id' => [
-                'required' ,
-                Rule::in(['1','2','3']),
-            ],
-            'transaction_id' => 'required',
-            'payment_type'   => [
-                    'required' ,
-                    Rule::in(['stripe','in-app']),
-                ],
-            'other_user_id'   => ['required_if:plan_id,3'],
-            'other_user_type' => [
-                'required_if:plan_id,3' ,
                 Rule::in(['singleton','parent']),
             ],
         ]);
@@ -185,45 +170,15 @@ class SubscriptionPlans extends Controller
                 $user = ParentsModel::where([['id', '=', $request->login_id],['status', '=', 'Unblocked']])->first();
             }
             
-            $data = [
-                'user_id'           => $request->login_id ? $request->login_id : '',
-                'user_type'         => $request->user_type ? $request->user_type : '',
-                'user_name'         => $user->name ? $user->name : '',
-                'other_user_id'     => $request->other_user_id ? $request->other_user_id : '',
-                'other_user_type'   => $request->other_user_type ? $request->other_user_type : '',
-                'paid_by'           => $user->name,
-                'paid_amount'       => $request->price,
-                'payment_type'      => $request->payment_type,
-                'transaction_id'    => $request->transaction_id,
-                'subscription_type' => $request->plan_id,
-                'transaction_datetime' => date('Y-m-d h:i:s'),
-            ];
-            $insert = DB::table('transactions')->insert($data);
-            if ($insert) {
-                if ($request->plan_id == 3) {
-                    if ($request->user_type == 'singleton' && $request->other_user_type == 'parent') {
-                        Singleton::where([['id', '=', $request->login_id],['status', '=', 'Unblocked']])->update(['active_subscription_id' => $request->plan_id]);
-                        ParentsModel::where([['id', '=', $request->other_user_id],['status', '=', 'Unblocked']])->update(['active_subscription_id' => $request->plan_id]);
-                    } elseif ($request->user_type == 'parent' && $request->other_user_type == 'singleton') {
-                        ParentsModel::where([['id', '=', $request->login_id],['status', '=', 'Unblocked']])->update(['active_subscription_id' => $request->plan_id]);
-                        Singleton::where([['id', '=', $request->other_user_id],['status', '=', 'Unblocked']])->update(['active_subscription_id' => $request->plan_id]);
-                    }
-                } else{
-                    if ($request->user_type == 'singleton') {
-                        Singleton::where([['id', '=', $request->login_id],['status', '=', 'Unblocked']])->update(['active_subscription_id' => $request->plan_id]);
-                    } elseif ($request->user_type == 'parent') {
-                        ParentsModel::where([['id', '=', $request->login_id],['status', '=', 'Unblocked']])->update(['active_subscription_id' => $request->plan_id]);
-                    }
-                }
-
+            if($user->active_subscription_id != 1){
                 return response()->json([
                     'status'    => 'success',
-                    'message'   => __('msg.subscribe.success'),
+                    'message'   => __('msg.premium.success'),
                 ],200);
             }else {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.subscribe.failure'),
+                    'message'   => __('msg.premium.failure'),
                 ],400);
             }
         } catch (\Throwable $e) {

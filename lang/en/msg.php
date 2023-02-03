@@ -394,6 +394,7 @@ return [
         'failure' => 'Unable to Reset Profile Search, Please Try Again...',
         'invalid' => 'No User found in Your Un-Match List, Please Try Again...',
         'premium' => 'Premium Feature',
+        'reset'   => 'You have already used this Feature for this month, Try Again next month...',
     ],
 
     'static-pages' => [
@@ -406,9 +407,9 @@ return [
         'failure' => 'Subsription Plan Not Found!',
     ],
 
-    'subscribe'  => [
-        'success' => 'Subsribed Successfully!',
-        'failure' => 'Unable to Subsribe, Please Try Again...',
+    'premium'  => [
+        'success' => 'Premium User',
+        'failure' => 'Not a Premium User',
     ],
 
     'parents' => [
