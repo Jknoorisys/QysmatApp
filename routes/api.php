@@ -103,8 +103,6 @@ Route::prefix('singleton')->group(function () {
     Route::post('messaged-users-list' , [Chat::class, 'messagedUsers']);
     Route::post('chat-history' , [Chat::class, 'chatHistory']);
     Route::post('close-chat' , [Chat::class, 'closeChat']);
-    // Route::post('send-chat-request' , [Chat::class, 'startChat']);
-    // Route::post('accept-chat-request' , [Chat::class, 'acceptChatRequest']);
     Route::post('invite-parent' , [Chat::class, 'inviteParent']);
 
     // Notifications
@@ -168,8 +166,6 @@ Route::prefix('parent')->group(function () {
     Route::post('send-message' , [ParentsChat::class, 'index']);
     Route::post('messaged-users-list' , [ParentsChat::class, 'messagedUsers']);
     Route::post('chat-history' , [ParentsChat::class, 'chatHistory']);
-    // Route::post('close-chat' , [ParentsChat::class, 'closeChat']);
-    // Route::post('start-chat' , [ParentsChat::class, 'startChat']);
     Route::post('invite-child' , [ParentsChat::class, 'inviteChild']);
 
     // Notifications
