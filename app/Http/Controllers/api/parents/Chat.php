@@ -398,8 +398,56 @@ class Chat extends Controller
         }
 
         try {
+            $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id],['blocked_user_id', '=', $request->messaged_user_singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
+            if (!empty($block)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.swips.blocked'),
+                ],400);
+            }
+
+            $report = ModelsReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id],['reported_user_id', '=', $request->messaged_user_singleton_id], ['reported_user_type', '=', 'singleton']])->first();
+            if (!empty($report)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.swips.reported'),
+                ],400);
+            }
+
+            $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id], ['un_matched_id', '=', $request->messaged_user_singleton_id]])->first();
+            if (!empty($unMatch)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.swips.un-matched'),
+                ],400);
+            }
+
             $linked = ParentChild::where([['parent_id','=',$request->login_id],['singleton_id','=',$request->singleton_id],['status','=','Linked']])->first();
             if (!empty($linked)) {
+                $block = BlockList ::where([['user_id', '=', $request->singleton_id], ['user_type', '=', 'singleton'], ['blocked_user_id', '=', $request->messaged_user_singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
+                if (!empty($block)) {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.invitation.blocked'),
+                    ],400);
+                }
+
+                $report = ModelsReportedUsers ::where([['user_id', '=', $request->singleton_id], ['user_type', '=', 'singleton'], ['reported_user_id', '=', $request->messaged_user_singleton_id], ['reported_user_type', '=', 'singleton']])->first();
+                if (!empty($report)) {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.invitation.reported'),
+                    ],400);
+                }
+
+                $unMatch = UnMatches ::where([['user_id', '=', $request->singleton_id], ['user_type', '=', 'singleton'], ['un_matched_id', '=', $request->messaged_user_singleton_id]])->first();
+                if (!empty($unMatch)) {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.invitation.un-matched'),
+                    ],400);
+                }
+
                 $invite = new ReferredMatches();
                 $invite->user_id = $linked->singleton_id ? $linked->singleton_id : '';
                 $invite->user_type = 'singleton';
