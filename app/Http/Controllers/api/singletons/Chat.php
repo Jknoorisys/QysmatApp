@@ -417,6 +417,15 @@ class Chat extends Controller
                                     'status' => 'available',
                                     'updated_at'   => date('Y-m-d H:i:s')
                                 ]);
+                $data = [
+                    'conversation' => 'no',
+                    'updated_at'   => date('Y-m-d H:i:s')
+                ];
+
+                MessagedUsers::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type]])
+                                        ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
+                                        ->update($data);
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.close-chat.success'),
