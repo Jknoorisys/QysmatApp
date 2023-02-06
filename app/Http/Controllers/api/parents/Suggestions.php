@@ -151,10 +151,6 @@ class Suggestions extends Controller
                     $this->db->where('location','LIKE',"%$location%");
                 }
 
-                // if(!empty($height)){
-                //     $this->db->where('height','=',$height);
-                // }
-
                 if(!empty($min_height) && !empty($max_height)){
                     $this->db->whereBetween('height', [$min_height, $max_height]);
                 }
@@ -183,12 +179,12 @@ class Suggestions extends Controller
                         $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                         $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
                         $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
-                        $not_linked = ParentChild ::where([['singleton_id','=', $singleton_id], ['status', '=', 'Linked']])->first();
-                        $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id], ['match_type', '=', 'liked']])
-                                            ->orWhere([['user_id', '=', $m->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $singleton_id], ['match_type', '=', 'liked']])
+                        $not_linked = ParentChild ::where([['singleton_id','=', $singleton_id], ['status', '=', 'Unlinked']])->first();
+                        $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id], ['match_type', '!=', 'liked']])
+                                            ->orWhere([['user_id', '=', $m->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $singleton_id], ['match_type', '!=', 'liked']])
                                             ->first();
 
-                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && !empty($not_linked) && !empty($mutual)) {
+                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && empty($not_linked) && empty($mutual)) {
                             $users[] = $m;
                         }
                     }

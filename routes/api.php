@@ -191,7 +191,7 @@ Route::prefix('subscriptions')->group(function () {
     Route::post('get-subscription-plans' , [SubscriptionPlans::class, 'index']);
     Route::post('get-active-subscription' , [SubscriptionPlans::class, 'activeSubscription']);
     Route::post('premium' , [SubscriptionPlans::class, 'isPremium']);
-
+    Route::post('non-premium-singletons' , [SubscriptionPlans::class, 'nonPremiumSingletons']);
 });
 
 // Islamic Quotes
@@ -227,3 +227,7 @@ Route::prefix('stripe')->group(function () {
     Route::post('webhook' , [StripeSubscription::class, 'webhookHandler']);
 });
 
+// Agora
+Route::prefix('agora')->group(function () {
+    Route::post('generate-token' , [Call::class, 'index']);
+});

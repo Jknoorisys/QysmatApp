@@ -56,7 +56,7 @@ class SubscriptionPlans extends Controller
                     $page->price = 'Free';
                     $features = [__("msg.Only 5 Profile Views per day"), __("msg.Unrestricted profile search criteria")];
                 }else {
-                    $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant message  (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
+                    $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant match request (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
                 }
                 $page->features= !empty($features) ? $features : "";
             }
@@ -116,7 +116,7 @@ class SubscriptionPlans extends Controller
                     $page->price = 'Free';
                     $features = [__("msg.Only 5 Profile Views per day"), __("msg.Unrestricted profile search criteria")];
                 }else {
-                    $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant message  (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
+                    $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant match request (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
                 }
                 $page->features= !empty($features) ? $features : "";
 
@@ -169,7 +169,7 @@ class SubscriptionPlans extends Controller
             } elseif ($request->user_type == 'parent') {
                 $user = ParentsModel::where([['id', '=', $request->login_id],['status', '=', 'Unblocked']])->first();
             }
-            
+
             if($user->active_subscription_id != 1){
                 return response()->json([
                     'status'    => 'success',
@@ -190,4 +190,56 @@ class SubscriptionPlans extends Controller
         }
     }
 
+    public function nonPremiumSingletons(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'   => 'required||numeric',
+            'user_type' => [
+                'required' ,
+                Rule::in(['parent']),
+            ],
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+
+
+            $profiles = DB::table('parent_children')
+                            ->where([['parent_children.parent_id','=',$request->login_id], ['parent_children.status', '=', 'Linked']])
+                            ->where('singletons.active_subscription_id', '=', '1')
+                            ->join('singletons', 'singletons.id', '=', 'parent_children.singleton_id')
+                            ->select('singletons.*')
+                            ->get();
+
+            if(!$profiles->isEmpty()){
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.parents.get-linked-profiles.success'),
+                    'data'      => $profiles
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.get-linked-profiles.failure'),
+                ],400);
+            }
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
 }

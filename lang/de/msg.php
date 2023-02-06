@@ -30,7 +30,7 @@ return [
     'Only 5 Profile Views per day'                  => 'Nur 5 Profilansichten pro Tag',
     'Unrestricted profile search criteria'          => 'Uneingeschränkte Profilsuchkriterien',
     'Unlimited swipes per day'                      => 'Unbegrenzte Wischvorgänge pro Tag',
-    'Send instant message  (3 per week)'            => 'Sofortnachricht senden (3 pro Woche)',
+    'Send instant match request (3 per week)'            => 'Sofortnachricht senden (3 pro Woche)',
     'In-app telephone and video calls'              => 'Telefon- und Videoanrufe in der App',
     'Refer profiles to friends and family'          => 'Verweisen Sie Profile an Freunde und Familie',
     'Undo last swipe'                               => 'Letztes Wischen rückgängig machen',
