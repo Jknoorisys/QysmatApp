@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('other_user_id');
             $table->enum('other_user_type', ['singleton','parent'])->default('singleton');
             // $table->string('paid_by');
-            // $table->string('paid_amount');
+            $table->string('amount_paid');
             // $table->string('currency_code');
             $table->enum('payment_method',['stripe','in-app'])->default('stripe');
             $table->string('stripe_subscription_id');

@@ -40,15 +40,12 @@ class Singleton extends Model
     protected $hidden = [
         'password',
         'remember_token',
-        // 'email_otp',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_otp',
+        'stripe_id',
+        'stripe_plan_id',
+        'social_id',
+        'status',
+        'created_at',
+        'updated_at',
     ];
 }

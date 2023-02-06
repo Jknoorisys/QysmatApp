@@ -46,7 +46,7 @@ return new class extends Migration
             $table->string('stripe_id');
             $table->string('stripe_plan_id');
             $table->enum('is_social',['1','0'])->default('0');
-            $table->enum('social_type',['google','facebook','apple']);
+            $table->enum('social_type',['google','facebook','apple','manual'])->default('manual');
             $table->string('social_id');
             $table->string('device_id');
             $table->enum('device_type',['android','ios']);

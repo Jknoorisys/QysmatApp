@@ -232,7 +232,7 @@ return [
     'Only 5 Profile Views per day'                  => 'Only 5 Profile Views per day',
     'Unrestricted profile search criteria'          => 'Unrestricted profile search criteria',
     'Unlimited swipes per day'                      => 'Unlimited swipes per day',
-    'Send instant message  (3 per week)'            => 'Send instant message  (3 per week)',
+    'Send instant match request (3 per week)'       => 'Send instant match request (3 per week)',
     'In-app telephone and video calls'              => 'In-app telephone and video calls',
     'Refer profiles to friends and family'          => 'Refer profiles to friends and family',
     'Undo last swipe'                               => 'Undo last swipe',
