@@ -505,6 +505,9 @@ return [
             'success' => 'Invitation Sent...',
             'failure' => "Unable to Send Invitation, Please Try Again...",
             'invalid' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+            'blocked' => 'Your Child has Blocked this User!',
+            'reported' => 'Your Child has Reported this User!',
+            'un-matched' => 'Your Child has Un-Matched this User!',
         ],
 
         'un-match' => [
@@ -746,6 +749,9 @@ return [
             'success' => 'Invitation Sent...',
             'failure' => "Unable to Send Invitation, Please Try Again...",
             'invalid' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+            'blocked' => 'Your Parent/Guardian has Blocked this User!',
+            'reported' => 'Your Parent/Guardian has Reported this User!',
+            'un-matched' => 'Your Parent/Guardian has Un-Matched this User!',
         ],
 
         'un-match' => [
