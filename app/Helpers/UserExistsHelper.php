@@ -3,7 +3,7 @@
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\Singleton;
-use Barryvdh\DomPDF\Facade\Pdf;
+// use Barryvdh\DomPDF\Facade\Pdf;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
@@ -801,18 +801,18 @@ use Illuminate\Support\Facades\Storage;
         return $response->getBody()->getContents();
     }
 
-    function generateInvoicePdf() {
-        ini_set('memory_limit', '8G');
-        $pdf = Pdf::loadView('invoice');
-        $pdf_name = 'invoice_'.time().'.pdf';
-        $path = Storage::put('invoices/'.$pdf_name,$pdf->output());
-        $email = 'jkauser7@gmail.com';
-        $data = ['salutation' => __('msg.Hi'),'name'=> 'Javeriya','otp'=> '968526', 'msg'=> __('msg.Let’s get you Registered with us!'), 'otp_msg'=> __('msg.Your One time Password to Complete your Registrations is')];
+    // function generateInvoicePdf() {
+    //     ini_set('memory_limit', '8G');
+    //     $pdf = Pdf::loadView('invoice');
+    //     $pdf_name = 'invoice_'.time().'.pdf';
+    //     $path = Storage::put('invoices/'.$pdf_name,$pdf->output());
+    //     $email = 'jkauser7@gmail.com';
+    //     $data = ['salutation' => __('msg.Hi'),'name'=> 'Javeriya','otp'=> '968526', 'msg'=> __('msg.Let’s get you Registered with us!'), 'otp_msg'=> __('msg.Your One time Password to Complete your Registrations is')];
 
-        Mail::send('invoice_email', $data, function ($message) use ($path, $pdf_name, $email, $pdf) {
-            $message->to($email)->subject('Invoice');
-            $message->attachData($pdf->output(), $pdf_name, ['as' => $pdf_name, 'mime' => 'application/pdf']);
-        });
-        return $path;
-    }
+    //     Mail::send('invoice_email', $data, function ($message) use ($path, $pdf_name, $email, $pdf) {
+    //         $message->to($email)->subject('Invoice');
+    //         $message->attachData($pdf->output(), $pdf_name, ['as' => $pdf_name, 'mime' => 'application/pdf']);
+    //     });
+    //     return $path;
+    // }
 ?>
