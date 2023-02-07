@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Subscriptions as ModelsSubscriptions;
 use Illuminate\Http\Request;
-use Stripe\Plan;
-use Stripe\Stripe;
+// use Stripe\Plan;
+// use Stripe\Stripe;
 
 class Subscriptions extends Controller
 {
@@ -88,22 +88,22 @@ class Subscriptions extends Controller
         $update =  ModelsSubscriptions :: whereId($request->id)->update(['subscription_type' => $request->subscription_type, 'price' => $request->price, 'updated_at' => date('Y-m-d H:i:s')]);
         if($update)
         {
-            Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-            $plan = Plan::create(
-                [
-                    'amount' => $request->price * 100,
-                    'currency' => env('STRIPE_CURRENCY'),
-                    'interval' => 'month',
-                    'product'  => [
-                        'name' => strtolower($request->subscription_type),
-                        'unit_label' => 'person'
-                    ]
-                ]
-            );
+            // Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+            // $plan = Plan::create(
+            //     [
+            //         'amount' => $request->price * 100,
+            //         'currency' => env('STRIPE_CURRENCY'),
+            //         'interval' => 'month',
+            //         'product'  => [
+            //             'name' => strtolower($request->subscription_type),
+            //             'unit_label' => 'person'
+            //         ]
+            //     ]
+            // );
 
-            if ($plan) {
-                ModelsSubscriptions :: whereId($request->id)->update(['stripe_plan_id' => $plan->id]);
-            }             
+            // if ($plan) {
+            //     ModelsSubscriptions :: whereId($request->id)->update(['stripe_plan_id' => $plan->id]);
+            // }             
 
             return redirect()->to('subscriptions')->with('success', __('msg.Subscription Price Updated!'));
         }else{

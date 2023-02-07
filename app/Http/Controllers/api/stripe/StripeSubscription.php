@@ -4,11 +4,15 @@ namespace App\Http\Controllers\api\stripe;
 
 use App\Http\Controllers\Controller;
 use App\Models\BankDetails;
+use App\Models\Charges;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\Singleton;
 use App\Models\Subscriptions;
 use App\Models\Transactions;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use PDF;
+use Dompdf\Adapter\PDFLib;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +43,8 @@ class StripeSubscription extends Controller
 
     public function index(Request $request)
     {
+        ini_set('memory_limit', '8G');
+
         $validator = Validator::make($request->all(), [
             'language' => [
                 'required' ,
@@ -54,17 +60,17 @@ class StripeSubscription extends Controller
                 'required' ,
                 Rule::in(['1','2','3']),
             ],
-            'stripe_token' => 'required',
+            // 'stripe_token' => 'required',
             'payment_method'   => [
                     'required' ,
                     Rule::in(['stripe','in-app']),
                 ],
             'stripe_email'    => 'required||email',
-            'other_user_id'   => ['required_if:plan_id,3'],
-            'other_user_type' => [
-                'required_if:plan_id,3' ,
-                Rule::in(['singleton','parent']),
-            ],
+            // 'other_user_id'   => ['required_if:user_type,parent', 'required_if:plan_id,3'],
+            // 'other_user_type' => [
+            //     'required_if:plan_id,3' ,'required_if:user_type,parent',
+            //     Rule::in(['singleton','parent']),
+            // ],
         ]);
 
         if($validator->fails()){
@@ -77,11 +83,11 @@ class StripeSubscription extends Controller
 
         try {
             $stripe = Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-            $token = $request->stripe_token;
+            // $token = $request->stripe_token;
             $email = $request->stripe_email;
             $user_id = $request->login_id;
             $user_type = $request->user_type;
-            $other_user_ids  = explode(',',$request->other_user_id);
+            $other_user_ids  = $request->other_user_id ? explode(',',$request->other_user_id) : null;
             $other_user_type = $request->other_user_type;
 
             if ($user_type == 'singleton') {
@@ -97,21 +103,21 @@ class StripeSubscription extends Controller
             if (!empty($user->stripe_id) && $user->stripe_id != null) {
                 $customer_id = $user->stripe_id;
             } else {
-                // $card = BankDetails::where([['user_id', '=', $user_id],['user_type', '=', $user_type]])->first();
-            
-                // if (!empty($card)) {
-                //     $month_year = explode('/',$card->month_year,2);
-                //     $month = $month_year[0];
-                //     $year = $month_year[1];
-                //     $token = \Stripe\Token::create(array(
-                //         "card" => array(
-                //         "number" => $card->card_number,
-                //         "exp_month" => $month,
-                //         "exp_year" => $year,
-                //         "cvc" => $card->cvv,
-                //         'name'  => $card->card_holder_name,
-                //         )
-                //     ));
+                $card = BankDetails::where([['user_id', '=', $user_id],['user_type', '=', $user_type]])->first();
+
+                if (!empty($card)) {
+                    $month_year = explode('/',$card->month_year,2);
+                    $month = $month_year[0];
+                    $year = $month_year[1];
+                    $token = \Stripe\Token::create(array(
+                        "card" => array(
+                        "number" => $card->card_number,
+                        "exp_month" => $month,
+                        "exp_year" => $year,
+                        "cvc" => $card->cvv,
+                        'name'  => $card->card_holder_name,
+                        )
+                    ));
 
                     $customer = \Stripe\Customer::create([
                         'name'  => $user_name,
@@ -120,26 +126,100 @@ class StripeSubscription extends Controller
                         'source'  => $token,
                     ]);
                     $customer_id = $customer->id;
-                // }else {
-                //     return response()->json([
-                //         'status'    => 'failed',
-                //         'message'   => __('msg.stripe.card'),
-                //     ],400);
-                // }
+                }else {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.stripe.card'),
+                    ],400);
+                }
             }
 
-            if ($request->plan_id == 3) {
+            if ($request->plan_id == 3 && $request->user_type == 'parent') {
+                $validator = Validator::make($request->all(), [
+                    'other_user_id'   => ['required_if:plan_id,3' ,'required_if:user_type,parent'],
+                    'other_user_type' => [
+                        'required_if:plan_id,3' ,'required_if:user_type,parent',
+                        Rule::in(['singleton']),
+                    ],
+                ]);
+
+                if($validator->fails()){
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.Validation Failed!'),
+                        'errors'    => $validator->errors()
+                    ],400);
+                }
+
                 $quantity = count($other_user_ids);
                 $subscription = \Stripe\Subscription::create(array(
                     "customer" =>  $customer_id,
                     "items" => array(
                         array(
                             "price" => $request->stripe_plan_id,
-                            "quantity" => $quantity
+                            "quantity" => $quantity + 1
                         ),
                     ),
                 ));
-            } else {
+            }elseif ($request->plan_id == 3 && $request->user_type == 'singleton') {
+                $parent = ParentChild::leftJoin('parents','parent_children.parent_id','=','parents.id')
+                                        ->where([['parent_children.singleton_id', '=', $request->login_id], ['parent_children.status','=','Linked']])
+                                        ->where('parents.active_subscription_id', '!=', '1')
+                                        ->first();
+                if (empty($parent)) {
+                    $validator = Validator::make($request->all(), [
+                        'other_user_id'   => ['required_if:plan_id,3' ,'required_if:user_type,parent'],
+                        'other_user_type' => [
+                            'required_if:plan_id,3' ,'required_if:user_type,parent',
+                            Rule::in(['parent']),
+                        ],
+                    ]);
+
+                    if($validator->fails()){
+                        return response()->json([
+                            'status'    => 'failed',
+                            'message'   => __('msg.Validation Failed!'),
+                            'errors'    => $validator->errors()
+                        ],400);
+                    }
+
+                    $quantity = count($other_user_ids);
+                    $subscription = \Stripe\Subscription::create(array(
+                        "customer" =>  $customer_id,
+                        "items" => array(
+                            array(
+                                "price" => $request->stripe_plan_id,
+                                "quantity" => $quantity + 1
+                            ),
+                        ),
+                    ));
+                } else {
+                    // $quantity = count($other_user_ids);
+                    $subscription = \Stripe\Subscription::create(array(
+                        "customer" =>  $customer_id,
+                        "items" => array(
+                            array(
+                                "price" => $request->stripe_plan_id,
+                                // "quantity" => $quantity
+                            ),
+                        ),
+                    ));
+                }
+            }
+
+            // if ($request->plan_id == 3) {
+            //     $quantity = count($other_user_ids);
+            //     $subscription = \Stripe\Subscription::create(array(
+            //         "customer" =>  $customer_id,
+            //         "items" => array(
+            //             array(
+            //                 "price" => $request->stripe_plan_id,
+            //                 "quantity" => $quantity
+            //             ),
+            //         ),
+            //     ));
+            // }
+            else {
                 $subscription = \Stripe\Subscription::create(array(
                     "customer" =>  $customer_id,
                     "items" => array(
@@ -163,7 +243,7 @@ class StripeSubscription extends Controller
                 $plan_period_end = $subscription->current_period_end;
                 $sub_convert_date = date('Y-m-d H:i:s', $sub_created);
                 $plan_convert_date = date('Y-m-d H:i:s', $plan_period_end);
-    
+
                 $sub_booking_data = [
                     'user_id' => $user_id,
                     'user_type' => $user_type,
@@ -176,6 +256,7 @@ class StripeSubscription extends Controller
                     'stripe_customer_id' => $stripe_customer_id,
                     'stripe_plan_id' => $stripe_plan_id,
                     'plan_amount' => $plan_amount,
+                    'amount_paid' => $other_user_ids ? ($plan_amount * (count($other_user_ids) + 1) / 100)  : $plan_amount/100,
                     'plan_amount_currency' => $plan_amount_currency,
                     'plan_interval' => $plan_interval,
                     'payer_email' => $email,
@@ -188,7 +269,7 @@ class StripeSubscription extends Controller
                 ];
 
                 $booking_id = DB::table('bookings')->insertGetId($sub_booking_data);
-                
+
                 if ($status == 'active') {
                     $sub_data = [
                         'booking_id' => $booking_id,
@@ -203,6 +284,7 @@ class StripeSubscription extends Controller
                         'stripe_customer_id' => $stripe_customer_id,
                         'stripe_plan_id' => $stripe_plan_id,
                         'plan_amount' => $plan_amount,
+                        'amount_paid' => $other_user_ids ? ($plan_amount * (count($other_user_ids) + 1) / 100)  : $plan_amount/100,
                         'plan_amount_currency' => $plan_amount_currency,
                         'plan_interval' => $plan_interval,
                         'payer_email' => $email,
@@ -216,28 +298,12 @@ class StripeSubscription extends Controller
 
                     $insert = DB::table('transactions')->insert($sub_data);
 
-                    $invoice = \Stripe\Invoice::retrieve($subscription->latest_invoice);
-                    
-                    $to = $user_email;
-                    $subject = "Invoice for your subscription";
-                    $file = $invoice->hosted_invoice_url;
-                    $message = "Please find the attached invoice for your subscription. You can download it from ".$file;
-
-                    Mail::send([], [], function ($m) use ($to, $subject, $message, $file) {
-                        $m->to($to)
-                            ->subject($subject)
-                            ->setBody(new TextPart($message))
-                            ->attachData($file, 'invoice.pdf', [
-                                'mime' => 'application/pdf',
-                            ]);                    
-                        });
-    
                     $update_sub_data = [
                         'stripe_id'              => $stripe_customer_id,
                         'active_subscription_id' => $request->plan_id,
                         'stripe_plan_id'         => $request->stripe_plan_id,
                     ];
-                
+
                     if ($user_type == 'singleton') {
                         Singleton::where([['id','=',$user_id],['status','=','Unblocked']])->update($update_sub_data);
                     } else {
@@ -249,17 +315,18 @@ class StripeSubscription extends Controller
                             foreach ($other_user_ids as $id) {
                                 Singleton::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
                             }
-                        } else {
+                        } elseif ($other_user_type == 'parent') {
                             foreach ($other_user_ids as $id) {
                                 ParentsModel::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
                             }
                         }
-                    } 
+                    }
 
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.stripe.success'),
                     ],200);
+                    // return $pdf->download('invoice.pdf');
                 } else {
                     return response()->json([
                         'status'    => 'failed',
@@ -359,30 +426,49 @@ class StripeSubscription extends Controller
                     'updated_at' => date('Y-m-d h:i:s')
                 ];
 
-                // $query = $Charge->insert($charge_data);
+                $query = Charges::insert($charge_data);
 
 
-                // if($status == 'failed')
-                // {
-                //     $find_name  = $UsersModel->where('sub_cust_id', $customer_id)->find();
-                //     // echo json_encode($find_name);die();
-                //     $user_id  = $find_name[0]['id'];
-                //     $sub_cust_id = $find_name[0]['sub_cust_id'];
-                //     $update_sub_data = ['user_type' => 'non_subscriber'];
-                //     $a = $UsersModel->update($user_id, $update_sub_data);
+                if($status == 'failed')
+                {
+                    $user_sub_data= Transactions::where('stripe_customer_id', $customer_id)->first();
 
-                //     if($a = !null)
-                //     {
-                //         $find_name  = $Subscription->where('stripe_customer_id', $sub_cust_id)->find();
-                //         $sub_id  =  $find_name[0]['id'];
-                //         $inactive = ['status' => 'inactive'];
-                //         $a = $Subscription->update($sub_id, $inactive);
-    
-                //     } 
-                // }
-               
-                
-                echo json_encode($charge_data);die();
+                    $user_id   = $user_sub_data->user_id;
+                    $user_type = $user_sub_data->user_type;
+                    $user_name = $user_sub_data->user_name;
+                    $user_email = $user_sub_data->user_email;
+                    $other_user_id = $user_sub_data->other_user_id;
+                    $other_user_type = $user_sub_data->other_user_type; 
+                    $sub_table_id = $user_sub_data->id;
+
+                    $update_sub_data = ['active_subscription_id' => '1'];
+
+                    if ($user_type == 'singleton') {
+                        $update = Singleton::where([['id','=',$user_id],['stripe_id','=', $customer_id],['status','=','Unblocked']])->update($update_sub_data);
+                    } else {
+                        $update = ParentsModel::where([['id','=',$user_id],['stripe_id','=', $customer_id],['status','=','Unblocked']])->update($update_sub_data);
+                    }
+
+                    if ($other_user_id) {
+                        $other_user_ids  = explode(',',$other_user_id);
+                        if ($other_user_type == 'singleton') {
+                            foreach ($other_user_ids as $id) {
+                                Singleton::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                            }
+                        } else {
+                            foreach ($other_user_ids as $id) {
+                                ParentsModel::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                            }
+                        }
+                    }
+
+                    if($update)
+                    {
+                        $inactive = ['status' => 'inactive'];
+                        Transactions::where('id', '=',  $sub_table_id)->update($inactive);
+                    }
+                }
+                // echo json_encode($charge_data);die();
                 break;
             case 'charge.succeeded':
                 $paymentMethod = $event->data->object;
@@ -438,12 +524,7 @@ class StripeSubscription extends Controller
                         'status'=> $status,
                         'created_at' => date('Y-m-d h:i:s')
                     ];
-                    // $query = $Charge->insert($charge_data);
-
-                    // $query2 = $ChargeHistory->insert($charge_data);
-
-
-                    echo json_encode($charge_data);die();
+                    $query = Charges::insert($charge_data);
                 }
 
                 break;
@@ -483,13 +564,13 @@ class StripeSubscription extends Controller
 
                 $user_sub_data= Transactions::where('stripe_subscription_id', $sub_id)->first();
 
-                $sub_table_id = $user_sub_data['id'];
-                $user_id   = $user_sub_data['user_id'];
-                $user_type = $user_sub_data['user_type'];
-                $user_name = $user_sub_data['user_name'];
-                $user_email = $user_sub_data['user_email'];
-                $other_user_id = $user_sub_data['other_user_id'];
-                $other_user_type = $user_sub_data['other_user_type'];
+                $sub_table_id = $user_sub_data->id;
+                $user_id   = $user_sub_data->user_id;
+                $user_type = $user_sub_data->user_type;
+                $user_name = $user_sub_data->user_name;
+                $user_email = $user_sub_data->user_email;
+                $other_user_id = $user_sub_data->other_user_id;
+                $other_user_type = $user_sub_data->other_user_type;
 
                 $sub_master_data = [
                     'user_id' => $user_id,
@@ -550,8 +631,8 @@ class StripeSubscription extends Controller
                         $inactive = ['status' => 'inactive'];
                         Transactions::where('id', '=',  $sub_table_id)->update($inactive);
                     }
-                }   
-
+                }
+                break;
             case 'invoice.created':
                 $invoice = $event->data->object;
             case 'invoice.deleted':
@@ -564,6 +645,10 @@ class StripeSubscription extends Controller
                 $invoice = $event->data->object;
             case 'invoice.paid':
                 $invoice = $event->data->object;
+                $invoiceData = $invoice;
+                $email = $invoiceData['email'];
+                generateInvoicePdf();
+                break;
             case 'invoice.payment_action_required':
                 $invoice = $event->data->object;
             case 'invoice.payment_failed':
