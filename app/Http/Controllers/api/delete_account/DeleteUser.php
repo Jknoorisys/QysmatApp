@@ -101,6 +101,14 @@ class DeleteUser extends Controller
                 }
 
                 if ($delete) {
+                    if($request->user_type == 'singleton'){
+                        $link = ParentChild::where([['singleton_id', '=', $request->login_id]])->delete();
+                    }else{
+                        $link = ParentChild::where([['parent_id', '=', $request->login_id]])->delete();
+                        if($link){
+                            Singleton::where('parent_id', '=', $request->login_id)->update(['parent_id' => '', 'updated_at' => date('Y-m-d H:i:s')]);
+                        }
+                    }
                     $match = MyMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
                     $unmatch = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
                     $refer = ReferredMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
