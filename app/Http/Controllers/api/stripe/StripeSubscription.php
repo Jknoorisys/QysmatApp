@@ -128,7 +128,7 @@ class StripeSubscription extends Controller
                     $customer_id = $customer->id;
                 }else {
                     return response()->json([
-                        'status'    => 'failed',
+                        'status'    => 'no_card_available',
                         'message'   => __('msg.stripe.card'),
                     ],400);
                 }
