@@ -14,7 +14,7 @@
     <div class="col-lg-4 col-xlg-3 col-md-5">
         <div class="card">
             <div class="card-body">
-                <center class="m-t-30"> <img src="{{ $details->photo1 ? asset($details->photo1) : 'assets/images/users/5.jpg'}}" class="rounded-circle" width="150" height="150" />
+                <center class="m-t-30"> <img src="{{ $details->photo1 ? asset($details->photo1) : 'assets/images/users/no-image.png'}}" class="rounded-circle" width="150" height="150" />
                     <h4 class="card-title m-t-10">{{$details->name}}</h4>
                     <h6 class="card-subtitle">{{$details->profession}}</h6>
                     {{-- <div class="row text-center justify-content-md-center">
@@ -87,51 +87,63 @@
             <!-- Tabs -->
             <ul class="nav nav-pills custom-pills" id="pills-tab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="pills-timeline-tab" data-toggle="pill" href="#current-month" role="tab" aria-controls="pills-timeline" aria-selected="true">{{ __('msg.Images')}}</a>
+                    <a class="nav-link active" id="pills-profile-tab" data-toggle="pill" href="#last-month" role="tab" aria-controls="pills-profile" aria-selected="false">{{__('msg.Verify Profile')}}</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#last-month" role="tab" aria-controls="pills-profile" aria-selected="false">{{__('msg.Verify Profile')}}</a>
+                    <a class="nav-link" id="pills-timeline-tab" data-toggle="pill" href="#current-month" role="tab" aria-controls="pills-timeline" aria-selected="true">{{ __('msg.Images')}}</a>
                 </li>
+                
                 <li class="nav-item">
                     <a class="nav-link" id="pills-setting-tab" data-toggle="pill" href="#previous-month" role="tab" aria-controls="pills-setting" aria-selected="false">{{__('msg.Subscription Plan')}}</a>
                 </li>
             </ul>
             <!-- Tabs -->
             <div class="tab-content" id="pills-tabContent">
-                <div class="tab-pane fade show active" id="current-month" role="tabpanel" aria-labelledby="pills-timeline-tab">
+                <div class="tab-pane fade show active" id="last-month" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ $details->photo1 ? asset($details->photo1) : 'assets/images/big/img1.jpg'}}" class="img-fluid rounded" width="200" height="200" /></div>
-                            <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ $details->photo2 ? asset($details->photo2) : 'assets/images/big/img2.jpg'}}" class="img-fluid rounded" width="200" height="200" /></div>
-                            <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ $details->photo3 ? asset($details->photo3) : 'assets/images/big/img3.jpg'}}" class="img-fluid rounded" width="200" height="200" /></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ $details->photo4 ? asset($details->photo4) : 'assets/images/big/img4.jpg'}}" class="img-fluid rounded" width="200" height="200" /></div>
-                            <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ $details->photo5 ? asset($details->photo5) : 'assets/images/big/img5.jpg'}}" class="img-fluid rounded" width="200" height="200" /></div>
-                            {{-- <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ $details->photo1 ? $details->photo1) : 'assets/images/big/img6.jpg'}}" class="img-fluid rounded" width="200" height="200" /></div> --}}
-                        </div>
+                        @if ($details->live_photo)
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded" width="300" height="200" /></div>
+                            </div>
+                        @endif
+                        
+                        @if ($details->id_proof)
+                            <div class="row">
+                                <div class="col-lg-4 col-md-12 m-b-20"><a href="{{asset($details->id_proof ? asset($details->id_proof) : 'assets/images/users/no-image.png')}}" class="btn btn-qysmat image-popup-vertical-fit el-link">{{__('msg.View ID Proof')}}</a></div>
+                            </div>
+                            <div class="row">
+                                <form action="{{route('verifySingleton')}}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{$details->id}}">
+                                    <input type="hidden" name="is_verified" value="{{$details->is_verified == 'verified' ? 'rejected' : 'verified' }}">
+                                    <button type="submit" data-status="{{$details->is_verified}}" data-id="{{$details->id}}" data-name="{{$details->name}}" class="btn btn-rounded show_confirm btn-{{$details->is_verified == 'verified' ? 'danger' : 'success' }}">{{$details->is_verified == 'verified' ? __('msg.Mark As Rejected') : __('msg.Mark As Verified') }}</button>
+                                </form>
+                            </div>
+                        @endif
                     </div>
                 </div>
-                <div class="tab-pane fade" id="last-month" role="tabpanel" aria-labelledby="pills-profile-tab">
+                <div class="tab-pane fade" id="current-month" role="tabpanel" aria-labelledby="pills-timeline-tab">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/big/img1.jpg'}}" class="img-fluid rounded" width="300" height="200" /></div>
+                            @if ($details->photo1)
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ $details->photo1 ? asset($details->photo1) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded" width="200" height="200" /></div>
+                            @endif
+                            @if ($details->photo2)
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ $details->photo2 ? asset($details->photo2) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded" width="200" height="200" /></div>
+                            @endif
+                            @if ($details->photo3)
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ $details->photo3 ? asset($details->photo3) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded" width="200" height="200" /></div>
+                            @endif
                         </div>
-                        {{-- <div class="row">
-                            <div class="col-lg-4 col-md-12 m-b-20"><a href="{{asset($details->id_proof ? asset($details->id_proof) : 'assets/images/big/img4.jpg')}}" class="btn btn-qysmat">{{__('msg.View ID Proof')}}</a></div>
-                        </div> --}}
                         <div class="row">
-                            <div class="col-lg-4 col-md-12 m-b-20"><a href="{{asset($details->id_proof ? asset($details->id_proof) : 'assets/images/big/img4.jpg')}}" class="btn btn-qysmat image-popup-vertical-fit el-link">{{__('msg.View ID Proof')}}</a></div>
+                            @if ($details->photo4)
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ $details->photo4 ? asset($details->photo4) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded" width="200" height="200" /></div> 
+                            @endif
+                            @if ($details->photo5)
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ $details->photo5 ? asset($details->photo5) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded" width="200" height="200" /></div>
+                            @endif
                         </div>
-                        <div class="row">
-                            <form action="{{route('verifySingleton')}}" method="post">
-                                @csrf
-                                <input type="hidden" name="id" value="{{$details->id}}">
-                                <input type="hidden" name="is_verified" value="{{$details->is_verified == 'verified' ? 'rejected' : 'verified' }}">
-                                <button type="submit" data-status="{{$details->is_verified}}" data-id="{{$details->id}}" data-name="{{$details->name}}" class="btn btn-rounded show_confirm btn-{{$details->is_verified == 'verified' ? 'danger' : 'success' }}">{{$details->is_verified == 'verified' ? __('msg.Mark As Rejected') : __('msg.Mark As Verified') }}</button>
-                            </form>
-                        </div>
-
                     </div>
                 </div>
                 <div class="tab-pane fade" id="previous-month" role="tabpanel" aria-labelledby="pills-setting-tab">

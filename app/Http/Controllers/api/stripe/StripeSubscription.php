@@ -645,9 +645,7 @@ class StripeSubscription extends Controller
                 $invoice = $event->data->object;
             case 'invoice.paid':
                 $invoice = $event->data->object;
-                $invoiceData = $invoice;
-                $email = $invoiceData['email'];
-                // generateInvoicePdf();
+                generateInvoicePdf($invoice);
                 break;
             case 'invoice.payment_action_required':
                 $invoice = $event->data->object;
