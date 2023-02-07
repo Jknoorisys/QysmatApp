@@ -14,7 +14,7 @@
     <div class="col-lg-4 col-xlg-3 col-md-5">
         <div class="card">
             <div class="card-body">
-                <center class="m-t-30"> <img src="{{ $details->profile_pic ? asset($details->profile_pic) : 'assets/images/users/5.jpg'}}" class="rounded-circle" width="150" height="150" />
+                <center class="m-t-30"> <img src="{{ $details->profile_pic ? asset($details->profile_pic) : 'assets/images/users/no-image.png'}}" class="rounded-circle" width="150" height="150" />
                     <h4 class="card-title m-t-10">{{$details->name}}</h4>
                     <h6 class="card-subtitle">{{$details->email}}</h6>
                 </center>
@@ -65,24 +65,24 @@
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="last-month" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/big/img1.jpg'}}" class="img-fluid rounded" /></div>
-                        </div>
-                        {{-- <div class="row">
-                            <div class="col-lg-12 col-md-12 m-b-20"><a href="{{asset($details->id_proof ? asset($details->id_proof) : 'assets/images/big/img4.jpg')}}" class="btn btn-qysmat">{{__('msg.View ID Proof')}}</a></div>
-                        </div> --}}
-                        <div class="row">
-                            <div class="col-lg-4 col-md-12 m-b-20"><a href="{{asset($details->id_proof ? asset($details->id_proof) : 'assets/images/big/img4.jpg')}}" class="btn btn-qysmat image-popup-vertical-fit el-link">{{__('msg.View ID Proof')}}</a></div>
-                        </div>
-                        <div class="row">
-                            <form action="{{route('verifyParent')}}" method="post">
-                                @csrf
-                                <input type="hidden" name="id" value="{{$details->id}}">
-                                <input type="hidden" name="is_verified" value="{{$details->is_verified == 'verified' ? 'rejected' : 'verified' }}">
-                                <button type="submit" data-status="{{$details->is_verified}}" data-id="{{$details->id}}" data-name="{{$details->name}}" class="btn btn-rounded show_confirm btn-{{$details->is_verified == 'verified' ? 'danger' : 'success' }}">{{$details->is_verified == 'verified' ? __('msg.Mark As Rejected') : __('msg.Mark As Verified') }}</button>
-                            </form>
-                        </div>
-
+                        @if ($details->live_photo)
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/big/img1.jpg'}}" class="img-fluid rounded" /></div>
+                            </div>
+                        @endif
+                        @if ($details->id_proof)
+                            <div class="row">
+                                <div class="col-lg-4 col-md-12 m-b-20"><a href="{{asset($details->id_proof ? asset($details->id_proof) : 'assets/images/big/img4.jpg')}}" class="btn btn-qysmat image-popup-vertical-fit el-link">{{__('msg.View ID Proof')}}</a></div>
+                            </div>
+                            <div class="row">
+                                <form action="{{route('verifyParent')}}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{$details->id}}">
+                                    <input type="hidden" name="is_verified" value="{{$details->is_verified == 'verified' ? 'rejected' : 'verified' }}">
+                                    <button type="submit" data-status="{{$details->is_verified}}" data-id="{{$details->id}}" data-name="{{$details->name}}" class="btn btn-rounded show_confirm btn-{{$details->is_verified == 'verified' ? 'danger' : 'success' }}">{{$details->is_verified == 'verified' ? __('msg.Mark As Rejected') : __('msg.Mark As Verified') }}</button>
+                                </form>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <div class="tab-pane fade" id="previous-month" role="tabpanel" aria-labelledby="pills-setting-tab">
