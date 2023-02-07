@@ -803,7 +803,10 @@ use Illuminate\Support\Facades\Storage;
 
     function generateInvoicePdf($invoice) {
         ini_set('memory_limit', '8G');
-        $pdf = Pdf::loadView('invoice');
+        $data = [
+            
+        ];
+        $pdf = Pdf::loadView('invoice', compact($invoice));
         $pdf_name = 'invoice_'.time().'.pdf';
         $path = Storage::put('invoices/'.$pdf_name,$pdf->output());
         $email = $invoice->customer_email;

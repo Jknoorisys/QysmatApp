@@ -1,109 +1,194 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            /* Add some styling for the invoice */
-            * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-            }
+	<head>
+		<meta charset="utf-8" />
+		<title>A simple, clean, and responsive HTML invoice template</title>
 
-            body {
-            background-color: #f2f2f2;
-            padding: 30px;
-            }
+		<style>
+			.invoice-box {
+				max-width: 800px;
+				margin: auto;
+				padding: 30px;
+				border: 1px solid #eee;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+				font-size: 16px;
+				line-height: 24px;
+				font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+				color: #555;
+			}
 
-            .invoice-container {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            box-shadow: 0px 0px 10px #ccc;
-            color: #333;
-            margin: auto;
-            max-width: 800px;
-            padding: 20px;
-            }
+			.invoice-box table {
+				width: 100%;
+				line-height: inherit;
+				text-align: left;
+			}
 
-            .invoice-header {
-            background-color: #8F7C5C;
-            color: #fff;
-            padding: 10px;
-            text-align: center;
-            }
+			.invoice-box table td {
+				padding: 5px;
+				vertical-align: top;
+			}
 
-            .invoice-header h1 {
-            margin: 0;
-            }
+			.invoice-box table tr td:nth-child(2) {
+				text-align: right;
+			}
 
-            .invoice-info {
-            margin-top: 20px;
-            text-align: center;
-            }
+			.invoice-box table tr.top table td {
+				padding-bottom: 20px;
+			}
 
-            .invoice-info p {
-            margin: 5px 0;
-            }
+			.invoice-box table tr.top table td.title {
+				font-size: 45px;
+				line-height: 45px;
+				color: #333;
+			}
 
-            .invoice-table {
-            margin-top: 20px;
-            width: 100%;
-            }
+			.invoice-box table tr.information table td {
+				padding-bottom: 40px;
+			}
 
-            .invoice-table th,
-            .invoice-table td {
-            border-bottom: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-            }
+			.invoice-box table tr.heading td {
+				background: #eee;
+				border-bottom: 1px solid #ddd;
+				font-weight: bold;
+			}
 
-            .invoice-table th {
-            background-color: #8F7C5C;
-            color: #fff;
-            }
+			.invoice-box table tr.details td {
+				padding-bottom: 20px;
+			}
 
-            .invoice-total {
-            margin-top: 20px;
-            text-align: right;
-            }
+			.invoice-box table tr.item td {
+				border-bottom: 1px solid #eee;
+			}
 
-            @media only screen and (max-width: 600px) {
-            /* Add responsive styles for small screens */
-            .invoice-container {
-                width: 100%;
-            }
-            }
-        </style>  
-    </head>
-    <body>
-        <!-- Add the invoice content -->
-        <div class="invoice-container">
-            <div class="invoice-header">
-            <h1>Invoice</h1>
-            </div>
-            <div class="invoice-info">
-            <p>Date: {{ date('Y-m-d') }}</p>
-            <p>Invoice : INV000001</p>
-            </div>
-            <table class="invoice-table">
-                <thead>
-                    <tr>
-                    <th>Item</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                        <tr>
-                        <td>Javeriya</td>
-                        <td>Premium</td>
-                        <td>10 GBP</td>
-                        </tr>
-                </tbody>
-            </table>
-            <div class="invoice-total">
-                <p>Total: 10 GBP</p>
-            </div>
-        </div>
-    </body>
+			.invoice-box table tr.item.last td {
+				border-bottom: none;
+			}
+
+			.invoice-box table tr.total td:nth-child(2) {
+				border-top: 2px solid #eee;
+				font-weight: bold;
+			}
+
+			@media only screen and (max-width: 600px) {
+				.invoice-box table tr.top table td {
+					width: 100%;
+					display: block;
+					text-align: center;
+				}
+
+				.invoice-box table tr.information table td {
+					width: 100%;
+					display: block;
+					text-align: center;
+				}
+			}
+
+			/** RTL **/
+			.invoice-box.rtl {
+				direction: rtl;
+				font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+			}
+
+			.invoice-box.rtl table {
+				text-align: right;
+			}
+
+			.invoice-box.rtl table tr td:nth-child(2) {
+				text-align: left;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="invoice-box">
+			<table cellpadding="0" cellspacing="0">
+				
+				<tr class="top">
+					<td colspan="2">
+						<table>
+							<tr>
+								<td>
+									<h1>Invoice</h1>
+								</td>
+								<td class="title">
+									<img src="https://www.sparksuite.com/images/logo.png" style="width: 100%; max-width: 300px" />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+
+				<tr class="information">
+					<td colspan="2">
+						<table>
+							<tr>
+
+								<td>
+									Acme Corp.<br />
+									John Doe<br />
+									john@example.com
+								</td>
+
+								<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+								<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+								<td style="text-align: left">
+									<b >Invoice No</b> <br/>
+									<b class="text-bold">Date Paid</b> <br/>
+									<b class="text-bold">End Date</b> <br/>
+								</td>
+
+								<td >
+									123<br />
+									January 1, 2015<br />
+									February 1, 2015 <br/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+
+				<td style="float: left; font-weight: bold;margin-top:-5%;">
+					£10.00 paid on February 7, 2023
+				</td>
+			</table>
+
+			<table cellpadding="0" cellspacing="0">
+				<tr class="heading" align="center">
+					<td>Description</td>
+					<td>Qty</td>
+					<td>Unit Price</td>
+					<td>Amount</td>
+				</tr>
+				<tr></tr>
+				<tr class="item" align="center">
+					<td class="item1">Website design</td>
+					<td>2</td>
+					<td>$300.00</td>
+					<td>$600.00</td>
+				</tr>
+				<td></td>
+				<tr align="center">
+					<td></td>
+					<td></td>
+					<td style="border-bottom: 1px solid #eee">Subtotal</td>
+					<td style="border-bottom: 1px solid #eee">$600.00</td>
+				</tr>
+				<tr align="center">
+					<td></td>
+					<td></td>
+					<td style="border-bottom: 1px solid #eee">Total</td>
+					<td style="border-bottom: 1px solid #eee">$600.00</td>
+				</tr>
+				<tr align="center">
+					<td></td>
+					<td></td>
+					<td style="border-bottom: 1px solid #eee"><b>Amount Paid</b></td>
+					<td style="border-bottom: 1px solid #eee">$600.00</td>
+				</tr>
+
+			</table>
+			
+			<br/>
+		</div>
+	</body>
 </html>
