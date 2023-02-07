@@ -97,7 +97,8 @@ class ResetProfileSearch extends Controller
             $requests = InstantMatchRequest::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
             $block = BlockList::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
             $report = ReportedUsers::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
-            $chat = MessagedUsers::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+            $chat = MessagedUsers::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])
+                                    ->orWhere([['messaged_user_id','=',$request->login_id],['messaged_user_type','=',$request->user_type]])->delete();
             $chat = ChatHistory::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])
                                 ->orWhere([['messaged_user_id','=',$request->login_id],['messaged_user_type','=',$request->user_type]])->delete();
             $swipe = LastSwipe::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
