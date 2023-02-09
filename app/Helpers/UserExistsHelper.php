@@ -804,15 +804,24 @@ use Illuminate\Support\Facades\Storage;
     function generateInvoicePdf($invoice) {
         ini_set('memory_limit', '8G');
         $data = [
-            
+            'name' => $invoice->customer_name ? $invoice->customer_name : '',
+            'email' => $invoice->customer_email ? $invoice->customer_email : '',
+            'phone' => $invoice->customer_phone ? $invoice->customer_phone : '',
+            'invoice_number' => $invoice->number ? $invoice->number : '',
+            'amount_paid' => $invoice->amount_paid ? $invoice->amount_paid : '',
+            'currency' => $invoice->currency ? $invoice->currency : '',
+            'period_start' => $invoice->period_start ? $invoice->period_start : '',
+            'period_end' => $invoice->period_end ? $invoice->period_end : '',
+            'total' => $invoice->total ? $invoice->total : '',
+            'description' => $invoice->lines
         ];
-        $pdf = Pdf::loadView('invoice', compact($invoice));
+        $pdf = Pdf::loadView('invoice', $data);
         $pdf_name = 'invoice_'.time().'.pdf';
         $path = Storage::put('invoices/'.$pdf_name,$pdf->output());
         $email = $invoice->customer_email;
-        $data = ['salutation' => __('msg.Hi'),'name'=> $invoice->customer_name,'otp'=> '968526', 'msg'=> __('msg.Let’s get you Registered with us!'), 'otp_msg'=> __('msg.Your One time Password to Complete your Registrations is')];
+        $data1 = ['salutation' => __('msg.Dear'),'name'=> $invoice->customer_name, 'msg'=> __('msg.This email serves to confirm the successful setup of your subscription with Us.'), 'msg1'=> __('msg.We are delighted to welcome you as a valued subscriber and are confident that you will enjoy the benefits of Premium Services.'),'msg2' => __('msg.Thank you for your trust!')];
 
-        Mail::send('invoice_email', $data, function ($message) use ($pdf_name, $email, $pdf) {
+        Mail::send('invoice_email', $data1, function ($message) use ($pdf_name, $email, $pdf) {
             $message->to($email)->subject('Invoice');
             $message->attachData($pdf->output(), $pdf_name, ['as' => $pdf_name, 'mime' => 'application/pdf']);
         });

@@ -333,6 +333,24 @@ return [
     'Your Chat Request is Accepted By'                      => 'Your Chat Request is Accepted By',
     'Chat Request Accepted'                                 => 'Chat Request Accepted',
 
+    // Invoice
+    'Invoice' => 'Invoice',
+    'Invoice No' => 'Invoice No',
+    'Date Paid' => 'Date Paid',
+    'End Date' => 'End Date',
+    'Paid on' => 'Paid on',
+    'Description' => 'Description',
+    'Qty' => 'Qty',
+    'Unit Price' => 'Unit Price',
+    'Amount' => 'Amount',
+    'Subtotal' => 'Subtotal',
+    'Total' => 'Total',
+    'Amount Paid' => 'Amount Paid',
+    'This email serves to confirm the successful setup of your subscription with Us.' => 'This email serves to confirm the successful setup of your subscription with Us.',
+    'Thank you for your trust!' => 'Thank you for your trust!',
+    'We are delighted to welcome you as a valued subscriber and are confident that you will enjoy the benefits of Premium Services.' => 'We are delighted to welcome you as a valued subscriber and are confident that you will enjoy the benefits of Premium Services.',
+    'Dear' => 'Dear',
+
     // FCM Notifications
     'New Message'                                           => 'New Message',
     'Your Profile is Verified by Admin'                     => 'Your Profile is Verified by Admin',
@@ -888,10 +906,16 @@ return [
     ],
 
     'stripe' => [
+        'session' => [
+            'success' => 'Stripe Session Created Successfully.',
+            'failure' => 'Unable to Create Stripe Session,Please Try Again...' 
+        ],
         'success' => 'Subscribed Successfully!',
         'failure' => 'Unable to Subscribe, Please Try Again...',
         'invalid' => 'Something Went Wrong, Please Try Again...',
         'card'    => 'Card Details Not Found, Please Try Again...',
+        'paid'    => 'Already Subscribed!',
+        'cancel'  => 'Subscription Failed, Please Try Again...'
     ],
 
 ];

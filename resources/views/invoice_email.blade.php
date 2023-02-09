@@ -120,14 +120,14 @@
                                                 <tr>
                                                   <td align="left" valign="top" class="r22-i nl2go-default-textstyle" style="color: #392f65; font-family: Inter; font-size: 16px; line-height: 1.5; padding-top: 5px; text-align: left;">
                                                     <div>
-                                                      <p style="margin: 0;"><span style="color: #685940;">{{ $otp_msg }}</span></p>
+                                                      <p style="margin: 0;"><span style="color: #685940;">{{ $msg1 }}</span></p>
                                                     </div>
                                                   </td>
                                                 </tr>
                                                 <tr>
-                                                  <td align="left" valign="top" class="r22-i nl2go-default-textstyle" style="color: #392f65; font-family: Inter; font-size: 16px; line-height: 1.5; padding-top: 5px; text-align: left;">
+                                                  <td align="left" valign="top" class="r22-i nl2go-default-textstyle" style="color: #392f65; font-family: Inter; font-size: 16px; line-height: 1; padding-top: 3px; text-align: left;">
                                                     <div style="color: #746346; background-color: transparent; margin: 0;  max-width: 100%; width: 100%; padding: 10px 0; font-family: Inter;">
-                                                      <span style="font-family: Inter;font-size:16px;"><span style="font-size: 35px; line-height: 55px; letter-spacing: 15px; display: inline-block; ">{{ $otp }}</span></span>
+                                                      <span style="font-family: Inter;font-size:16px;"><span style="font-size: 20px; display: inline-block; ">{{ $msg2 }}</span></span>
                                                     </div>
                                                   </td>
                                                 </tr>
