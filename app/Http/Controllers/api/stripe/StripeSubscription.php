@@ -612,7 +612,7 @@ class StripeSubscription extends Controller
                     if($update){
                         $update_sub_data = [
                             'stripe_id'              => $session['customer'],
-                            'active_subscription_id' => $payment_details->stripe_subscription_id,
+                            'active_subscription_id' => 2,
                             'stripe_plan_id'         => $payment_details->stripe_plan_id,
                         ];
     
