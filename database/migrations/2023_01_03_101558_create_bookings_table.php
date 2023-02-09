@@ -15,15 +15,13 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
+            $table->longText('stripe_session_id');
             $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
             $table->string('user_name');
             $table->string('user_email');
             $table->string('other_user_id');
             $table->enum('other_user_type', ['singleton','parent'])->default('singleton');
-            // $table->string('paid_by');
-            $table->string('amount_paid');
-            // $table->string('currency_code');
             $table->enum('payment_method',['stripe','in-app'])->default('stripe');
             $table->string('stripe_subscription_id');
             $table->string('stripe_customer_id');
@@ -32,11 +30,14 @@ return new class extends Migration
             $table->string('plan_amount_currency');
             $table->string('plan_interval');
             $table->string('plan_interval_count');
+            $table->integer('quantity');
+            $table->string('amount_paid');
             $table->string('payer_email');
             $table->string('transaction_datetime');
             $table->string('sub_created');
             $table->string('plan_period_start');
             $table->string('plan_period_end');
+            $table->string('session_status');
             $table->string('status');
             $table->timestamps();
         });

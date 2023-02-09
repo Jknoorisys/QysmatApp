@@ -2,8 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>A simple, clean, and responsive HTML invoice template</title>
-
+		<title>Invoice</title>
 		<style>
 			.invoice-box {
 				max-width: 800px;
@@ -108,11 +107,11 @@
 						<table>
 							<tr>
 								<td>
-									<h1>Invoice</h1>
+									<h1>{{ __('msg.Invoice') }}</h1>
 								</td>
-								<td class="title">
-									<img src="https://www.sparksuite.com/images/logo.png" style="width: 100%; max-width: 300px" />
-								</td>
+								<!-- <td class="title">
+									<img src="{{ asset('assets/uploads/logo/logo1.png') }}" style="width: 100%; max-width: 300px" />
+								</td> -->
 							</tr>
 						</table>
 					</td>
@@ -124,23 +123,22 @@
 							<tr>
 
 								<td>
-									Acme Corp.<br />
-									John Doe<br />
-									john@example.com
+									{{ $name }}<br />
+									{{ $email }}<br />
+									{{ $phone }}
 								</td>
 
-								<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
 								<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
 								<td style="text-align: left">
-									<b >Invoice No</b> <br/>
-									<b class="text-bold">Date Paid</b> <br/>
-									<b class="text-bold">End Date</b> <br/>
+									<b >{{ __('msg.Invoice No') }}</b> <br/>
+									<b class="text-bold">{{ __('msg.Date Paid') }}</b> <br/>
+									<b class="text-bold">{{ __('msg.End Date') }}</b> <br/>
 								</td>
 
 								<td >
-									123<br />
-									January 1, 2015<br />
-									February 1, 2015 <br/>
+								{{ $invoice_number }}<br />
+								{{ $period_start }}<br />
+								{{ $period_end }} <br/>
 								</td>
 							</tr>
 						</table>
@@ -148,42 +146,42 @@
 				</tr>
 
 				<td style="float: left; font-weight: bold;margin-top:-5%;">
-					£10.00 paid on February 7, 2023
+					{{ $amount_paid. ' '. __('msg.Paid on '). date('d M Y', strtotime($period_start)) }} 
 				</td>
 			</table>
 
 			<table cellpadding="0" cellspacing="0">
 				<tr class="heading" align="center">
-					<td>Description</td>
-					<td>Qty</td>
-					<td>Unit Price</td>
-					<td>Amount</td>
+					<td>{{ __('msg.Description') }}</td>
+					<td>{{ __('msg.Qty') }}</td>
+					<td>{{ __('msg.Unit Price') }}</td>
+					<td>{{ __('msg.Amount') }}</td>
 				</tr>
 				<tr></tr>
 				<tr class="item" align="center">
-					<td class="item1">Website design</td>
-					<td>2</td>
+					<td class="item1">Premium</td>
+					<td>{{ 2 }}</td>
 					<td>$300.00</td>
-					<td>$600.00</td>
+					<td>{{ $total }}</td>
 				</tr>
 				<td></td>
 				<tr align="center">
 					<td></td>
 					<td></td>
-					<td style="border-bottom: 1px solid #eee">Subtotal</td>
-					<td style="border-bottom: 1px solid #eee">$600.00</td>
+					<td style="border-bottom: 1px solid #eee">{{ __('msg.Subtotal') }}</td>
+					<td style="border-bottom: 1px solid #eee">{{ $total }}</td>
 				</tr>
 				<tr align="center">
 					<td></td>
 					<td></td>
-					<td style="border-bottom: 1px solid #eee">Total</td>
-					<td style="border-bottom: 1px solid #eee">$600.00</td>
+					<td style="border-bottom: 1px solid #eee">{{ __('msg.Total') }}</td>
+					<td style="border-bottom: 1px solid #eee">{{ $total }}</td>
 				</tr>
 				<tr align="center">
 					<td></td>
 					<td></td>
-					<td style="border-bottom: 1px solid #eee"><b>Amount Paid</b></td>
-					<td style="border-bottom: 1px solid #eee">$600.00</td>
+					<td style="border-bottom: 1px solid #eee"><b>{{ __('msg.Amount Paid') }}</b></td>
+					<td style="border-bottom: 1px solid #eee">{{ $amount_paid }}</td>
 				</tr>
 
 			</table>
