@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\parents;
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
 use App\Models\Categories as ModelsCategories;
+use App\Models\Counters;
 use App\Models\Matches;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
@@ -173,6 +174,7 @@ class Suggestions extends Controller
 
                 if(!$suggestion->isEmpty()){
                     $users = [];
+                    $count = 0;
                     foreach ($suggestion as $m) {
                         $singleton_id = $m->id;
                         $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
@@ -186,12 +188,38 @@ class Suggestions extends Controller
 
                         if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && empty($not_linked) && empty($mutual)) {
                             $users[] = $m;
+                            $count = $count + 1;
                         }
                     }
 
                     $premium = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
                     if (!empty($premium) && $premium->active_subscription_id == '1') {
-                        $users = array_slice($users, 0, 5, true);
+                        $user_counter = Counters::where([['user_id', '=', $request->login_id],['user_type', '=', 'parent'],['singleton_id','=', $request->singleton_id]])->first();
+                        if(!empty($user_counter)){
+                            if($user_counter->date != date('Y-m-d')){
+                                Counters::where([['user_id', '=', $request->login_id],['user_type', '=', 'parent'],['singleton_id','=', $request->singleton_id]])->update(
+                                    [
+                                        'counter' => ($count <= $user_counter->counter || $count <= 5) ? 0 : $user_counter->counter + 5,
+                                        'date' => date('Y-m-d'),
+                                        'updated_at' => date('Y-m-d H:i:s')
+                                    ]
+                                );
+                            }
+                        }else{
+                            Counters::insert(
+                                [
+                                    'user_id' => $request->login_id,
+                                    'user_type' => 'parent',
+                                    'singleton_id' => $request->singleton_id,
+                                    'counter' => 0,
+                                    'date' => date('Y-m-d'),
+                                    'created_at' => date('Y-m-d H:i:s')
+                                ]
+                            );
+                        }
+
+                        $slice = $user_counter ? $user_counter->counter : 0;
+                        $users = array_slice($users, $slice, 5, false);
                     }
 
                     if(!empty($users)){
