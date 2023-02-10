@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Stripe\Stripe;
 
 // use PDF;
 
@@ -803,17 +804,22 @@ use Illuminate\Support\Facades\Storage;
 
     function generateInvoicePdf($invoice) {
         ini_set('memory_limit', '8G');
+        $stripe = Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+        $subscription = \Stripe\Subscription::Retrieve($invoice->subscription);
+        $item = $subscription['items']['data'][0];
         $data = [
             'name' => $invoice->customer_name ? $invoice->customer_name : '',
             'email' => $invoice->customer_email ? $invoice->customer_email : '',
             'phone' => $invoice->customer_phone ? $invoice->customer_phone : '',
             'invoice_number' => $invoice->number ? $invoice->number : '',
-            'amount_paid' => $invoice->amount_paid ? $invoice->amount_paid : '',
+            'amount_paid' => $invoice->amount_paid ? $invoice->amount_paid/100 : '',
             'currency' => $invoice->currency ? $invoice->currency : '',
-            'period_start' => $invoice->period_start ? $invoice->period_start : '',
-            'period_end' => $invoice->period_end ? $invoice->period_end : '',
-            'total' => $invoice->total ? $invoice->total : '',
-            'description' => $invoice->lines
+            'period_start' => $subscription->current_period_start ? $subscription->current_period_start : '',
+            'period_end' => $subscription->current_period_end ? $subscription->current_period_end : '',
+            'subtotal' => $invoice->subtotal ? $invoice->subtotal/100 : '',
+            'total' => $invoice->total ? $invoice->total/100 : '',
+            'quantity' => $item['quantity'],
+            'unit_price' => $item['price']['unit_amount']
         ];
         $pdf = Pdf::loadView('invoice', $data);
         $pdf_name = 'invoice_'.time().'.pdf';
