@@ -408,12 +408,6 @@ class StripeSubscription extends Controller
             $success_url = 'http://127.0.0.1:8000/api/stripe/success';
             $cancel_url = 'http://127.0.0.1:8000/api/stripe/fail';
 
-            // if($request->plan_id == 2){
-            //     $qty = 1;
-            // }else{
-            //     $qty = count($other_user_ids);
-            // }
-
             if ($request->plan_id == 3 && $request->user_type == 'parent') {
                 $validator = Validator::make($request->all(), [
                     'other_user_id'   => ['required_if:plan_id,3' ,'required_if:user_type,parent'],
@@ -488,6 +482,7 @@ class StripeSubscription extends Controller
                 'other_user_id' => $request->other_user_id ? $request->other_user_id : '',
                 'other_user_type' => $other_user_type ? $other_user_type : '',
                 'payment_method' => "stripe",
+                'active_subscription_id' => $request->plan_id,
                 'stripe_subscription_id' => '',
                 'quantity' => $qty,
                 'stripe_customer_id' => '',
@@ -602,6 +597,8 @@ class StripeSubscription extends Controller
                 $other_user_ids = $other_user_id ? explode(',', $other_user_id) : null;
                 $other_user_type = $payment_details->other_user_type ? $payment_details->other_user_type : '';
                 $booking_id = $payment_details->id;
+                $active_subscription_id = $payment_details->active_subscription_id;
+
                 $session = \Stripe\Checkout\Session::Retrieve(
                     $payment_details->stripe_session_id,
                     []
@@ -635,9 +632,10 @@ class StripeSubscription extends Controller
                         'user_type' => $user_type,
                         'user_name' => $user_name,
                         'user_email' => $user_email,
-                        'other_user_id' => $request->other_user_id ? $request->other_user_id : '',
+                        'other_user_id' => $other_user_id ? $other_user_id : '',
                         'other_user_type' => $other_user_type ? $other_user_type : '',
                         'payment_method' => "stripe",
+                        'active_subscription_id' => $active_subscription_id,
                         'stripe_subscription_id' => $session->subscription,
                         'stripe_customer_id' => $session->customer,
                         'stripe_plan_id' => $payment_details->stripe_plan_id,
@@ -662,7 +660,7 @@ class StripeSubscription extends Controller
                     if($update){
                         $update_sub_data = [
                             'stripe_id'              => $session['customer'],
-                            'active_subscription_id' => 2,
+                            'active_subscription_id' => $active_subscription_id,
                             'stripe_plan_id'         => $payment_details->stripe_plan_id,
                         ];
     
@@ -672,17 +670,17 @@ class StripeSubscription extends Controller
                             ParentsModel::where([['id','=',$user_id],['status','=','Unblocked']])->update($update_sub_data);
                         }
     
-                        // if ($request->plan_id == 3) {
-                        //     if ($other_user_type == 'singleton') {
-                        //         foreach ($other_user_ids as $id) {
-                        //             Singleton::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
-                        //         }
-                        //     } elseif ($other_user_type == 'parent') {
-                        //         foreach ($other_user_ids as $id) {
-                        //             ParentsModel::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
-                        //         }
-                        //     }
-                        // }
+                        if ($active_subscription_id == 3 && $other_user_id) {
+                            if ($other_user_type == 'singleton') {
+                                foreach ($other_user_ids as $id) {
+                                    Singleton::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                                }
+                            } elseif ($other_user_type == 'parent') {
+                                foreach ($other_user_ids as $id) {
+                                    ParentsModel::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                                }
+                            }
+                        }
 
                         return response()->json([
                             'status'    => 'success',
@@ -793,6 +791,8 @@ class StripeSubscription extends Controller
                 $other_user_ids = $other_user_id ? explode(',', $other_user_id) : null;
                 $other_user_type = $payment_details->other_user_type ? $payment_details->other_user_type : '';
                 $booking_id = $payment_details->id;
+                $active_subscription_id = $payment_details->active_subscription_id;
+
                 $session = \Stripe\Checkout\Session::Retrieve(
                     $payment_details->stripe_session_id,
                     []
@@ -804,6 +804,7 @@ class StripeSubscription extends Controller
                     );
 
                     $update_booking  =  [
+                        'active_subscription_id' => 1,
                         'status'         => $expire->payment_status,
                         'session_status' => $expire->status,
                         'updated_at'     => date('Y-m-d H:i:s'),
@@ -820,6 +821,7 @@ class StripeSubscription extends Controller
                         'other_user_id' => $request->other_user_id ? $request->other_user_id : '',
                         'other_user_type' => $other_user_type ? $other_user_type : '',
                         'payment_method' => "stripe",
+                        'active_subscription_id' => 1,
                         'stripe_plan_id' => $payment_details->stripe_plan_id,
                         'plan_amount' => $payment_details->plan_amount,
                         'plan_amount_currency' => $session->currency,
@@ -1414,6 +1416,7 @@ class StripeSubscription extends Controller
                 $user_email = $user_sub_data->user_email;
                 $other_user_id = $user_sub_data->other_user_id;
                 $other_user_type = $user_sub_data->other_user_type;
+                $active_subscription_id = $user_sub_data->active_subscription_id;
 
                 $sub_master_data = [
                     'user_id' => $user_id,
@@ -1423,6 +1426,7 @@ class StripeSubscription extends Controller
                     'other_user_id' => $other_user_id ? $other_user_id : '',
                     'other_user_type' => $other_user_type ? $other_user_type : '',
                     'payment_method' => "stripe",
+                    'active_subscription_id' => $active_subscription_id,
                     'stripe_subscription_id' => $sub_id,
                     'stripe_customer_id' => $customer_id,
                     'stripe_plan_id' => $plan_id,
