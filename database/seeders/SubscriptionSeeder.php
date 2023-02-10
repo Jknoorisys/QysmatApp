@@ -21,22 +21,22 @@ class SubscriptionSeeder extends Seeder
             [
                 'subscription_type' => 'Basic',
                 'price' => 0.00,
-                'currency' => '',
+                'currency' => '£',
                 'stripe_plan_id' => '',
                 'created_at' => date('Y-m-d H:i:s')
             ],
             [
                 'subscription_type' => 'Premium',
                 'price' => 10.00,
-                'currency' => '',
-                'stripe_plan_id' => 'price_1MYMZBLwKxgINf1OL4QE0BNr',
+                'currency' => '£',
+                'stripe_plan_id' => 'price_1MYpphKnRvfDWQjItPjZuiFg',
                 'created_at' => date('Y-m-d H:i:s')
             ],
             [
                 'subscription_type' => 'Joint Subscription',
                 'price' => 5.00,
-                'currency' => '',
-                'stripe_plan_id' => 'price_1MYMa3LwKxgINf1O0olFc6e1',
+                'currency' => '£',
+                'stripe_plan_id' => 'price_1MYpr1KnRvfDWQjI2OqRA4Ak',
                 'created_at' => date('Y-m-d H:i:s')
             ]
         ]);
