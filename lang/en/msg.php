@@ -337,6 +337,7 @@ return [
     'Invoice' => 'Invoice',
     'Invoice No' => 'Invoice No',
     'Date Paid' => 'Date Paid',
+    'Start Date' => 'Start Date',
     'End Date' => 'End Date',
     'Paid on' => 'Paid on',
     'Description' => 'Description',
