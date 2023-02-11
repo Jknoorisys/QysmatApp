@@ -359,6 +359,8 @@ return [
     'You hav a New Match Request!'                          => 'You hav a New Match Request!',
     'Instant Match Request'                                 => 'Instant Match Request',
     'You have a Instant Match Request from'                 => 'You have a Instant Match Request from',
+    'Call'                                                  => 'Call',
+    'You have a Call from'                                  => 'You have a Call from',
 
     // API
     'Validation Failed!'                    => 'Validation Failed!',
@@ -920,7 +922,12 @@ return [
     ],
 
     'agora' => [
+        'create'  => [
+            'success' => 'Call Details Saved.',
+            'failure' => 'Unable to Save Call Details, Please Try Again...'
+        ],
         'success' => 'Token Generated Successfully!',
-        'failure' => 'Unable to Generate Toke, Please Try Again...'
+        'failure' => 'Unable to Generate Toke, Please Try Again...',
+        'invalid' => 'Unable to Call'
     ]
 ];

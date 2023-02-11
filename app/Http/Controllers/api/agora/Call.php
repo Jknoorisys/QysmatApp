@@ -4,9 +4,14 @@ namespace App\Http\Controllers\api\agora;
 
 use App\Http\Controllers\Controller;
 use App\Models\BankDetails as ModelsBankDetails;
+use App\Models\BlockList;
+use App\Models\CallHistory;
+use App\Models\Matches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\ReportedUsers;
 use App\Models\Singleton;
+use App\Models\UnMatches;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
@@ -98,6 +103,19 @@ class Call extends Controller
                 'required' ,
                 Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
             ],
+            'caller_id'   => 'required||numeric',
+            'caller_user_type' => [
+                'required' ,
+                Rule::in(['singleton','parent']),
+            ],
+            'receiver_id'   => 'required||numeric',
+            'receiver_user_type' => [
+                'required' ,
+                Rule::in(['singleton','parent']),
+            ],
+            'singleton_id' => [
+                'required_if:caller_user_type,parent',
+            ],
         ]);
 
         if($validator->fails()){
@@ -109,10 +127,53 @@ class Call extends Controller
         }
 
         try {
+
+            if ($request->caller_user_type == 'singleton') {
+                $premium = Singleton::where([['id', '=', $request->caller_id], ['status', '=', 'Unblocked']])->first();
+                $sender_pic = $premium ? $premium->photo1 : '';
+            } else {
+                $premium = ParentsModel::where([['id', '=', $request->caller_id], ['status', '=', 'Unblocked']])->first();
+                $sender_pic = $premium ? $premium->profile_pic : '';
+            }
+
+            if ($premium->active_subscription_id == '1') {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.reset-profile.premium'),
+                ],400);
+            }
+
+            if ($request->receiver_user_type == 'singleton') {
+                $reciever = Singleton::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
+            } else {
+                $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
+            }
+
+            // $user = $premium->id.$premium->mobile;
             $cname  =   (string) random_int(100000000, 9999999999999999);
+            // $cname  =   (string) $user;
             $token  =   $this->generateTokenForChannel($cname);
 
             if ($token) {
+                $title = __('msg.Call');
+                $body = __('msg.You have a Call from').' '.$premium->name;
+
+                if (isset($reciever) && !empty($reciever)) {
+                    $token = $reciever->fcm_token;
+                    $data = array(
+                        'notType' => "video_call" || "audio_call",
+                        'from_user_name' => $premium->name,
+                        'from_user_pic' => $sender_pic,
+                        'from_user_id' => $premium->id,
+                        'to_user_id' => $reciever->id,
+                        'to_user_type' => $reciever->user_type,
+                        'channel_name' => $cname,
+                        'token' => $token,
+                    );
+
+                    sendFCMNotifications($token, $title, $body, $data);
+                }
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.agora.success'),
@@ -140,13 +201,11 @@ class Call extends Controller
      * 
      */
 
-    private function generateTokenForChannel($cname = null, $uid = 0)
+    private function generateTokenForChannel($cname)
     {
-    //    include('RtcTokenBuilder');
-    //    require_once "RtcTokenBuilder.php";
-
-        $appID                  =   'ccd7d92514b946bc991026b785d48973';
-        $appCertificate         =   '4e5a208bb0d4480299faa2889e0f4ca5';
+        $appID                  =   env('APP_ID');
+        $appCertificate         =   env('APP_CERTIFICATE');
+        $uid = random_int(100000000, 9999999999999999);
 
         $role                   =   RtcTokenBuilder::RolePublisher;
         $expireTimeInSeconds    =   3600;
@@ -154,5 +213,68 @@ class Call extends Controller
         $privilegeExpiredTs     =   $currentTimestamp + $expireTimeInSeconds;
 
         return RtcTokenBuilder::buildTokenWithUid($appID, $appCertificate, $cname, $uid, $role, $privilegeExpiredTs);
-    }    
+    }   
+    
+    public function callHistory(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'caller_id'   => 'required||numeric',
+            'caller_user_type' => [
+                'required' ,
+                Rule::in(['singleton','parent']),
+            ],
+            'receiver_id'   => 'required||numeric',
+            'receiver_user_type' => [
+                'required' ,
+                Rule::in(['singleton','parent']),
+            ],
+            'call_type' => [
+                'required' ,
+                Rule::in(['audio','video']),
+            ],
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+            $data = [
+                'caller_id' => $request->caller_id,
+                'caller_type' => $request->caller_user_type,
+                'receiver_id' => $request->receiver_id,
+                'receiver_type' => $request->receiver_user_type,
+                'call_type' => $request->call_type,
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+
+            $insert = CallHistory::insert($data);
+            if ($insert) {
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.agora.create.success'),
+                ],200);
+            } else {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.agora.create.failure'),
+                ],400);
+            }
+            
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
 }
