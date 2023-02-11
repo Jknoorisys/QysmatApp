@@ -28,10 +28,6 @@ class Call extends Controller
     {
         $lang = (isset($_POST['language']) && !empty($_POST['language'])) ? $_POST['language'] : 'en';
         App::setlocale($lang);
-
-        if (isset($_POST['login_id']) && !empty($_POST['login_id']) && isset($_POST['user_type']) && !empty($_POST['user_type'])) {
-            userExist($_POST['login_id'], $_POST['user_type']);
-        }
     } 
 
     // public function index(Request $request){
@@ -95,15 +91,47 @@ class Call extends Controller
     //     }
     // }
 
-    public function index()
+    public function index(Request $request)
     {
-        // $this->cors();
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+        ]);
 
-        $cname  =   (string) random_int(100000000, 9999999999999999);
-        $token  =   $this->generateTokenForChannel($cname);
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
 
-        echo json_encode(['status' => 'success', 'app_id' => 'ccd7d92514b946bc991026b785d48973', 'cname' => $cname, 'token_id' => $token]);
-        exit;
+        try {
+            $cname  =   (string) random_int(100000000, 9999999999999999);
+            $token  =   $this->generateTokenForChannel($cname);
+
+            if ($token) {
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.agora.success'),
+                    'channel_name' => $cname, 
+                    'token' => $token
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.agora.failure'),
+                ],400);
+            }
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
     }    
 
     /**

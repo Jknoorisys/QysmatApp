@@ -919,4 +919,8 @@ return [
         'cancel'  => 'Subscription Failed, Please Try Again...'
     ],
 
+    'agora' => [
+        'success' => 'Token Generated Successfully!',
+        'failure' => 'Unable to Generate Toke, Please Try Again...'
+    ]
 ];
