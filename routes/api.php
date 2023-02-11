@@ -228,4 +228,5 @@ Route::prefix('stripe')->group(function () {
 // Agora
 Route::prefix('agora')->group(function () {
     Route::post('generate-token' , [Call::class, 'index']);
+    Route::post('save' , [Call::class, 'callHistory']);
 });
