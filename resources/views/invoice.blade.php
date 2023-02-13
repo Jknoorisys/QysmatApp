@@ -3,7 +3,6 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>Invoice</title>
-		<style type="text/css" emogrify="no">@import url("https://fonts.googleapis.com/css2?family=Inter"); </style>
 		<style>
 			.invoice-box {
 				max-width: 800px;
@@ -13,7 +12,7 @@
 				box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 				font-size: 16px;
 				line-height: 24px;
-				font-family: 'Inter, Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+				font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
 				color: #555;
 			}
 
@@ -50,7 +49,6 @@
 				background: #eee;
 				border-bottom: 1px solid #ddd;
 				font-weight: bold;
-				text-align: center;
 			}
 
 			.invoice-box table tr.details td {
@@ -87,7 +85,7 @@
 			/** RTL **/
 			.invoice-box.rtl {
 				direction: rtl;
-				font-family: 'Inter',Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+				font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
 			}
 
 			.invoice-box.rtl table {
@@ -160,12 +158,12 @@
 					<td>{{ __('msg.Amount') }}</td>
 				</tr>
 				<tr class="item" align="center">
-					<td style="border:none">{{ $item1_name }}</td>
+				<td style="border:none">{{ $item1_name }}</td>
 					<td style="border:none">{{ $item1_quantity }}</td>
 					<td style="border:none">£{{ $item1_unit_price/100 }}</td>
 					<td style="border:none">£{{ ($item1_quantity * $item1_unit_price)/100 }}</td>
 				</tr>
-				@if ($item2)
+				@if ($item2 == 2)
 					<tr class="item" align="center">
 						<td style="border:none">{{ $item2_name }}</td>
 						<td style="border:none">{{ $item2_quantity }}</td>
@@ -173,8 +171,7 @@
 						<td style="border:none">£{{ ($item2_quantity * $item2_unit_price)/100 }}</td>
 					</tr>
 				@endif
-				
-				<tr align="center">
+				<tr class="item" align="center">
 					<td style="border:none">{{ date('d M', $period_start).' '.'-'.' '. date('d M', $period_end).', '.date('Y', $period_end)}}</td>
 					<td></td>
 					<td></td>
