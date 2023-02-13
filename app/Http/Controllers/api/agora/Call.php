@@ -150,8 +150,8 @@ class Call extends Controller
             }
 
             // $user = $premium->id.$premium->mobile;
-            $cname  =   (string) random_int(100000000, 9999999999999999);
-            // $cname  =   (string) $user;
+            // $cname  =   (string) random_int(100000000, 9999999999999999);
+            $cname  =   'QysmatApp';
             $token  =   $this->generateTokenForChannel($cname);
 
             if ($token) {
@@ -201,11 +201,10 @@ class Call extends Controller
      * 
      */
 
-    private function generateTokenForChannel($cname)
+    private function generateTokenForChannel($cname = null, $uid = 0)
     {
         $appID                  =   env('APP_ID');
         $appCertificate         =   env('APP_CERTIFICATE');
-        $uid = random_int(100000000, 9999999999999999);
 
         $role                   =   RtcTokenBuilder::RolePublisher;
         $expireTimeInSeconds    =   3600;
