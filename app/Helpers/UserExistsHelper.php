@@ -807,7 +807,7 @@ use Stripe\Stripe;
         $stripe = Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
         $subscription = \Stripe\Subscription::Retrieve($invoice->subscription);
         $item1 = $subscription->items->data[0];
-        $item2 = $subscription->items->data[1] ? $subscription->items->data[1] : null;
+        $item2 = count($subscription->items->data) == 2 ? $subscription->items->data[1] : null;
         $data = [
             'name' => $invoice->customer_name ? $invoice->customer_name : '',
             'email' => $invoice->customer_email ? $invoice->customer_email : '',

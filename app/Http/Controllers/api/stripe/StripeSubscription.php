@@ -624,7 +624,7 @@ class StripeSubscription extends Controller
                 if($session->payment_status == "paid" && $session->status == "complete"){
                     $subscription = \Stripe\Subscription::Retrieve($session->subscription);
                     $item1 = $subscription->items->data[0];
-                    $item2 = $subscription->items->data[1] ? $subscription->items->data[1] : null;
+                    $item2 = count($subscription->items->data) == 2 ? $subscription->items->data[1] : null;
 
                     $update_booking  =  [
                         'subscription_id' => $session->subscription,
@@ -1172,8 +1172,8 @@ class StripeSubscription extends Controller
                 break;
             case 'customer.subscription.updated':
                 $subscription = $event->data->object;
-                $item1 = $subscription->items->data[0];
-                $item2 = $subscription->items->data[1];
+                // $item1 = $subscription->items->data[0];
+                // $item2 = $subscription->items->data[1];
 
                 $sub_id = $subscription->id;
                 $status = $subscription->status;
