@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-// use Stripe\Stripe;
+use Stripe\Stripe;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=utf8");
@@ -72,7 +72,7 @@ class DeleteUser extends Controller
         }
 
         try {
-            
+
             if($request->user_type == 'singleton'){
                 $userExists = Singleton::find($request->login_id);
             }else{
@@ -90,17 +90,58 @@ class DeleteUser extends Controller
             if($user_details){
                 if($request->user_type == 'singleton'){
                     $user = Singleton::find($request->login_id);
-                    $subscription_id = Transactions::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type]])->first();
-                    // $delete =  Singleton :: whereId($request->login_id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
+                    $active_subscription_id = $user ? $user->active_subscription_id : '';
                     $delete =  Singleton :: whereId($request->login_id)->delete();
                 }else{
                     $user = ParentsModel::find($request->login_id);
-                    $subscription_id = Transactions::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type]])->first();
-                    // $delete =  ParentsModel :: whereId($request->login_id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
+                    $active_subscription_id = $user ? $user->active_subscription_id : '';
                     $delete =  ParentsModel :: whereId($request->login_id)->delete();
                 }
-
+                
                 if ($delete) {
+                    $login_id = $request->login_id;
+                    $user_type = $request->user_type;
+                    $transaction = DB::table('transactions')
+                                            ->where([['user_id', '=', $login_id],['user_type', '=', $user_type]])
+                                            ->orWhere(function($query) use ($login_id, $user_type){
+                                                $query->whereRaw("FIND_IN_SET($login_id, other_user_id)")
+                                                    ->where('other_user_type', '=', $user_type);
+                                            })
+                                            ->first();
+                    
+                    if ($transaction) {
+                        $stripe = Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+                        $subscription = \Stripe\Subscription::update(
+                            $transaction->subscription_id,
+                            [
+                                'cancel_at_period_end' => true,
+                            ]
+                        );
+
+                        if ($subscription) {
+                            Transactions::where('id','=', $transaction->id)->update(['subs_status' => $subscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                            $update_sub_data = [
+                                'customer_id'            => '',
+                                'active_subscription_id' => 1,
+                                'stripe_plan_id'         => '',
+                                'subscription_item_id'   => ''
+                            ];
+        
+                            if ($active_subscription_id == 3 && $transaction->other_user_id) {
+                                $other_user_ids = $transaction->other_user_id ? explode(',',$transaction->other_user_id) : null;
+                                if ($transaction->other_user_type == 'singleton') {
+                                    foreach ($other_user_ids as $id) {
+                                        Singleton::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                                    }
+                                } elseif ($transaction->other_user_type == 'parent') {
+                                    foreach ($other_user_ids as $id) {
+                                        ParentsModel::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if($request->user_type == 'singleton'){
                         $link = ParentChild::where([['singleton_id', '=', $request->login_id]])->delete();
                     }else{
@@ -178,16 +219,6 @@ class DeleteUser extends Controller
                     ];
 
                     $admin->notify(new AdminNotification($user, 'admin', 0, $details));
-                    $stripe_subscription_id = $subscription_id ? $subscription_id->stripe_subscription_id : null;
-                    // if($stripe_subscription_id){
-                    //     $stripe = Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-                    //     $subscription = \Stripe\Subscription::update(
-                    //         $stripe_subscription_id,
-                    //         [
-                    //         'cancel_at_period_end' => true,
-                    //         ]
-                    //     );
-                    // }
 
                     return response()->json([
                         'status'    => 'success',

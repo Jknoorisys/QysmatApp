@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('paid_status');
             $table->string('charge_country');
             $table->string('exp_month');
+            $table->string('exp_year');
             $table->string('funding');
             $table->string('last4');
             $table->string('network');
