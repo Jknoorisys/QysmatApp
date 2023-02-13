@@ -39,6 +39,7 @@
                         <tr>
                             <th class="text-center">{{ __('msg.Name')}}</th>
                             <th class="text-center">{{ __('msg.User Type')}}</th>
+                            <th class="text-center">{{ __('msg.Subscription Type')}}</th>
                             <th class="text-center">{{ __('msg.Status')}}</th>
                             <th class="text-center">{{ __('msg.Date')}}</th>
                             <th class="text-center">{{ __('msg.Actions')}}</th>
@@ -50,8 +51,17 @@
                                 <tr>
                                     <td class="text-center">{{$value->user_name}}</td>
                                     <td class="text-center">{{$value->user_type}}</td>
-                                    <td class="text-center">{{$value->status}}</td>
-                                    <td class="text-center">{{date('d-m-Y',strtotime($value->transaction_datetime))}}<br>{{date('h:i:s A', strtotime($value->transaction_datetime))}}</td>
+                                    <td class="text-center">
+                                        @if ($value->active_subscription_id == 2)
+                                            {{ __('msg.Premium')}}
+                                        @elseif ($value->active_subscription_id == 3)
+                                            {{ __('msg.Joint Premium')}}
+                                        @else
+                                            {{ __('msg.Basic')}}
+                                        @endif
+                                    </td>
+                                    <td class="text-center">{{$value->subs_status}}</td>
+                                    <td class="text-center">{{date('d-m-Y',strtotime($value->created_at))}}<br>{{date('h:i:s A', strtotime($value->created_at))}}</td>
                                     <td class="text-center bt-switch">
                                         <form action="{{route('viewTransaction')}}" method="post">
                                             @csrf

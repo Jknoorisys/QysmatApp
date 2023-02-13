@@ -43,8 +43,9 @@ return new class extends Migration
             $table->string('live_photo');
             $table->string('id_proof');
             $table->string('active_subscription_id')->default('1');
-            $table->string('stripe_id');
             $table->string('stripe_plan_id');
+            $table->string('customer_id');
+            $table->string('subscription_item_id');
             $table->enum('is_social',['1','0'])->default('0');
             $table->enum('social_type',['google','facebook','apple','manual'])->default('manual');
             $table->string('social_id');

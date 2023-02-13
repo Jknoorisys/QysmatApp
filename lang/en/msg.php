@@ -120,6 +120,9 @@ return [
     'Manage Transactions'       => 'Manage Transactions',
     'Transaction Details'       => 'Transaction Details',
     'User Type'                 => 'User Type',
+    'Transaction Type'          => 'Transaction Type',
+    'Premium'                   => 'Premium',
+    'Joint Premium'             => 'Joint Premium',
     'Paid By'                   => 'Paid By',
     'Paid Amount'               => 'Paid Amount',
     'Curency'                   => 'Curency',
@@ -911,7 +914,8 @@ return [
     'stripe' => [
         'session' => [
             'success' => 'Stripe Session Created Successfully.',
-            'failure' => 'Unable to Create Stripe Session,Please Try Again...' 
+            'failure' => 'Unable to Create Stripe Session, Please Try Again...' ,
+            'invalid' => 'Invalid Plan, Please Try Again...'
         ],
         'success' => 'Subscribed Successfully!',
         'failure' => 'Unable to Subscribe, Please Try Again...',

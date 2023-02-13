@@ -94,8 +94,9 @@ class Subscriptions extends Controller
                     'amount' => $request->price * 100,
                     'currency' => env('STRIPE_CURRENCY'),
                     'interval' => 'month',
+                    'nickname' => $request->subscription_type,
                     'product'  => [
-                        'name' => strtolower($request->subscription_type),
+                        'name' => $request->subscription_type,
                         'unit_label' => 'person'
                     ]
                 ]
@@ -103,7 +104,7 @@ class Subscriptions extends Controller
 
             if ($plan) {
                 ModelsSubscriptions :: whereId($request->id)->update(['stripe_plan_id' => $plan->id]);
-            }             
+            }
 
             return redirect()->to('subscriptions')->with('success', __('msg.Subscription Price Updated!'));
         }else{

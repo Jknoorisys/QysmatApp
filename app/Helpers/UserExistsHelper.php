@@ -806,7 +806,8 @@ use Stripe\Stripe;
         ini_set('memory_limit', '8G');
         $stripe = Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
         $subscription = \Stripe\Subscription::Retrieve($invoice->subscription);
-        $item = $subscription['items']['data'][0];
+        $item1 = $subscription->items->data[0];
+        $item2 = $subscription->items->data[1];
         $data = [
             'name' => $invoice->customer_name ? $invoice->customer_name : '',
             'email' => $invoice->customer_email ? $invoice->customer_email : '',
@@ -818,8 +819,14 @@ use Stripe\Stripe;
             'period_end' => $subscription->current_period_end ? $subscription->current_period_end : '',
             'subtotal' => $invoice->subtotal ? $invoice->subtotal/100 : '',
             'total' => $invoice->total ? $invoice->total/100 : '',
-            'quantity' => $item['quantity'],
-            'unit_price' => $item['price']['unit_amount']
+            'item1_name' => $item1->price->nickname,
+            'item1_unit_price' => $item1->price->unit_amount,
+            'item1_quantity' => $item1->quantity,
+            'item1_total'   => $item1->amount/100,
+            'item2_name' => $item2->price->nickname,
+            'item2_quantity' => $item2->quantity,
+            'item2_unit_price' => $item2->price->unit_amount,
+            'item2_total'   => $item2->amount/100
         ];
         $pdf = Pdf::loadView('invoice', $data);
         $pdf_name = 'invoice_'.time().'.pdf';

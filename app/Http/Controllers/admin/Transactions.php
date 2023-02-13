@@ -32,8 +32,8 @@ class Transactions extends Controller
         $data['url']                      = route('dashboard');
         $data['title']                    = __("msg.Manage Transactions");
         if(!empty($data['from_date']) && !empty($data['to_date'])){
-            $data['records']              = ModelsTransactions::whereDate('transaction_datetime', '>=', $data['from_date'])
-                                                ->whereDate('transaction_datetime', '<=', $data['to_date'])
+            $data['records']              = ModelsTransactions::whereDate('created_at', '>=', $data['from_date'])
+                                                ->whereDate('created_at', '<=', $data['to_date'])
                                                 ->paginate(10);
         }else{
             $data['records']               = ModelsTransactions::paginate(10);
@@ -48,7 +48,7 @@ class Transactions extends Controller
     {
         $id     = $request->id;
         if(!empty($id)){
-            $data['details']             = ModelsTransactions::where('transactions.id',$id)->first();
+            $data['details']             = ModelsTransactions::where('id',$id)->first();
             $data['admin']               = $this->admin;
             $data['previous_title']      = __("msg.Manage Transactions");
             $data['url']                 = route('transactions');
