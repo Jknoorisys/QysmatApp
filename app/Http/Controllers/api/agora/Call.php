@@ -149,9 +149,9 @@ class Call extends Controller
                 $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
             }
 
-            $user = $premium->id.$premium->mobile;
-            // $cname  =   (string) random_int(100000000, 9999999999999999);
-            $cname  =   (string) $user;
+            // $user = $premium->id.$premium->mobile;
+            $cname  =   (string) random_int(100000000, 9999999999999999);
+            // $cname  =   (string) $user;
             $token  =   $this->generateTokenForChannel($cname);
 
             if ($token) {
