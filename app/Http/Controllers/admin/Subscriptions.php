@@ -96,7 +96,7 @@ class Subscriptions extends Controller
                     'interval' => 'month',
                     'nickname' => $request->subscription_type,
                     'product'  => [
-                        'name' => strtolower($request->subscription_type),
+                        'name' => $request->subscription_type,
                         'unit_label' => 'person'
                     ]
                 ]
