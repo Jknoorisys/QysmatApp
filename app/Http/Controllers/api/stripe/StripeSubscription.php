@@ -624,7 +624,7 @@ class StripeSubscription extends Controller
                 if($session->payment_status == "paid" && $session->status == "complete"){
                     $subscription = \Stripe\Subscription::Retrieve($session->subscription);
                     $item1 = $subscription->items->data[0];
-                    $item2 = $subscription->items->data[1];
+                    $item2 = $subscription->items->data[1] ? $subscription->items->data[1] : null;
 
                     $update_booking  =  [
                         'subscription_id' => $session->subscription,
@@ -649,13 +649,13 @@ class StripeSubscription extends Controller
                         'customer_id' => $session->customer,
                         'subscription_id' => $session->subscription,
                         'subscription_item1_id' => $item1->id,
-                        'subscription_item2_id' => $item2->id,
+                        'subscription_item2_id' => $item2 ? $item2->id : '',
                         'item1_plan_id' => $item1->plan->id,
-                        'item2_plan_id' => $item2->plan->id,
+                        'item2_plan_id' => $item2 ? $item2->plan->id : '',
                         'item1_unit_amount' => $item1->plan->amount/100,
-                        'item2_unit_amount' => $item2->plan->amount/100,
+                        'item2_unit_amount' => $item2 ? $item2->plan->amount/100 : '',
                         'item1_quantity' => $item1->quantity,
-                        'item2_quantity' => $item2->quantity,
+                        'item2_quantity' => $item2 ? $item2->quantity : '',
                         'amount_paid' => $session->amount_total/100,
                         'currency' => $session->currency,
                         'plan_interval' => $item1->plan->interval,
@@ -724,8 +724,8 @@ class StripeSubscription extends Controller
                         $update_sub_data1 = [
                             'customer_id'            => $session->customer,
                             'active_subscription_id' => $active_subscription_id,
-                            'stripe_plan_id'         => $item2->plan->id,
-                            'subscription_item_id'   => $item2->id
+                            'stripe_plan_id'         => $item2 ? $item2->plan->id : $item1->plan->id,
+                            'subscription_item_id'   => $item2 ? $item2->id : $item1->id
                         ];
 
                         if ($active_subscription_id == 3 && $other_user_id) {

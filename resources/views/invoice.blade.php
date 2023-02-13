@@ -165,12 +165,14 @@
 					<td style="border:none">£{{ $item1_unit_price/100 }}</td>
 					<td style="border:none">£{{ ($item1_quantity * $item1_unit_price)/100 }}</td>
 				</tr>
-				<tr class="item" align="center">
-					<td style="border:none">{{ $item2_name }}</td>
-					<td style="border:none">{{ $item2_quantity }}</td>
-					<td style="border:none">£{{ $item2_unit_price/100 }}</td>
-					<td style="border:none">£{{ ($item2_quantity * $item2_unit_price)/100 }}</td>
-				</tr>
+				@if ($item2)
+					<tr class="item" align="center">
+						<td style="border:none">{{ $item2_name }}</td>
+						<td style="border:none">{{ $item2_quantity }}</td>
+						<td style="border:none">£{{ $item2_unit_price/100 }}</td>
+						<td style="border:none">£{{ ($item2_quantity * $item2_unit_price)/100 }}</td>
+					</tr>
+				@endif
 				<tr align="center">
 					<td style="border:none">{{ date('d M', $period_start).' '.'-'.' '. date('d M', $period_end).', '.date('Y', $period_end)}}</td>
 					<td></td>
