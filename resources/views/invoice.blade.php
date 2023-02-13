@@ -173,6 +173,7 @@
 						<td style="border:none">£{{ ($item2_quantity * $item2_unit_price)/100 }}</td>
 					</tr>
 				@endif
+				
 				<tr align="center">
 					<td style="border:none">{{ date('d M', $period_start).' '.'-'.' '. date('d M', $period_end).', '.date('Y', $period_end)}}</td>
 					<td></td>
