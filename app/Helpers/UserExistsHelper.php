@@ -823,7 +823,7 @@ use Stripe\Stripe;
             'item1_unit_price' => $item1->price->unit_amount,
             'item1_quantity' => $item1->quantity,
             'item1_total'   => $item1->amount/100,
-            'item2'        => $item2,
+            'item2' => $item2 ? $item2 : '',
             'item2_name' => $item2 ? $item2->price->nickname : '',
             'item2_quantity' => $item2 ? $item2->quantity : '',
             'item2_unit_price' => $item2 ? $item2->price->unit_amount : '',
