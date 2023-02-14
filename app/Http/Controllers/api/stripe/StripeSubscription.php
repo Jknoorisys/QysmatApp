@@ -514,8 +514,6 @@ class StripeSubscription extends Controller
                 'currency' => env('STRIPE_CURRENCY'),
             ]);
 
-            return $session; exit;
-
             $sub_booking_data = [
                 'stripe_session_id' => $session->id,
                 'user_id' => $user_id,
