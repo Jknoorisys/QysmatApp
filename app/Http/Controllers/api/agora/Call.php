@@ -149,9 +149,8 @@ class Call extends Controller
                 $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
             }
 
-            // $user = $premium->id.$premium->mobile;
-            // $cname  =   (string) random_int(100000000, 9999999999999999);
-            $cname  =   'QysmatApp';
+            $cname  =   (string) random_int(100000000, 9999999999999999);
+            // $cname  =   'QysmatApp';
             $token  =   $this->generateTokenForChannel($cname);
 
             if ($token) {
@@ -193,13 +192,7 @@ class Call extends Controller
                 'error'     => $e->getMessage()
             ],500);
         }
-    }    
-
-    /**
-     * @method generateTokenForChannelByUID()     
-     * @date: 2021-11-28 15:15
-     * 
-     */
+    }  
 
     private function generateTokenForChannel($cname = null, $uid = 0)
     {

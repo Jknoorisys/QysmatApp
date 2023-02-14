@@ -161,7 +161,11 @@ class Suggestions extends Controller
                 }
 
                 if(!empty($min_age) && !empty($max_age)){
-                    $this->db->whereBetween('age', [$min_age, $max_age]);
+                    if ($max_age == 'above') {
+                        $this->db->where('age','>=', $min_age);
+                    }else{
+                        $this->db->whereBetween('age', [$min_age, $max_age]);
+                    }
                 }
 
                 $this->db->where('id','!=',$request->singleton_id);

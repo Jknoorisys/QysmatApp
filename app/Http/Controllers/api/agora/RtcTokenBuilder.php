@@ -3,8 +3,6 @@ namespace App\Http\Controllers\api\agora;
 
 use App\Http\Controllers\api\agora\AccessToken;
 
-// require_once "AccessToken.php";
-
 class RtcTokenBuilder
 {
     const RoleAttendee = 0;
