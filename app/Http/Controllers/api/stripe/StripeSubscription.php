@@ -393,7 +393,7 @@ class StripeSubscription extends Controller
 
             $stripe_plan_id = $plan2 ? $plan2->stripe_plan_id : '';
             $stripe_joint_plan_id = $plan3 ? $plan3->stripe_plan_id : '';
-            if (!$stripe_plan_id || $stripe_joint_plan_id) {
+            if (!$stripe_plan_id || !$stripe_joint_plan_id) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.stripe.session.failure'),
@@ -513,6 +513,8 @@ class StripeSubscription extends Controller
                 'mode' => 'subscription',
                 'currency' => env('STRIPE_CURRENCY'),
             ]);
+
+            return $session; exit;
 
             $sub_booking_data = [
                 'stripe_session_id' => $session->id,
