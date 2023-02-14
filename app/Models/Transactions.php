@@ -26,4 +26,13 @@ class Transactions extends Model
         'created_at',
         'updated_at'
     ];
+
+    protected $hidden = [
+        'customer_id',
+        'subscription_id',
+        'subscription_item1_id',
+        'subscription_item2_id',
+        'item1_plan_id',
+        'item2_plan_id',
+    ];
 }
