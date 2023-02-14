@@ -18,4 +18,10 @@ class Subscriptions extends Model
         'created_at',
         'updated_at'
     ];
+
+    protected $hidden = [
+        'stripe_plan_id',
+        'created_at',
+        'updated_at'
+    ];
 }
