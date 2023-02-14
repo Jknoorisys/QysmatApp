@@ -40,6 +40,7 @@ return new class extends Migration
             $table->string('payer_email');
             $table->string('plan_period_start');
             $table->string('plan_period_end');
+            $table->string('invoice_url');
             $table->string('payment_status');
             $table->string('subs_status');
             $table->timestamps();
