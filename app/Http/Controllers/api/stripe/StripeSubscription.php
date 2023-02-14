@@ -369,8 +369,8 @@ class StripeSubscription extends Controller
                 'required' ,
                 Rule::in(['2','3']),
             ],
-            'stripe_plan_id'   => 'required',
-            'stripe_joint_plan_id'   => 'required_if:plan_id,3',
+            // 'stripe_plan_id'   => 'required',
+            // 'stripe_joint_plan_id'   => 'required_if:plan_id,3',
         ]);
 
         if($validator->fails()){
@@ -388,6 +388,17 @@ class StripeSubscription extends Controller
             $user_type = $request->user_type;
             $other_user_ids  = $request->other_user_id ? explode(',',$request->other_user_id) : null;
             $other_user_type = $request->other_user_type;
+            $plan2 = Subscriptions::where('id', '=', '2')->first();
+            $plan3 = Subscriptions::where('id', '=', '3')->first();
+
+            $stripe_plan_id = $plan2 ? $plan2->stripe_plan_id : '';
+            $stripe_joint_plan_id = $plan3 ? $plan3->stripe_plan_id : '';
+            if (!$stripe_plan_id || $stripe_joint_plan_id) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.stripe.session.failure'),
+                ],400);
+            }
 
             if ($user_type == 'singleton') {
                 $user = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
@@ -399,12 +410,15 @@ class StripeSubscription extends Controller
                 $user_email = $user->email;
             }
 
-            $success_url = 'http://127.0.0.1:8000/api/stripe/success';
-            $cancel_url = 'http://127.0.0.1:8000/api/stripe/fail';
+            // $success_url = 'http://127.0.0.1:8000/api/stripe/success';
+            // $cancel_url = 'http://127.0.0.1:8000/api/stripe/fail';
+
+            $success_url = url('api/stripe/success');
+            $cancel_url = url('api/stripe/fail');
 
             if ($request->plan_id == 2) {
                 $line_items = [
-                    ['price' => $request->stripe_plan_id, 'quantity' => 1]
+                    ['price' => $stripe_plan_id, 'quantity' => 1]
                 ];
             } elseif ($request->plan_id == 3) {
 
@@ -431,9 +445,9 @@ class StripeSubscription extends Controller
                         }
 
                         $line_items = [
-                            ['price' => $request->stripe_plan_id, 'quantity' => 1],
+                            ['price' => $stripe_plan_id, 'quantity' => 1],
                             [
-                                'price' => $request->stripe_joint_plan_id,
+                                'price' => $stripe_joint_plan_id,
                                 'quantity' => count($other_user_ids)
                             ]
                         ];
@@ -441,7 +455,7 @@ class StripeSubscription extends Controller
                     } else {
                         $line_items = [
                             [
-                                'price' => $request->stripe_joint_plan_id,
+                                'price' => $stripe_joint_plan_id,
                                 'quantity' => 1
                             ]
                         ];
@@ -464,9 +478,9 @@ class StripeSubscription extends Controller
                     }
 
                     $line_items = [
-                        ['price' => $request->stripe_plan_id, 'quantity' => 1],
+                        ['price' => $stripe_plan_id, 'quantity' => 1],
                         [
-                            'price' => $request->stripe_joint_plan_id,
+                            'price' => $stripe_joint_plan_id,
                             'quantity' => count($other_user_ids)
                         ]
                     ];
