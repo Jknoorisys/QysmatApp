@@ -40,6 +40,7 @@
                             <th class="text-center">{{ __('msg.Name')}}</th>
                             <th class="text-center">{{ __('msg.User Type')}}</th>
                             <th class="text-center">{{ __('msg.Subscription Type')}}</th>
+                            <th class="text-center">{{ __('msg.Invoice')}}</th>
                             <th class="text-center">{{ __('msg.Status')}}</th>
                             <th class="text-center">{{ __('msg.Date')}}</th>
                             <th class="text-center">{{ __('msg.Actions')}}</th>
@@ -58,6 +59,13 @@
                                             {{ __('msg.Joint Premium')}}
                                         @else
                                             {{ __('msg.Basic')}}
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if ($value->invoice_url)
+                                            <a href="{{asset($value->invoice_url)}}"  download class="btn btn-rounded btn-qysmat"><i class="fas fa-download"></i></a>
+                                        @else
+                                            <i class="fas fa-minus"></i>
                                         @endif
                                     </td>
                                     <td class="text-center">{{$value->subs_status}}</td>
