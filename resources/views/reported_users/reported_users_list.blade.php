@@ -53,9 +53,7 @@
                         <tr>
                             <th class="text-center">{{ __('msg.Name')}}</th>
                             <th class="text-center">{{ __('msg.User Type')}}</th>
-                            {{-- <th class="text-center">{{ __('msg.Reported Count')}}</th> --}}
-                            {{-- <th class="text-center">{{ __('msg.Status')}}</th>
-                            <th class="text-center">{{ __('msg.Actions')}}</th> --}}
+                            <th class="text-center">{{ __('msg.Reason')}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,7 +62,7 @@
                                 <tr>
                                     <td class="text-center">{{$value->reported_user_name}}</td>
                                     <td class="text-center">{{$value->reported_user_type}}</td>
-                                    {{-- <td class="text-center">{{$value->reported_count}}</td> --}}
+                                    <td class="text-center">{{$value->reason}}</td>
                                 </tr>
                             @endforeach
                         @else
