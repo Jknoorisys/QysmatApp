@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Stripe\Stripe;
 
-// use PDF;
-
-
     function userExist($login_id, $user_type)
     {
         if ($user_type == 'singleton') {

@@ -222,7 +222,7 @@
                 <a href="{{route('transactions')}}" class="d-flex align-items-center" style="color: #575757;">
                     <div class="m-r-10">
                         <span>{{__('msg.Average Revenue')}}</span>
-                        <h4>£{{$revenue}}</h4>
+                        <h4>£{{number_format((float)$revenue, 2, '.', '')}}</h4>
                     </div>
                     <div class="ml-auto">
                         <div class="gaugejs-box">
