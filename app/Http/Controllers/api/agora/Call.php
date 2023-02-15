@@ -52,6 +52,10 @@ class Call extends Controller
                 'required' ,
                 Rule::in(['singleton','parent']),
             ],
+            'call_type' => [
+                'required' ,
+                Rule::in(['audio','video']),
+            ],
             'singleton_id' => [
                 'required_if:caller_user_type,parent',
             ],
@@ -97,14 +101,14 @@ class Call extends Controller
                 if (isset($reciever) && !empty($reciever)) {
                     $token = $reciever->fcm_token;
                     $data = array(
-                        'notType' => "video_call" || "audio_call",
+                        'notType'        => $request->call_type,
                         'from_user_name' => $premium->name,
-                        'from_user_pic' => $sender_pic,
-                        'from_user_id' => $premium->id,
-                        'to_user_id' => $reciever->id,
-                        'to_user_type' => $reciever->user_type,
-                        'channel_name' => $agora['channel'],
-                        'token' => $agora['token'],
+                        'from_user_pic'  => $sender_pic,
+                        'from_user_id'   => $premium->id,
+                        'to_user_id'     => $reciever->id,
+                        'to_user_type'   => $reciever->user_type,
+                        'channel_name'   => $agora['channel'],
+                        'token'          => $agora['token'],
                     );
 
                     sendFCMNotifications($token, $title, $body, $data);
