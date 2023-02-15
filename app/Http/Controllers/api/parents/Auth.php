@@ -226,7 +226,7 @@ class Auth extends Controller
         }
 
         try {
-            $user = ParentsModel::where([['id','=',$request->user_id],['status','=','unblocked']])->first();
+            $user = ParentsModel::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
             if(!empty($user)){
                 if($user->email_otp == $request->otp){
                     $verified =  ParentsModel :: whereId($request->user_id)->update(['is_email_verified' => 'verified', 'email_verified_at' => date('Y-m-d H:i:s')]);
@@ -520,7 +520,7 @@ class Auth extends Controller
         }
 
         try {
-            $user = ParentsModel::where([['id','=',$request->user_id],['status','=','unblocked']])->first();
+            $user = ParentsModel::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
             if(!empty($user)){
                 if($user->email_otp == $request->otp){
                     $verified =  ParentsModel :: where('id','=',$request->user_id)->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);
@@ -596,7 +596,7 @@ class Auth extends Controller
         }
 
         try {
-            $user = ParentsModel::where([['email','=',$request->email],['is_social','=',$request->is_social],['social_type','=',$request->social_type],['status','=','unblocked']])->first();
+            $user = ParentsModel::where([['email','=',$request->email],['is_social','=',$request->is_social],['social_type','=',$request->social_type],['status','=','Unblocked']])->first();
             if(!empty($user)){
                 if($request->social_id == $user->social_id){
 
@@ -685,7 +685,7 @@ class Auth extends Controller
         }
 
         try {
-            $user = ParentsModel::where([['email','=',$request->email],['status','=','unblocked']])->first();
+            $user = ParentsModel::where([['email','=',$request->email],['status','=','Unblocked']])->first();
             if(!empty($user)){
                 if(Hash::check($request->password, $user->password)){
 
