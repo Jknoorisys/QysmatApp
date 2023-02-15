@@ -5020,7 +5020,7 @@ a.close.disabled {
   overflow: hidden; }
   .modal-open .modal {
     overflow-x: hidden;
-    overflow-y: auto; }
+    overflow-y: hidden; }
 
 .modal {
   position: fixed;

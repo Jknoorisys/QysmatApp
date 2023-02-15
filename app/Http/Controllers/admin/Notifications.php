@@ -5,7 +5,9 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin;
-
+use App\Models\ParentsModel;
+use App\Models\Singleton;
+use App\Notifications\SendNotification;
 
 class Notifications extends Controller
 {
@@ -29,13 +31,22 @@ class Notifications extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Notifications");
         $data['records']             = $this->admin->notifications()->where('user_type','=','admin')->paginate(10);
-        // return $data['records'];exit;
-        // foreach ($data['records'] as $value ) {
-        //     echo json_encode($value->data['title']);
-        // }exit;
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('notifications.notifications_list', $data);
-        // return $data['records'];exit;
         return view('layouts.main',$data);
+    }
+
+    public function sendNotification(Request $request)
+    {
+        $singletons = Singleton::where('status', '=', 'Unblocked')->get();
+        $parent     = ParentsModel::where('status', '=', 'Unblocked')->get();
+        $message    = $request->message;
+        foreach ($singletons as $user) {
+            $user->notify(new SendNotification ($message,$user->user_type) );
+        }
+        foreach ($parent as $user) {
+            $user->notify(new SendNotification ($message,$user->user_type) );
+        }
+        return redirect()->to('notifications')->with('success', __('msg.Notification Sent!'));
     }
 }

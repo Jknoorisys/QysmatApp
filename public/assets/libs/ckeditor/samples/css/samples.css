@@ -963,13 +963,14 @@ body input.navigation-b ul li a:hover:hover {
 .modal {
   padding: 20px;
   border-radius: 3px;
-  background-color: white;
+  /* background-color: white; */
   max-width: 700px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   width: 80% !important;
   top: 50% !important;
+  left: 50% !important;
   -webkit-transform: translate(-50%, -50%) !important;
   -moz-transform: translate(-50%, -50%) !important;
   -ms-transform: translate(-50%, -50%) !important;
