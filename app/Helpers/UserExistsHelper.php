@@ -856,6 +856,5 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
         $token = RtcTokenBuilder::buildTokenWithUid($appID, $appCertificate, $channelName, $uid, $role, $privilegeExpiredTs);
         $data = ['token' => $token, 'channel' => $channelName];
         return $data;
-    
     }
 ?>
