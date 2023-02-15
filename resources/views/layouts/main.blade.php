@@ -12,9 +12,9 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/uploads/logo/logo.png">
     <title>Qysmat</title>
     <!-- Custom CSS -->
-    <link href="assets/libs/chartist/dist/chartist.min.css" rel="stylesheet">
-    <link href="assets/extra-libs/c3/c3.min.css" rel="stylesheet">
-    <link href="assets/libs/morris.js/morris.css" rel="stylesheet">
+    <!-- <link href="assets/libs/chartist/dist/chartist.min.css" rel="stylesheet"> -->
+    <!-- <link href="assets/extra-libs/c3/c3.min.css" rel="stylesheet"> -->
+    <!-- <link href="assets/libs/morris.js/morris.css" rel="stylesheet"> -->
     <link href="assets/extra-libs/toastr/dist/build/toastr.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="assets/extra-libs/prism/prism.css">
     <link rel="stylesheet" type="text/css" href="assets/libs/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css">
@@ -195,16 +195,16 @@
     <!--This page JavaScript -->
     <script src="assets/libs/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
     <!--chartis chart-->
-    <script src="assets/libs/chartist/dist/chartist.min.js"></script>
-    <script src="assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
+    <!-- <script src="assets/libs/chartist/dist/chartist.min.js"></script> -->
+    <!-- <script src="assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script> -->
     <!--c3 charts -->
-    <script src="assets/extra-libs/c3/d3.min.js"></script>
-    <script src="assets/extra-libs/c3/c3.min.js"></script>
+    <!-- <script src="assets/extra-libs/c3/d3.min.js"></script> -->
+    <!-- <script src="assets/extra-libs/c3/c3.min.js"></script> -->
     <!--chartjs -->
-    <script src="assets/libs/raphael/raphael.min.js"></script>
-    <script src="assets/libs/morris.js/morris.min.js"></script>
+    <!-- <script src="assets/libs/raphael/raphael.min.js"></script> -->
+    <!-- <script src="assets/libs/morris.js/morris.min.js"></script> -->
 
-    <script src="dist/js/pages/dashboards/dashboard1.js"></script>
+    <!-- <script src="dist/js/pages/dashboards/dashboard1.js"></script> -->
 
     {{-- toasterjs --}}
     <script src="dist/js/custom.min.js"></script>
