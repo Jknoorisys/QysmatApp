@@ -67,8 +67,6 @@ class Call extends Controller
 
         try {
 
-            return GetToken($request->login_id);exit;
-
             if ($request->caller_user_type == 'singleton') {
                 $premium = Singleton::where([['id', '=', $request->caller_id], ['status', '=', 'Unblocked']])->first();
                 $sender_pic = $premium ? $premium->photo1 : '';
@@ -90,9 +88,9 @@ class Call extends Controller
                 $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
             }
 
-            $data  =   GetToken($request->login_id);
+            $agora  =   GetToken($request->login_id);
 
-            if ($data) {
+            if ($agora) {
                 $title = __('msg.Call');
                 $body = __('msg.You have a Call from').' '.$premium->name;
 
@@ -105,8 +103,8 @@ class Call extends Controller
                         'from_user_id' => $premium->id,
                         'to_user_id' => $reciever->id,
                         'to_user_type' => $reciever->user_type,
-                        'channel_name' => $data['channel'],
-                        'token' => $data['token'],
+                        'channel_name' => $agora['channel'],
+                        'token' => $agora['token'],
                     );
 
                     sendFCMNotifications($token, $title, $body, $data);
@@ -115,8 +113,8 @@ class Call extends Controller
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.agora.success'),
-                    'channel_name' => $data['channel'], 
-                    'token' => $data['token']
+                    'channel_name' => $agora['channel'], 
+                    'token' => $agora['token']
                 ],200);
             }else{
                 return response()->json([
