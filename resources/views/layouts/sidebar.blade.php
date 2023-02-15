@@ -98,7 +98,7 @@
 
                 <li class="sidebar-item">
                     <a class="sidebar-link waves-effect waves-dark" href="{{route('notifications')}}" aria-expanded="false">
-                        <i class="fa-solid fa-wallet"></i>
+                        <i class="fas fa-bell"></i>
                         <span class="hide-menu sidebar-title"> {{__('msg.Manage Notifications')}} </span>
                     </a>
                 </li>

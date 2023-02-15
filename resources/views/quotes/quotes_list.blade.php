@@ -49,7 +49,7 @@
        <div class="card-body">
         <div class="row">
             <div class="col-10"></div>
-            <div class="col-2"><a href="{{route('addQuote')}}" class="btn btn-qysmat mb-2">{{ __('Add Islamic Quotes')}}</a></div>
+            <div class="col-2"><a href="{{route('addQuote')}}" class="btn btn-qysmat mb-2">{{ __('msg.Add Islamic Quotes')}}</a></div>
         </div>
             <div class="table-responsive">
                 <table class="table table-sm table-hover">

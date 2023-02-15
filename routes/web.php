@@ -117,3 +117,4 @@ Route::any('deleted-users' , [DeletedUsers::class, 'index'])->middleware('isLogg
 
 // Manage Notifications
 Route::any('notifications' , [Notifications::class, 'index'])->middleware('isLoggedIn')->name('notifications');
+Route::any('send-notification' , [Notifications::class, 'sendNotification'])->middleware('isLoggedIn')->name('send-notification');

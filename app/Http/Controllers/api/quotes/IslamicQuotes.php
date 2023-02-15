@@ -39,7 +39,7 @@ class IslamicQuotes extends Controller
         }
 
         try {
-            $page = Quotes::where('status','=','Active')->get();
+            $page = Quotes::where('status','=','Active')->inRandomOrder()->get();
             if(!$page->isEmpty()){
                 return response()->json([
                     'status'    => 'success',

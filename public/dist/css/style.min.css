@@ -26292,7 +26292,7 @@ a.close.disabled {
 }
 .modal-open .modal {
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 .modal {
     position: fixed;

@@ -279,9 +279,13 @@ return [
 
     // Manage Notifications
     'Manage Notifications'              => 'Manage Notifications',
+    'Send Notification'                 => 'Send Notification',
     'Title'                             => 'Title',
     'Message'                           => 'Message',
     'View all notifications'            => 'View all notifications',
+    'Send'                              => 'Send',
+    'Anouncment'                        => 'Anouncment',
+    'Notification Sent!'                => 'Notification Sent!',
 
     // Sweat alert
     'Are You Sure'              => 'Are You Sure',
