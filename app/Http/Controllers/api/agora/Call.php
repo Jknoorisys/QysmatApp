@@ -35,67 +35,6 @@ class Call extends Controller
         App::setlocale($lang);
     } 
 
-    // public function index(Request $request){
-    //     $validator = Validator::make($request->all(), [
-    //         'language' => [
-    //             'required' ,
-    //             Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
-    //         ],
-    //         'login_id'   => 'required||numeric',
-    //         'user_type' => [
-    //             'required' ,
-    //             Rule::in(['singleton','parent']),
-    //         ],
-    //     ]);
-
-    //     if($validator->fails()){
-    //         return response()->json([
-    //             'status'    => 'failed',
-    //             'message'   => __('msg.Validation Failed!'),
-    //             'errors'    => $validator->errors()
-    //         ],400);
-    //     }
-
-    //     try {
-
-    //         if ($request->user_type == 'singleton') {
-    //             $premium = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-    //         } else {
-    //             $premium = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-    //         }
-
-    //         if ($premium->active_subscription_id == '1') {
-    //             return response()->json([
-    //                 'status'    => 'failed',
-    //                 'message'   => __('msg.reset-profile.premium'),
-    //             ],400);
-    //         }
-
-    //         // $user_id = $request->login_id;
-    //         // $user_type = $request->user_type;
-
-    //         // $appID = env('APP_ID');
-    //         // $appCertificate = env('APP_CERTIFICATE');
-           
-    //         // $channelName = "7d72365eb983485397e3e3f9d460bdda";
-    //         // $uid = 2882341273;
-    //         // $uidStr = "2882341273";
-    //         // $role = RtcTokenBuilder::RoleAttendee;
-    //         // $expireTimeInSeconds = 3600;
-    //         // $currentTimestamp = (new \DateTime("now", new \DateTimeZone('UTC')))->getTimestamp();
-    //         // $privilegeExpiredTs = $currentTimestamp + $expireTimeInSeconds;
-    //         // $privilegeExpiredTs = $currentTimestamp + $expireTimeInSeconds; 
-        
-    //         // return RtcTokenBuilder::buildTokenWithUid($appID, $appCertificate, $channelName, $uid, $role, $privilegeExpiredTs); 
-    //     } catch (\Throwable $e) {
-    //         return response()->json([
-    //             'status'    => 'failed',
-    //             'message'   => __('msg.error'),
-    //             'error'     => $e->getMessage()
-    //         ],500);
-    //     }
-    // }
-
     public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -150,8 +89,10 @@ class Call extends Controller
             }
 
             $cname  =   (string) random_int(100000000, 9999999999999999);
+            $uid    =   random_int(100000000, 9999999999);
+
             // $cname  =   'QysmatApp';
-            $token  =   $this->generateTokenForChannel($cname);
+            $token  =   $this->generateTokenForChannel($cname, $uid);
 
             if ($token) {
                 $title = __('msg.Call');
@@ -177,6 +118,7 @@ class Call extends Controller
                     'status'    => 'success',
                     'message'   => __('msg.agora.success'),
                     'channel_name' => $cname, 
+                    'uid' => $uid,
                     'token' => $token
                 ],200);
             }else{
@@ -198,7 +140,7 @@ class Call extends Controller
     {
         $appID                  =   env('APP_ID');
         $appCertificate         =   env('APP_CERTIFICATE');
-
+        // $uid                    =   random_int(100000000, 9999999999);
         $role                   =   RtcTokenBuilder::RolePublisher;
         $expireTimeInSeconds    =   3600;
         $currentTimestamp       =   (new DateTime("now", new DateTimeZone('UTC')))->getTimestamp();

@@ -263,7 +263,7 @@
                                         <div class="row justify-content-center">
                                             <div class="col-3"></div>
                                             <div class="col-2 mt-1">
-                                                <form action="{{route('changeParentStatus')}}" method="post">
+                                                <form action="{{route('changeStatus')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" name="id" value="{{$value->id}}">
                                                     <input type="hidden" name="status" value="{{$value->status == 'Unblocked' ? 'Blocked' : 'Unblocked' }}">
