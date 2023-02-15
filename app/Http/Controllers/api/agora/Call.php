@@ -129,19 +129,7 @@ class Call extends Controller
                 'error'     => $e->getMessage()
             ],500);
         }
-    }  
-
-    // private function generateTokenForChannel($cname, $uid)
-    // {
-    //     $appID                  =   env('APP_ID');
-    //     $appCertificate         =   env('APP_CERTIFICATE');
-    //     $role                   =   RtcTokenBuilder::RolePublisher;
-    //     $expireTimeInSeconds    =   3600;
-    //     $currentTimestamp       =   (new DateTime("now", new DateTimeZone('UTC')))->getTimestamp();
-    //     $privilegeExpiredTs     =   $currentTimestamp + $expireTimeInSeconds;
-
-    //     return RtcTokenBuilder::buildTokenWithUid($appID, $appCertificate, $cname, $uid, $role, $privilegeExpiredTs);
-    // }   
+    }
     
     public function callHistory(Request $request)
     {
@@ -164,6 +152,10 @@ class Call extends Controller
                 'required' ,
                 Rule::in(['audio','video']),
             ],
+            'call_status' => [
+                'required' ,
+                Rule::in(['incoming','accepted','rejected']),
+            ],
         ]);
 
         if($validator->fails()){
@@ -181,6 +173,7 @@ class Call extends Controller
                 'receiver_id' => $request->receiver_id,
                 'receiver_type' => $request->receiver_user_type,
                 'call_type' => $request->call_type,
+                'status'    => $request->call_status,
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
