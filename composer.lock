@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b69643b9ab68f8b70d754c782ce0a9a",
+    "content-hash": "aa6ec63553693f0e63a77da9f414da52",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -5822,6 +5822,70 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "willywes/agora-sdk-php",
+            "version": "v0.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Willywes/agora-sdk-php.git",
+                "reference": "7605943993e9719f60e53374967f5e059255f44e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Willywes/agora-sdk-php/zipball/7605943993e9719f60e53374967f5e059255f44e",
+                "reference": "7605943993e9719f60e53374967f5e059255f44e",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~7|~8|~9"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~5|~6",
+                "phpunit/phpunit": "~9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Willywes\\AgoraSDK\\AgoraSDKServiceProvider"
+                    ],
+                    "aliases": {
+                        "AgoraSDK": "Willywes\\AgoraSDK\\Facades\\AgoraSDK"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Willywes\\AgoraSDK\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alejandro Isla",
+                    "email": "alejandro.isla.c@gmail.com",
+                    "homepage": "http://alejandroisla.cl"
+                }
+            ],
+            "description": "Agora.io SDK PHP",
+            "homepage": "https://github.com/willywes/agora-sdk-php",
+            "keywords": [
+                "Agora SDK",
+                "Agora SDK PHP",
+                "Agora.io",
+                "laravel",
+                "php",
+                "sdk"
+            ],
+            "support": {
+                "issues": "https://github.com/Willywes/agora-sdk-php/issues",
+                "source": "https://github.com/Willywes/agora-sdk-php/tree/v0.1.3"
+            },
+            "time": "2022-04-28T20:52:31+00:00"
         }
     ],
     "packages-dev": [

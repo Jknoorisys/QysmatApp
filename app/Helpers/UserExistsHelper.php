@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Stripe\Stripe;
+use Willywes\AgoraSDK\RtcTokenBuilder;
 
     function userExist($login_id, $user_type)
     {
@@ -838,5 +839,23 @@ use Stripe\Stripe;
             $message->attachData($pdf->output(), $pdf_name, ['as' => $pdf_name, 'mime' => 'application/pdf']);
         });
         return $path;
+    }
+
+    function GetToken($user_id){
+    
+        $appID         =   env('APP_ID');
+        $appCertificate    =   env('APP_CERTIFICATE');
+        $channelName  =   (string) random_int(100000000, 9999999999999999);
+        $uid = $user_id;
+        $uidStr = ($user_id) . '';
+        $role = RtcTokenBuilder::RolePublisher;
+        $expireTimeInSeconds = 3600;
+        $currentTimestamp = (new \DateTime("now", new \DateTimeZone('UTC')))->getTimestamp();
+        $privilegeExpiredTs = $currentTimestamp + $expireTimeInSeconds;
+    
+        $token = RtcTokenBuilder::buildTokenWithUid($appID, $appCertificate, $channelName, $uid, $role, $privilegeExpiredTs);
+        $data = ['token' => $token, 'channel' => $channelName];
+        return $data;
+    
     }
 ?>

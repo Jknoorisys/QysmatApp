@@ -448,7 +448,7 @@ class Auth extends Controller
         }
 
         try {
-            $user = Singleton::where([['email','=',$request->email],['social_type','=',$request->social_type],['is_social','=',$request->is_social],['status','=','unblocked']])->first();
+            $user = Singleton::where([['email','=',$request->email],['social_type','=',$request->social_type],['is_social','=',$request->is_social],['status','=','Unblocked']])->first();
             if(!empty($user)){
                 if($request->social_id == $user->social_id){
                     if ($user->mobile == '') {
@@ -537,7 +537,7 @@ class Auth extends Controller
             ],400);
         }
 
-        $user = Singleton::where([['email','=',$request->email],['status','=','unblocked']])->first();
+        $user = Singleton::where([['email','=',$request->email],['status','=','Unblocked']])->first();
         if(!empty($user)){
             if(Hash::check($request->password, $user->password)){
                 if ($user->mobile == '') {
@@ -777,7 +777,7 @@ class Auth extends Controller
         }
 
         try {
-            $user = Singleton::where([['id','=',$request->user_id],['status','=','unblocked']])->first();
+            $user = Singleton::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
             if(!empty($user)){
                 if($user->email_otp == $request->otp){
                     $verified =  Singleton :: where('id','=',$request->user_id)->update(['password' => Hash::make($request->password), 'updated_at' => date('Y-m-d H:i:s')]);

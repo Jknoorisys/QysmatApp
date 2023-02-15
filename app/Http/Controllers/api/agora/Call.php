@@ -67,6 +67,8 @@ class Call extends Controller
 
         try {
 
+            return GetToken($request->login_id);exit;
+
             if ($request->caller_user_type == 'singleton') {
                 $premium = Singleton::where([['id', '=', $request->caller_id], ['status', '=', 'Unblocked']])->first();
                 $sender_pic = $premium ? $premium->photo1 : '';
@@ -88,13 +90,9 @@ class Call extends Controller
                 $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
             }
 
-            $cname  =   (string) random_int(100000000, 9999999999999999);
-            $uid    =   random_int(100000000, 9999999999);
+            $data  =   GetToken($request->login_id);
 
-            // $cname  =   'QysmatApp';
-            $token  =   $this->generateTokenForChannel($cname, $uid);
-
-            if ($token) {
+            if ($data) {
                 $title = __('msg.Call');
                 $body = __('msg.You have a Call from').' '.$premium->name;
 
@@ -107,8 +105,8 @@ class Call extends Controller
                         'from_user_id' => $premium->id,
                         'to_user_id' => $reciever->id,
                         'to_user_type' => $reciever->user_type,
-                        'channel_name' => $cname,
-                        'token' => $token,
+                        'channel_name' => $data['channel'],
+                        'token' => $data['token'],
                     );
 
                     sendFCMNotifications($token, $title, $body, $data);
@@ -117,9 +115,8 @@ class Call extends Controller
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.agora.success'),
-                    'channel_name' => $cname, 
-                    'uid' => $uid,
-                    'token' => $token
+                    'channel_name' => $data['channel'], 
+                    'token' => $data['token']
                 ],200);
             }else{
                 return response()->json([
@@ -136,18 +133,17 @@ class Call extends Controller
         }
     }  
 
-    private function generateTokenForChannel($cname = null, $uid = 0)
-    {
-        $appID                  =   env('APP_ID');
-        $appCertificate         =   env('APP_CERTIFICATE');
-        // $uid                    =   random_int(100000000, 9999999999);
-        $role                   =   RtcTokenBuilder::RolePublisher;
-        $expireTimeInSeconds    =   3600;
-        $currentTimestamp       =   (new DateTime("now", new DateTimeZone('UTC')))->getTimestamp();
-        $privilegeExpiredTs     =   $currentTimestamp + $expireTimeInSeconds;
+    // private function generateTokenForChannel($cname, $uid)
+    // {
+    //     $appID                  =   env('APP_ID');
+    //     $appCertificate         =   env('APP_CERTIFICATE');
+    //     $role                   =   RtcTokenBuilder::RolePublisher;
+    //     $expireTimeInSeconds    =   3600;
+    //     $currentTimestamp       =   (new DateTime("now", new DateTimeZone('UTC')))->getTimestamp();
+    //     $privilegeExpiredTs     =   $currentTimestamp + $expireTimeInSeconds;
 
-        return RtcTokenBuilder::buildTokenWithUid($appID, $appCertificate, $cname, $uid, $role, $privilegeExpiredTs);
-    }   
+    //     return RtcTokenBuilder::buildTokenWithUid($appID, $appCertificate, $cname, $uid, $role, $privilegeExpiredTs);
+    // }   
     
     public function callHistory(Request $request)
     {
