@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\DeletedUsers;
 use App\Models\ParentsModel;
 use App\Models\Singleton;
 use Illuminate\Http\Request;
@@ -127,8 +128,21 @@ class ParentsController extends Controller
     public function deleteParent(Request $request)
     {
         $id = $request->id;
+        $user = ParentsModel::find($id);
+        $user_type = 'parent';
+        $active_subscription_id = $user ? $user->active_subscription_id : '';
+        $data = [
+            'user_id'     => $id,
+            'user_type'   => $user_type,
+            'user_name'   => $user->name,
+            'reason_type' => 'Admin',
+            'reason'      => 'Admin',
+        ];
+        $insert = DeletedUsers::insert($data);
         $delete =  ParentsModel :: whereId($id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
+        // $delete =  ParentsModel :: whereId($id)->delete();
         if ($delete) {
+            $deleteAccount = deleteAccountDetails($id,$user_type,$active_subscription_id);
             return back()->with('success', __('msg.Parent Deleted'));
         } else {
             return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));

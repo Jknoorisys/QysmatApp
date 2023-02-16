@@ -1,12 +1,25 @@
 <?php
 
+use App\Models\Admin;
+use App\Models\BlockList;
+use App\Models\ChatHistory;
+use App\Models\InstantMatchRequest;
+use App\Models\LastSwipe;
+use App\Models\Matches;
+use App\Models\MessagedUsers;
+use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\RecievedMatches;
+use App\Models\ReferredMatches;
+use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\Transactions;
+use App\Models\UnMatches;
 use Barryvdh\DomPDF\Facade\Pdf;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Stripe\Stripe;
@@ -856,5 +869,282 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
         $token = RtcTokenBuilder::buildTokenWithUid($appID, $appCertificate, $channelName, $uid, $role, $privilegeExpiredTs);
         $data = ['token' => $token, 'channel' => $channelName];
         return $data;
+    }
+
+    function deleteAccountDetails($user_id, $user_type, $active_subscription_id)
+    {
+
+        $stripe = new \Stripe\StripeClient(
+            env('STRIPE_SECRET_KEY')
+        );
+
+        if ($user_type == 'parent') {
+            $parentTransaction = DB::table('transactions')
+                            ->where([['user_id', '=', $user_id],['user_type', '=', $user_type],['subs_status', '!=', 'canceled']])
+                            ->orWhere(function($query) use ($user_id, $user_type){
+                                $query->whereRaw("FIND_IN_SET($user_id, other_user_id)")
+                                    ->where('other_user_type', '=', $user_type)
+                                    ->where('subs_status', '!=', 'canceled');
+                            })
+                            ->first();
+
+            if (!empty($parentTransaction)) {
+                if ($active_subscription_id == 2) {
+                    $parentSubscription = $stripe->subscriptions->cancel(
+                        $parentTransaction->subscription_id,
+                        []
+                    );
+    
+                    if ($parentSubscription) {
+                        Transactions::where('subscription_id','=', $parentSubscription->id)->update(['subs_status' => $parentSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                    }
+                } elseif($active_subscription_id == 3) {
+                    if (($parentTransaction->user_id == $user_id) && ($parentTransaction->user_type == $user_type)) {
+                        $parentSubscription = $stripe->subscriptions->cancel(
+                            $parentTransaction->subscription_id,
+                            []
+                        );
+            
+                        if ($parentSubscription) {
+                            Transactions::where('subscription_id','=', $parentSubscription->id)->update(['subs_status' => $parentSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                            $update_sub_data = [
+                                'customer_id'            => '',
+                                'active_subscription_id' => 1,
+                                'stripe_plan_id'         => '',
+                                'subscription_item_id'   => ''
+                            ];
+            
+                            if ($active_subscription_id == 3 && $parentTransaction->other_user_id) {
+                                $other_user_ids = $parentTransaction->other_user_id ? explode(',',$parentTransaction->other_user_id) : null;
+                                if ($parentTransaction->other_user_type == 'singleton') {
+                                    foreach ($other_user_ids as $id) {
+                                        Singleton::where('id','=',$id)->update($update_sub_data);
+                                    }
+                                } elseif ($parentTransaction->other_user_type == 'parent') {
+                                    foreach ($other_user_ids as $id) {
+                                        ParentsModel::where('id','=',$id)->update($update_sub_data);
+                                    }
+                                }
+                            }
+    
+                            $linkedChild = ParentChild::where([['parent_id', '=', $user_id],['status', '=', 'Linked']])->get();
+                            if (!$linkedChild->isEmpty()) {
+                                foreach ($linkedChild as $child) {
+                                    $singleton_id = $child->singleton_id ;
+                                    $childTransaction = DB::table('transactions')
+                                                            ->where([['user_id', '=', $singleton_id],['user_type', '=', 'singleton'],['active_subscription_id','=','3']])
+                                                            ->first();
+                                    $childSubscription = $stripe->subscriptions->cancel(
+                                                        $childTransaction->subscription_id,
+                                                        []
+                                                    );
+                                    if ($childSubscription) {
+                                        Transactions::where('subscription_id','=', $childSubscription->id)->update(['subs_status' => $childSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                                        $update_sub_data = [
+                                            'customer_id'            => '',
+                                            'active_subscription_id' => 1,
+                                            'stripe_plan_id'         => '',
+                                            'subscription_item_id'   => ''
+                                        ];
+    
+                                        Singleton::where('id','=',$singleton_id)->update($update_sub_data);
+                                    }
+                                }
+                            }
+                        }
+                    } 
+                    // elseif (($transaction->other_user_id == $user_id) && ($transaction->other_user_type == $user_type)) {
+                    //     $subscription = $stripe->subscriptions->cancel(
+                    //         $transaction->subscription_id,
+                    //         []
+                    //     );
+            
+                    //     if ($subscription) {
+                    //         Transactions::where('id','=', $transaction->id)->update(['subs_status' => $subscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                    //         $update_sub_data = [
+                    //             'customer_id'            => '',
+                    //             'active_subscription_id' => 1,
+                    //             'stripe_plan_id'         => '',
+                    //             'subscription_item_id'   => ''
+                    //         ];
+            
+                            
+                    //         Singleton::where('id','=',$transaction->user_id)->update($update_sub_data);
+    
+                    //         $linkedChild = ParentChild::where([['parent_id', '=', $user_id],['status', '=', 'Linked']])->get();
+                    //         if (!$linkedChild->isEmpty()) {
+                    //             foreach ($linkedChild as $child) {
+                    //                 $singleton_id = $child->singleton_id ;
+                    //                 $childTransaction = DB::table('transactions')
+                    //                                         ->where([['user_id', '=', $singleton_id],['user_type', '=', 'singleton'],['active_subscription_id','=','3']])
+                    //                                         ->first();
+                    //                 $childsubscription = $stripe->subscriptions->cancel(
+                    //                                     $childTransaction->subscription_id,
+                    //                                     []
+                    //                                 );
+                    //                 if ($childsubscription) {
+                    //                     Transactions::where('id','=', $childsubscription->id)->update(['subs_status' => $childsubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                    //                     $update_sub_data = [
+                    //                         'customer_id'            => '',
+                    //                         'active_subscription_id' => 1,
+                    //                         'stripe_plan_id'         => '',
+                    //                         'subscription_item_id'   => ''
+                    //                     ];
+    
+                    //                     Singleton::where('id','=',$singleton_id)->update($update_sub_data);
+                    //                 }
+                    //             }
+                                
+                    //         }
+                    //     }
+                    // }
+                }
+            }
+        } elseif($user_type == 'singleton') {
+            
+            $singletonTransaction = DB::table('transactions')
+                                    ->where([['user_id', '=', $user_id],['user_type', '=', $user_type],['subs_status', '!=', 'canceled']])
+                                    ->orWhere(function($query) use ($user_id, $user_type){
+                                        $query->whereRaw("FIND_IN_SET($user_id, other_user_id)")
+                                            ->where('other_user_type', '=', $user_type)
+                                            ->where('subs_status', '!=', 'canceled');
+                                    })
+                                    ->first();
+
+           if (!empty($singletonTransaction)) {
+                $in_other_user_ids = $singletonTransaction ? explode(',',$singletonTransaction->other_user_id) : null;
+                if ($active_subscription_id == 2) {
+                    $singletonSubscription = $stripe->subscriptions->cancel(
+                        $singletonTransaction->subscription_id,
+                        []
+                    );
+
+                    if ($singletonSubscription) {
+                        Transactions::where('subscription_id','=', $singletonSubscription->id)->update(['subs_status' => $singletonSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                    }
+                } elseif($active_subscription_id == 3) {
+                    if (($singletonTransaction->user_id == $user_id) && ($singletonTransaction->user_type == $user_type)) {
+                         $singletonSubscription = $stripe->subscriptions->cancel(
+                                $singletonTransaction->subscription_id,
+                                []
+                            );
+                            
+                        if ($singletonSubscription) {
+                            Transactions::where('subscription_id','=', $singletonSubscription->id)->update(['subs_status' => $singletonSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                        }
+                    } elseif ($in_other_user_ids && in_array($user_id, $in_other_user_ids) && ($singletonTransaction->other_user_type == $user_type)) {
+                        if ($singletonTransaction->item2_quantity == 1) {
+                            $singletonSubscription = $stripe->subscriptionItems->delete(
+                                $singletonTransaction->subscription_item2_id,
+                                []
+                              );
+
+                            if ($singletonSubscription) {
+                                $updateData = [
+                                    'other_user_id' => "",
+                                    "other_user_type" => "",
+                                    "subscription_item2_id" => "",
+                                    "item2_plan_id" => "",
+                                    "item2_unit_amount" => "",
+                                    'item2_quantity' => "",
+                                    'amount_paid' => $singletonTransaction->item1_unit_amount,
+                                    'updated_at' => date('Y-m-d H:i:s')
+                                ];
+
+                                Transactions::where('subscription_item2_id','=', $singletonSubscription->id)->update($updateData);
+                            }
+                        } elseif($singletonTransaction->item2_quantity > 1) {
+                            $quantity = $singletonTransaction->item2_quantity - 1;
+                            $singletonSubscription = $stripe->subscriptionItems->update(
+                                $singletonTransaction->subscription_item2_id,
+                                ['quantity' => $quantity]
+                            );
+
+                            if ($singletonSubscription) {
+                                $updateData = [
+                                    'other_user_id' => str_replace($user_id, "", $singletonTransaction->other_user_id),
+                                    'item2_quantity' => $singletonSubscription->quantity,
+                                    'amount_paid' => $singletonTransaction->amount_paid - $singletonTransaction->item2_unit_amount ,
+                                    'updated_at' => date('Y-m-d H:i:s')
+                                ];
+
+                                Transactions::where('subscription_item2_id','=', $singletonSubscription->id)->update($updateData);
+                            }
+                        }
+                        
+                    }
+                }
+           }
+        }
+            
+        if($user_type == 'singleton'){
+            $link = ParentChild::where([['singleton_id', '=', $user_id]])->delete();
+        }else{
+            $link = ParentChild::where([['parent_id', '=', $user_id]])->delete();
+            if($link){
+                Singleton::where('parent_id', '=', $user_id)->update(['parent_id' => '', 'updated_at' => date('Y-m-d H:i:s')]);
+            }
+        }
+
+        $match = MyMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
+        $unmatch = UnMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
+        $refer = ReferredMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
+        $received = RecievedMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
+
+        $requests = InstantMatchRequest::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
+        $block = BlockList::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
+        $report = ReportedUsers::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
+        $chat = MessagedUsers::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
+        $chat = ChatHistory::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                            ->orWhere([['messaged_user_id','=',$user_id],['messaged_user_type','=',$user_type]])->delete();
+        $swipe = LastSwipe::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
+
+        if ($user_type == 'singleton') {
+            $mutual = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'hold']])
+                                ->orWhere([['match_id','=',$user_id],['user_type','=','singleton'], ['match_type', '=', 'hold']])
+                                ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no']);
+            $liked = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'liked']])
+                                ->orWhere([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'un-matched']])
+                                ->delete();
+
+            $matched = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'matched']])
+                                ->orWhere([['match_id','=',$user_id],['user_type','=','singleton'], ['match_type', '=', 'matched']])
+                                ->first();
+
+            if (!empty($matched)) {
+                $matched->match_id != $user_id ? $un_matched_id = $matched->match_id : $un_matched_id = $matched->user_id;
+
+                $other_queue = Matches::leftjoin('singletons', function($join) use ($un_matched_id) {
+                                            $join->on('singletons.id','=','matches.match_id')
+                                                ->where('matches.match_id','!=',$un_matched_id);
+                                            $join->orOn('singletons.id','=','matches.user_id')
+                                                ->where('matches.user_id','!=',$un_matched_id);
+                                        })
+                                        ->where('singletons.chat_status', '=','available')
+                                        ->where(function($query) use ($un_matched_id){
+                                            $query->where([['matches.user_id', '=', $un_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']])
+                                                ->orWhere([['matches.match_id', '=', $un_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']]);
+                                        })
+                                        ->orderBy('matches.queue')->first(['matches.*']);
+
+                if (!empty($other_queue)) {
+                    Matches::where([['user_id', '=', $un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'hold'], ['queue', '=', $other_queue->queue]])
+                                    ->orWhere([['match_id', '=', $un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'hold'], ['queue', '=', $other_queue->queue]])
+                                    ->update(['match_type' => 'matched','queue' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+
+                    Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'matched']])
+                                ->orWhere([['match_id','=',$user_id],['user_type','=','singleton'], ['match_type', '=', 'matched']])
+                                ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no'],['status' => 'available']);
+                    Singleton::where('id', '=', $user_id)->orWhere('id', '=', $un_matched_id)->update(['chat_status' => 'available']);
+                }
+            }
+        } else {
+            $mutual = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'matched']])
+                                ->orWhere([['matched_parent_id','=',$user_id],['user_type','=','parent'], ['match_type', '=', 'matched']])
+                                ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no']);
+            $liked = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'liked']])
+                                ->orWhere([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'un-matched']])
+                                ->delete();
+        }
     }
 ?>
