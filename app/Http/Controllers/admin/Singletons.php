@@ -138,8 +138,8 @@ class Singletons extends Controller
             'reason'      => 'Admin',
         ];
         $insert = DeletedUsers::insert($data);
-        $delete =  Singleton :: whereId($id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
-        // $delete =  Singleton :: whereId($id)->delete();
+        // $delete =  Singleton :: whereId($id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
+        $delete =  Singleton :: whereId($id)->delete();
         if ($delete) {
             $deleteAccount = deleteAccountDetails($id,$user_type,$active_subscription_id);
             return back()->with('success', __('msg.User Deleted'));
