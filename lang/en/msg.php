@@ -919,7 +919,9 @@ return [
         'session' => [
             'success' => 'Stripe Session Created Successfully.',
             'failure' => 'Unable to Create Stripe Session, Please Try Again...' ,
-            'invalid' => 'Invalid Plan, Please Try Again...'
+            'invalid' => 'Invalid Plan, Please Try Again...',
+            'parent-not-premium' => 'Your Father/Gardian does not have Premium Account, Please Try Again...',
+            'child-not-premium' => 'You does not have any Non-Premium Child, Please Try Again...'
         ],
         'success' => 'Subscribed Successfully!',
         'failure' => 'Unable to Subscribe, Please Try Again...',

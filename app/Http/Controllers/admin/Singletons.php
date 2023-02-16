@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\DeletedUsers;
 use App\Models\Singleton;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -126,8 +127,21 @@ class Singletons extends Controller
     public function deleteSingleton(Request $request)
     {
         $id = $request->id;
+        $user = Singleton::find($id);
+        $user_type = 'singleton';
+        $active_subscription_id = $user ? $user->active_subscription_id : '';
+        $data = [
+            'user_id'     => $id,
+            'user_type'   => $user_type,
+            'user_name'   => $user->name,
+            'reason_type' => 'Admin',
+            'reason'      => 'Admin',
+        ];
+        $insert = DeletedUsers::insert($data);
         $delete =  Singleton :: whereId($id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
+        // $delete =  Singleton :: whereId($id)->delete();
         if ($delete) {
+            $deleteAccount = deleteAccountDetails($id,$user_type,$active_subscription_id);
             return back()->with('success', __('msg.User Deleted'));
         } else {
             return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));

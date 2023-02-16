@@ -410,9 +410,6 @@ class StripeSubscription extends Controller
                 $user_email = $user->email;
             }
 
-            // $success_url = 'http://127.0.0.1:8000/api/stripe/success';
-            // $cancel_url = 'http://127.0.0.1:8000/api/stripe/fail';
-
             $success_url = url('api/stripe/success');
             $cancel_url = url('api/stripe/fail');
 
@@ -427,38 +424,18 @@ class StripeSubscription extends Controller
                                         ->where([['parent_children.singleton_id', '=', $request->login_id], ['parent_children.status','=','Linked']])
                                         ->where('parents.active_subscription_id', '!=', '1')
                                         ->first();
-                    if (empty($parent)) {
-                        $validator = Validator::make($request->all(), [
-                            'other_user_id'   => ['required_if:plan_id,3' ,'required_if:user_type,parent'],
-                            'other_user_type' => [
-                                'required_if:plan_id,3' ,'required_if:user_type,parent',
-                                Rule::in(['parent']),
-                            ],
-                        ]);
-
-                        if($validator->fails()){
-                            return response()->json([
-                                'status'    => 'failed',
-                                'message'   => __('msg.Validation Failed!'),
-                                'errors'    => $validator->errors()
-                            ],400);
-                        }
-
-                        $line_items = [
-                            ['price' => $stripe_plan_id, 'quantity' => 1],
-                            [
-                                'price' => $stripe_joint_plan_id,
-                                'quantity' => count($other_user_ids)
-                            ]
-                        ];
-
-                    } else {
+                    if (!empty($parent)) {
                         $line_items = [
                             [
                                 'price' => $stripe_joint_plan_id,
                                 'quantity' => 1
                             ]
                         ];
+                    } else {
+                        return response()->json([
+                            'status'    => 'failed',
+                            'message'   => __('msg.stripe.session.parent-not-premium'),
+                        ],400);
                     }
                 } elseif ($request->user_type == 'parent') {
                     $validator = Validator::make($request->all(), [
@@ -1199,7 +1176,7 @@ class StripeSubscription extends Controller
                 $customer_id = $subscription->customer;
                 $plan_amount_currency = $subscription->plan->currency;
 
-                $user_sub_data= Transactions::where('stripe_subscription_id', $sub_id)->first();
+                $user_sub_data= Transactions::where('subscription_id', $sub_id)->first();
 
                 $sub_table_id = $user_sub_data->id;
                 $user_id   = $user_sub_data->user_id;
@@ -1209,32 +1186,6 @@ class StripeSubscription extends Controller
                 $other_user_id = $user_sub_data->other_user_id;
                 $other_user_type = $user_sub_data->other_user_type;
                 $active_subscription_id = $user_sub_data->active_subscription_id;
-
-                // $sub_data = [
-                //     'user_id' => $user_id,
-                //     'user_type' => $user_type,
-                //     'user_name' => $user_name,
-                //     'user_email' => $user_email,
-                //     'other_user_id' => $other_user_id ? $other_user_id : '',
-                //     'other_user_type' => $other_user_type ? $other_user_type : '',
-                //     'active_subscription_id' => $active_subscription_id,
-                //     'customer_id' => $customer_id,
-                //     'subscription_id' => $sub_id,
-                //     'subscription_item1_id' => $item1->id,
-                //     'subscription_item2_id' => $item2->id,
-                //     'item1_plan_id' => $item1->plan->id,
-                //     'item2_plan_id' => $item2->plan->id,
-                //     'item1_unit_amount' => $item1->plan->amount/100,
-                //     'item2_unit_amount' => $item2->plan->amount/100,
-                //     'item1_quantity' => $item1->quantity,
-                //     'item2_quantity' => $item2->quantity,
-                //     'plan_interval' => $item1->plan->interval,
-                //     'plan_interval_count' => $item1->plan->interval_count,
-                //     'plan_period_start' => $subscription ? date("Y-m-d H:i:s", $subscription->current_period_start) : '',
-                //     'plan_period_end' => $subscription ? date("Y-m-d H:i:s", $subscription->current_period_end) : '',
-                //     'subs_status' => $subscription->status,
-                //     'created_at' => date("Y-m-d H:i:s", $subscription->created)
-                // ];
 
                 $sub_booking_data = [
                     'user_id' => $user_id,
@@ -1327,6 +1278,37 @@ class StripeSubscription extends Controller
                 $subscription = $event->data->object;
             case 'customer.subscription.deleted':
                 $subscription = $event->data->object;
+                $transaction= Transactions::where('stripe_subscription_id', $subscription->id)->first();
+
+                $sub_table_id = $transaction->id;
+                $user_id   = $transaction->user_id;
+                $user_type = $transaction->user_type;
+                $user_name = $transaction->user_name;
+                $user_email = $transaction->user_email;
+                $other_user_id = $transaction->other_user_id;
+                $other_user_type = $transaction->other_user_type;
+                $active_subscription_id = $transaction->active_subscription_id;
+                Transactions::where('id','=', $transaction->id)->update(['subs_status' => $subscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                $update_sub_data = [
+                    'customer_id'            => '',
+                    'active_subscription_id' => 1,
+                    'stripe_plan_id'         => '',
+                    'subscription_item_id'   => ''
+                ];
+
+                if ($active_subscription_id == 3 && $other_user_id) {
+                    $other_user_ids = $transaction->other_user_id ? explode(',',$other_user_id) : null;
+                    if ($transaction->other_user_type == 'singleton') {
+                        foreach ($other_user_ids as $id) {
+                            Singleton::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                        }
+                    } elseif ($transaction->other_user_type == 'parent') {
+                        foreach ($other_user_ids as $id) {
+                            ParentsModel::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                        }
+                    }
+                }
+            break;
             case 'customer.subscription.paused':
                 $subscription = $event->data->object;
             case 'customer.subscription.resumed':
