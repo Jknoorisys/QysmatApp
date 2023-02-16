@@ -139,8 +139,8 @@ class ParentsController extends Controller
             'reason'      => 'Admin',
         ];
         $insert = DeletedUsers::insert($data);
-        $delete =  ParentsModel :: whereId($id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
-        // $delete =  ParentsModel :: whereId($id)->delete();
+        // $delete =  ParentsModel :: whereId($id)->update(['status' => 'Deleted', 'updated_at' => date('Y-m-d H:i:s')]);
+        $delete =  ParentsModel :: whereId($id)->delete();
         if ($delete) {
             $deleteAccount = deleteAccountDetails($id,$user_type,$active_subscription_id);
             return back()->with('success', __('msg.Parent Deleted'));
