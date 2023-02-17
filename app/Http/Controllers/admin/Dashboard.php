@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\CallHistory;
 use App\Models\Charges;
 use App\Models\ChatHistory;
 use App\Models\DeletedUsers;
@@ -57,7 +58,9 @@ class Dashboard extends Controller
         $data['met_someone']     = DeletedUsers::where('reason_type','=','Met Someone/Getting Married')->count();
         $data['other']     = DeletedUsers::where('reason_type','=','Other')->count();
 
-        // $data['revenue']             = Transactions::where('payment_status','=','SUCCESS')->avg('paid_amount');
+        $data['audio']     = CallHistory::where('call_type','=','audio')->count();
+        $data['video']     = CallHistory::where('call_type','=','video')->count();
+
         $data['revenue']             = Charges::where('status', '=', 'succeeded')->avg('plan_amount');
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('admin.dashboard', $data);

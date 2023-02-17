@@ -198,11 +198,11 @@
                         <div class="row justify-content-center">
                             <div class="col-6">
                                 <h5>{{__('msg.Telephone Calls')}}</h5>
-                                <h4>{{$active}}</h4>
+                                <h4>{{$audio}}</h4>
                             </div>
                             <div class="col-6">
                                 <h5>{{__('msg.Video Calls')}}</h5>
-                                <h4>{{$blocked}}</h4>
+                                <h4>{{$video}}</h4>
                             </div>
                         </div>
                     </div>
