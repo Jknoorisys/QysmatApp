@@ -27,7 +27,7 @@ class SubscriptionPlans extends Controller
         App::setlocale($lang);
 
         if (isset($_POST['login_id']) && !empty($_POST['login_id']) && isset($_POST['user_type']) && !empty($_POST['user_type'])) {
-            userExist($_POST['login_id'], $_POST['user_type']);
+            userFound($_POST['login_id'], $_POST['user_type']);
         }
     }
 
@@ -213,8 +213,6 @@ class SubscriptionPlans extends Controller
         }
 
         try {
-
-
             $profiles = DB::table('parent_children')
                             ->where([['parent_children.parent_id','=',$request->login_id], ['parent_children.status', '=', 'Linked']])
                             ->where('singletons.active_subscription_id', '=', '1')
