@@ -97,8 +97,8 @@ class Call extends Controller
             $agora  =   GetToken($request->login_id, $channelName);
 
             if ($agora) {
-                $title = __('msg.Call');
-                $body = __('msg.You have a Call from').' '.$premium->name;
+                $title = $premium->name;
+                $body = __('msg.Incoming').' '.$request->call_type.' '. __('msg.Call');
 
                 if (isset($reciever) && !empty($reciever)) {
                     $token = $reciever->fcm_token;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\stripe;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\BankDetails;
 use App\Models\Charges;
 use App\Models\ParentChild;
@@ -10,6 +11,7 @@ use App\Models\ParentsModel;
 use App\Models\Singleton;
 use App\Models\Subscriptions;
 use App\Models\Transactions;
+use App\Notifications\AdminNotification;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Carbon\Carbon;
 use PDF;
@@ -731,6 +733,17 @@ class StripeSubscription extends Controller
                             }
                         }
 
+                        $admin = Admin::find(1);
+                        $details = [
+                            'title' => __('msg.New Subscription'),
+                            'msg'   => __('msg.has Subscribed.'),
+                        ];
+                        if ($user_type == 'singleton') {
+                            $user = Singleton::where([['id','=',$user_id],['status','=','Unblocked']])->first();
+                        } else {
+                            $user = ParentsModel::where([['id','=',$user_id],['status','=','Unblocked']])->first();
+                        }
+                        $admin->notify(new AdminNotification($user, 'admin', 0, $details));
                         return response()->json([
                             'status'    => 'success',
                             'message'   => __('msg.stripe.success'),
