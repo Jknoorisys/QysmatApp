@@ -854,11 +854,11 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
         return $path;
     }
 
-    function GetToken($user_id){
+    function GetToken($user_id, $channelName){
     
         $appID         =   env('APP_ID');
         $appCertificate    =   env('APP_CERTIFICATE');
-        $channelName  =   (string) random_int(100000000, 9999999999999999);
+        // $channelName  =   (string) random_int(100000000, 9999999999999999);
         $uid = $user_id;
         $uidStr = ($user_id) . '';
         $role = RtcTokenBuilder::RolePublisher;
