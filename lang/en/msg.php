@@ -342,6 +342,8 @@ return [
     'Chat Request'                                          => 'Chat Request',
     'Your Chat Request is Accepted By'                      => 'Your Chat Request is Accepted By',
     'Chat Request Accepted'                                 => 'Chat Request Accepted',
+    'New Subscription'                                      => 'New Subscription',
+    'has Subscribed.'                                       => 'has Subscribed.',
 
     // Invoice
     'Invoice' => 'Invoice',
@@ -371,6 +373,7 @@ return [
     'You have a Instant Match Request from'                 => 'You have a Instant Match Request from',
     'Call'                                                  => 'Call',
     'You have a Call from'                                  => 'You have a Call from',
+    'Incoming'                                              => 'Incoming',
 
     // API
     'Validation Failed!'                    => 'Validation Failed!',
