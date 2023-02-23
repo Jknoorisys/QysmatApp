@@ -229,7 +229,7 @@ class SubscriptionPlans extends Controller
             }else{
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.parents.get-linked-profiles.failure'),
+                    'message'   => __('msg.parents.get-linked-profiles.invalid'),
                 ],400);
             }
         } catch (\Throwable $e) {
