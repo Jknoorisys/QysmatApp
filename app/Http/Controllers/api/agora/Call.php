@@ -56,6 +56,7 @@ class Call extends Controller
                 'required' ,
                 Rule::in(['audio','video']),
             ],
+            'channel_name' => 'required',
             'singleton_id' => [
                 'required_if:caller_user_type,parent',
             ],
@@ -92,7 +93,8 @@ class Call extends Controller
                 $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
             }
 
-            $agora  =   GetToken($request->login_id);
+            $channelName = $request->channel_name;
+            $agora  =   GetToken($request->login_id, $channelName);
 
             if ($agora) {
                 $title = __('msg.Call');
