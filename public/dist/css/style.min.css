@@ -25307,9 +25307,9 @@ html body .font-bold {
 }
 .page-link:hover {
     z-index: 2;
-    color: #381be7;
+    color: #8F7C5C;
     background-color: #e9ecef;
-    border-color: #8F7C5C;
+    border-color: #dee2e6;
 }
 .page-link:focus {
     z-index: 2;
@@ -25324,7 +25324,7 @@ html body .font-bold {
     color: #fff;
     /* background-color: #4798e8; */
     background: linear-gradient(180deg, #AF9A7F 0%, #A28D69 50%, #8F7C5C 100%);
-    border-color: #8F7C5C;
+    border-color: #AF9A7F;
 }
 .page-item.disabled .page-link {
     color: #6c757d;
