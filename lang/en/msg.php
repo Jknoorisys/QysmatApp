@@ -287,6 +287,9 @@ return [
     'Anouncment'                        => 'Anouncment',
     'Notification Sent!'                => 'Notification Sent!',
 
+    // Manage Contact Us  Forms
+    'Manage Contact Us  Forms' => 'Manage Contact Us  Forms',
+
     // Sweat alert
     'Are You Sure'              => 'Are You Sure',
     'You want to Reject '       => 'You want to Reject ',

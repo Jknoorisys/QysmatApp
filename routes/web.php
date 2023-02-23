@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\admin\ContactDetails;
+use App\Http\Controllers\admin\ContactUs;
 use App\Http\Controllers\admin\Dashboard;
 use App\Http\Controllers\admin\DeletedUsers;
 use App\Http\Controllers\admin\FAQS;
@@ -114,6 +115,9 @@ Route::any('reported-users' , [ReportedUsers::class, 'index'])->middleware('isLo
 
 // Manage Deleted Users
 Route::any('deleted-users' , [DeletedUsers::class, 'index'])->middleware('isLoggedIn')->name('deleted-users');
+
+// Manage Contact Us forms
+Route::any('contact-us' , [ContactUs::class, 'index'])->middleware('isLoggedIn')->name('contact-us');
 
 // Manage Notifications
 Route::any('notifications' , [Notifications::class, 'index'])->middleware('isLoggedIn')->name('notifications');
