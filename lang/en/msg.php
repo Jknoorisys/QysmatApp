@@ -628,7 +628,8 @@ return [
 
         'get-linked-profiles' => [
             'success' => 'Linked Profile List Fetched Successfully!',
-            'failure' => 'Your children has already Subscribed!',
+            'failure' => 'No Profile Found!',
+            'invalid' => 'No non-premium Child Found!',
         ],
 
         'get-child-profile' => [
