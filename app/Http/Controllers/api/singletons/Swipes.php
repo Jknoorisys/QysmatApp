@@ -12,8 +12,10 @@ use App\Models\ParentsModel;
 use App\Models\RecievedMatches;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
+use App\Models\SwipedUpUsers;
 use App\Models\UnMatches;
 use App\Notifications\MatchNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -415,6 +417,13 @@ class Swipes extends Controller
                     ]
                 );
             }elseif ($request->swipe == 'up') {
+                $swiped_data = [
+                    'user_id' => $request->login_id ? $request->login_id : '',
+                    'user_type'  => $request->user_type ? $request->user_type : '',
+                    'swiped_user_id'    => $request->swiped_user_id ? $request->swiped_user_id : '',
+                    'created_at'    => Carbon::now(),
+                ];
+                SwipedUpUsers::insert($swiped_data);
                 $swipe = LastSwipe::updateOrCreate(
                     ['user_id' => $request->login_id, 'user_type' => $request->user_type],
                     [
@@ -465,6 +474,7 @@ class Swipes extends Controller
                                 ]
                             );
                         }elseif ($last_swipe->swipe == 'up') {
+                            SwipedUpUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['swiped_user_id', '=', $last_swipe->swiped_user_id]])->delete();
                             $swipe = LastSwipe::updateOrCreate(
                                 ['user_id' => $request->login_id, 'user_type' => $request->user_type],
                                 [

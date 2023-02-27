@@ -12,6 +12,7 @@ use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
+use App\Models\SwipedUpUsers;
 use App\Models\UnMatches;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -181,6 +182,7 @@ class Suggestions extends Controller
                     $count = 0;
                     foreach ($suggestion as $m) {
                         $singleton_id = $m->id;
+                        $swiped_up = SwipedUpUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id], ['swiped_user_id', '=', $singleton_id]])->first();
                         $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                         $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                         $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
@@ -191,7 +193,7 @@ class Suggestions extends Controller
                                             ->orWhere([['user_id', '=', $m->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $singleton_id], ['match_type', '!=', 'liked']])
                                             ->first();
 
-                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && empty($not_linked) && empty($mutual)) {
+                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && empty($not_linked) && empty($mutual) && empty($swiped_up)) {
                             $users[] = $m;
                             $count = $count + 1;
                         }

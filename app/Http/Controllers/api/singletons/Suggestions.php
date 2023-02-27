@@ -11,6 +11,7 @@ use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
+use App\Models\SwipedUpUsers;
 use App\Models\UnMatches;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -258,6 +259,7 @@ class Suggestions extends Controller
                     $count = 0;
                     foreach ($suggestion as $m) {
                         $singleton_id = $m->id;
+                        $swiped_up = SwipedUpUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['swiped_user_id', '=', $singleton_id]])->first();
                         $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
                         $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton']])->first();
                         $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['un_matched_id', '=', $singleton_id]])->first();
@@ -268,7 +270,7 @@ class Suggestions extends Controller
                         $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $singleton_id],['match_type', '!=', 'liked']])
                                             ->orWhere([['user_id', '=', $singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id],['match_type', '!=', 'liked']])
                                             ->first();
-                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && empty($not_linked) && empty($mutual)) {
+                        if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && empty($not_linked) && empty($mutual) && empty($swiped_up)) {
                             $users[] = $m;
                             $count = $count + 1;
                         }
