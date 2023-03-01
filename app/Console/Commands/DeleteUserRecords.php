@@ -28,7 +28,7 @@ class DeleteUserRecords extends Command
      */
     public function handle()
     {
-        $one_hour_ago = now()->subHour(); 
+        $one_hour_ago = now()->subMinute(); 
         DB::table('swiped_up_users')->where('created_at', '<', $one_hour_ago)->delete();
         $this->info('Successfully deleted swiped-up profiles.');
     }
