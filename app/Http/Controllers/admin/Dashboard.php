@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Booking;
 use App\Models\CallHistory;
 use App\Models\Charges;
 use App\Models\ChatHistory;
@@ -20,6 +21,9 @@ use Illuminate\Support\Facades\Redirect;
 
 class Dashboard extends Controller
 {
+    private $admin_id;
+    private $admin;
+
     public function  __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -61,7 +65,9 @@ class Dashboard extends Controller
         $data['audio']     = CallHistory::where('call_type','=','audio')->count();
         $data['video']     = CallHistory::where('call_type','=','video')->count();
 
-        $data['revenue']             = Charges::where('status', '=', 'succeeded')->avg('plan_amount');
+        // $data['revenue']             = Charges::where('status', '=', 'succeeded')->avg('plan_amount');
+        $data['revenue']             = Booking::where('payment_status', '=', 'paid')->avg('amount_paid');
+
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('admin.dashboard', $data);
         return view('layouts.main', $data);

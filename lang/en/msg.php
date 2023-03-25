@@ -938,6 +938,23 @@ return [
         'cancel'  => 'Subscription Failed, Please Try Again...'
     ],
 
+    'apple' => [
+        'session' => [
+            'success' => 'In App Payment Session Created Successfully.',
+            'failure' => 'Unable to Create In App Payment Session, Please Try Again...' ,
+            'invalid' => 'Invalid Plan, Please Try Again...',
+            'parent-not-premium' => 'Your Father/Gardian does not have Premium Account, Please Try Again...',
+            'child-not-premium' => 'You does not have any Non-Premium Child, Please Try Again...'
+        ],
+        
+        'success' => 'Subscribed Successfully!',
+        'failure' => 'Unable to Subscribe, Please Try Again...',
+        'invalid' => 'Something Went Wrong, Please Try Again...',
+        'card'    => 'Card Details Not Found, Please Try Again...',
+        'paid'    => 'Already Subscribed!',
+        'cancel'  => 'Subscription Failed, Please Try Again...'
+    ],
+
     'agora' => [
         'create'  => [
             'success' => 'Call Details Saved.',
