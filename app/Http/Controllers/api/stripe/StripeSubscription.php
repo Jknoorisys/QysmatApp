@@ -181,7 +181,7 @@ class StripeSubscription extends Controller
             ]);
 
             $sub_booking_data = [
-                'stripe_session_id' => $session->id,
+                'session_id' => $session->id,
                 'user_id' => $user_id,
                 'user_type' => $user_type,
                 'user_name' => $user_name,
@@ -284,7 +284,7 @@ class StripeSubscription extends Controller
         try{
             $stripe = Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
             $session_id = $request->session_id;
-            $payment_details = DB::table('bookings')->where('stripe_session_id', '=', $session_id)->first();
+            $payment_details = DB::table('bookings')->where('session_id', '=', $session_id)->first();
             if (!empty($payment_details)) {
                 $user_id = $payment_details->user_id ? $payment_details->user_id : '';
                 $user_type = $payment_details->user_type ? $payment_details->user_type : '';
@@ -297,7 +297,7 @@ class StripeSubscription extends Controller
                 $active_subscription_id = $payment_details->active_subscription_id;
 
                 $session = \Stripe\Checkout\Session::Retrieve(
-                    $payment_details->stripe_session_id,
+                    $payment_details->session_id,
                     []
                 );
 
@@ -530,7 +530,7 @@ class StripeSubscription extends Controller
         try{
             $stripe = Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
             $session_id = $request->session_id;
-            $payment_details = DB::table('bookings')->where('stripe_session_id', '=', $session_id)->first();
+            $payment_details = DB::table('bookings')->where('session_id', '=', $session_id)->first();
             if (!empty($payment_details)) {
                 $user_id = $payment_details->user_id ? $payment_details->user_id : '';
                 $user_type = $payment_details->user_type ? $payment_details->user_type : '';
@@ -542,12 +542,12 @@ class StripeSubscription extends Controller
                 $booking_id = $payment_details->id;
 
                 $session = \Stripe\Checkout\Session::Retrieve(
-                    $payment_details->stripe_session_id,
+                    $payment_details->session_id,
                     []
                 );
                 if($session->status == "open"){
                     $expire = $this->stripe->checkout->sessions->expire(
-                        $payment_details->stripe_session_id,
+                        $payment_details->session_id,
                         []
                     );
 

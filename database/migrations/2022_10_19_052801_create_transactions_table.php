@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->integer('booking_id');
-            $table->enum('paymnet_method',['stripe','in-app'])->default('stripe');
+            $table->enum('payment_method',['stripe','in-app'])->default('stripe');
             $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
             $table->string('user_name');

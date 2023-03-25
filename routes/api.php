@@ -228,10 +228,11 @@ Route::prefix('stripe')->group(function () {
 
 // In-App Subscription
 Route::prefix('apple')->group(function () {
-    // Route::post('subscribe' , [InAppSubscriptions::class, 'index']);
-    // Route::any('success' , [InAppSubscriptions::class, 'paymentSuccess']);
-    // Route::any('fail' , [InAppSubscriptions::class, 'paymentFail']);
+    Route::post('subscribe' , [InAppSubscriptions::class, 'index']);
+    Route::post('success' , [InAppSubscriptions::class, 'paymentSuccess']);
+    Route::post('fail' , [InAppSubscriptions::class, 'paymentFail']);
     Route::post('update' , [InAppSubscriptions::class, 'updateSubscription']);
+    Route::post('cancel' , [InAppSubscriptions::class, 'cancelSubscription']);
 });
 
 // Agora
