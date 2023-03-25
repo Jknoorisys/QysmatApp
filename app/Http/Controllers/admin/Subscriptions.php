@@ -11,6 +11,9 @@ use Stripe\Stripe;
 
 class Subscriptions extends Controller
 {
+    private $admin_id;
+    private $admin;
+    
     public function  __construct()
     {
         $this->middleware(function ($request, $next) {

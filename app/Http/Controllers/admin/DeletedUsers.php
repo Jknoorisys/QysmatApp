@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\DB;
 
 class DeletedUsers extends Controller
 {
+    private $admin_id;
+    private $admin;
+    
     public function  __construct()
     {
         $this->middleware(function ($request, $next) {
