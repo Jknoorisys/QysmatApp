@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\agora\Call;
+use App\Http\Controllers\api\apple_pay\InAppSubscriptions;
 use App\Http\Controllers\api\bank_details\BankDetails;
 use App\Http\Controllers\api\contact_details\ContactDetails;
 use App\Http\Controllers\api\contact_us\ContactUs;
@@ -223,6 +224,14 @@ Route::prefix('stripe')->group(function () {
     Route::any('success' , [StripeSubscription::class, 'paymentSuccess']);
     Route::any('fail' , [StripeSubscription::class, 'paymentFail']);
     Route::post('webhook' , [StripeSubscription::class, 'webhookHandler']);
+});
+
+// In-App Subscription
+Route::prefix('apple')->group(function () {
+    // Route::post('subscribe' , [InAppSubscriptions::class, 'index']);
+    // Route::any('success' , [InAppSubscriptions::class, 'paymentSuccess']);
+    // Route::any('fail' , [InAppSubscriptions::class, 'paymentFail']);
+    Route::post('update' , [InAppSubscriptions::class, 'updateSubscription']);
 });
 
 // Agora
