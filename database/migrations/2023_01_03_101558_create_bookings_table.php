@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->longText('stripe_session_id');
+            $table->enum('paymnet_method',['stripe','in-app'])->default('stripe');
             $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
             $table->string('user_name');
@@ -24,18 +25,9 @@ return new class extends Migration
             $table->string('other_user_type');
             $table->enum('active_subscription_id',['1','2','3'])->default('1');
             $table->string('subscription_id');
-            // $table->string('subscription_item_id');
             $table->string('customer_id');
-            // $table->string('plan_id');
-            // $table->string('unit_amount');
             $table->string('currency');
-            // $table->string('plan_interval');
-            // $table->string('plan_interval_count');
-            // $table->integer('quantity');
             $table->string('amount_paid');
-            // $table->string('payer_email');
-            // $table->string('plan_period_start');
-            // $table->string('plan_period_end');
             $table->string('session_status');
             $table->string('payment_status');
             $table->timestamps();
