@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 
 class ParentsController extends Controller
 {
+    private $admin_id;
+    private $admin;
+    
     public function  __construct()
     {
         $this->middleware(function ($request, $next) {

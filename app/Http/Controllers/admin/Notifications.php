@@ -11,6 +11,9 @@ use App\Notifications\SendNotification;
 
 class Notifications extends Controller
 {
+    private $admin_id;
+    private $admin;
+    
     public function  __construct()
     {
         $this->middleware(function ($request, $next) {

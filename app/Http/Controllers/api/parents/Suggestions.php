@@ -26,6 +26,8 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control");
 
 class Suggestions extends Controller
 {
+    private $db;
+    
     public function  __construct()
     {
         $lang = (isset($_POST['language']) && !empty($_POST['language'])) ? $_POST['language'] : 'en';
