@@ -167,7 +167,7 @@ class InAppSubscriptions extends Controller
                 ],400);
             }
 
-            $session_id = Str::uuid();
+            $session_id = 'in_app_'.Str::uuid();
 
             $sub_booking_data = [
                 'session_id' => $session_id,
@@ -215,7 +215,10 @@ class InAppSubscriptions extends Controller
     }
 
     public function paymentSuccess(Request $request){
-        die('subscription successful');
+
+        $payload = $request->getContent();
+        $payloadObject = json_decode($payload, true);
+        return $payloadObject;
         $validator = Validator::make($request->all(), [
             'language' => [
                 'required' ,
@@ -235,6 +238,7 @@ class InAppSubscriptions extends Controller
         try{
             $session_id = $request->session_id;
             $payment_details = DB::table('bookings')->where('session_id', '=', $session_id)->first();
+            return $payment_details;
             if (!empty($payment_details)) {
                 $user_id = $payment_details->user_id ? $payment_details->user_id : '';
                 $user_type = $payment_details->user_type ? $payment_details->user_type : '';
