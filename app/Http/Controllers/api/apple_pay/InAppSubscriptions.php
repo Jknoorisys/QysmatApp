@@ -487,6 +487,8 @@ class InAppSubscriptions extends Controller
 
     public function updateSubscription(Request $request)
     {
-        return $request->all();
+        $payload = $request->getContent();
+        $payloadObject = json_decode($payload, true);
+        return $payloadObject;
     }
 }
