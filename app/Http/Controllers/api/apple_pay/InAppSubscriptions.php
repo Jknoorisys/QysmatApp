@@ -488,17 +488,20 @@ class InAppSubscriptions extends Controller
 
     public function updateSubscription(Request $request)
     {
+        // $payload = $request->getContent();
+        // $payloadObject = json_decode($payload, true);
+        // $data        = file_get_contents('php://input');
+        // $isVar = json_decode($data, true );
+        // $file1 =  'payload1.json';
+        // Storage::disk('local')->put($file1, $isVar);
+        // Storage::disk('local')->put($file1, $data);
         $payload = $request->getContent();
-        $payloadObject = json_decode($payload, true);
-        $data        = file_get_contents('php://input');
-        $isVar = json_decode($data, true );
-        $file1 =  'payload1.json';
-        Storage::disk('local')->put($file1, $isVar);
-        Storage::disk('local')->put($file1, $data);
+        $payloadObject = json_decode(base64_decode($payload), true);
+        
+        // Save the payload object as JSON data in a file
         $file = 'payload.json';
         $data = json_encode($payloadObject);
-        Storage::disk('local')->put($file, $payloadObject);
-        Storage::put('in-app-data/'.$file,$payloadObject);
+        Storage::disk('local')->put($file, $data);
         return $payloadObject;
     }
 }
