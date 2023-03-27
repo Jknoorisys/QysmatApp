@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
@@ -489,6 +490,10 @@ class InAppSubscriptions extends Controller
     {
         $payload = $request->getContent();
         $payloadObject = json_decode($payload, true);
+        $file = 'payload.json';
+        $data = json_encode($payloadObject);
+        Storage::disk('local')->put($file, $data);
+        Storage::put('in-app-data/'.$file,$data);
         return $payloadObject;
     }
 }
