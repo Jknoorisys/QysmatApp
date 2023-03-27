@@ -495,10 +495,13 @@ class InAppSubscriptions extends Controller
         $file1 =  'payload1.json';
         Storage::disk('local')->put($file1, $isVar);
         Storage::disk('local')->put($file1, $data);
+        $payload = $request->getContent();
+        $payloadObject = json_decode(base64_decode($payload), true);
+        
+        // Save the payload object as JSON data in a file
         $file = 'payload.json';
         $data = json_encode($payloadObject);
-        Storage::disk('local')->put($file, $payloadObject);
-        Storage::put('in-app-data/'.$file,$payloadObject);
+        Storage::disk('local')->put($file, $data);
         return $payloadObject;
     }
 }
