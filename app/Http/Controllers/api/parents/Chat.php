@@ -281,7 +281,7 @@ class Chat extends Controller
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.messaged-users.success'),
-                    'data'      => $$new_list
+                    'data'      => $new_list
                 ],200);
             }else{
                 return response()->json([
