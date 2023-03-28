@@ -271,7 +271,6 @@ class Chat extends Controller
                     $new_list->singleton_id = $value->messaged_user_singleton_id;
                     $new_list->messaged_user_id = $value->user_id;
                     $new_list->messaged_user_singleton_id = $value->singleton_id;
-                    return $list;
                 } else {
                     $new_list =  $list;
                 }
