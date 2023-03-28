@@ -890,23 +890,77 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
 
             if (!empty($parentTransaction)) {
                 if ($active_subscription_id == 2) {
-                    $parentSubscription = $stripe->subscriptions->cancel(
-                        $parentTransaction->subscription_id,
-                        []
-                    );
-    
-                    if ($parentSubscription) {
-                        Transactions::where('subscription_id','=', $parentSubscription->id)->update(['subs_status' => $parentSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
-                    }
-                } elseif($active_subscription_id == 3) {
-                    if (($parentTransaction->user_id == $user_id) && ($parentTransaction->user_type == $user_type)) {
+                    if ($parentTransaction->payment_method == 'stripe') {
                         $parentSubscription = $stripe->subscriptions->cancel(
                             $parentTransaction->subscription_id,
                             []
                         );
-            
+        
                         if ($parentSubscription) {
                             Transactions::where('subscription_id','=', $parentSubscription->id)->update(['subs_status' => $parentSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                        }
+                    }else{
+                        Transactions::where('subscription_id','=', $parentTransaction->subscription_id)->update(['subs_status' => 'inactive', 'updated_at' => date('Y-m-d H:i:s')]);
+                    }
+                } elseif($active_subscription_id == 3) {
+                    if (($parentTransaction->user_id == $user_id) && ($parentTransaction->user_type == $user_type)) {
+
+                        if ($parentTransaction->payment_method == 'stripe') {
+                            
+                            $parentSubscription = $stripe->subscriptions->cancel(
+                                $parentTransaction->subscription_id,
+                                []
+                            );
+                
+                            if ($parentSubscription) {
+                                Transactions::where('subscription_id','=', $parentSubscription->id)->update(['subs_status' => $parentSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                                $update_sub_data = [
+                                    'customer_id'            => '',
+                                    'active_subscription_id' => 1,
+                                    'stripe_plan_id'         => '',
+                                    'subscription_item_id'   => ''
+                                ];
+                
+                                if ($active_subscription_id == 3 && $parentTransaction->other_user_id) {
+                                    $other_user_ids = $parentTransaction->other_user_id ? explode(',',$parentTransaction->other_user_id) : null;
+                                    if ($parentTransaction->other_user_type == 'singleton') {
+                                        foreach ($other_user_ids as $id) {
+                                            Singleton::where('id','=',$id)->update($update_sub_data);
+                                        }
+                                    } elseif ($parentTransaction->other_user_type == 'parent') {
+                                        foreach ($other_user_ids as $id) {
+                                            ParentsModel::where('id','=',$id)->update($update_sub_data);
+                                        }
+                                    }
+                                }
+        
+                                $linkedChild = ParentChild::where([['parent_id', '=', $user_id],['status', '=', 'Linked']])->get();
+                                if (!$linkedChild->isEmpty()) {
+                                    foreach ($linkedChild as $child) {
+                                        $singleton_id = $child->singleton_id ;
+                                        $childTransaction = DB::table('transactions')
+                                                                ->where([['user_id', '=', $singleton_id],['user_type', '=', 'singleton'],['active_subscription_id','=','3']])
+                                                                ->first();
+                                        $childSubscription = $stripe->subscriptions->cancel(
+                                                            $childTransaction->subscription_id,
+                                                            []
+                                                        );
+                                        if ($childSubscription) {
+                                            Transactions::where('subscription_id','=', $childSubscription->id)->update(['subs_status' => $childSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                                            $update_sub_data = [
+                                                'customer_id'            => '',
+                                                'active_subscription_id' => 1,
+                                                'stripe_plan_id'         => '',
+                                                'subscription_item_id'   => ''
+                                            ];
+        
+                                            Singleton::where('id','=',$singleton_id)->update($update_sub_data);
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            Transactions::where('subscription_id','=', $parentTransaction->subscription_id)->update(['subs_status' => 'inactive', 'updated_at' => date('Y-m-d H:i:s')]);
                             $update_sub_data = [
                                 'customer_id'            => '',
                                 'active_subscription_id' => 1,
@@ -934,12 +988,9 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
                                     $childTransaction = DB::table('transactions')
                                                             ->where([['user_id', '=', $singleton_id],['user_type', '=', 'singleton'],['active_subscription_id','=','3']])
                                                             ->first();
-                                    $childSubscription = $stripe->subscriptions->cancel(
-                                                        $childTransaction->subscription_id,
-                                                        []
-                                                    );
-                                    if ($childSubscription) {
-                                        Transactions::where('subscription_id','=', $childSubscription->id)->update(['subs_status' => $childSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                        
+                                    if ($childTransaction) {
+                                        Transactions::where('subscription_id','=', $childTransaction->subscription_id)->update(['subs_status' => 'inactive', 'updated_at' => date('Y-m-d H:i:s')]);
                                         $update_sub_data = [
                                             'customer_id'            => '',
                                             'active_subscription_id' => 1,
@@ -1014,32 +1065,56 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
            if (!empty($singletonTransaction)) {
                 $in_other_user_ids = $singletonTransaction ? explode(',',$singletonTransaction->other_user_id) : null;
                 if ($active_subscription_id == 2) {
-                    $singletonSubscription = $stripe->subscriptions->cancel(
-                        $singletonTransaction->subscription_id,
-                        []
-                    );
-
-                    if ($singletonSubscription) {
-                        Transactions::where('subscription_id','=', $singletonSubscription->id)->update(['subs_status' => $singletonSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                    if ($singletonTransaction->payment_method == 'stripe') {
+                        $singletonSubscription = $stripe->subscriptions->cancel(
+                            $singletonTransaction->subscription_id,
+                            []
+                        );
+    
+                        if ($singletonSubscription) {
+                            Transactions::where('subscription_id','=', $singletonSubscription->id)->update(['subs_status' => $singletonSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                        }
+                    } else {
+                        Transactions::where('subscription_id','=', $singletonTransaction->subscription_id)->update(['subs_status' => 'inactive', 'updated_at' => date('Y-m-d H:i:s')]);
                     }
+                    
                 } elseif($active_subscription_id == 3) {
                     if (($singletonTransaction->user_id == $user_id) && ($singletonTransaction->user_type == $user_type)) {
-                         $singletonSubscription = $stripe->subscriptions->cancel(
+                        if ($singletonTransaction->payment_method == 'stripe') {
+                            $singletonSubscription = $stripe->subscriptions->cancel(
                                 $singletonTransaction->subscription_id,
                                 []
                             );
                             
-                        if ($singletonSubscription) {
-                            Transactions::where('subscription_id','=', $singletonSubscription->id)->update(['subs_status' => $singletonSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                            if ($singletonSubscription) {
+                                Transactions::where('subscription_id','=', $singletonSubscription->id)->update(['subs_status' => $singletonSubscription->status, 'updated_at' => date('Y-m-d H:i:s')]);
+                            }
+                        } else {
+                            Transactions::where('subscription_id','=', $singletonTransaction->subscription_id)->update(['subs_status' => 'inactive', 'updated_at' => date('Y-m-d H:i:s')]);
                         }
                     } elseif ($in_other_user_ids && in_array($user_id, $in_other_user_ids) && ($singletonTransaction->other_user_type == $user_type)) {
                         if ($singletonTransaction->item2_quantity == 1) {
-                            $singletonSubscription = $stripe->subscriptionItems->delete(
-                                $singletonTransaction->subscription_item2_id,
-                                []
-                              );
-
-                            if ($singletonSubscription) {
+                            if ($singletonTransaction->payment_method == 'stripe') {
+                                $singletonSubscription = $stripe->subscriptionItems->delete(
+                                    $singletonTransaction->subscription_item2_id,
+                                    []
+                                  );
+    
+                                if ($singletonSubscription) {
+                                    $updateData = [
+                                        'other_user_id' => "",
+                                        "other_user_type" => "",
+                                        "subscription_item2_id" => "",
+                                        "item2_plan_id" => "",
+                                        "item2_unit_amount" => "",
+                                        'item2_quantity' => "",
+                                        'amount_paid' => $singletonTransaction->item1_unit_amount,
+                                        'updated_at' => date('Y-m-d H:i:s')
+                                    ];
+    
+                                    Transactions::where('subscription_item2_id','=', $singletonSubscription->id)->update($updateData);
+                                }
+                            } else {
                                 $updateData = [
                                     'other_user_id' => "",
                                     "other_user_type" => "",
@@ -1051,25 +1126,38 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
                                     'updated_at' => date('Y-m-d H:i:s')
                                 ];
 
-                                Transactions::where('subscription_item2_id','=', $singletonSubscription->id)->update($updateData);
+                                Transactions::where('subscription_id','=', $singletonTransaction->subscription_id)->update($updateData);
                             }
+                            
                         } elseif($singletonTransaction->item2_quantity > 1) {
                             $quantity = $singletonTransaction->item2_quantity - 1;
-                            $singletonSubscription = $stripe->subscriptionItems->update(
-                                $singletonTransaction->subscription_item2_id,
-                                ['quantity' => $quantity]
-                            );
+                            if ($singletonTransaction->payment_method == 'stripe') {
+                                $singletonSubscription = $stripe->subscriptionItems->update(
+                                    $singletonTransaction->subscription_item2_id,
+                                    ['quantity' => $quantity]
+                                );
 
-                            if ($singletonSubscription) {
+                                if ($singletonSubscription) {
+                                    $updateData = [
+                                        'other_user_id' => str_replace($user_id, "", $singletonTransaction->other_user_id),
+                                        'item2_quantity' => $singletonSubscription->quantity,
+                                        'amount_paid' => $singletonTransaction->amount_paid - $singletonTransaction->item2_unit_amount ,
+                                        'updated_at' => date('Y-m-d H:i:s')
+                                    ];
+
+                                    Transactions::where('subscription_item2_id','=', $singletonSubscription->id)->update($updateData);
+                                }
+                            } else {
                                 $updateData = [
                                     'other_user_id' => str_replace($user_id, "", $singletonTransaction->other_user_id),
-                                    'item2_quantity' => $singletonSubscription->quantity,
+                                    'item2_quantity' => $quantity,
                                     'amount_paid' => $singletonTransaction->amount_paid - $singletonTransaction->item2_unit_amount ,
                                     'updated_at' => date('Y-m-d H:i:s')
                                 ];
 
-                                Transactions::where('subscription_item2_id','=', $singletonSubscription->id)->update($updateData);
+                                Transactions::where('subscription_id','=', $singletonTransaction->subscription_id)->update($updateData);
                             }
+                            
                         }
                         
                     }

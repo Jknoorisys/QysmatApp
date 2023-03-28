@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\apple_pay;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\BankDetails;
+use App\Models\Booking;
 use App\Models\Charges;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
@@ -12,10 +13,12 @@ use App\Models\Singleton;
 use App\Models\Subscriptions;
 use App\Models\Transactions;
 use App\Notifications\AdminNotification;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -217,15 +220,17 @@ class InAppSubscriptions extends Controller
 
     public function paymentSuccess(Request $request){
 
-        $payload = $request->getContent();
-        $payloadObject = json_decode($payload, true);
-        return $payloadObject;
         $validator = Validator::make($request->all(), [
             'language' => [
                 'required' ,
                 Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
             ],
             'session_id'   => 'required',
+            'transaction_id' => 'required',
+            'product_id' => 'required',
+            'amount_paid' => 'required',
+            'payment_status' => 'required',
+            'transaction_date' => 'required'
         ]);
 
         if($validator->fails()){
@@ -239,7 +244,7 @@ class InAppSubscriptions extends Controller
         try{
             $session_id = $request->session_id;
             $payment_details = DB::table('bookings')->where('session_id', '=', $session_id)->first();
-            return $payment_details;
+
             if (!empty($payment_details)) {
                 $user_id = $payment_details->user_id ? $payment_details->user_id : '';
                 $user_type = $payment_details->user_type ? $payment_details->user_type : '';
@@ -250,27 +255,28 @@ class InAppSubscriptions extends Controller
                 $other_user_type = $payment_details->other_user_type ? $payment_details->other_user_type : '';
                 $booking_id = $payment_details->id;
                 $active_subscription_id = $payment_details->active_subscription_id;
+                $subscription_id = $request->transaction_id;
+                $plan_id = $request->product_id;
+                $amount_paid = $request->amount_paid;
+                $payment_status = $request->payment_status;
+                $transaction_date = $request->transaction_date;
 
-                $session = \Stripe\Checkout\Session::Retrieve(
-                    $payment_details->session_id,
-                    []
-                );
+                $parent_premium = ($plan_id == 'com.app.qysmat.premium.parent.joint_1.subscription' || $plan_id == 'com.app.qysmat.premium.parent.joint_2.subscription' || $plan_id == 'com.app.qysmat.premium.parent.joint_3.subscription' || $plan_id == 'com.app.qysmat.premium.parent.joint_4.subscription') ? 1 : 0;
+                $child_premium = $plan_id == 'com.app.qysmat.premium.child.joint.subscription' ? 1 : 0;
 
-                if($session->payment_status == "paid" && $session->status == "complete"){
-                    $subscription = \Stripe\Subscription::Retrieve($session->subscription);
-                    $item1 = $subscription->items->data[0];
-                    $item2 = count($subscription->items->data) == 2 ? $subscription->items->data[1] : null;
-
+                if ($payment_status == 'purchased' || $payment_status == 'PURCHASED') {
                     $update_booking  =  [
-                        'subscription_id' => $session->subscription,
-                        'customer_id' => $session->customer,
-                        'amount_paid' => $session->amount_total/100,
+                        'subscription_id' => $subscription_id,
+                        'amount_paid' => $amount_paid,
                         'payment_status' => 'paid',
                         'session_status' => 'complete',
                         'updated_at'     => date('Y-m-d H:i:s'),
                     ];
 
                     $update = DB::table('bookings')->where('id', '=', $payment_details->id)->update($update_booking);
+                    $plan = Subscriptions::where('id','=','2')->first();
+                    $joint_plan = Subscriptions::where('id','=','3')->first();
+                    $quantity = $other_user_ids ? count($other_user_ids) : '';
 
                     $sub_data = [
                         'booking_id' => $booking_id,
@@ -280,36 +286,33 @@ class InAppSubscriptions extends Controller
                         'user_email' => $user_email,
                         'other_user_id' => $other_user_id ? $other_user_id : '',
                         'other_user_type' => $other_user_type ? $other_user_type : '',
+                        'payment_method' => 'in-app',
                         'active_subscription_id' => $active_subscription_id,
-                        'customer_id' => $session->customer,
-                        'subscription_id' => $session->subscription,
-                        'subscription_item1_id' => $item1->id,
-                        'subscription_item2_id' => $item2 ? $item2->id : '',
-                        'item1_plan_id' => $item1->plan->id,
-                        'item2_plan_id' => $item2 ? $item2->plan->id : '',
-                        'item1_unit_amount' => $item1->plan->amount/100,
-                        'item2_unit_amount' => $item2 ? $item2->plan->amount/100 : '',
-                        'item1_quantity' => $item1->quantity,
-                        'item2_quantity' => $item2 ? $item2->quantity : '',
-                        'amount_paid' => $session->amount_total/100,
-                        'currency' => $session->currency,
-                        'plan_interval' => $item1->plan->interval,
-                        'plan_interval_count' => $item1->plan->interval_count,
-                        'payer_email' => $session->customer_details ? $session->customer_details->email : '',
-                        'plan_period_start' => $subscription ? date("Y-m-d H:i:s", $subscription->current_period_start) : '',
-                        'plan_period_end' => $subscription ? date("Y-m-d H:i:s", $subscription->current_period_end) : '',
-                        'payment_status' => $session->payment_status,
-                        'subs_status' => $subscription->status,
-                        'created_at' => date("Y-m-d H:i:s", $subscription->created)
+                        'subscription_id' => $subscription_id,
+                        'item1_plan_id' => $plan_id,
+                        'item1_unit_amount' => $child_premium == 0 ? $plan->price : $joint_plan->price,
+                        'item2_unit_amount' => $parent_premium == 1 ? $joint_plan->price : '',
+                        'item1_quantity' => 1,
+                        'item2_quantity' => $parent_premium == 1 ? $quantity : '',
+                        'amount_paid' => $amount_paid,
+                        'currency' => $payment_details->currency,
+                        'plan_interval' => 'month',
+                        'plan_interval_count' => 1,
+                        'payer_email' => $user_email,
+                        'plan_period_start' => Carbon::createFromTimestamp($transaction_date / 1000),
+                        'plan_period_end' => Carbon::createFromTimestamp($transaction_date / 1000)->addMonth(),
+                        'payment_status' => 'paid',
+                        'subs_status' => 'active',
+                        'created_at' => Carbon::now()
                     ];
 
                     $insert = DB::table('transactions')->insert($sub_data);
+
                     if($update){
                         $update_sub_data = [
-                            'customer_id'            => $session->customer,
                             'active_subscription_id' => $active_subscription_id,
-                            'stripe_plan_id'         => $item1->plan->id,
-                            'subscription_item_id'   => $item1->id
+                            'stripe_plan_id'         => $plan_id,
+                            'subscription_item_id'   => $subscription_id
                         ];
 
                         if ($user_type == 'singleton') {
@@ -319,10 +322,9 @@ class InAppSubscriptions extends Controller
                         }
 
                         $update_sub_data1 = [
-                            'customer_id'            => $session->customer,
                             'active_subscription_id' => $active_subscription_id,
-                            'stripe_plan_id'         => $item2 ? $item2->plan->id : $item1->plan->id,
-                            'subscription_item_id'   => $item2 ? $item2->id : $item1->id
+                            'stripe_plan_id'         => $plan_id,
+                            'subscription_item_id'   => $subscription_id
                         ];
 
                         if ($active_subscription_id == 3 && $other_user_id) {
@@ -353,15 +355,7 @@ class InAppSubscriptions extends Controller
                             'message'   => __('msg.stripe.success'),
                         ],200);
                     }
-                } else if ($session->payment_status == "unpaid" && $session->status == "open") {
-                    return response()->json([
-                        'status'    => 'failed',
-                        'message'   => __('msg.apple.failure'),
-                        'apple'  => [
-                            'session_id'  => $session['id'],
-                            'url'         => $session['url'],
-                        ],
-                    ],400);
+                
                 } else {
                     return response()->json([
                         'status'    => 'failed',
@@ -384,7 +378,6 @@ class InAppSubscriptions extends Controller
     }
 
     public function paymentFail(Request $request){
-        die('subscription failed');
         $validator = Validator::make($request->all(), [
             'language' => [
                 'required' ,
@@ -404,6 +397,7 @@ class InAppSubscriptions extends Controller
         try{
             $session_id = $request->session_id;
             $payment_details = DB::table('bookings')->where('session_id', '=', $session_id)->first();
+
             if (!empty($payment_details)) {
                 $user_id = $payment_details->user_id ? $payment_details->user_id : '';
                 $user_type = $payment_details->user_type ? $payment_details->user_type : '';
@@ -414,56 +408,35 @@ class InAppSubscriptions extends Controller
                 $other_user_type = $payment_details->other_user_type ? $payment_details->other_user_type : '';
                 $booking_id = $payment_details->id;
 
-                $session = \Stripe\Checkout\Session::Retrieve(
-                    $payment_details->session_id,
-                    []
-                );
-                if($session->status == "open"){
-                    // $expire = $this->stripe->checkout->sessions->expire(
-                    //     $payment_details->session_id,
-                    //     []
-                    // );
+                $update_booking  =  [
+                    'active_subscription_id' => 1,
+                    'payment_status'         => 'canceled',
+                    'session_status' => 'complete',
+                    'updated_at'     => date('Y-m-d H:i:s'),
+                ];
 
-                    $update_booking  =  [
-                        // 'active_subscription_id' => 1,
-                        // 'payment_status'         => $expire->payment_status,
-                        // 'session_status' => $expire->status,
-                        // 'updated_at'     => date('Y-m-d H:i:s'),
-                    ];
+                $update = DB::table('bookings')->where('id', '=', $payment_details->id)->update($update_booking);
 
-                    $update = DB::table('bookings')->where('id', '=', $payment_details->id)->update($update_booking);
+                $sub_data = [
+                    'booking_id' => $booking_id,
+                    'user_id' => $user_id,
+                    'user_type' => $user_type,
+                    'user_name' => $user_name,
+                    'user_email' => $user_email,
+                    'other_user_id' => $other_user_id ? $other_user_id : '',
+                    'other_user_type' => $other_user_type ? $other_user_type : '',
+                    'active_subscription_id' => 1,
+                    'payment_status' => 'canceled',
+                    'subs_status' => 'inactive',
+                    'created_at' => date('Y-m-d h:i:s')
+                ];
 
-                    $sub_data = [
-                        'booking_id' => $booking_id,
-                        'user_id' => $user_id,
-                        'user_type' => $user_type,
-                        'user_name' => $user_name,
-                        'user_email' => $user_email,
-                        'other_user_id' => $other_user_id ? $other_user_id : '',
-                        'other_user_type' => $other_user_type ? $other_user_type : '',
-                        'active_subscription_id' => 1,
-                        'payment_status' => $session->payment_status,
-                        'subs_status' => 'inactive',
-                        'created_at' => date('Y-m-d h:i:s')
-                    ];
+                $insert = DB::table('transactions')->insert($sub_data);
 
-                    $insert = DB::table('transactions')->insert($sub_data);
-
-                    if($update){
-                        return response()->json([
-                            'status'    => 'failed',
-                            'message'   => __('msg.apple.failure'),
-                        ],400);
-                    }
-                } else if ($session->status == "complete") {
+                if($update){
                     return response()->json([
                         'status'    => 'failed',
-                        'message'   => __('msg.apple.paid'),
-                    ],400);
-                } else if ($session->status == "expired") {
-                    return response()->json([
-                        'status'    => 'failed',
-                        'message'   => __('msg.apple.invalid'),
+                        'message'   => __('msg.apple.failure'),
                     ],400);
                 } else {
                     return response()->json([
@@ -499,8 +472,148 @@ class InAppSubscriptions extends Controller
         $payload = base64_decode($parts[1]);
         $signature = $parts[2];
 
+        // $payload = '{"notificationType":"SUBSCRIBED","subtype":"RESUBSCRIBE","notificationUUID":"f8ac20ef-e972-4465-80c4-3170f9882aff","data":{"bundleId":"com.app.qysmat","bundleVersion":"1","environment":"Sandbox","signedTransactionInfo":"eyJhbGciOiJFUzI1NiIsIng1YyI6WyJNSUlFTURDQ0E3YWdBd0lCQWdJUWFQb1BsZHZwU29FSDBsQnJqRFB2OWpBS0JnZ3Foa2pPUFFRREF6QjFNVVF3UWdZRFZRUURERHRCY0hCc1pTQlhiM0pzWkhkcFpHVWdSR1YyWld4dmNHVnlJRkpsYkdGMGFXOXVjeUJEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURUxNQWtHQTFVRUN3d0NSell4RXpBUkJnTlZCQW9NQ2tGd2NHeGxJRWx1WXk0eEN6QUpCZ05WQkFZVEFsVlRNQjRYRFRJeE1EZ3lOVEF5TlRBek5Gb1hEVEl6TURreU5EQXlOVEF6TTFvd2daSXhRREErQmdOVkJBTU1OMUJ5YjJRZ1JVTkRJRTFoWXlCQmNIQWdVM1J2Y21VZ1lXNWtJR2xVZFc1bGN5QlRkRzl5WlNCU1pXTmxhWEIwSUZOcFoyNXBibWN4TERBcUJnTlZCQXNNSTBGd2NHeGxJRmR2Y214a2QybGtaU0JFWlhabGJHOXdaWElnVW1Wc1lYUnBiMjV6TVJNd0VRWURWUVFLREFwQmNIQnNaU0JKYm1NdU1Rc3dDUVlEVlFRR0V3SlZVekJaTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEEwSUFCT29UY2FQY3BlaXBOTDllUTA2dEN1N3BVY3dkQ1hkTjh2R3FhVWpkNThaOHRMeGlVQzBkQmVBK2V1TVlnZ2gxLzVpQWsrRk14VUZtQTJhMXI0YUNaOFNqZ2dJSU1JSUNCREFNQmdOVkhSTUJBZjhFQWpBQU1COEdBMVVkSXdRWU1CYUFGRDh2bENOUjAxREptaWc5N2JCODVjK2xrR0taTUhBR0NDc0dBUVVGQndFQkJHUXdZakF0QmdnckJnRUZCUWN3QW9ZaGFIUjBjRG92TDJObGNuUnpMbUZ3Y0d4bExtTnZiUzkzZDJSeVp6WXVaR1Z5TURFR0NDc0dBUVVGQnpBQmhpVm9kSFJ3T2k4dmIyTnpjQzVoY0hCc1pTNWpiMjB2YjJOemNEQXpMWGQzWkhKbk5qQXlNSUlCSGdZRFZSMGdCSUlCRlRDQ0FSRXdnZ0VOQmdvcWhraUc5Mk5rQlFZQk1JSCtNSUhEQmdnckJnRUZCUWNDQWpDQnRneUJzMUpsYkdsaGJtTmxJRzl1SUhSb2FYTWdZMlZ5ZEdsbWFXTmhkR1VnWW5rZ1lXNTVJSEJoY25SNUlHRnpjM1Z0WlhNZ1lXTmpaWEIwWVc1alpTQnZaaUIwYUdVZ2RHaGxiaUJoY0hCc2FXTmhZbXhsSUhOMFlXNWtZWEprSUhSbGNtMXpJR0Z1WkNCamIyNWthWFJwYjI1eklHOW1JSFZ6WlN3Z1kyVnlkR2xtYVdOaGRHVWdjRzlzYVdONUlHRnVaQ0JqWlhKMGFXWnBZMkYwYVc5dUlIQnlZV04wYVdObElITjBZWFJsYldWdWRITXVNRFlHQ0NzR0FRVUZCd0lCRmlwb2RIUndPaTh2ZDNkM0xtRndjR3hsTG1OdmJTOWpaWEowYVdacFkyRjBaV0YxZEdodmNtbDBlUzh3SFFZRFZSME9CQllFRkNPQ21NQnEvLzFMNWltdlZtcVgxb0NZZXFyTU1BNEdBMVVkRHdFQi93UUVBd0lIZ0RBUUJnb3Foa2lHOTJOa0Jnc0JCQUlGQURBS0JnZ3Foa2pPUFFRREF3Tm9BREJsQWpFQWw0SkI5R0pIaXhQMm51aWJ5VTFrM3dyaTVwc0dJeFBNRTA1c0ZLcTdoUXV6dmJleUJ1ODJGb3p6eG1ienBvZ29BakJMU0ZsMGRaV0lZbDJlalBWK0RpNWZCbktQdThteW1CUXRvRS9IMmJFUzBxQXM4Yk51ZVUzQ0JqamgxbHduRHNJPSIsIk1JSURGakNDQXB5Z0F3SUJBZ0lVSXNHaFJ3cDBjMm52VTRZU3ljYWZQVGp6Yk5jd0NnWUlLb1pJemowRUF3TXdaekViTUJrR0ExVUVBd3dTUVhCd2JHVWdVbTl2ZENCRFFTQXRJRWN6TVNZd0pBWURWUVFMREIxQmNIQnNaU0JEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURVRNQkVHQTFVRUNnd0tRWEJ3YkdVZ1NXNWpMakVMTUFrR0ExVUVCaE1DVlZNd0hoY05NakV3TXpFM01qQXpOekV3V2hjTk16WXdNekU1TURBd01EQXdXakIxTVVRd1FnWURWUVFERER0QmNIQnNaU0JYYjNKc1pIZHBaR1VnUkdWMlpXeHZjR1Z5SUZKbGJHRjBhVzl1Y3lCRFpYSjBhV1pwWTJGMGFXOXVJRUYxZEdodmNtbDBlVEVMTUFrR0ExVUVDd3dDUnpZeEV6QVJCZ05WQkFvTUNrRndjR3hsSUVsdVl5NHhDekFKQmdOVkJBWVRBbFZUTUhZd0VBWUhLb1pJemowQ0FRWUZLNEVFQUNJRFlnQUVic1FLQzk0UHJsV21aWG5YZ3R4emRWSkw4VDBTR1luZ0RSR3BuZ24zTjZQVDhKTUViN0ZEaTRiQm1QaENuWjMvc3E2UEYvY0djS1hXc0w1dk90ZVJoeUo0NXgzQVNQN2NPQithYW85MGZjcHhTdi9FWkZibmlBYk5nWkdoSWhwSW80SDZNSUgzTUJJR0ExVWRFd0VCL3dRSU1BWUJBZjhDQVFBd0h3WURWUjBqQkJnd0ZvQVV1N0Rlb1ZnemlKcWtpcG5ldnIzcnI5ckxKS3N3UmdZSUt3WUJCUVVIQVFFRU9qQTRNRFlHQ0NzR0FRVUZCekFCaGlwb2RIUndPaTh2YjJOemNDNWhjSEJzWlM1amIyMHZiMk56Y0RBekxXRndjR3hsY205dmRHTmhaek13TndZRFZSMGZCREF3TGpBc29DcWdLSVltYUhSMGNEb3ZMMk55YkM1aGNIQnNaUzVqYjIwdllYQndiR1Z5YjI5MFkyRm5NeTVqY213d0hRWURWUjBPQkJZRUZEOHZsQ05SMDFESm1pZzk3YkI4NWMrbGtHS1pNQTRHQTFVZER3RUIvd1FFQXdJQkJqQVFCZ29xaGtpRzkyTmtCZ0lCQkFJRkFEQUtCZ2dxaGtqT1BRUURBd05vQURCbEFqQkFYaFNxNUl5S29nTUNQdHc0OTBCYUI2NzdDYUVHSlh1ZlFCL0VxWkdkNkNTamlDdE9udU1UYlhWWG14eGN4ZmtDTVFEVFNQeGFyWlh2TnJreFUzVGtVTUkzM3l6dkZWVlJUNHd4V0pDOTk0T3NkY1o0K1JHTnNZRHlSNWdtZHIwbkRHZz0iLCJNSUlDUXpDQ0FjbWdBd0lCQWdJSUxjWDhpTkxGUzVVd0NnWUlLb1pJemowRUF3TXdaekViTUJrR0ExVUVBd3dTUVhCd2JHVWdVbTl2ZENCRFFTQXRJRWN6TVNZd0pBWURWUVFMREIxQmNIQnNaU0JEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURVRNQkVHQTFVRUNnd0tRWEJ3YkdVZ1NXNWpMakVMTUFrR0ExVUVCaE1DVlZNd0hoY05NVFF3TkRNd01UZ3hPVEEyV2hjTk16a3dORE13TVRneE9UQTJXakJuTVJzd0dRWURWUVFEREJKQmNIQnNaU0JTYjI5MElFTkJJQzBnUnpNeEpqQWtCZ05WQkFzTUhVRndjR3hsSUVObGNuUnBabWxqWVhScGIyNGdRWFYwYUc5eWFYUjVNUk13RVFZRFZRUUtEQXBCY0hCc1pTQkpibU11TVFzd0NRWURWUVFHRXdKVlV6QjJNQkFHQnlxR1NNNDlBZ0VHQlN1QkJBQWlBMklBQkpqcEx6MUFjcVR0a3lKeWdSTWMzUkNWOGNXalRuSGNGQmJaRHVXbUJTcDNaSHRmVGpqVHV4eEV0WC8xSDdZeVlsM0o2WVJiVHpCUEVWb0EvVmhZREtYMUR5eE5CMGNUZGRxWGw1ZHZNVnp0SzUxN0lEdll1VlRaWHBta09sRUtNYU5DTUVBd0hRWURWUjBPQkJZRUZMdXczcUZZTTRpYXBJcVozcjY5NjYvYXl5U3JNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEZ1lEVlIwUEFRSC9CQVFEQWdFR01Bb0dDQ3FHU000OUJBTURBMmdBTUdVQ01RQ0Q2Y0hFRmw0YVhUUVkyZTN2OUd3T0FFWkx1Tit5UmhIRkQvM21lb3locG12T3dnUFVuUFdUeG5TNGF0K3FJeFVDTUcxbWloREsxQTNVVDgyTlF6NjBpbU9sTTI3amJkb1h0MlFmeUZNbStZaGlkRGtMRjF2TFVhZ002QmdENTZLeUtBPT0iXX0.eyJ0cmFuc2FjdGlvbklkIjoiMjAwMDAwMDMwMjU5NjQwMyIsIm9yaWdpbmFsVHJhbnNhY3Rpb25JZCI6IjIwMDAwMDAzMDIxNzg3ODUiLCJ3ZWJPcmRlckxpbmVJdGVtSWQiOiIyMDAwMDAwMDIzODg2OTgyIiwiYnVuZGxlSWQiOiJjb20uYXBwLnF5c21hdCIsInByb2R1Y3RJZCI6ImNvbS5hcHAucXlzbWF0LnByZW1pdW0uY2hpbGQuaW5kaXZpZHVhbC5zdWJzY3JpcHRpb24iLCJzdWJzY3JpcHRpb25Hcm91cElkZW50aWZpZXIiOiIyMTI4OTI2MSIsInB1cmNoYXNlRGF0ZSI6MTY3OTg5OTY0MjAwMCwib3JpZ2luYWxQdXJjaGFzZURhdGUiOjE2Nzk3MzQxMjYwMDAsImV4cGlyZXNEYXRlIjoxNjc5ODk5OTQyMDAwLCJxdWFudGl0eSI6MSwidHlwZSI6IkF1dG8tUmVuZXdhYmxlIFN1YnNjcmlwdGlvbiIsImluQXBwT3duZXJzaGlwVHlwZSI6IlBVUkNIQVNFRCIsInNpZ25lZERhdGUiOjE2Nzk4OTk2NTc0NTQsImVudmlyb25tZW50IjoiU2FuZGJveCJ9.CPhczn9j5up3-XxNZu46K01hLLPl9dedMx4g6Wgh3CGYLZw47rcDXJEz-BNgbn7Yy9X3lw3w6QvL13IfmMiZjQ","signedRenewalInfo":"eyJhbGciOiJFUzI1NiIsIng1YyI6WyJNSUlFTURDQ0E3YWdBd0lCQWdJUWFQb1BsZHZwU29FSDBsQnJqRFB2OWpBS0JnZ3Foa2pPUFFRREF6QjFNVVF3UWdZRFZRUURERHRCY0hCc1pTQlhiM0pzWkhkcFpHVWdSR1YyWld4dmNHVnlJRkpsYkdGMGFXOXVjeUJEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURUxNQWtHQTFVRUN3d0NSell4RXpBUkJnTlZCQW9NQ2tGd2NHeGxJRWx1WXk0eEN6QUpCZ05WQkFZVEFsVlRNQjRYRFRJeE1EZ3lOVEF5TlRBek5Gb1hEVEl6TURreU5EQXlOVEF6TTFvd2daSXhRREErQmdOVkJBTU1OMUJ5YjJRZ1JVTkRJRTFoWXlCQmNIQWdVM1J2Y21VZ1lXNWtJR2xVZFc1bGN5QlRkRzl5WlNCU1pXTmxhWEIwSUZOcFoyNXBibWN4TERBcUJnTlZCQXNNSTBGd2NHeGxJRmR2Y214a2QybGtaU0JFWlhabGJHOXdaWElnVW1Wc1lYUnBiMjV6TVJNd0VRWURWUVFLREFwQmNIQnNaU0JKYm1NdU1Rc3dDUVlEVlFRR0V3SlZVekJaTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEEwSUFCT29UY2FQY3BlaXBOTDllUTA2dEN1N3BVY3dkQ1hkTjh2R3FhVWpkNThaOHRMeGlVQzBkQmVBK2V1TVlnZ2gxLzVpQWsrRk14VUZtQTJhMXI0YUNaOFNqZ2dJSU1JSUNCREFNQmdOVkhSTUJBZjhFQWpBQU1COEdBMVVkSXdRWU1CYUFGRDh2bENOUjAxREptaWc5N2JCODVjK2xrR0taTUhBR0NDc0dBUVVGQndFQkJHUXdZakF0QmdnckJnRUZCUWN3QW9ZaGFIUjBjRG92TDJObGNuUnpMbUZ3Y0d4bExtTnZiUzkzZDJSeVp6WXVaR1Z5TURFR0NDc0dBUVVGQnpBQmhpVm9kSFJ3T2k4dmIyTnpjQzVoY0hCc1pTNWpiMjB2YjJOemNEQXpMWGQzWkhKbk5qQXlNSUlCSGdZRFZSMGdCSUlCRlRDQ0FSRXdnZ0VOQmdvcWhraUc5Mk5rQlFZQk1JSCtNSUhEQmdnckJnRUZCUWNDQWpDQnRneUJzMUpsYkdsaGJtTmxJRzl1SUhSb2FYTWdZMlZ5ZEdsbWFXTmhkR1VnWW5rZ1lXNTVJSEJoY25SNUlHRnpjM1Z0WlhNZ1lXTmpaWEIwWVc1alpTQnZaaUIwYUdVZ2RHaGxiaUJoY0hCc2FXTmhZbXhsSUhOMFlXNWtZWEprSUhSbGNtMXpJR0Z1WkNCamIyNWthWFJwYjI1eklHOW1JSFZ6WlN3Z1kyVnlkR2xtYVdOaGRHVWdjRzlzYVdONUlHRnVaQ0JqWlhKMGFXWnBZMkYwYVc5dUlIQnlZV04wYVdObElITjBZWFJsYldWdWRITXVNRFlHQ0NzR0FRVUZCd0lCRmlwb2RIUndPaTh2ZDNkM0xtRndjR3hsTG1OdmJTOWpaWEowYVdacFkyRjBaV0YxZEdodmNtbDBlUzh3SFFZRFZSME9CQllFRkNPQ21NQnEvLzFMNWltdlZtcVgxb0NZZXFyTU1BNEdBMVVkRHdFQi93UUVBd0lIZ0RBUUJnb3Foa2lHOTJOa0Jnc0JCQUlGQURBS0JnZ3Foa2pPUFFRREF3Tm9BREJsQWpFQWw0SkI5R0pIaXhQMm51aWJ5VTFrM3dyaTVwc0dJeFBNRTA1c0ZLcTdoUXV6dmJleUJ1ODJGb3p6eG1ienBvZ29BakJMU0ZsMGRaV0lZbDJlalBWK0RpNWZCbktQdThteW1CUXRvRS9IMmJFUzBxQXM4Yk51ZVUzQ0JqamgxbHduRHNJPSIsIk1JSURGakNDQXB5Z0F3SUJBZ0lVSXNHaFJ3cDBjMm52VTRZU3ljYWZQVGp6Yk5jd0NnWUlLb1pJemowRUF3TXdaekViTUJrR0ExVUVBd3dTUVhCd2JHVWdVbTl2ZENCRFFTQXRJRWN6TVNZd0pBWURWUVFMREIxQmNIQnNaU0JEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURVRNQkVHQTFVRUNnd0tRWEJ3YkdVZ1NXNWpMakVMTUFrR0ExVUVCaE1DVlZNd0hoY05NakV3TXpFM01qQXpOekV3V2hjTk16WXdNekU1TURBd01EQXdXakIxTVVRd1FnWURWUVFERER0QmNIQnNaU0JYYjNKc1pIZHBaR1VnUkdWMlpXeHZjR1Z5SUZKbGJHRjBhVzl1Y3lCRFpYSjBhV1pwWTJGMGFXOXVJRUYxZEdodmNtbDBlVEVMTUFrR0ExVUVDd3dDUnpZeEV6QVJCZ05WQkFvTUNrRndjR3hsSUVsdVl5NHhDekFKQmdOVkJBWVRBbFZUTUhZd0VBWUhLb1pJemowQ0FRWUZLNEVFQUNJRFlnQUVic1FLQzk0UHJsV21aWG5YZ3R4emRWSkw4VDBTR1luZ0RSR3BuZ24zTjZQVDhKTUViN0ZEaTRiQm1QaENuWjMvc3E2UEYvY0djS1hXc0w1dk90ZVJoeUo0NXgzQVNQN2NPQithYW85MGZjcHhTdi9FWkZibmlBYk5nWkdoSWhwSW80SDZNSUgzTUJJR0ExVWRFd0VCL3dRSU1BWUJBZjhDQVFBd0h3WURWUjBqQkJnd0ZvQVV1N0Rlb1ZnemlKcWtpcG5ldnIzcnI5ckxKS3N3UmdZSUt3WUJCUVVIQVFFRU9qQTRNRFlHQ0NzR0FRVUZCekFCaGlwb2RIUndPaTh2YjJOemNDNWhjSEJzWlM1amIyMHZiMk56Y0RBekxXRndjR3hsY205dmRHTmhaek13TndZRFZSMGZCREF3TGpBc29DcWdLSVltYUhSMGNEb3ZMMk55YkM1aGNIQnNaUzVqYjIwdllYQndiR1Z5YjI5MFkyRm5NeTVqY213d0hRWURWUjBPQkJZRUZEOHZsQ05SMDFESm1pZzk3YkI4NWMrbGtHS1pNQTRHQTFVZER3RUIvd1FFQXdJQkJqQVFCZ29xaGtpRzkyTmtCZ0lCQkFJRkFEQUtCZ2dxaGtqT1BRUURBd05vQURCbEFqQkFYaFNxNUl5S29nTUNQdHc0OTBCYUI2NzdDYUVHSlh1ZlFCL0VxWkdkNkNTamlDdE9udU1UYlhWWG14eGN4ZmtDTVFEVFNQeGFyWlh2TnJreFUzVGtVTUkzM3l6dkZWVlJUNHd4V0pDOTk0T3NkY1o0K1JHTnNZRHlSNWdtZHIwbkRHZz0iLCJNSUlDUXpDQ0FjbWdBd0lCQWdJSUxjWDhpTkxGUzVVd0NnWUlLb1pJemowRUF3TXdaekViTUJrR0ExVUVBd3dTUVhCd2JHVWdVbTl2ZENCRFFTQXRJRWN6TVNZd0pBWURWUVFMREIxQmNIQnNaU0JEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURVRNQkVHQTFVRUNnd0tRWEJ3YkdVZ1NXNWpMakVMTUFrR0ExVUVCaE1DVlZNd0hoY05NVFF3TkRNd01UZ3hPVEEyV2hjTk16a3dORE13TVRneE9UQTJXakJuTVJzd0dRWURWUVFEREJKQmNIQnNaU0JTYjI5MElFTkJJQzBnUnpNeEpqQWtCZ05WQkFzTUhVRndjR3hsSUVObGNuUnBabWxqWVhScGIyNGdRWFYwYUc5eWFYUjVNUk13RVFZRFZRUUtEQXBCY0hCc1pTQkpibU11TVFzd0NRWURWUVFHRXdKVlV6QjJNQkFHQnlxR1NNNDlBZ0VHQlN1QkJBQWlBMklBQkpqcEx6MUFjcVR0a3lKeWdSTWMzUkNWOGNXalRuSGNGQmJaRHVXbUJTcDNaSHRmVGpqVHV4eEV0WC8xSDdZeVlsM0o2WVJiVHpCUEVWb0EvVmhZREtYMUR5eE5CMGNUZGRxWGw1ZHZNVnp0SzUxN0lEdll1VlRaWHBta09sRUtNYU5DTUVBd0hRWURWUjBPQkJZRUZMdXczcUZZTTRpYXBJcVozcjY5NjYvYXl5U3JNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEZ1lEVlIwUEFRSC9CQVFEQWdFR01Bb0dDQ3FHU000OUJBTURBMmdBTUdVQ01RQ0Q2Y0hFRmw0YVhUUVkyZTN2OUd3T0FFWkx1Tit5UmhIRkQvM21lb3locG12T3dnUFVuUFdUeG5TNGF0K3FJeFVDTUcxbWloREsxQTNVVDgyTlF6NjBpbU9sTTI3amJkb1h0MlFmeUZNbStZaGlkRGtMRjF2TFVhZ002QmdENTZLeUtBPT0iXX0.eyJvcmlnaW5hbFRyYW5zYWN0aW9uSWQiOiIyMDAwMDAwMzAyMTc4Nzg1IiwiYXV0b1JlbmV3UHJvZHVjdElkIjoiY29tLmFwcC5xeXNtYXQucHJlbWl1bS5jaGlsZC5pbmRpdmlkdWFsLnN1YnNjcmlwdGlvbiIsInByb2R1Y3RJZCI6ImNvbS5hcHAucXlzbWF0LnByZW1pdW0uY2hpbGQuaW5kaXZpZHVhbC5zdWJzY3JpcHRpb24iLCJhdXRvUmVuZXdTdGF0dXMiOjEsInNpZ25lZERhdGUiOjE2Nzk4OTk2NTc0MzMsImVudmlyb25tZW50IjoiU2FuZGJveCIsInJlY2VudFN1YnNjcmlwdGlvblN0YXJ0RGF0ZSI6MTY3OTg5OTY0MjAwMH0.zQvaZFuttHfQ1AN3IlCKp8EW31MuzoAjFZ6GkEvgXhiNBNt7wA-ekNYe_Ve7HsSK3wQd-KJKUGjh9dyxAUlohA"},"version":"2.0","signedDate":1679899657449}';
+        $payloadData = json_decode($payload, true);
+
+        // Retrieve the notification type from the payload
+        $notificationType = $payloadData['notificationType'];
+        
+        $encodedSignedTransactionInfo = explode('.', ($payloadData['data']['signedTransactionInfo']));
+        $encodedSignedRenewalInfo = explode('.', $payloadData['data']['signedRenewalInfo']);
+        $signedTransactionInfo = json_decode(base64_decode($encodedSignedTransactionInfo[1]), true);
+        $signedRenewalInfo = json_decode(base64_decode($encodedSignedRenewalInfo[1]), true);
+        $createDate = Carbon::createFromTimestamp($signedTransactionInfo['purchaseDate'] / 1000);
+        $expiresDate = Carbon::createFromTimestamp($signedTransactionInfo['expiresDate'] / 1000);
+
+        // Handle the notification based on its type
+        switch ($notificationType) {
+            case 'DID_FAIL_TO_RENEW':
+                return $notificationType;
+                break;
+            case 'DID_RENEW':
+                return $notificationType;
+                break;
+            case 'INITIAL_BUY':
+                return $notificationType;
+                break;
+            case 'EXPIRED':
+                return $notificationType;
+                break;
+            case 'SUBSCRIBED':
+                $transactionId = $signedTransactionInfo['transactionId'];
+                $originalTransactionId = $signedTransactionInfo['originalTransactionId'];
+                $status = $signedTransactionInfo['inAppOwnershipType'];
+
+                $paymentDetails = Transactions::where([['subscription_id', '=', $originalTransactionId],['subs_status', '=', 'active']])->first();
+                $productId = $signedTransactionInfo['productId'];
+                $parent_premium = ($productId == 'com.app.qysmat.premium.parent.joint_1.subscription' || $productId == 'com.app.qysmat.premium.parent.joint_2.subscription' || $productId == 'com.app.qysmat.premium.parent.joint_3.subscription' || $productId == 'com.app.qysmat.premium.parent.joint_4.subscription') ? 1 : 0;
+                $child_premium = $productId == 'com.app.qysmat.premium.child.joint.subscription' ? 1 : 0;
+
+                if (!empty($paymentDetails)) {
+                    $booking_data = [
+                        'payment_method' => $paymentDetails->payment_method,
+                        'user_id' => $paymentDetails->user_id,
+                        'user_type' => $paymentDetails->user_type,
+                        'user_name' => $paymentDetails->user_name,
+                        'user_email' => $paymentDetails->user_email,
+                        'other_user_id' => $paymentDetails->other_user_id ? $paymentDetails->other_user_id : '',
+                        'other_user_type' => $paymentDetails->other_user_type ? $paymentDetails->other_user_type : '',
+                        'active_subscription_id' => $paymentDetails->active_subscription_id,
+                        'currency' => $paymentDetails->currency,
+                        'amount_paid' => $paymentDetails->amount_paid,
+                        'subscription_id' => $originalTransactionId,
+                        'payment_status' => 'paid',
+                        'session_status' => 'complete',
+                        'created_at' => Carbon::now()
+                    ];
+
+                    $booking_id = Booking::insertGetId($booking_data);
+                    if ($status == 'PURCHASED' || $status == 'purchased') {
+                        $trxn_data = [
+                            'booking_id' => $booking_id,
+                            'plan_period_start' => $createDate,
+                            'plan_period_end' => $expiresDate,
+                            'updated_at' => Carbon::now()
+                        ];
+    
+                        Transactions::where('subscription_id', '=', $originalTransactionId)->update($trxn_data);
+
+                        $premium = Subscriptions::where('id', '=', '2')->first();
+                        $joint = Subscriptions::where('id', '=', '3')->first();
+
+                        // send invoice
+                        $data = [
+                            'name' => $paymentDetails->user_name ? $paymentDetails->user_name : '',
+                            'email' => $paymentDetails->user_email ? $paymentDetails->user_email : '',
+                            'phone' =>  '',
+                            'invoice_number' => (string)rand(10000, 50000),
+                            'amount_paid' => $paymentDetails->amount_paid,
+                            'currency' => $paymentDetails->currency ? $paymentDetails->currency : '',
+                            'period_start' => $signedTransactionInfo['purchaseDate'] / 1000,
+                            'period_end' => $signedTransactionInfo['expiresDate'] / 1000,
+                            'subtotal' => $paymentDetails->amount_paid,
+                            'total' => $paymentDetails->amount_paid,
+                            'item1_name' => $child_premium == 0 ? $premium->subscription_type : $joint->subscription_type,
+                            'item1_unit_price' => $paymentDetails->item1_unit_amount * 100,
+                            'item1_quantity' => $paymentDetails->item1_quantity,
+                            'item2_name' => $parent_premium == 1 ? $joint->subscription_type : '',
+                            'item2_unit_price' => $paymentDetails->item2_unit_amount * 100,
+                            'item2_quantity' => $paymentDetails->item2_quantity,
+                            'item2' => $parent_premium == 1 ? 2 : 1,
+                        ];
+
+                        $pdf = Pdf::loadView('invoice', $data);
+                        $pdf_name = 'invoice_'.time().'.pdf';
+                        $path = Storage::put('invoices/'.$pdf_name,$pdf->output());
+                        $invoice_url = ('storage/app/invoices/'.$pdf_name);
+                        Transactions::where('subscription_id', '=', $originalTransactionId)->update(['invoice_url' => $invoice_url]);
+                        $email = $paymentDetails->user_email;
+                        $data1 = ['salutation' => __('msg.Dear'),'name'=> $paymentDetails->user_name, 'msg'=> __('msg.This email serves to confirm the successful setup of your subscription with Us.'), 'msg1'=> __('msg.We are delighted to welcome you as a valued subscriber and are confident that you will enjoy the benefits of Premium Services.'),'msg2' => __('msg.Thank you for your trust!')];
+                
+                        Mail::send('invoice_email', $data1, function ($message) use ($pdf_name, $email, $pdf) {
+                            $message->to($email)->subject('Invoice');
+                            $message->attachData($pdf->output(), $pdf_name, ['as' => $pdf_name, 'mime' => 'application/pdf']);
+                        });
+
+                    } else {
+                        $update_sub_data = ['active_subscription_id' => '1'];
+
+                        if ($paymentDetails->user_type == 'singleton') {
+                            $update = Singleton::where([['id','=',$paymentDetails->user_id],['status','=','Unblocked']])->update($update_sub_data);
+                        } else {
+                            $update = ParentsModel::where([['id','=',$paymentDetails->user_id],['status','=','Unblocked']])->update($update_sub_data);
+                        }
+
+                        if ($paymentDetails->other_user_id) {
+                            $other_user_ids  = explode(',',$paymentDetails->other_user_id);
+                            if ($paymentDetails->other_user_type == 'singleton') {
+                                foreach ($other_user_ids as $id) {
+                                    Singleton::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                                }
+                            } else {
+                                foreach ($other_user_ids as $id) {
+                                    ParentsModel::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                                }
+                            }
+                        }
+
+                        if($update)
+                        {
+                            $inactive = ['status' => 'inactive'];
+                            Transactions::where('id', '=',  $paymentDetails->id)->update($inactive);
+                        }
+                    }
+                }
+                break;
+            default:
+                // Handle unknown notification type
+                break;
+        }
+
         // Store the decoded payload in a file
-        Storage::disk('local')->put('decoded_payload.txt', $payload);
-        return $payload;
+        Storage::disk('local')->put('decoded_payload_'.random_int(0,9).'.txt', $payload);
+
+        
+        return 'true';
     }
 }
