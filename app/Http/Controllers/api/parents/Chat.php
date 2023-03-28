@@ -266,11 +266,21 @@ class Chat extends Controller
                 }
             }
 
+            $new_list =  $list;
+            foreach ($new_list as $list_1) {
+                if ($list_1->user_id != $parent_id) {
+                    $new_list->user_id = $list_1->messaged_user_id;
+                    $new_list->singleton_id = $list_1->messaged_user_singleton_id;
+                    $new_list->messaged_user_id = $list_1->user_id;
+                    $new_list->messaged_user_singleton_id = $list_1->singleton_id;
+                }
+            }
+
             if(!$list->isEmpty()){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.messaged-users.success'),
-                    'data'      => $list
+                    'data'      => $new_list
                 ],200);
             }else{
                 return response()->json([
