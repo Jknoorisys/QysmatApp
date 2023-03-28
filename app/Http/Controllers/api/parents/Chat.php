@@ -264,8 +264,17 @@ class Chat extends Controller
                 }else{
                     $list[$key]->chat_status = 'enabled';
                 }
+
+                if ($list->user_id != $parent_id) {
+                    return 'yes';
+                } else {
+                    return 'yes';
+                }
             }
 
+            $new_list = $list;
+            
+            
             return $list;
             if(!$list->isEmpty()){
                 return response()->json([
