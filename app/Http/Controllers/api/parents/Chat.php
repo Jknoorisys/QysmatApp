@@ -265,6 +265,7 @@ class Chat extends Controller
                     $list[$key]->chat_status = 'enabled';
                 }
 
+                return $value;
                 if ($value->user_id != $parent_id) {
                     $new_list =  $value;
                     $new_list->user_id = $value->messaged_user_id;
