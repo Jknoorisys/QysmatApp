@@ -625,6 +625,7 @@ return [
         'access-request' => [
             'success' => 'Access Request Sent Successfully!',
             'failure' => 'Unable to Send Access Request, Please Try Again...',
+            'invalid' => 'Child Already Linked!',
         ],
 
         'verify-access-request' => [
