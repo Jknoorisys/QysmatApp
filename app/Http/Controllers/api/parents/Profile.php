@@ -255,6 +255,15 @@ class Profile extends Controller
         }
 
         try {
+            $user = Singleton::where([['id','=',$request->singleton_id],['status','!=','Deleted']])->first();
+
+            if (!empty($user) && !empty($user->parent_id)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.access-request.invalid'),
+                ],400);
+            }
+
             $access_code = random_int(100000, 999999);
             $accessRequest = ParentChild::updateOrCreate(
                 ['parent_id' => $request->login_id, 'singleton_id' => $request->singleton_id],
@@ -269,7 +278,6 @@ class Profile extends Controller
 
             if($accessRequest){
 
-                $user = Singleton::where([['id','=',$request->singleton_id],['status','!=','Deleted']])->first();
                 $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
                 $user->notify(new RequestAccessNotification($parent, $user->user_type, 0, $access_code));
 
