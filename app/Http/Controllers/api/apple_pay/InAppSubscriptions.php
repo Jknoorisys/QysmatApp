@@ -471,7 +471,7 @@ class InAppSubscriptions extends Controller
         $header = base64_decode($parts[0]);
         $payload = base64_decode($parts[1]);
         $signature = $parts[2];
-
+        
         $payloadData = json_decode($payload, true);
 
         // Retrieve the notification type from the payload
@@ -487,16 +487,157 @@ class InAppSubscriptions extends Controller
         // Handle the notification based on its type
         switch ($notificationType) {
             case 'DID_FAIL_TO_RENEW':
-                return $notificationType;
+                $transactionId = $signedTransactionInfo['transactionId'];
+                $originalTransactionId = $signedTransactionInfo['originalTransactionId'];
+
+                $paymentDetails = Transactions::where([['subscription_id', '=', $originalTransactionId],['subs_status', '=', 'active']])->first();
+
+                if (!empty($paymentDetails)) {
+                    $update_sub_data = ['active_subscription_id' => '1'];
+
+                    if ($paymentDetails->user_type == 'singleton') {
+                        $update = Singleton::where([['id','=',$paymentDetails->user_id],['status','=','Unblocked']])->update($update_sub_data);
+                    } else {
+                        $update = ParentsModel::where([['id','=',$paymentDetails->user_id],['status','=','Unblocked']])->update($update_sub_data);
+                    }
+
+                    if ($paymentDetails->other_user_id) {
+                        $other_user_ids  = explode(',',$paymentDetails->other_user_id);
+                        if ($paymentDetails->other_user_type == 'singleton') {
+                            foreach ($other_user_ids as $id) {
+                                Singleton::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                            }
+                        } else {
+                            foreach ($other_user_ids as $id) {
+                                ParentsModel::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                            }
+                        }
+                    }
+
+                    if($update)
+                    {
+                        $inactive = ['status' => 'inactive'];
+                        Transactions::where('id', '=',  $paymentDetails->id)->update($inactive);
+                    }
+                }
                 break;
             case 'DID_RENEW':
-                return $notificationType;
+                $transactionId = $signedTransactionInfo['transactionId'];
+                $originalTransactionId = $signedTransactionInfo['originalTransactionId'];
+                $status = $signedTransactionInfo['inAppOwnershipType'];
+
+                $paymentDetails = Transactions::where([['subscription_id', '=', $originalTransactionId],['subs_status', '=', 'active']])->first();
+                $productId = $signedTransactionInfo['productId'];
+                $parent_premium = ($productId == 'com.app.qysmat.premium.parent.joint_1.subscription' || $productId == 'com.app.qysmat.premium.parent.joint_2.subscription' || $productId == 'com.app.qysmat.premium.parent.joint_3.subscription' || $productId == 'com.app.qysmat.premium.parent.joint_4.subscription') ? 1 : 0;
+                $child_premium = $productId == 'com.app.qysmat.premium.child.joint.subscription' ? 1 : 0;
+
+                if (!empty($paymentDetails)) {
+
+                    $booking = Booking::where('subscription_id', '=', $originalTransactionId)->first();
+                    $booking_data = [
+                        'payment_method' => $paymentDetails->payment_method,
+                        'user_id' => $paymentDetails->user_id,
+                        'user_type' => $paymentDetails->user_type,
+                        'user_name' => $paymentDetails->user_name,
+                        'user_email' => $paymentDetails->user_email,
+                        'other_user_id' => $paymentDetails->other_user_id ? $paymentDetails->other_user_id : '',
+                        'other_user_type' => $paymentDetails->other_user_type ? $paymentDetails->other_user_type : '',
+                        'active_subscription_id' => $paymentDetails->active_subscription_id,
+                        'currency' => $paymentDetails->currency,
+                        'amount_paid' => $paymentDetails->amount_paid,
+                        'subscription_id' => $originalTransactionId,
+                        'payment_status' => 'paid',
+                        'session_status' => 'complete',
+                        'created_at' => Carbon::now()
+                    ];
+
+                    if (empty($booking)) {
+                        $booking_id = Booking::insertGetId($booking_data);
+                    }else{
+                        $booking_id = $booking->id;
+                    }
+
+                    if ($status == 'PURCHASED' || $status == 'purchased') {
+                        $trxn_data = [
+                            'booking_id' => $booking_id,
+                            'subscription_id' => $originalTransactionId,
+                            'plan_period_start' => $createDate,
+                            'plan_period_end' => $expiresDate,
+                            'updated_at' => Carbon::now()
+                        ];
+    
+                        Transactions::where('subscription_id', '=', $originalTransactionId)->update($trxn_data);
+
+                        $premium = Subscriptions::where('id', '=', '2')->first();
+                        $joint = Subscriptions::where('id', '=', '3')->first();
+
+                        // send invoice
+                        $data = [
+                            'name' => $paymentDetails->user_name ? $paymentDetails->user_name : '',
+                            'email' => $paymentDetails->user_email ? $paymentDetails->user_email : '',
+                            'phone' =>  '',
+                            'invoice_number' => (string)rand(10000, 50000),
+                            'amount_paid' => $paymentDetails->amount_paid,
+                            'currency' => $paymentDetails->currency ? $paymentDetails->currency : '',
+                            'period_start' => $signedTransactionInfo['purchaseDate'] / 1000,
+                            'period_end' => $signedTransactionInfo['expiresDate'] / 1000,
+                            'subtotal' => $paymentDetails->amount_paid,
+                            'total' => $paymentDetails->amount_paid,
+                            'item1_name' => $child_premium == 0 ? $premium->subscription_type : $joint->subscription_type,
+                            'item1_unit_price' => $paymentDetails->item1_unit_amount ? $paymentDetails->item1_unit_amount * 100 : '',
+                            'item1_quantity' => $paymentDetails->item1_quantity,
+                            'item2_name' => $parent_premium == 1 ? $joint->subscription_type : '',
+                            'item2_unit_price' => $paymentDetails->item2_unit_amount ? $paymentDetails->item2_unit_amount * 100 : '',
+                            'item2_quantity' => $paymentDetails->item2_quantity,
+                            'item2' => $parent_premium == 1 ? 2 : 1,
+                        ];
+
+                        $pdf = Pdf::loadView('invoice', $data);
+                        $pdf_name = 'invoice_'.time().'.pdf';
+                        $path = Storage::put('invoices/'.$pdf_name,$pdf->output());
+                        $invoice_url = ('storage/app/invoices/'.$pdf_name);
+                        Transactions::where('subscription_id', '=', $originalTransactionId)->update(['invoice_url' => $invoice_url]);
+                        $email = $paymentDetails->user_email;
+                        $data1 = ['salutation' => __('msg.Dear'),'name'=> $paymentDetails->user_name, 'msg'=> __('msg.This email serves to confirm the successful setup of your subscription with Us.'), 'msg1'=> __('msg.We are delighted to welcome you as a valued subscriber and are confident that you will enjoy the benefits of Premium Services.'),'msg2' => __('msg.Thank you for your trust!')];
+                
+                        Mail::send('invoice_email', $data1, function ($message) use ($pdf_name, $email, $pdf) {
+                            $message->to($email)->subject('Invoice');
+                            $message->attachData($pdf->output(), $pdf_name, ['as' => $pdf_name, 'mime' => 'application/pdf']);
+                        });
+
+                    } else {
+                        $update_sub_data = ['active_subscription_id' => '1'];
+
+                        if ($paymentDetails->user_type == 'singleton') {
+                            $update = Singleton::where([['id','=',$paymentDetails->user_id],['status','=','Unblocked']])->update($update_sub_data);
+                        } else {
+                            $update = ParentsModel::where([['id','=',$paymentDetails->user_id],['status','=','Unblocked']])->update($update_sub_data);
+                        }
+
+                        if ($paymentDetails->other_user_id) {
+                            $other_user_ids  = explode(',',$paymentDetails->other_user_id);
+                            if ($paymentDetails->other_user_type == 'singleton') {
+                                foreach ($other_user_ids as $id) {
+                                    Singleton::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                                }
+                            } else {
+                                foreach ($other_user_ids as $id) {
+                                    ParentsModel::where([['id','=',$id],['status','=','Unblocked']])->update($update_sub_data);
+                                }
+                            }
+                        }
+
+                        if($update)
+                        {
+                            $inactive = ['status' => 'inactive'];
+                            Transactions::where('id', '=',  $paymentDetails->id)->update($inactive);
+                        }
+                    }
+                }
                 break;
             case 'INITIAL_BUY':
-                return $notificationType;
                 break;
             case 'EXPIRED':
-                return $notificationType;
                 break;
             case 'SUBSCRIBED':
                 $transactionId = $signedTransactionInfo['transactionId'];
