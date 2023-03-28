@@ -234,20 +234,6 @@ class Chat extends Controller
 
         try {
             $parent_id = $request->login_id;
-            // $list = ChatHistory::leftjoin('parents', function($join) use ($parent_id) {
-            //                         $join->on('parents.id','=','chat_histories.messaged_user_id')
-            //                             ->where('chat_histories.messaged_user_id','!=',$parent_id);
-            //                         $join->orOn('parents.id','=','chat_histories.user_id')
-            //                             ->where('chat_histories.user_id','!=',$parent_id);
-            //                     })
-            //                     // ->join('parents', 'chat_histories.messaged_user_id', '=', 'parents.id')
-            //                     ->where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.singleton_id', '=', $request->singleton_id]])
-            //                     ->orWhere([['chat_histories.messaged_user_id', '=', $request->login_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.messaged_user_singleton_id', '=', $request->singleton_id]])
-            //                     ->select('chat_histories.messaged_user_id','parents.*','chat_histories.user_id','chat_histories.messaged_user_singleton_id')
-            //                     ->orderBy('chat_histories.id', 'desc')
-            //                     ->distinct()
-            //                     ->get();
-
 
             $list = MessagedUsers::leftjoin('parents', function($join) use ($parent_id) {
                                         $join->on('parents.id','=','messaged_users.messaged_user_id')
@@ -278,6 +264,18 @@ class Chat extends Controller
                 }else{
                     $list[$key]->chat_status = 'enabled';
                 }
+
+                if ($value->user_id != $parent_id) {
+                    $user_id = $value->messaged_user_id;
+                    $singleton_id = $value->messaged_user_singleton_id;
+                    $messaged_user_id = $value->user_id;
+                    $messaged_user_singleton_id = $value->singleton_id;
+                    $value->user_id = $user_id;
+                    $value->singleton_id = $singleton_id;
+                    $value->messaged_user_id = $messaged_user_id;
+                    $value->messaged_user_singleton_id = $messaged_user_singleton_id;
+                }
+            
             }
 
             if(!$list->isEmpty()){
