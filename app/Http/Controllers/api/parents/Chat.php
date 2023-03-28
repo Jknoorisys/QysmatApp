@@ -264,24 +264,13 @@ class Chat extends Controller
                 }else{
                     $list[$key]->chat_status = 'enabled';
                 }
-
-                return $value;
-                if ($value->user_id != $parent_id) {
-                    $new_list =  $value;
-                    $new_list->user_id = $value->messaged_user_id;
-                    $new_list->singleton_id = $value->messaged_user_singleton_id;
-                    $new_list->messaged_user_id = $value->user_id;
-                    $new_list->messaged_user_singleton_id = $value->singleton_id;
-                }else{
-                    $new_list = $value;
-                }
             }
 
             if(!$list->isEmpty()){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.messaged-users.success'),
-                    'data'      => $new_list
+                    'data'      => $list
                 ],200);
             }else{
                 return response()->json([
