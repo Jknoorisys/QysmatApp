@@ -234,30 +234,20 @@ class Chat extends Controller
 
         try {
             $parent_id = $request->login_id;
-            // $list = ChatHistory::leftjoin('parents', function($join) use ($parent_id) {
-            //                         $join->on('parents.id','=','chat_histories.messaged_user_id')
-            //                             ->where('chat_histories.messaged_user_id','!=',$parent_id);
-            //                         $join->orOn('parents.id','=','chat_histories.user_id')
-            //                             ->where('chat_histories.user_id','!=',$parent_id);
-            //                     })
-            //                     // ->join('parents', 'chat_histories.messaged_user_id', '=', 'parents.id')
-            //                     ->where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.singleton_id', '=', $request->singleton_id]])
-            //                     ->orWhere([['chat_histories.messaged_user_id', '=', $request->login_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.messaged_user_singleton_id', '=', $request->singleton_id]])
-            //                     ->select('chat_histories.messaged_user_id','parents.*','chat_histories.user_id','chat_histories.messaged_user_singleton_id')
-            //                     ->orderBy('chat_histories.id', 'desc')
-            //                     ->distinct()
-            //                     ->get();
-
 
             $list = MessagedUsers::leftjoin('parents', function($join) use ($parent_id) {
                                         $join->on('parents.id','=','messaged_users.messaged_user_id')
-                                            ->where('messaged_users.messaged_user_id','!=',$parent_id);
+                                            ->where('messaged_users.messaged_user_id','!=',$parent_id)
+                                            ->select('messaged_users.user_id','messaged_users.singleton_id','messaged_users.messaged_user_id','messaged_users.messaged_user_singleton_id','parents.*')
+                                            ;
                                         $join->orOn('parents.id','=','messaged_users.user_id')
-                                            ->where('messaged_users.user_id','!=',$parent_id);
+                                            ->where('messaged_users.user_id','!=',$parent_id)
+                                            ->select('messaged_users.user_id as messaged_user_id','messaged_users.singleton_id as messaged_user_singleton_id','messaged_users.messaged_user_id as user_id','messaged_users.messaged_user_singleton_id as singleton_id','parents.*')
+                                            ;
                                     })
                                     ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type], ['messaged_users.singleton_id', '=', $request->singleton_id]])
                                     ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type], ['messaged_users.messaged_user_singleton_id', '=', $request->singleton_id]])
-                                    ->select('messaged_users.user_id','messaged_users.singleton_id','messaged_users.messaged_user_id','messaged_users.messaged_user_singleton_id','parents.*')
+                                    // ->select('messaged_users.user_id','messaged_users.singleton_id','messaged_users.messaged_user_id','messaged_users.messaged_user_singleton_id','parents.*')
                                     ->orderBy('messaged_users.id', 'desc')
                                     ->get();
 

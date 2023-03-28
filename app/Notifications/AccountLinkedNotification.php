@@ -10,6 +10,9 @@ use Illuminate\Notifications\Notification;
 class AccountLinkedNotification extends Notification
 {
     use Queueable;
+    private $user;
+    private $user_type;
+    private $singleton_id;
 
     /**
      * Create a new notification instance.
@@ -44,9 +47,9 @@ class AccountLinkedNotification extends Notification
     {
         return (new MailMessage)
                     ->greeting(__('msg.Hi').'!')
-                    ->line(__('msg.Your Profile is Linked with').' '.$this->user->name)
-                    ->line(__('msg.To See His/Her Profile, Click on the Link Below'))
-                    ->action(__('msg.Click Here'), url('/'));
+                    ->line(__('msg.Your Profile is Linked with').' '.$this->user->name);
+                    // ->line(__('msg.To See His/Her Profile, Click on the Link Below'))
+                    // ->action(__('msg.Click Here'), url('/'));
     }
 
     /**

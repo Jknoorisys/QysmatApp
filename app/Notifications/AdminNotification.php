@@ -10,7 +10,11 @@ use Illuminate\Notifications\Notification;
 class AdminNotification extends Notification
 {
     use Queueable;
-
+    private $user;
+    private $user_type;
+    private $singleton_id;
+    private $details;
+    
     /**
      * Create a new notification instance.
      *

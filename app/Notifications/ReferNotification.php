@@ -10,6 +10,9 @@ use Illuminate\Notifications\Notification;
 class ReferNotification extends Notification
 {
     use Queueable;
+    private $user;
+    private $user_type;
+    private $singleton_id;
 
     /**
      * Create a new notification instance.
@@ -44,9 +47,9 @@ class ReferNotification extends Notification
     {
         return (new MailMessage)
                     ->greeting(__('msg.Hi').'!')
-                    ->line($this->user->name.' '.__('msg.has Referred a Match.'))
-                    ->line(__('msg.To See Referred Match, Click on the Link Below'))
-                    ->action(__('msg.Click Here'), url('/'));
+                    ->line($this->user->name.' '.__('msg.has Referred a Match.'));
+                    // ->line(__('msg.To See Referred Match, Click on the Link Below'))
+                    // ->action(__('msg.Click Here'), url('/'));
     }
 
     /**
