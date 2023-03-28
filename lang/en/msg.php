@@ -783,7 +783,7 @@ return [
         'invitation' => [
             'success' => 'Invitation Sent...',
             'failure' => "Unable to Send Invitation, Please Try Again...",
-            'invalid' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+            'invalid' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
             'blocked' => 'Your Parent/Guardian has Blocked this User!',
             'reported' => 'Your Parent/Guardian has Reported this User!',
             'un-matched' => 'Your Parent/Guardian has Un-Matched this User!',
@@ -874,7 +874,7 @@ return [
         'access-details' => [
             'success' => 'Parent Access Request Details Fetched Successfully!',
             'failure' => 'No Access Request Details Found!',
-            'invalid' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+            'invalid' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         ],
 
         'add-category' => [
@@ -896,7 +896,7 @@ return [
             'success' => 'Suggestions Based on Singleton Categories Fetched Successfully!',
             'failure' => 'No Suggestions Found!',
             'invalid' => 'Category Details Not Found!',
-            'not-linked' => 'Your Profile is No Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+            'not-linked' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         ],
 
         'swips' => [

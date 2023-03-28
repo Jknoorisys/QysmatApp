@@ -89,6 +89,8 @@ class ResetProfileSearch extends Controller
                 ],400);
             }
 
+            $premium->notifications()->where('user_type', '=', $request->user_type)->delete();
+
             $match = MyMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
             $unmatch = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
             $refer = ReferredMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();

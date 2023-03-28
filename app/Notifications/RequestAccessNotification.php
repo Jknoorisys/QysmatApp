@@ -10,6 +10,10 @@ use Illuminate\Notifications\Notification;
 class RequestAccessNotification extends Notification
 {
     use Queueable;
+    private $user;
+    private $user_type;
+    private $singleton_id;
+    private $access_code;
 
     /**
      * Create a new notification instance.
@@ -45,9 +49,9 @@ class RequestAccessNotification extends Notification
     {
         return (new MailMessage)
                     ->greeting(__('msg.Hi').'!')
-                    ->line($this->user->name.' '.__('msg.has Sent you an Access Request.'))
-                    ->line(__('msg.Your Access Code is'))
-                    ->line(__($this->access_code.'.'), url('/'));
+                    ->line($this->user->name.' '.__('msg.has Sent you an Access Request.'));
+                    // ->line(__('msg.Your Access Code is'))
+                    // ->line(__($this->access_code.'.'), url('/'));
     }
 
     /**

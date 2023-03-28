@@ -10,6 +10,8 @@ use Illuminate\Notifications\Notification;
 class AcceptChatRequest extends Notification
 {
     use Queueable;
+    private $user;
+    private $user_type;
 
     /**
      * Create a new notification instance.
@@ -43,9 +45,9 @@ class AcceptChatRequest extends Notification
     {
         return (new MailMessage)
                     ->greeting(__('msg.Hi').'!')
-                    ->line( __('msg.Your Chat Request is Accepted By').' '.$this->user->name)
-                    ->line( __('msg.To See His/Her Profile, Click on the Link Below'))
-                    ->action(__('msg.Click Here'), url('/'));
+                    ->line( __('msg.Your Chat Request is Accepted By').' '.$this->user->name);
+                    // ->line( __('msg.To See His/Her Profile, Click on the Link Below'))
+                    // ->action(__('msg.Click Here'), url('/'));
     }
 
     /**
