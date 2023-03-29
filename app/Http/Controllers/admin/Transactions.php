@@ -37,9 +37,10 @@ class Transactions extends Controller
         if(!empty($data['from_date']) && !empty($data['to_date'])){
             $data['records']              = ModelsTransactions::whereDate('created_at', '>=', $data['from_date'])
                                                 ->whereDate('created_at', '<=', $data['to_date'])
+                                                ->orderBy('created_at')
                                                 ->paginate(10);
         }else{
-            $data['records']               = ModelsTransactions::paginate(10);
+            $data['records']               = ModelsTransactions::orderBy('created_at')->paginate(10);
         }
 
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
