@@ -29,6 +29,16 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
     {
         if ($user_type == 'singleton') {
             $user = Singleton::find($login_id);
+
+            if (empty($user)) {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
             if (empty($user) || $user->status == 'Deleted') {
                 $response = [
                     'status'    => 'failed',
@@ -68,6 +78,15 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
 
         } elseif ($user_type == 'parent') {
             $user = ParentsModel::find($login_id);
+            if (empty($user)) {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
             if (empty($user) || $user->status == 'Deleted') {
                 $response = [
                     'status'    => 'failed',
@@ -111,6 +130,16 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
     {
         if ($user_type == 'singleton') {
             $user = Singleton::find($login_id);
+
+            if (empty($user)) {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
             if (empty($user) || $user->status == 'Deleted') {
                 $response = [
                     'status'    => 'failed',
@@ -131,6 +160,15 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
 
         } elseif ($user_type == 'parent') {
             $user = ParentsModel::find($login_id);
+            if (empty($user)) {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
             if (empty($user) || $user->status == 'Deleted') {
                 $response = [
                     'status'    => 'failed',
@@ -155,6 +193,14 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
     {
         if ($user_type == 'singleton') {
             $user = Singleton::find($login_id);
+            if (empty($user)) {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
 
             if (empty($user) || $user->status == 'Deleted') {
                 $response = [
@@ -194,6 +240,15 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
             }
         } elseif ($user_type == 'parent') {
             $user = ParentsModel::find($login_id);
+            if (empty($user)) {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+            
             if (empty($user) || $user->status == 'Deleted') {
                 $response = [
                     'status'    => 'failed',
