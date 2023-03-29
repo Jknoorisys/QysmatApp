@@ -597,14 +597,14 @@ class Auth extends Controller
 
         try {
             $user = ParentsModel::where([['email','=',$request->email],['is_social','=',$request->is_social],['social_type','=',$request->social_type]])->first();
-            if ($user->status == 'Blocked') {
+            if ($user->status == 'Deleted') {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.helper.blocked'),
                 ],400);
             }
-
-            if ($user->status == 'Deleted') {
+            
+            if ($user->status == 'Blocked') {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.helper.blocked'),
@@ -700,14 +700,14 @@ class Auth extends Controller
 
         try {
             $user = ParentsModel::where('email','=',$request->email)->first();
-            if ($user->status == 'Blocked') {
+            if ($user->status == 'Deleted') {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.helper.blocked'),
                 ],400);
             }
-
-            if ($user->status == 'Deleted') {
+            
+            if ($user->status == 'Blocked') {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.helper.blocked'),
