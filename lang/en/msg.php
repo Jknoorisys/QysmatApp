@@ -915,7 +915,8 @@ return [
     ],
 
     'helper' => [
-        'not-found' => 'User Not Found!',
+        'not-found' => 'User Not Found, Create an account first...',
+        'blocked' => 'User is Blocked by Admin!',
         'not-verified' => 'Profile not Verified By Admin, Please Try After Some Time...',
         'singleton-not-linked' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         'parent-not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
