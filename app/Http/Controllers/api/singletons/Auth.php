@@ -453,7 +453,7 @@ class Auth extends Controller
             if (empty($user) || $user->status == 'Deleted') {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.helper.blocked'),
+                    'message'   => __('msg.helper.not-found'),
                 ],400);
             }
 
@@ -557,7 +557,7 @@ class Auth extends Controller
         if (empty($user) || $user->status == 'Deleted') {
             return response()->json([
                 'status'    => 'failed',
-                'message'   => __('msg.helper.blocked'),
+                'message'   => __('msg.helper.not-found'),
             ],400);
         }
         
