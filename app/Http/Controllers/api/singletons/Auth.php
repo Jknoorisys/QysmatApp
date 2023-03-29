@@ -448,7 +448,21 @@ class Auth extends Controller
         }
 
         try {
-            $user = Singleton::where([['email','=',$request->email],['social_type','=',$request->social_type],['is_social','=',$request->is_social],['status','=','Unblocked']])->first();
+            $user = Singleton::where([['email','=',$request->email],['social_type','=',$request->social_type],['is_social','=',$request->is_social]])->first();
+            if ($user->status == 'Blocked') {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.blocked'),
+                ],400);
+            }
+
+            if ($user->status == 'Deleted') {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.blocked'),
+                ],400);
+            }
+
             if(!empty($user)){
                 if($request->social_id == $user->social_id){
                     if ($user->mobile == '') {
@@ -537,7 +551,21 @@ class Auth extends Controller
             ],400);
         }
 
-        $user = Singleton::where([['email','=',$request->email],['status','=','Unblocked']])->first();
+        $user = Singleton::where('email','=',$request->email)->first();
+        if ($user->status == 'Blocked') {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.helper.blocked'),
+            ],400);
+        }
+
+        if ($user->status == 'Deleted') {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.helper.blocked'),
+            ],400);
+        }
+
         if(!empty($user)){
             if(Hash::check($request->password, $user->password)){
                 if ($user->mobile == '') {
