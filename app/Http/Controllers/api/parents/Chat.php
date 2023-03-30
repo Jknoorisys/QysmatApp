@@ -420,6 +420,14 @@ class Chat extends Controller
                 ],400);
             }
 
+            $refer = ReferredMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id],['referred_match_id', '=', $request->messaged_user_singleton_id]])->first();
+            if (!empty($refer)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.swips.invite'),
+                ],400);
+            }
+
             $linked = ParentChild::where([['parent_id','=',$request->login_id],['singleton_id','=',$request->singleton_id],['status','=','Linked']])->first();
             if (!empty($linked)) {
                 $block = BlockList ::where([['user_id', '=', $request->singleton_id], ['user_type', '=', 'singleton'], ['blocked_user_id', '=', $request->messaged_user_singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
