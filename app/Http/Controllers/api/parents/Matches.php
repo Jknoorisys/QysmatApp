@@ -556,6 +556,32 @@ class Matches extends Controller
                 ],400);
             }
 
+            // $blocked_singleton = BlockList::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['blocked_user_id', '=', $request->re_matched_id], ['blocked_user_type', '=', 'singleton']])
+            //                             ->first();
+
+            // $blocked_parent = BlockList::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['blocked_user_id', '=', $userExists->parent_id], ['blocked_user_type', '=', 'parent']])
+            //                             ->first();
+
+            // if(!empty($blocked_singleton) || !empty($blocked_parent)){
+            //     return response()->json([
+            //         'status'    => 'failed',
+            //         'message'   => __('msg.parents.re-match.failure'),
+            //     ],400);
+            // }
+
+            // $reported_singleton = ReportedUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['reported_user_id', '=', $request->re_matched_id], ['reported_user_type', '=', 'singleton']])
+            //                             ->first();
+
+            // $reported_parent = ReportedUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['reported_user_id', '=', $userExists->parent_id], ['reported_user_type', '=', 'parent']])
+            //                             ->first();
+
+            // if(!empty($reported_singleton) || !empty($reported_parent)){
+            //     return response()->json([
+            //         'status'    => 'failed',
+            //         'message'   => __('msg.parents.re-match.failure'),
+            //     ],400);
+            // }
+
             $unmatched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id], ['is_rematched', '=', 'no'],['singleton_id', '=', $request->singleton_id], ['match_type', '=', 'un-matched']])
                                         ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->re_matched_id], ['is_rematched', '=', 'no'], ['match_type', '=', 'un-matched']])
                                         ->first();
