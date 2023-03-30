@@ -78,13 +78,6 @@ class BlockOrReportUser extends Controller
             $user->user_type                 = $request->user_type ? $request->user_type : '';
             $user_details                    = $user->save();
 
-            // DB::table('block_lists')->updateOrInsert(
-            //     ['user_id' => $request->login_id],
-            //     [
-
-            //     ]
-            // );
-
             if($user_details){
                 return response()->json([
                     'status'    => 'success',
