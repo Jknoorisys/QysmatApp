@@ -34,15 +34,19 @@ class Transactions extends Controller
         $data['previous_title']           = __("msg.Dashboard");
         $data['url']                      = route('dashboard');
         $data['title']                    = __("msg.Manage Transactions");
+        $db = ModelsTransactions::orderBy('created_at','DESC');
         if(!empty($data['from_date']) && !empty($data['to_date'])){
-            $data['records']              = ModelsTransactions::whereDate('created_at', '>=', $data['from_date'])
-                                                ->whereDate('created_at', '<=', $data['to_date'])
-                                                ->orderBy('created_at','DESC')
-                                                ->paginate(10);
-        }else{
-            $data['records']               = ModelsTransactions::orderBy('created_at','DESC')->paginate(10);
+            // $data['records']              = ModelsTransactions::whereDate('created_at', '>=', $data['from_date'])
+            //                                     ->whereDate('created_at', '<=', $data['to_date'])
+            //                                     ->orderBy('created_at','DESC')
+                                                // ->paginate(10);
+                                                $db->whereDate('created_at', '>=', $data['from_date'])
+                                                    ->whereDate('created_at', '<=', $data['to_date']);
         }
-
+        // else{
+        //     $data['records']               = ModelsTransactions::orderBy('created_at','DESC')->paginate(10);
+        // }
+        $data['records']               = $db->paginate(10);
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('transactions.transactions_list', $data);
         return view('layouts.main',$data);
