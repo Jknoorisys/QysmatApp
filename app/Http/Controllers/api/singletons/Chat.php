@@ -497,14 +497,6 @@ class Chat extends Controller
                 ],400);
             }
 
-            $refer = ReferredMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['referred_match_id', '=', $request->messaged_user_id]])->first();
-            if (!empty($refer)) {
-                return response()->json([
-                    'status'    => 'failed',
-                    'message'   => __('msg.parents.swips.inite'),
-                ],400);
-            }
-
             $linked = ParentChild::where([['singleton_id','=',$request->login_id],['status','=','Linked']])->first();
 
             if (!empty($linked)) {
@@ -531,6 +523,15 @@ class Chat extends Controller
                         'message'   => __('msg.singletons.invitation.un-matched'),
                     ],400);
                 }
+
+                $refer = ReferredMatches ::where([['user_id', '=', $linked->parent_id], ['user_type', '=', 'parent'], ['singleton_id', '=', $request->login_id],['referred_match_id', '=', $request->messaged_user_id]])->first();
+                if (!empty($refer)) {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.parents.swips.inite'),
+                    ],400);
+                }
+
 
                 $invite = new ReferredMatches();
                 $invite->user_id = $linked->parent_id ? $linked->parent_id : '';
