@@ -1,5 +1,5 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-
+<style> .picker__weekday{ color: white;}</style>
 <div class="col-12">
     <div class="card">
        <div class="card-body">
@@ -8,14 +8,30 @@
                 <div class="row">
                     <div class="col-4">
                         <label for="from_date" class="form-label">{{__('msg.From Date')}}</label>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <input type="date" name="from_date" id="from_date" class="form-control" value="{{$from_date}}">
+                        </div> --}}
+                        <div class="input-group text-black">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <span class="ti-calendar"></span>
+                                </span>
+                            </div>
+                            <input type='text' name="from_date" id="from_date" value="{{$from_date}}" class="form-control pickadate" placeholder="{{__('msg.From Date')}}" />
                         </div>
                     </div>
                     <div class="col-4">
                         <label for="to_date" class="form-label">{{__('msg.To Date')}}</label>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <input type="date" name="to_date" id="to_date" class="form-control" value="{{$to_date}}">
+                        </div> --}}
+                        <div class="input-group text-black">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <span class="ti-calendar"></span>
+                                </span>
+                            </div>
+                            <input type='text' name="to_date" id="to_date" value="{{$to_date}}" class="form-control pickadate" placeholder="{{__('msg.To Date')}}" />
                         </div>
                     </div>
                     <div class="col-2">
