@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Stripe\Stripe;
 use Willywes\AgoraSDK\RtcTokenBuilder;
+use Illuminate\Support\Facades\File;
 
     function userExist($login_id, $user_type)
     {
@@ -953,7 +954,9 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
         $pdf = Pdf::loadView('invoice', $data);
         $pdf_name = 'invoice_'.time().'.pdf';
         // $path = Storage::put('invoices/'.$pdf_name,$pdf->output());
-        $path = Storage::disk('assets')->put('invoices/'.$pdf_name,$pdf->output());
+        $file_path = base_path('assets/invoices' . $pdf_name);
+
+        $path = File::put($file_path,$pdf->output());
         // $invoice_url = ('storage/app/invoices/'.$pdf_name);
         $invoice_url = ('assets/invoices/'.$pdf_name);
         Transactions::where('subscription_id', '=', $invoice->subscription)->update(['invoice_url' => $invoice_url]);
