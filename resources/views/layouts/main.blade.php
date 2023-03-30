@@ -22,6 +22,11 @@
     <link href="assets/libs/magnific-popup/dist/magnific-popup.css" rel="stylesheet">
     {{-- Font --}}
     <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+    {{-- Date Picker --}}
+    <link rel="stylesheet" type="text/css" href="assets/libs/pickadate/lib/themes/default.css">
+    <link rel="stylesheet" type="text/css" href="assets/libs/pickadate/lib/themes/default.date.css">
+    <link rel="stylesheet" type="text/css" href="assets/libs/pickadate/lib/themes/default.time.css">
+
     <!-- Custom CSS -->
     <link href="dist/css/style.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="assets/libs/ckeditor/samples/toolbarconfigurator/lib/codemirror/neo.css">
@@ -213,6 +218,15 @@
 
     <script src="assets/libs/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
     <script src="assets/libs/magnific-popup/meg.init.js"></script>
+
+    {{-- date picker --}}
+    <script src="assets/libs/pickadate/lib/compressed/picker.js"></script>
+    <script src="assets/libs/pickadate/lib/compressed/picker.date.js"></script>
+    <script src="assets/libs/pickadate/lib/compressed/picker.time.js"></script>
+    <script src="assets/libs/pickadate/lib/compressed/legacy.js"></script>
+    <script src="assets/libs/moment/moment.js"></script>
+    <script src="assets/libs/daterangepicker/daterangepicker.js"></script>
+    <script src="dist/js/pages/forms/datetimepicker/datetimepicker.init.js"></script>
 </body>
 
 </html>
