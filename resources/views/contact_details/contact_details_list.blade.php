@@ -42,6 +42,10 @@
     label:active:after {
     width: 100px;
     }
+
+    div.dataTables_wrapper div.dataTables_filter label{
+        display: none
+    }
 </style>
 
 <div class="col-12">
@@ -52,7 +56,7 @@
             {{-- <div class="col-2"><a href="{{route('addContact')}}" class="btn btn-qysmat mb-2">{{ __('Add Contact Details')}}</a></div> --}}
         </div>
             <div class="table-responsive">
-                <table class="table table-sm table-hover">
+                <table id="zero_config" class="table table-sm table-hover">
                     <thead>
                         <tr>
                             <th class="text-center">{{ __('msg.Contact Type')}}</th>

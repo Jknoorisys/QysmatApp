@@ -8,7 +8,7 @@
             <div class="col-2"><button type="button" data-toggle="modal" data-target="#verticalcenter" class="btn btn-qysmat mb-2">{{ __('msg.Send Notification')}}</button></div>
         </div> -->
             <div class="table-responsive">
-                <table class="table table-sm table-hover">
+                <table id="zero_config" class="table table-sm table-hover">
                     <thead>
                         <tr>
                             <th class="text-center">{{ __('msg.Name')}}</th>
@@ -36,7 +36,7 @@
                         @endif
                     </tbody>
                 </table>
-                {!!$records->withQueryString()->links('pagination::bootstrap-5')!!}
+                {{-- {!!$records->withQueryString()->links('pagination::bootstrap-5')!!} --}}
             </div>
        </div>
     </div>

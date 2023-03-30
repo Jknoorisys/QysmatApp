@@ -42,6 +42,10 @@
     label:active:after {
     width: 100px;
     }
+
+    div.dataTables_wrapper div.dataTables_filter label{
+        display: none
+    }
 </style>
 
 <div class="col-12">
@@ -52,7 +56,7 @@
             <div class="col-2"><a href="{{route('addQuote')}}" class="btn btn-qysmat mb-2">{{ __('msg.Add Islamic Quotes')}}</a></div>
         </div>
             <div class="table-responsive">
-                <table class="table table-sm table-hover">
+                <table id="zero_config" class="table table-sm table-hover">
                     <thead>
                         <tr>
                             <th class="text-center">{{ __('msg.Quotes')}}</th>
@@ -118,7 +122,7 @@
                         @endif
                     </tbody>
                 </table>
-                {!!$records->withQueryString()->links('pagination::bootstrap-5')!!}
+                {{-- {!!$records->withQueryString()->links('pagination::bootstrap-5')!!} --}}
             </div>
        </div>
     </div>
