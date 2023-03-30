@@ -598,6 +598,28 @@ class Matches extends Controller
                 ],400);
             }
 
+            $blocked = BlockList::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $request->re_matched_id], ['blocked_user_type', '=', 'singleton']])
+                                        ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['blocked_user_id', '=', $request->login_id], ['blocked_user_type', '=', 'singleton']])
+                                        ->first();
+
+            if(!empty($blocked)){
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.re-match.failure'),
+                ],400);
+            }
+
+            $reported = ReportedUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $request->re_matched_id], ['reported_user_type', '=', 'singleton']])
+                                        ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['reported_user_id', '=', $request->login_id], ['reported_user_type', '=', 'singleton']])
+                                        ->first();
+
+            if(!empty($reported)){
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.re-match.failure'),
+                ],400);
+            }
+
             $unmatched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id], ['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
                                         ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
                                         ->first();
