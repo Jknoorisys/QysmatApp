@@ -42,13 +42,17 @@
     label:active:after {
     width: 100px;
     }
+
+    div.dataTables_wrapper div.dataTables_filter label{
+        display: none
+    }
 </style>
 
 <div class="col-12">
     <div class="card">
        <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-sm table-hover">
+                <table id="#zero_config" class="table table-sm table-hover">
                     <form class="m-t-30" action="{{route('sigletons')}}" method="post">
                         @csrf
                         <div class="row">
