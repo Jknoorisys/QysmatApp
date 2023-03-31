@@ -964,8 +964,14 @@ return [
             'success' => 'Call Details Saved.',
             'failure' => 'Unable to Save Call Details, Please Try Again...'
         ],
+        'reject'  => [
+            'success' => 'Call Rejected',
+            'failure' => 'Unable to Reject Call, Please Try Again...'
+        ],
+
         'success' => 'Token Generated Successfully!',
         'failure' => 'Unable to Generate Toke, Please Try Again...',
-        'invalid' => 'Unable to Call'
+        'invalid' => 'Unable to Call',
+        'Call Rejected' => 'Call Rejected'
     ]
 ];

@@ -239,4 +239,5 @@ Route::prefix('apple')->group(function () {
 Route::prefix('agora')->group(function () {
     Route::post('generate-token' , [Call::class, 'index']);
     Route::post('save' , [Call::class, 'callHistory']);
+    Route::post('reject' , [Call::class, 'rejectCall']);
 });
