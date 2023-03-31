@@ -38,9 +38,9 @@ class Transactions extends Controller
             $data['records']              = ModelsTransactions::whereDate('created_at', '>=', $data['from_date'])
                                                 ->whereDate('created_at', '<=', $data['to_date'])
                                                 ->orderBy('created_at','DESC')
-                                                ->paginate(10);
+                                                ->get();
         }else{
-            $data['records']               = ModelsTransactions::orderBy('created_at','DESC')->paginate(10);
+            $data['records']               = ModelsTransactions::orderBy('created_at','DESC')->get();
         }
 
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');

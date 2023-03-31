@@ -31,7 +31,7 @@ class ContactDetails extends Controller
         $data['previous_title']      = __("msg.Dashboard");
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Contact Details");
-        $data['records']             =  ModelsContactDetails::where('status', '!=' ,'Deleted')->paginate(10);
+        $data['records']             =  ModelsContactDetails::where('status', '!=' ,'Deleted')->get();
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('contact_details.contact_details_list', $data);
         return view('layouts.main',$data);

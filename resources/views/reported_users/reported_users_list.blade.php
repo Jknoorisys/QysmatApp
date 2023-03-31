@@ -7,7 +7,7 @@
     visibility: hidden;
     }
 
-    label {
+    .qysmat-lable {
     cursor: pointer;
     text-indent: -9999px;
     width: 40px;
@@ -18,7 +18,7 @@
     position: relative;
     }
 
-    label:after {
+    .qysmat-lable:after {
     content: '';
     position: absolute;
     top: 2.2px;
@@ -39,9 +39,13 @@
     transform: translateX(-100%);
     }
 
-    label:active:after {
+    .qysmat-lable:active:after {
     width: 100px;
     }
+
+    /* div.dataTables_wrapper div.dataTables_filter label{
+        display: none
+    } */
 </style>
 
 <div class="col-12">

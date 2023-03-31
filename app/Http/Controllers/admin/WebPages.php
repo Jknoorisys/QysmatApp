@@ -31,7 +31,7 @@ class WebPages extends Controller
         $data['previous_title']      = __("msg.Dashboard");
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Web Pages");
-        $data['records']             =  ModelsWebPages::where('status', '!=' ,'Deleted')->paginate(10);
+        $data['records']             =  ModelsWebPages::where('status', '!=' ,'Deleted')->get();
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('web_pages.web_pages_list', $data);
         return view('layouts.main',$data);

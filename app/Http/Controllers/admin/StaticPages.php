@@ -31,7 +31,7 @@ class StaticPages extends Controller
         $data['previous_title']      = __("msg.Dashboard");
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Static Pages");
-        $data['records']             =  ModelsStaticPages::where('status', '!=' ,'Deleted')->paginate(10);
+        $data['records']             =  ModelsStaticPages::where('status', '!=' ,'Deleted')->get();
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('static_pages.static_pages_list', $data);
         return view('layouts.main',$data);

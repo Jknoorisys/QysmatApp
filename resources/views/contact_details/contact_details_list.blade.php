@@ -7,7 +7,7 @@
     visibility: hidden;
     }
 
-    label {
+    .qysmat-lable {
     cursor: pointer;
     text-indent: -9999px;
     width: 40px;
@@ -18,7 +18,7 @@
     position: relative;
     }
 
-    label:after {
+    .qysmat-lable:after {
     content: '';
     position: absolute;
     top: 2.2px;
@@ -39,13 +39,13 @@
     transform: translateX(-100%);
     }
 
-    label:active:after {
+    .qysmat-lable:active:after {
     width: 100px;
     }
 
-    div.dataTables_wrapper div.dataTables_filter label{
+    /* div.dataTables_wrapper div.dataTables_filter label{
         display: none
-    }
+    } */
 </style>
 
 <div class="col-12">
@@ -81,7 +81,7 @@
                                                     @csrf
                                                     <input type="hidden" name="id" value="{{$value->id}}">
                                                     <input type="hidden" name="status" value="{{$value->status == 'Active' ? 'Inactive' : 'Active' }}">
-                                                    <button type="submit" data-status="{{$value->status == 'Active' ? 'Active' : 'Inactive'}}" data-id="{{$value->id}}" data-name="{{$value->contact_type}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Inactive' ? '' : 'checked'}} /><label for="switch">Toggle</label></button>
+                                                    <button type="submit" data-status="{{$value->status == 'Active' ? 'Active' : 'Inactive'}}" data-id="{{$value->id}}" data-name="{{$value->contact_type}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Inactive' ? '' : 'checked'}} /><label class="qysmat-lable" for="switch">Toggle</label></button>
                                                 </form>
                                             </div>
                                             <div class="col-2">
@@ -110,7 +110,7 @@
                         @endif
                     </tbody>
                 </table>
-                {!!$records->withQueryString()->links('pagination::bootstrap-5')!!}
+                {{-- {!!$records->withQueryString()->links('pagination::bootstrap-5')!!} --}}
             </div>
        </div>
     </div>
