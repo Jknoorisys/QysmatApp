@@ -32,7 +32,7 @@ class ReportedUsers extends Controller
         $data['previous_title']           = __("msg.Dashboard");
         $data['url']                      = route('dashboard');
         $data['title']                    = __("msg.Manage Reported Users");
-        $data['records']                  = ModelsReportedUsers::paginate(10);
+        $data['records']                  = ModelsReportedUsers::get();
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('reported_users.reported_users_list', $data);
         return view('layouts.main',$data);

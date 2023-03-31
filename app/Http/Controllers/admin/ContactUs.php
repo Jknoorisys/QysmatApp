@@ -31,7 +31,7 @@ class ContactUs extends Controller
         $data['previous_title']           = __("msg.Dashboard");
         $data['url']                      = route('dashboard');
         $data['title']                    = __("msg.Manage Contact Us  Forms");
-        $data['records']                  = ModelsContactUs::paginate(10);
+        $data['records']                  = ModelsContactUs::get();
         $data['notifications']            = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']                  = view('contact_us.contact_us_list', $data);
         return view('layouts.main',$data);

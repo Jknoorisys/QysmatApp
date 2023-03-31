@@ -32,7 +32,7 @@ class DeletedUsers extends Controller
         $data['previous_title']           = __("msg.Dashboard");
         $data['url']                      = route('dashboard');
         $data['title']                    = __("msg.Manage Deleted Users");
-        $data['records']                  = ModelsDeletedUsers::paginate(10);
+        $data['records']                  = ModelsDeletedUsers::get();
         $data['notifications']            = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']                  = view('deleted_users.deleted_users_list', $data);
         return view('layouts.main',$data);
