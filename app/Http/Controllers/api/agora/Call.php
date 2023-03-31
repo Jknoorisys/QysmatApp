@@ -204,4 +204,111 @@ class Call extends Controller
             ],500);
         }
     }
+
+    public function rejectCall(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'caller_id'   => 'required||numeric',
+            'caller_user_type' => [
+                'required' ,
+                Rule::in(['singleton','parent']),
+            ],
+            'receiver_id'   => 'required||numeric',
+            'receiver_user_type' => [
+                'required' ,
+                Rule::in(['singleton','parent']),
+            ],
+            'call_type' => [
+                'required' ,
+                Rule::in(['audio','video']),
+            ],
+            'call_status' => [
+                'required' ,
+                Rule::in(['incoming','accepted','rejected']),
+            ],
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+
+            if ($request->caller_user_type == 'singleton') {
+                $premium = Singleton::where([['id', '=', $request->caller_id], ['status', '=', 'Unblocked']])->first();
+                $sender_pic = $premium ? $premium->photo1 : '';
+            } else {
+                $premium = ParentsModel::where([['id', '=', $request->caller_id], ['status', '=', 'Unblocked']])->first();
+                $sender_pic = $premium ? $premium->profile_pic : '';
+            }
+
+            if ($premium->active_subscription_id == '1') {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.reset-profile.premium'),
+                ],400);
+            }
+
+            if ($request->receiver_user_type == 'singleton') {
+                $reciever = Singleton::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
+            } else {
+                $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
+            }
+
+            $title = $premium->name;
+            $body = __('msg.Call Rejected');
+
+            if (isset($reciever) && !empty($reciever)) {
+                $token = $reciever->fcm_token;
+                $data = array(
+                    'notType'        => 'canceled',
+                    'from_user_name' => $premium->name,
+                    'from_user_id'   => $premium->id,
+                    'from_user_pic'  => $sender_pic,
+                    'to_user_id'     => $reciever->id,
+                    'to_user_type'   => $reciever->user_type,
+                );
+
+                sendFCMNotifications($token, $title, $body, $data);
+            }
+
+            $data = [
+                'caller_id' => $request->caller_id,
+                'caller_type' => $request->caller_user_type,
+                'receiver_id' => $request->receiver_id,
+                'receiver_type' => $request->receiver_user_type,
+                'call_type' => $request->call_type,
+                'status'    => $request->call_status,
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+
+            $insert = CallHistory::insert($data);
+            if ($insert) {
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.agora.create.success'),
+                ],200);
+            } else {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.agora.create.failure'),
+                ],400);
+            }
+            
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
 }
