@@ -226,10 +226,6 @@ class Call extends Controller
                 'required' ,
                 Rule::in(['audio','video']),
             ],
-            'call_status' => [
-                'required' ,
-                Rule::in(['incoming','accepted','rejected']),
-            ],
         ]);
 
         if($validator->fails()){
@@ -286,20 +282,21 @@ class Call extends Controller
                 'receiver_id' => $request->receiver_id,
                 'receiver_type' => $request->receiver_user_type,
                 'call_type' => $request->call_type,
-                'status'    => $request->call_status,
+                'status'    => 'rejected',
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
             $insert = CallHistory::insert($data);
+            
             if ($insert) {
                 return response()->json([
                     'status'    => 'success',
-                    'message'   => __('msg.agora.create.success'),
+                    'message'   => __('msg.agora.reject.success'),
                 ],200);
             } else {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.agora.create.failure'),
+                    'message'   => __('msg.agora.reject.failure'),
                 ],400);
             }
             
