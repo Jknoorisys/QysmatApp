@@ -595,6 +595,23 @@ class Matches extends Controller
                     UnMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->re_matched_id]])
                                 ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $request->singleton_id]])
                                 ->delete();
+                    
+                    $myMatch               = new MyMatches();
+                    $myMatch->user_id      = $request->login_id ? $request->login_id : '';
+                    $myMatch->user_type    = $request->user_type ? $request->user_type : '';
+                    $myMatch->singleton_id = $request->singleton_id ? $request->singleton_id : '';
+                    $myMatch->matched_id   = $request->re_matched_id ? $request->re_matched_id : '';
+                    $myMatch->save();
+    
+                    if ($myMatch){
+                        $recieved = new RecievedMatches();
+                        $recieved->user_id = $userExists->parent_id ? $userExists->parent_id : '';
+                        $recieved->user_type = 'parent';
+                        $recieved->singleton_id = $request->re_matched_id ? $request->re_matched_id : '';
+                        $recieved->recieved_match_id = $request->singleton_id ? $request->singleton_id : '';
+                        $recieved->save();
+                    }
+
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.parents.re-match.success'),
