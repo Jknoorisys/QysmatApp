@@ -82,12 +82,12 @@ class ResetProfileSearch extends Controller
                     ->whereBetween('created_at', [Carbon::now()->subMonth(), Carbon::now()])
                     ->count();
 
-            if ($formsSubmitted >= 1) {
-                return response()->json([
-                    'status'    => 'failed',
-                    'message'   => __('msg.reset-profile.reset'),
-                ],400);
-            }
+            // if ($formsSubmitted >= 1) {
+            //     return response()->json([
+            //         'status'    => 'failed',
+            //         'message'   => __('msg.reset-profile.reset'),
+            //     ],400);
+            // }
 
             $premium->notifications()->where('user_type', '=', $request->user_type)->delete();
 
