@@ -193,7 +193,7 @@ class Suggestions extends Controller
                     $count = 0;
                     foreach ($suggestion as $m) {
                         $singleton_id = $m->id;
-                        $swiped_up = SwipedUpUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id], ['swiped_user_id', '=', $singleton_id]])->first();
+                        $swiped_up = SwipedUpUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id], ['swiped_user_id', '=', $singleton_id]])->first();
                         $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                         $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
                         $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
