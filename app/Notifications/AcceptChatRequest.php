@@ -10,8 +10,6 @@ use Illuminate\Notifications\Notification;
 class AcceptChatRequest extends Notification
 {
     use Queueable;
-    private $user;
-    private $user_type;
 
     /**
      * Create a new notification instance.

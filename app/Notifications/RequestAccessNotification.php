@@ -10,10 +10,6 @@ use Illuminate\Notifications\Notification;
 class RequestAccessNotification extends Notification
 {
     use Queueable;
-    private $user;
-    private $user_type;
-    private $singleton_id;
-    private $access_code;
 
     /**
      * Create a new notification instance.

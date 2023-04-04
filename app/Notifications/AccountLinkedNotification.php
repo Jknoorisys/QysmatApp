@@ -10,9 +10,6 @@ use Illuminate\Notifications\Notification;
 class AccountLinkedNotification extends Notification
 {
     use Queueable;
-    private $user;
-    private $user_type;
-    private $singleton_id;
 
     /**
      * Create a new notification instance.
