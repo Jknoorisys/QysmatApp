@@ -76,7 +76,7 @@ class InstantMatch extends Controller
             }
 
             $userExists = Singleton::find($request->requested_id);
-            if(empty($userExists) || $userExists->staus == 'Deleted' || $userExists->staus == 'Blocked'){
+            if(empty($userExists) || $userExists->status == 'Deleted' || $userExists->status == 'Blocked'){
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.send-request.invalid'),

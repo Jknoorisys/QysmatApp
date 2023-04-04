@@ -528,7 +528,7 @@ class Chat extends Controller
                 if (!empty($refer)) {
                     return response()->json([
                         'status'    => 'failed',
-                        'message'   => __('msg.parents.swips.inite'),
+                        'message'   => __('msg.parents.swips.invite'),
                     ],400);
                 }
 

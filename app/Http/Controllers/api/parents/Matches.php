@@ -62,7 +62,7 @@ class Matches extends Controller
         try {
             $userExists = Singleton::find($request->un_matched_id);
 
-            if(empty($userExists) || $userExists->staus == 'Deleted' || $userExists->staus == 'Blocked'){
+            if(empty($userExists) || $userExists->status == 'Deleted' || $userExists->status == 'Blocked'){
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.un-match.invalid'),
@@ -538,7 +538,7 @@ class Matches extends Controller
             }
 
             $userExists = Singleton::find($request->re_matched_id);
-            if(empty($userExists) || $userExists->staus == 'Deleted' || $userExists->staus == 'Blocked'){
+            if(empty($userExists) || $userExists->status == 'Deleted' || $userExists->status == 'Blocked'){
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.re-match.invalid'),
