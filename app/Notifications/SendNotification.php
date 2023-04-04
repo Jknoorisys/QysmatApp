@@ -10,8 +10,6 @@ use Illuminate\Notifications\Notification;
 class SendNotification extends Notification
 {
     use Queueable;
-    private $user_type;
-    private $message;
 
     /**
      * Create a new notification instance.
