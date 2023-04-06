@@ -242,6 +242,14 @@ class InAppSubscriptions extends Controller
         }
 
         try{
+            $transactionIdExists = DB::table('transactions')->where([['subscription_id', '=', $request->transaction_id],['subs_status', '=', 'active']])->first();
+            if(!empty($transactionIdExists)){
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.apple.active'),
+                    ],400);
+                } 
+            
             $session_id = $request->session_id;
             $payment_details = DB::table('bookings')->where('session_id', '=', $session_id)->first();
 
