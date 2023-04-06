@@ -954,6 +954,7 @@ return [
         'success' => 'Subscribed Successfully!',
         'failure' => 'Unable to Subscribe, Please Try Again...',
         'invalid' => 'Something Went Wrong, Please Try Again...',
+        'active'  => 'Subscription Already Active!',
         'card'    => 'Card Details Not Found, Please Try Again...',
         'paid'    => 'Already Subscribed!',
         'cancel'  => 'Subscription Failed, Please Try Again...'
