@@ -36,6 +36,41 @@
             border-left: none;
         }
 
+        @keyframes slide-in {
+            0% {
+            left: -100%;
+            }
+            100% {
+            left: 0;
+            }
+        }
+        
+        @keyframes bounce {
+            0% {
+            transform: translateY(-100%) rotateX(0deg);
+            }
+            40% {
+            transform: translateY(0) rotateX(360deg);
+            }
+            60% {
+            transform: translateY(0) rotateX(280deg);
+            }
+            80% {
+            transform: translateY(0) rotateX(320deg);
+            }
+            100% {
+            transform: translateY(0) rotateX(0deg);
+            }
+        }
+
+        .light-logo {
+            animation-name: bounce;
+            animation-duration: 1s;
+            animation-delay: 0.5s;
+            animation-fill-mode: forwards;
+            transform-origin: center;
+        }
+
         .auth-wrapper .auth-box {
                 max-width: 330px;
                 width: 90%;
@@ -67,7 +102,7 @@
             <div class="auth-box">
                 <div id="loginform">
                     <div class="logo">
-                        <span class="db"><img src="assets/uploads/logo/logo.png" width="120px" height="100px"  alt="logo" /></span>
+                        <span class="db"><img src="assets/uploads/logo/logo.png" width="120px" class="light-logo" height="100px"  alt="logo" /></span>
                         <h3 class="font-medium m-b-0" style="font-family: 'Times New Roman'; color:#8F7C5C">Qysmat</h3>
                     </div>
                     <!-- Form -->
