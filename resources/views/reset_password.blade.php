@@ -31,6 +31,60 @@
             color: white;
             border: 0.5px solid white;
         }
+
+        .qysmat-icon{
+            border-top-left-radius: 25px;
+            border-bottom-left-radius: 25px;
+        }
+
+        #cnfm_password, #password{
+            border-top-right-radius: 25px;
+            border-bottom-right-radius: 25px;
+            border-left: none;
+        }
+
+        @keyframes slide-in {
+            0% {
+            left: -100%;
+            }
+            100% {
+            left: 0;
+            }
+        }
+        
+        @keyframes bounce {
+            0% {
+            transform: translateY(-100%) rotateX(0deg);
+            }
+            40% {
+            transform: translateY(0) rotateX(360deg);
+            }
+            60% {
+            transform: translateY(0) rotateX(280deg);
+            }
+            80% {
+            transform: translateY(0) rotateX(320deg);
+            }
+            100% {
+            transform: translateY(0) rotateX(0deg);
+            }
+        }
+
+        .light-logo {
+            animation-name: bounce;
+            animation-duration: 1s;
+            animation-delay: 0.5s;
+            animation-fill-mode: forwards;
+            transform-origin: center;
+        }
+
+        .auth-wrapper .auth-box {
+                max-width: 330px;
+                width: 90%;
+                background: #00000057;
+                color: white;
+                border: 1px solid #3a3a3a;
+            }
     </style>
 </head>
 
@@ -55,7 +109,7 @@
             <div class="auth-box">
                 <div id="loginform">
                     <div class="logo">
-                        <span class="db"><img src="{{asset('assets/uploads/logo/logo.png')}}" width="120px" height="100px"  alt="logo" /></span>
+                        <span class="db"><img src="{{asset('assets/uploads/logo/logo.png')}}" width="120px" height="100px"  alt="logo" class="light-logo" /></span>
                         <h3 class="font-medium m-b-0" style="font-family: 'Times New Roman'; color:#8F7C5C">Qysmat</h3>
                     </div>
                     <!-- Form -->
@@ -88,21 +142,37 @@
                                 <input type="hidden" name="user_type" id="user_type" value="{{$user->user_type}}">
                                 <input type="hidden" name="email" id="email" value="{{$user->email}}">
 
-                                <div class="col-md-12">
+                                <div class="input-group mb-3" id="show_hide_password">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text qysmat-icon" id="basic-addon2"><i class="fa fa-eye-slash"></i></span>
+                                    </div>
+                                    <input type="password" class="form-control form-control-lg" required name="password" id="password" placeholder="{{ __('msg.Enter Password')}}" aria-label="Password" aria-describedby="basic-addon1">
+                                    <span class="err_password text-danger"></span>
+                                </div>
+
+                                {{-- <div class="col-md-12">
                                     <label for="password" class="form-label">{{__('msg.Password')}}</label>
                                     <div class="input-group" id="show_hide_password">
                                         <input type="password" class="form-control smp-input bg-light" required name="password" style="font-weight: 300;font-size: 15px;color: #38424C; border-right:none;" id="password" placeholder="{{ __('msg.Enter Password')}}"> <a href="javascript:;" style="line-height: 38px;align-items: center; border:1px solid #dfe0e1;border-left:none;" class="input-group-text text-qysmat bg-light"><i class='fas fa-eye-slash'></i></a>
                                     </div>
                                     </div><span class="err_email text-danger"></span>
+                                </div> --}}
+
+                                <div class="input-group mb-3" id="show_hide_cnfm_password">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text qysmat-icon" id="basic-addon2"><i class="fa fa-eye-slash"></i></span>
+                                    </div>
+                                    <input type="password" class="form-control form-control-lg" required name="cnfm_password" id="cnfm_password" placeholder="{{ __('msg.Confirm Password')}}" aria-label="Password" aria-describedby="basic-addon1">
+                                    <span class="err_cnfm_password text-danger"></span>
                                 </div>
 
-                                <div class="col-md-12" style="margin-top: 15px;">
+                                {{-- <div class="col-md-12" style="margin-top: 15px;">
                                     <label for="cnfm_password" class="form-label">{{__('msg.Confirm Password')}}</label>
                                     <div class="input-group" id="show_hide_cnfm_password">
                                         <input type="password" required class="form-control smp-input bg-light" name="cnfm_password" style="font-weight: 300;font-size: 15px;color: #38424C; border-right:none;" id="cnfm_password" placeholder="{{ __('msg.Confirm Password')}}"> <a href="javascript:;" style="line-height: 38px;align-items: center; border:1px solid #dfe0e1;border-left:none;" class="input-group-text text-qysmat bg-light"><i class='fas fa-eye-slash'></i></a>
                                     </div>
                                     <span class="err_password text-danger"></span>
-                                </div>
+                                </div> --}}
 
                                 <div class="pb-4 pt-4 col-md-12">
                                     <div class="d-grid">
@@ -176,7 +246,7 @@
             password.onkeyup = validatePassword;
             cnfm_password.onkeyup = validatePassword;
 
-            $("#show_hide_password a").on('click', function(event) {
+            $("#show_hide_password span").on('click', function(event) {
                 event.preventDefault();
                 if ($('#show_hide_password input').attr("type") == "text") {
                     $('#show_hide_password input').attr('type', 'password');
@@ -189,7 +259,7 @@
                 }
             });
 
-            $("#show_hide_cnfm_password a").on('click', function(event) {
+            $("#show_hide_cnfm_password span").on('click', function(event) {
                 event.preventDefault();
                 if ($('#show_hide_cnfm_password input').attr("type") == "text") {
                     $('#show_hide_cnfm_password input').attr('type', 'password');
