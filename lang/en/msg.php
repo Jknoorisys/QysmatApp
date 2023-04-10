@@ -124,6 +124,7 @@ return [
     'Payment Method'            => 'Payment Method',
     'Premium'                   => 'Premium',
     'Joint Premium'             => 'Joint Premium',
+    'Basic'                     => 'Basic',
     'Paid By'                   => 'Paid By',
     'Paid Amount'               => 'Paid Amount',
     'Curency'                   => 'Curency',
