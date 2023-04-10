@@ -56,6 +56,7 @@
                             <th class="text-center">{{ __('msg.Name')}}</th>
                             <th class="text-center">{{ __('msg.User Type')}}</th>
                             <th class="text-center">{{ __('msg.Subscription Type')}}</th>
+                            <th class="text-center">{{ __('msg.Payment Method')}}</th>
                             <th class="text-center">{{ __('msg.Invoice')}}</th>
                             <th class="text-center">{{ __('msg.Status')}}</th>
                             <th class="text-center">{{ __('msg.Date')}}</th>
@@ -77,6 +78,7 @@
                                             {{ __('msg.Basic')}}
                                         @endif
                                     </td>
+                                    <td class="text-center">{{ Str::upper($value->payment_method)}}</td>
                                     <td class="text-center">
                                         @if ($value->invoice_url)
                                             <a href="{{asset($value->invoice_url)}}"  download class="btn btn-rounded btn-qysmat"><i class="fas fa-download"></i></a>

@@ -121,6 +121,7 @@ return [
     'Transaction Details'       => 'Transaction Details',
     'User Type'                 => 'User Type',
     'Transaction Type'          => 'Transaction Type',
+    'Payment Method'            => 'Payment Method',
     'Premium'                   => 'Premium',
     'Joint Premium'             => 'Joint Premium',
     'Paid By'                   => 'Paid By',
