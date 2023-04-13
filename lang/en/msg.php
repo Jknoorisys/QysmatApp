@@ -309,7 +309,7 @@ return [
     'Email Verification'        => 'Email Verification',
     'Forget Password'           => 'Forget Password',
     'Your OTP is'               => 'Your OTP is',
-    'Welcome on Qysmat App'     => 'Welcome on Qysmat App',
+    'Welcome to Qysmat App'     => 'Welcome to Qysmat App',
     'Let’s get you Registered with us!' => 'Let’s get you Registered with us!',
     'Your One time Password to Complete your Registrations is' => 'Your One time Password to Complete your Registrations is',
     'Find us'                   => 'Find us',
@@ -924,7 +924,7 @@ return [
         'not-verified' => 'Profile not Verified By Admin, Please Try After Some Time...',
         'singleton-not-linked' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
         'parent-not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
-        'busy' => 'Chat in Progress...',
+        'busy' => 'Now that you’re in an open conversation, you will no longer be able to use other features on the app during this time',
         'available' => 'No Chat in Progress...',
     ],
 
