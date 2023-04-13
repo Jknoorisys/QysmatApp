@@ -86,7 +86,7 @@
                                                 <tr>
                                                   <td align="left" valign="top" class="r20-i nl2go-default-textstyle" style="color: #392f65; font-family: Inter; font-size: 16px; line-height: 1.1; text-align: left;">
                                                     <div>
-                                                      <h1 class="default-heading1" style="margin: 0; color: #392f65; font-family: Inter; font-size: 35px;"><span style="color: #8f7c5c;">Welcome on Qysmat App</span></h1>
+                                                      <h1 class="default-heading1" style="margin: 0; color: #392f65; font-family: Inter; font-size: 35px;"><span style="color: #8f7c5c;">Welcome to Qysmat App</span></h1>
                                                     </div>
                                                   </td>
                                                 </tr>
