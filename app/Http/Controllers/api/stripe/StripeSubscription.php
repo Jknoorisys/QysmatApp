@@ -898,7 +898,7 @@ class StripeSubscription extends Controller
                     'subscription_id' => $sub_id,
                     'customer_id' => $customer_id,
                     'currency' => $plan_amount_currency,
-                    'payment_status' => $status,
+                    'payment_status' => $status == 'active' ? 'paid' : 'unpaid',
                     'created_at' => date('Y-m-d H:i:s', $sub_created)
                 ];
     
