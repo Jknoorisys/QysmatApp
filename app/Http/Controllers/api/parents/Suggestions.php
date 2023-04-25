@@ -129,6 +129,13 @@ class Suggestions extends Controller
             'singleton_id'     => 'required',
         ]);
 
+        if ($request->location && !empty($request->location)) {
+            $validator = Validator::make($request->all(), [
+                'lat'    => 'required',
+                'long'   => 'required',
+            ]);
+        }
+
         if($validator->fails()){
             return response()->json([
                 'status'    => 'failed',
@@ -147,6 +154,8 @@ class Suggestions extends Controller
                 $category->age_range     = $request->age_range ? $request->age_range : '';
                 // $category->profession    = $request->profession ? $request->profession : '';
                 $category->location      = $request->location ? $request->location : '';
+                $category->lat           = $request->lat ? $request->lat : '';
+                $category->long          = $request->long ? $request->long : '';
                 $category->height        = $request->height ? $request->height : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
 
@@ -173,6 +182,8 @@ class Suggestions extends Controller
                 $category->age_range     = $request->age_range ? $request->age_range : '';
                 // $category->profession    = $request->profession ? $request->profession : '';
                 $category->location      = $request->location ? $request->location : '';
+                $category->lat           = $request->lat ? $request->lat : '';
+                $category->long          = $request->long ? $request->long : '';
                 $category->height        = $request->height ? $request->height : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
 
