@@ -142,21 +142,21 @@
                 <div class="tab-pane fade" id="current-month" role="tabpanel" aria-labelledby="pills-timeline-tab">
                     <div class="card-body">
                         <div class="row">
-                            @if ( !empty($reverify) &&$reverify->photo1)
+                            @if ( !empty($details))
                                 <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo1) ? $reverify->photo1 : ($details->photo1 ? asset($details->photo1) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded" width="200" height="200" /></div>
                             @endif
-                            @if (!empty($reverify) && $reverify->photo2)
+                            @if (!empty($details))
                                 <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo2) ? $reverify->photo2 : ($details->photo2 ? asset($details->photo2) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded" width="200" height="200" /></div>
                             @endif
-                            @if (!empty($reverify) && $reverify->photo3)
+                            @if (!empty($details))
                                 <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo3) ? $reverify->photo3 : ($details->photo3 ? asset($details->photo3) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded" width="200" height="200" /></div>
                             @endif
                         </div>
                         <div class="row">
-                            @if (!empty($reverify) && $reverify->photo4)
+                            @if (!empty($details))
                                 <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo4) ? $reverify->photo4 : ($details->photo4 ? asset($details->photo4) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded" width="200" height="200" /></div> 
                             @endif
-                            @if (!empty($reverify) && $reverify->photo5)
+                            @if (!empty($details))
                                 <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo5) ? $reverify->photo5 : ($details->photo5 ? asset($details->photo5) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded" width="200" height="200" /></div>
                             @endif
                         </div>
