@@ -13,21 +13,20 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('singletons', function (Blueprint $table) {
+        Schema::create('re_verify_requests', function (Blueprint $table) {
             $table->id();
+            $table->integer('user_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->integer('parent_id');
             $table->string('name');
             $table->string('email')->unique();
             $table->string('mobile');
-            $table->string('password');
-            $table->string('email_otp');
-            $table->enum('is_email_verified',['verified', 'not verified'])->default('not verified');
             $table->string('photo1');
             $table->string('photo2');
             $table->string('photo3');
             $table->string('photo4');
             $table->string('photo5');
+            $table->string('profile_pic');
+            $table->string('relation_with_singleton');
             $table->string('dob');
             $table->string('age');
             $table->enum('gender', ['Male','Female', 'Other']);
@@ -43,31 +42,18 @@ return new class extends Migration
             $table->string('long');
             $table->string('live_photo');
             $table->string('id_proof');
-            $table->string('active_subscription_id')->default('1');
-            $table->string('stripe_plan_id');
-            $table->string('customer_id');
-            $table->string('subscription_item_id');
-            $table->enum('is_social',['1','0'])->default('0');
-            $table->enum('social_type',['google','facebook','apple','manual'])->default('manual');
-            $table->string('social_id');
-            $table->string('device_id');
-            $table->enum('device_type',['android','ios']);
-            $table->string('fcm_token');
-            $table->string('device_token');
-            $table->enum('is_verified',['verified', 'rejected', 'pending'])->default('pending');
-            $table->enum('chat_status',['available', 'busy'])->default('available');
-            $table->enum('status',['Blocked','Unblocked', 'Deleted'])->default('Unblocked');
+            $table->enum('status',['pending','verified','rejected'])->default('pending');
             $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
-     **
+     *
      * @return void
      */
     public function down()
     {
-        Schema::dropIfExists('singletons');
+        Schema::dropIfExists('re_verify_requests');
     }
 };

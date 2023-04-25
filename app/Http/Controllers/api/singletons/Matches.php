@@ -8,6 +8,7 @@ use App\Models\Matches as ModelsMatches;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\PremiumFeatures;
 use App\Models\RecievedMatches;
 use App\Models\ReferredMatches;
 use App\Models\ReportedUsers;
@@ -100,9 +101,35 @@ class Matches extends Controller
                                             ->orderBy('matches.queue')->first(['matches.*']);
 
                    if (!empty($queue)) {
-                    ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_type', '=', 'hold'], ['queue', '=', $queue->queue]])
+                        ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_type', '=', 'hold'], ['queue', '=', $queue->queue]])
                                     ->orWhere([['match_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'hold'], ['queue', '=', $queue->queue]])
                                     ->update(['match_type' => 'matched', 'queue' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+                        
+                        $notify = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_type', '=', 'matched']])
+                        ->orWhere([['match_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
+                        ->first();
+
+                        if (!empty($notify)) {
+                            // send congratulations fcm notification
+                            $user1 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
+                            $user2 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
+
+                            if (isset($user) && !empty($user)) {
+                                $title = __('msg.Profile Matched');
+                                $body = __('msg.Congratulations Your Profile is Matched!');
+                                $token = $user->fcm_token;
+                                $data = array(
+                                    'notType' => "profile_matched",
+                                    'user1_id' => $user1 ? $user1->id : '',
+                                    'user1_name' => $user1 ?  $user1->name : '',
+                                    'user1_profile' => $user1 ?  $user1->photo1 : '',
+                                    'user2_id' => $user2 ? $user2->id : '',
+                                    'user2_name' => $user2 ? $user2->name : '',
+                                    'user2_profile' => $user2 ? $user2->photo1 : '',
+                                );
+                                $result = sendFCMNotifications($token, $title, $body, $data);
+                            }
+                        }
                    }
 
                    $other_queue = ModelsMatches::leftjoin('singletons', function($join) use ($un_matched_id) {
@@ -124,6 +151,34 @@ class Matches extends Controller
                         ModelsMatches::where([['user_id', '=', $request->un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'hold'], ['queue', '=', $other_queue->queue]])
                                         ->orWhere([['match_id', '=', $request->un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'hold'], ['queue', '=', $other_queue->queue]])
                                         ->update(['match_type' => 'matched','queue' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+
+                        $notify = ModelsMatches::where([['user_id', '=', $request->un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
+                        ->orWhere([['match_id', '=', $request->un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
+                        ->first();
+
+                        if (!empty($notify)) {
+                            // send congratulations fcm notification
+                            $user1 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
+                            $user2 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
+
+                            if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
+                                $title = __('msg.Profile Matched');
+                                $body = __('msg.Congratulations Your Profile is Matched!');
+                                $token1 = $user1->fcm_token;
+                                $token2 = $user2->fcm_token;
+                                $data = array(
+                                    'notType' => "profile_matched",
+                                    'user1_id' => $user1 ? $user1->id : '',
+                                    'user1_name' => $user1 ?  $user1->name : '',
+                                    'user1_profile' => $user1 ?  $user1->photo1 : '',
+                                    'user2_id' => $user2 ? $user2->id : '',
+                                    'user2_name' => $user2 ? $user2->name : '',
+                                    'user2_profile' => $user2 ? $user2->photo1 : '',
+                                );
+                                sendFCMNotifications($token1, $title, $body, $data);
+                                sendFCMNotifications($token2, $title, $body, $data);
+                            }
+                        }
                     }
                 }
 
@@ -572,7 +627,8 @@ class Matches extends Controller
             $singleton_id = $request->login_id;
             $re_matched_id = $request->re_matched_id;
             $premium = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-            if ($premium->active_subscription_id == '1') {
+            $featureStatus = PremiumFeatures::whereId(1)->first();
+            if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.re-match.premium'),
@@ -668,8 +724,37 @@ class Matches extends Controller
                 //                                 ->orderBy('matches.queue', 'DESC')->first();
 
                 if (empty($matched)) {
+                    $notify = ModelsMatches::where([['matches.user_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched']])
+                    ->orWhere([['matches.match_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched']])
+                    ->first(['matches.*']);
+
+                    if (!empty($notify)) {
+                        // send congratulations fcm notification
+                        $user1 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
+                        $user2 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
+
+                        if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
+                            $title = __('msg.Profile Matched');
+                            $body = __('msg.Congratulations Your Profile is Matched!');
+                            $token1 = $user1->fcm_token;
+                            $token2 = $user2->fcm_token;
+                            $data = array(
+                                'notType' => "profile_matched",
+                                'user1_id' => $user1 ? $user1->id : '',
+                                'user1_name' => $user1 ?  $user1->name : '',
+                                'user1_profile' => $user1 ?  $user1->photo1 : '',
+                                'user2_id' => $user2 ? $user2->id : '',
+                                'user2_name' => $user2 ? $user2->name : '',
+                                'user2_profile' => $user2 ? $user2->photo1 : '',
+                            );
+                           sendFCMNotifications($token1, $title, $body, $data);
+                           sendFCMNotifications($token2, $title, $body, $data);
+                        }
+                    }
+
                     $queue_no = 0;
                     $match_type = 'matched';
+                    
                 } elseif (!empty($queue) && !empty($matched)) {
                     $queue_no = $queue ? $queue->queue+1 : 0;
                     $match_type = 'hold';

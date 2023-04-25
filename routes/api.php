@@ -68,6 +68,7 @@ Route::prefix('singleton')->group(function () {
     // Singleton Profile
     Route::post('get-profile' , [Profile::class, 'index']);
     Route::post('update-profile' , [Profile::class, 'updateProfile']);
+    Route::post('update-location' , [Profile::class, 'updatecurrentlocation']);
     Route::post('upload-photos' , [Profile::class, 'uploadPhotos']);
     Route::post('get-access-details' , [Profile::class, 'getAccessDetails']);
     Route::post('busy' , [Profile::class, 'chatInProgress']);
@@ -133,6 +134,7 @@ Route::prefix('parent')->group(function () {
     // Parent Profile
     Route::post('get-profile' , [ParentsProfile::class, 'index']);
     Route::post('update-profile' , [ParentsProfile::class, 'updateProfile']);
+    Route::post('update-location' , [ParentsProfile::class, 'updatecurrentlocation']);
     Route::post('search-child' , [ParentsProfile::class, 'searchChild']);
     Route::post('send-access-request' , [ParentsProfile::class, 'sendAccessRequest']);
     Route::post('verify-access-code' , [ParentsProfile::class, 'verifyAccessRequest']);
@@ -140,6 +142,7 @@ Route::prefix('parent')->group(function () {
     Route::post('get-child-profile' , [ParentsProfile::class, 'getChildProfile']);
 
     // Profile Suggestions
+    Route::post('add-categories' , [ParentsSuggestions::class, 'addCategory']);
     Route::post('get-categories' , [ParentsSuggestions::class, 'index']);
     Route::post('get-sugestions' , [ParentsSuggestions::class, 'suggestions']);
 

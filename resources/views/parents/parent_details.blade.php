@@ -14,9 +14,9 @@
     <div class="col-lg-4 col-xlg-3 col-md-5">
         <div class="card">
             <div class="card-body">
-                <center class="m-t-30"> <img src="{{ $details->profile_pic ? asset($details->profile_pic) : 'assets/images/users/no-image.png'}}" class="rounded-circle" width="150" height="150" />
-                    <h4 class="card-title m-t-10">{{$details->name}}</h4>
-                    <h6 class="card-subtitle">{{$details->email}}</h6>
+                <center class="m-t-30"> <img src="{{ (!empty($reverify) && $reverify->profile_pic) ? $reverify->profile_pic : ($details->profile_pic ? asset($details->profile_pic) : 'assets/images/users/no-image.png')}}" class="rounded-circle" width="150" height="150" />
+                    <h4 class="card-title m-t-10">{{(!empty($reverify) && $reverify->name) ? $reverify->name : $details->name}}</h4>
+                    <h6 class="card-subtitle">{{(!empty($reverify) && $reverify->email) ? $reverify->email : $details->email}}</h6>
                 </center>
             </div>
 
@@ -26,14 +26,14 @@
 
                 {{-- <div class="row"> --}}
                     {{-- <div class="col-6"> --}}
-                        <small class="text-muted">{{__('msg.Email')}}</small><h6>{{$details->email}}</h6>
+                        <small class="text-muted">{{__('msg.Email')}}</small><h6>{{(!empty($reverify) && $reverify->email) ? $reverify->email : $details->email}}</h6>
                     {{-- </div>
                     <div class="col-6"> --}}
-                        <small class="text-muted p-t-30 db">{{__('msg.Phone')}}</small><h6>{{$details->mobile}}</h6>
+                        <small class="text-muted p-t-30 db">{{__('msg.Phone')}}</small><h6>{{(!empty($reverify) && $reverify->mobile) ? $reverify->mobile : $details->mobile}}</h6>
                     {{-- </div> --}}
                 {{-- </div> --}}
 
-                <small class="text-muted p-t-30 db">{{__('msg.Address')}}</small><h6>{{$details->location}}</h6>
+                <small class="text-muted p-t-30 db">{{__('msg.Address')}}</small><h6>{{(!empty($reverify) && $reverify->location) ? $reverify->location : $details->location}}</h6>
 
                 {{-- <hr />
 
@@ -42,8 +42,9 @@
                 <hr />
 
                 <div class="row">
-                    <div class="col-6"><small class="text-muted p-t-30 db">{{__('msg.Ethnic Origin')}}</small><h6>{{$details->ethnic_origin}}</h6></div>
-                    <div class="col-6"><small class="text-muted p-t-30 db">{{__('msg.Islamic Sector')}}</small><h6>{{$details->islamic_sect}}</h6></div>
+                    <div class="col-4"><small class="text-muted p-t-30 db">{{__('msg.Nationality')}}</small><h6>{{(!empty($reverify) && $reverify->nationality) ? $reverify->nationality : $details->nationality}}</h6></div>
+                    <div class="col-4"><small class="text-muted p-t-30 db">{{__('msg.Ethnic Origin')}}</small><h6>{{(!empty($reverify) && $reverify->ethnic_origin) ? $reverify->ethnic_origin : $details->ethnic_origin}}</h6></div>
+                    <div class="col-4"><small class="text-muted p-t-30 db">{{__('msg.Islamic Sector')}}</small><h6>{{(!empty($reverify) && $reverify->islamic_sect) ? $reverify->islamic_sect : $details->islamic_sect}}</h6></div>
                 </div>
             </div>
         </div>
@@ -65,12 +66,29 @@
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="last-month" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <div class="card-body">
-                        @if ($details->live_photo)
+                        @if (!empty($reverify) && $reverify->live_photo)
                             <div class="row">
-                                <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/big/img1.jpg'}}" class="img-fluid rounded" /></div>
+                                <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $reverify->live_photo ? asset($reverify->live_photo) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded" width="300" height="200" /></div>
+                            </div>
+                        @elseif ($details->live_photo)
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded" width="300" height="200" /></div>
                             </div>
                         @endif
-                        @if ($details->id_proof)
+
+                        @if (!empty($reverify) && $reverify->id_proof)
+                            <div class="row">
+                                <div class="col-lg-4 col-md-12 m-b-20"><a href="{{asset($reverify->id_proof ? asset($reverify->id_proof) : 'assets/images/users/no-image.png')}}" class="btn btn-qysmat image-popup-vertical-fit el-link">{{__('msg.View ID Proof')}}</a></div>
+                            </div>
+                            <div class="row">
+                                <form action="{{route('verifyParent')}}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{$details->id}}">
+                                    <input type="hidden" name="is_verified" value="{{$details->is_verified == 'verified' ? 'rejected' : 'verified' }}">
+                                    <button type="submit" data-status="{{$details->is_verified}}" data-id="{{$details->id}}" data-name="{{$details->name}}" class="btn btn-rounded show_confirm btn-{{$details->is_verified == 'verified' ? 'danger' : 'success' }}">{{$details->is_verified == 'verified' ? __('msg.Mark As Rejected') : __('msg.Mark As Verified') }}</button>
+                                </form>
+                            </div>
+                        @elseif ($details->id_proof)
                             <div class="row">
                                 <div class="col-lg-4 col-md-12 m-b-20"><a href="{{asset($details->id_proof ? asset($details->id_proof) : 'assets/images/big/img4.jpg')}}" class="btn btn-qysmat image-popup-vertical-fit el-link">{{__('msg.View ID Proof')}}</a></div>
                             </div>
@@ -93,9 +111,9 @@
                                     <h4 class="card-title text-uppercase text-center">{{$details->subscription_type}}</h4>
                                     <h6 class="card-price text-white text-center">{{ $details->active_subscription_id !=1 ? $details->currency : ''}}{{$details->price}}
                                         @if ($details->active_subscription_id == 2)
-                                            <p style="font-size:14px;">per month</p>
+                                            <p style="font-size:14px;">{{ __('msg.per month') }}</p>
                                         @elseif ($details->active_subscription_id == 3)
-                                            <p style="font-size:14px;">per month per person</p>
+                                            <p style="font-size:14px;">{{ __('msg.per month per person') }}</p>
                                         @endif
                                         <span class="term"></span>
                                     </h6>

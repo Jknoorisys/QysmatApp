@@ -500,6 +500,28 @@ class Chat extends Controller
                         }else{
                             $queue = 0;
                             $match_type = 'matched';
+
+                            // send congratulations fcm notification
+                            $user1 = Singleton::whereId($request->singleton_id)->first();
+                            $user2 = Singleton::whereId($request->messaged_user_singleton_id)->first();
+
+                            if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
+                                $title = __('msg.Profile Matched');
+                                $body = __('msg.Congratulations Your Child Profile is Matched!');
+                                $token = $user1->fcm_token;
+                                $token1 = $user2->fcm_token;
+                                $data = array(
+                                    'notType' => "profile_matched",
+                                    'user1_id' => $user1->id,
+                                    'user1_name' => $user1->name,
+                                    'user1_profile' => $user1->photo1,
+                                    'user2_id' => $user2->id,
+                                    'user2_name' => $user2->name,
+                                    'user2_profile' => $user2->photo1,
+                                );
+                                sendFCMNotifications($token, $title, $body, $data);
+                                sendFCMNotifications($token1, $title, $body, $data);
+                            }
                         }
 
                         Matches::where([['user_id', '=', $request->messaged_user_singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $linked->singleton_id], ['is_rematched', '=', 'no']])

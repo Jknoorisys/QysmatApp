@@ -144,6 +144,9 @@ return [
     'You want to Inactivate '            => 'You want to Inactivate ',
     'Subscription Inactivated'           => 'Subscription Inactivated',
     'Subscription Activated'             => 'Subscription Activated',
+    'Features Inactivated'               => 'Features Inactivated',
+    'Features Activated'                 => 'Features Activated',
+    'Premium Features'                   => 'Premium Features',
     'Update Subscription Price'          => 'Update Subscription Price',
     'Update Price'                       => 'Update Price',
     'Subscription'                       => 'Subscription',
@@ -242,16 +245,11 @@ return [
     'Refer profiles to friends and family'          => 'Refer profiles to friends and family',
     'Undo last swipe'                               => 'Undo last swipe',
     'Reset profile search and start again once a month'  => 'Reset profile search and start again once a month',
-
-    'Page Name is Required'              => 'Page Name is Required',
-    'Page Description is Required'       => 'Page Description is Required',
-    'Page Title is Required'             => 'Page Title is Required',
-    'Web Page Added!'                    => 'Web Page Added!',
-    'Web Page Updated!'                  => 'Web Page Updated!',
-    'Web Page Deleted!'                  => 'Web Page Deleted!',
-    'Update Page'                        => 'Update Page',
-    'Description'                        => 'Description',
-    'Short Description'                  => 'Short Description',
+    'Premium Features'                              => 'Premium Features',
+    'Enable Premium Features'               => 'Enable Premium Features',
+    'per month'                                     => 'per month',
+    'per month per person'                          => 'per month per person',
+    'Once you activate premium features, you may not be able to deactivate them again' => 'Once you activate premium features, you may not be able to deactivate them again',
 
     // Manage Islamic Quotes
     'Manage Islamic Quotes'             => 'Manage Islamic Quotes',
@@ -319,6 +317,9 @@ return [
     'Need to reset your password?' => 'Need to reset your password?',
     'No problem! Just click on the button below and you’ll be on yor way.' => 'No problem! Just click on the button below and you’ll be on yor way.',
     'Reset Your Password'       => 'Reset Your Password',
+    'Access Request Code'       => 'Access Request Code',
+    'Let’s get Connected!'      => 'Let’s get Connected!',
+    'Your Access Code to get Connected with your Parent/Guardian is' => 'Your Access Code to get Connected with your Parent/Guardian is',
 
     // Notifications
     'has Sent you a Match Request.'                         => 'has Sent you a Match Request.',
@@ -346,6 +347,9 @@ return [
     'Chat Request Accepted'                                 => 'Chat Request Accepted',
     'New Subscription'                                      => 'New Subscription',
     'has Subscribed.'                                       => 'has Subscribed.',
+    'Profile Matched'                                       => 'Profile Matched',
+    'Congratulations Your Profile is Matched!'              => 'Congratulations Your Profile is Matched!',
+    'Congratulations Your Child Profile is Matched!'        => 'Congratulations Your Child Profile is Matched!',
 
     // Invoice
     'Invoice' => 'Invoice',
@@ -619,6 +623,12 @@ return [
             'invalid' => 'User Not Found!',
         ],
 
+        'update-location' => [
+            'success' => 'Current Location Updated Successfully!',
+            'failure' => 'Unable to Update Location, Please Try Again...!',
+            'invalid' => 'User Not Found!',
+        ],
+        
         'search-child' => [
             'success' => 'Singletons List Fetched Successfully!',
             'failure' => 'No Result Found!',
@@ -866,6 +876,12 @@ return [
         'update-profile' => [
             'success' => 'Profile Details Updated Successfully!',
             'failure' => 'Unable to Update Profile, Please Try Again...!',
+            'invalid' => 'User Not Found!',
+        ],
+
+        'update-location' => [
+            'success' => 'Current Location Updated Successfully!',
+            'failure' => 'Unable to Update Location, Please Try Again...!',
             'invalid' => 'User Not Found!',
         ],
 

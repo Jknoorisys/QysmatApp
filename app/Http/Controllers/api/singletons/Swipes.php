@@ -9,6 +9,7 @@ use App\Models\Matches;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\PremiumFeatures;
 use App\Models\RecievedMatches;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
@@ -128,6 +129,28 @@ class Swipes extends Controller
                     }else{
                         $queue = 0;
                         $match_type = 'matched';
+
+                        // send congratulations fcm notification
+                        $user = Singleton::where([['id','=',$request->swiped_user_id],['status','!=','Deleted']])->first();
+                        $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+
+                        if (isset($user) && !empty($user) && isset($singleton) && !empty($singleton)) {
+                            $title = __('msg.Profile Matched');
+                            $body = __('msg.Congratulations Your Profile is Matched!');
+                            $token = $user->fcm_token;
+                            $token1 = $singleton->fcm_token;
+                            $data = array(
+                                'notType' => "profile_matched",
+                                'user1_id' => $user->id,
+                                'user1_name' => $user->name,
+                                'user1_profile' => $user->photo1,
+                                'user2_id' => $singleton->id,
+                                'user2_name' => $singleton->name,
+                                'user2_profile' => $singleton->photo1,
+                            );
+                            sendFCMNotifications($token, $title, $body, $data);
+                            sendFCMNotifications($token1, $title, $body, $data);
+                        }
                     }
 
                     Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])
@@ -228,7 +251,15 @@ class Swipes extends Controller
                 );
             }elseif ($request->swipe == 'down') {
                 $premium = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-                if ($premium->active_subscription_id != '1') {
+                $featureStatus = PremiumFeatures::whereId(1)->first();
+                if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.swips.premium'),
+                    ],400);
+                }
+
+                // if ($premium->active_subscription_id != '1') {
                     $last_swipe = LastSwipe::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type]])->first();
                     if(!empty($last_swipe)){
                         if ($last_swipe->swipe == 'right') {
@@ -236,11 +267,11 @@ class Swipes extends Controller
 
                             $match = Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $last_swipe->swiped_user_id]])
                                               ->orWhere([['user_id', '=', $last_swipe->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id]])->first();
-                            if ($match->match_type == 'liked') {
+                            if (!empty($match) && $match->match_type == 'liked') {
                                 Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $last_swipe->swiped_user_id]])
                                         ->orWhere([['user_id', '=', $last_swipe->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id]])
                                         ->delete();
-                            }elseif ($match->match_type == 'matched' || $match->match_type == 'hold') {
+                            }elseif (!empty($match) && ($match->match_type == 'matched' || $match->match_type == 'hold')) {
                                 Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $last_swipe->swiped_user_id]])
                                          ->orWhere([['user_id', '=', $last_swipe->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id]])
                                          ->update(['match_type' => 'liked', 'queue' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
@@ -289,12 +320,12 @@ class Swipes extends Controller
                             'message'   => __('msg.singletons.swips.invalid'),
                         ],400);
                     }
-                } else {
-                    return response()->json([
-                        'status'    => 'failed',
-                        'message'   => __('msg.singletons.swips.premium'),
-                    ],400);
-                }
+                // } else {
+                //     return response()->json([
+                //         'status'    => 'failed',
+                //         'message'   => __('msg.singletons.swips.premium'),
+                //     ],400);
+                // }
             }
 
             if(!empty($swipe)){

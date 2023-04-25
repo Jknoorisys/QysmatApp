@@ -15,11 +15,15 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->integer('user_id');
             $table->integer('singleton_id');
+            $table->enum('user_type', ['singleton','parent'])->default('singleton');
             $table->enum('gender', ['Male','Female', 'Other']);
             $table->string('age_range');
             $table->string('profession');
             $table->string('location');
+            $table->string('lat');
+            $table->string('long');
             $table->string('height');
             $table->string('islamic_sect');
             $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');

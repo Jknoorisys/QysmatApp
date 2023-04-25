@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\PremiumFeatures;
 use App\Models\Subscriptions as ModelsSubscriptions;
 use Illuminate\Http\Request;
 use Stripe\Plan;
@@ -34,6 +35,7 @@ class Subscriptions extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Subscriptions");
         $data['records']             =  ModelsSubscriptions::paginate(10);
+        $data['premiumStatus']       =  PremiumFeatures::whereId(1)->first();
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
 
         $features = [];
@@ -112,6 +114,22 @@ class Subscriptions extends Controller
             return redirect()->to('subscriptions')->with('success', __('msg.Subscription Price Updated!'));
         }else{
             return back()->with('fail', __('msg.Please Try Again....'));
+        }
+    }
+
+    public function changeFeatureStatus(Request $request)
+    {
+        $status = $request->status;
+        $statusChange =  PremiumFeatures :: whereId(1)->update(['status' => $status, 'updated_at' => date('Y-m-d H:i:s')]);
+        if ($statusChange) {
+            if ($status == 'inactive') {
+                return back()->with('success', __('msg.Features Inactivated'));
+            } else {
+                return back()->with('success', __('msg.Features Activated'));
+            }
+
+        } else {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
         }
     }
 }

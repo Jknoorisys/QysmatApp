@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('email_otp');
             $table->enum('is_email_verified',['verified', 'not verified'])->default('not verified');
             $table->string('nationality');
+            $table->string('country_code');
             $table->string('ethnic_origin');
             $table->string('islamic_sect');
             $table->string('location');
@@ -44,7 +45,7 @@ return new class extends Migration
             $table->string('fcm_token');
             $table->string('device_token');
             $table->enum('status',['Blocked','Unblocked', 'Deleted'])->default('Unblocked');
-            $table->enum('is_verified',['verified', 'rejected'])->default('rejected');
+            $table->enum('is_verified',['verified', 'rejected', 'pending'])->default('pending');
             $table->timestamps();
         });
     }

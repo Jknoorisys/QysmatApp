@@ -9,6 +9,7 @@ use App\Models\CallHistory;
 use App\Models\Matches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\PremiumFeatures;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\UnMatches;
@@ -80,7 +81,8 @@ class Call extends Controller
                 $sender_pic = $premium ? $premium->profile_pic : '';
             }
 
-            if ($premium->active_subscription_id == '1') {
+            $featureStatus = PremiumFeatures::whereId(1)->first();
+            if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.reset-profile.premium'),
@@ -246,7 +248,8 @@ class Call extends Controller
                 $sender_pic = $premium ? $premium->profile_pic : '';
             }
 
-            if ($premium->active_subscription_id == '1') {
+            $featureStatus = PremiumFeatures::whereId(1)->first();
+            if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.reset-profile.premium'),
