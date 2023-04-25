@@ -91,7 +91,7 @@
 
                 <li class="sidebar-item">
                     <a class="sidebar-link waves-effect waves-dark" href="{{route('contact-us')}}" aria-expanded="false">
-                        <i class="fa-regular fa-id-badge"></i>
+                        <i class="fa-solid fa-address-book"></i>
                         <span class="hide-menu sidebar-title"> {{__('msg.Manage Contact Us  Forms')}} </span>
                     </a>
                 </li>
