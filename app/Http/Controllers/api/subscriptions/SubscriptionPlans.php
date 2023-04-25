@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\subscriptions;
 use App\Http\Controllers\Controller;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\PremiumFeatures;
 use App\Models\Singleton;
 use App\Models\Subscriptions;
 use Illuminate\Http\Request;
@@ -50,6 +51,7 @@ class SubscriptionPlans extends Controller
 
         try {
             $pages = Subscriptions::where('status','=','Active')->get();
+            $featureStatus = PremiumFeatures::whereId(1)->first();
             $features = [];
             foreach ($pages as $page) {
                 if ($page->subscription_type == 'Basic') {
@@ -59,6 +61,7 @@ class SubscriptionPlans extends Controller
                     $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant match request (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
                 }
                 $page->features= !empty($features) ? $features : "";
+                $page->feature_status = $featureStatus ? $featureStatus->status : '';
             }
 
             if(!empty($pages)){

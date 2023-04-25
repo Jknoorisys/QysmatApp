@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('parent_children', function (Blueprint $table) {
+        Schema::create('premium_features', function (Blueprint $table) {
             $table->id();
-            $table->integer('parent_id');
-            $table->integer('singleton_id');
-            $table->string('access_code')->unique();
-            $table->enum('status',['Linked','Unlinked'])->default('Unlinked');
+            $table->enum('status',['active','inactive'])->default('inactive');
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('parent_children');
+        Schema::dropIfExists('premium_features');
     }
 };

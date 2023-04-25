@@ -11,6 +11,7 @@ use App\Models\MessagedUsers;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\PremiumFeatures;
 use App\Models\RecievedMatches;
 use App\Models\ReferredMatches;
 use App\Models\Singleton;
@@ -68,7 +69,8 @@ class InstantMatch extends Controller
         try {
 
             $premium = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-            if ($premium->active_subscription_id == '1') {
+            $featureStatus = PremiumFeatures::whereId(1)->first();
+            if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.send-request.premium'),
@@ -260,6 +262,28 @@ class InstantMatch extends Controller
                         }else{
                             $queue = 0;
                             $match_type = 'matched';
+
+                            // send congratulations fcm notification
+                            $user = Singleton::where([['id','=',$request->swiped_user_id],['status','!=','Deleted']])->first();
+                            $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+
+                            if (isset($user) && !empty($user) && isset($singleton) && !empty($singleton)) {
+                                $title = __('msg.Profile Matched');
+                                $body = __('msg.Congratulations Your Profile is Matched!');
+                                $token = $user->fcm_token;
+                                $token1 = $singleton->fcm_token;
+                                $data = array(
+                                    'notType' => "profile_matched",
+                                    'user1_id' => $user->id,
+                                    'user1_name' => $user->name,
+                                    'user1_profile' => $user->photo1,
+                                    'user2_id' => $singleton->id,
+                                    'user2_name' => $singleton->name,
+                                    'user2_profile' => $singleton->photo1,
+                                );
+                                sendFCMNotifications($token, $title, $body, $data);
+                                sendFCMNotifications($token1, $title, $body, $data);
+                            }
                         }
 
                         Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])

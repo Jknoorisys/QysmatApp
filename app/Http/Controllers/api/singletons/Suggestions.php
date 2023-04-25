@@ -9,6 +9,7 @@ use App\Models\Counters;
 use App\Models\Matches;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
+use App\Models\PremiumFeatures;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\SwipedUpUsers;
@@ -84,7 +85,7 @@ class Suggestions extends Controller
         }
 
         try {
-            $category = ModelsCategories::where([['status','=','Active'],['singleton_id','=',$request->login_id]])->first();
+            $category = ModelsCategories::where([['status','=','Active'],['user_id','=',$request->login_id],['user_type', '=', 'singleton']])->first();
 
             if(!empty($category)){
                 return response()->json([
@@ -127,14 +128,14 @@ class Suggestions extends Controller
         }
 
         try {
-            $categoryExists = ModelsCategories::where('singleton_id',$request->login_id)->first();
+            $categoryExists = ModelsCategories::where([['user_id','=',$request->login_id],['user_type', '=', 'singleton']])->first();
 
             if (!empty($categoryExists)) {
                 $user = Singleton::where('id',$request->login_id)->first();
-                $category = ModelsCategories::where('singleton_id',$request->login_id)->first();
+                $category = ModelsCategories::where([['user_id','=',$request->login_id],['user_type', '=', 'singleton']])->first();
                 $category->gender        = $user->gender == 'Male' ? 'Female' : 'Male';
                 $category->age_range     = $request->age_range ? $request->age_range : '';
-                $category->profession    = $request->profession ? $request->profession : '';
+                // $category->profession    = $request->profession ? $request->profession : '';
                 $category->location      = $request->location ? $request->location : '';
                 $category->height        = $request->height ? $request->height : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
@@ -155,10 +156,11 @@ class Suggestions extends Controller
                 }
             } else {
                 $category = new ModelsCategories();
-                $category->singleton_id  = $request->login_id ? $request->login_id : '';
+                $category->user_id       = $request->login_id ? $request->login_id : '';
+                $category->user_type     = 'singleton';
                 $category->gender        = $request->gender ? $request->gender : '';
                 $category->age_range     = $request->age_range ? $request->age_range : '';
-                $category->profession    = $request->profession ? $request->profession : '';
+                // $category->profession    = $request->profession ? $request->profession : '';
                 $category->location      = $request->location ? $request->location : '';
                 $category->height        = $request->height ? $request->height : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
@@ -214,14 +216,18 @@ class Suggestions extends Controller
                 ],400);
             }
 
-            $category = ModelsCategories::where('singleton_id',$request->login_id)->first();
+            $category = ModelsCategories::where([['user_id','=',$request->login_id],['user_type', '=', 'singleton']])->first();
 
             if (!empty($category)) {
                 // $gender = $category->gender ? $category->gender : '';
                 $user = Singleton::where('id',$request->login_id)->first();
                 $gender = $category->gender ? $category->gender : '';
-                $profession = $category->profession ? $category->profession : '';
+                // $profession = $category->profession ? $category->profession : '';
+                
                 $location = $category->location ? $category->location : '';
+                $latitude = $category->lat ? $category->lat : '';
+                $longitude = $category->long ? $category->long : '';
+
                 // $height = $category->height ? $category->height : '';
                 $islamic_sect = $category->islamic_sect ? $category->islamic_sect : '';
                 $age = $category->age_range ? explode('-',$category->age_range) : '';
@@ -234,16 +240,49 @@ class Suggestions extends Controller
 
                 $this->db = DB::table('singletons');
 
-                if(!empty($profession)){
-                    $this->db->where('profession','LIKE',"%$profession%");
-                }
+                // if(!empty($profession)){
+                //     $this->db->where('profession','LIKE',"%$profession%");
+                // }
 
-                if(!empty($location)){
-                    $this->db->where('location','LIKE',"%$location%");
+                // if(!empty($location)){
+                //     $this->db->where('location','LIKE',"%$location%");
+                // }
+
+                if (!empty($location)) {
+                    $validator = Validator::make($request->all(), [
+                        'search_by' => [
+                            'required',
+                            Rule::in(['radius', 'country']),
+                        ],
+                        'radius'   => ['required_if:search_by,radius'],
+                        'country_code'   => ['required_if:search_by,country'],
+                    ]);
+
+                    if($validator->fails()){
+                        return response()->json([
+                            'status'    => 'failed',
+                            'message'   => __('msg.Validation Failed!'),
+                            'errors'    => $validator->errors()
+                        ],400);
+                    }
+
+                    if ($request->search_by == 'radius') {
+                        $this->db->select('*', DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(`lat`)) * cos(radians(`long`) - radians(?)) + sin(radians(?)) * sin(radians(`lat`)))) AS distance'))
+                            ->having('distance', '<', $request->radius)
+                            ->orderBy('distance')
+                            ->setBindings([$latitude, $longitude, $latitude]);
+                    } else {
+                        $this->db->where('country_code','=',$request->country_code);
+                    }
                 }
 
                 if(!empty($min_height) && !empty($max_height)){
-                    $this->db->whereBetween('height', [$min_height, $max_height]);
+                    if ($max_height == 'above') {
+                        $this->db->where('height','>=', $min_height);
+                    }else{
+                        $this->db->whereBetween('height', [$min_height, $max_height]);
+                    }
+                    // $this->db->whereBetween('height', [$min_height, $max_height]);
                 }
 
                 if(!empty($islamic_sect)){
@@ -288,7 +327,8 @@ class Suggestions extends Controller
                     }
 
                     $premium = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-                    if (!empty($premium) && $premium->active_subscription_id == '1') {
+                    $featureStatus = PremiumFeatures::whereId(1)->first();
+                    if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
                         $user_counter = Counters::where([['user_id', '=', $request->login_id],['user_type', '=', 'singleton']])->first();
                         if(!empty($user_counter)){
                             if($user_counter->date != date('Y-m-d')){

@@ -1331,6 +1331,33 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
                                     ->orWhere([['match_id', '=', $un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'hold'], ['queue', '=', $other_queue->queue]])
                                     ->update(['match_type' => 'matched','queue' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
 
+                    $notify = Matches::where([['user_id', '=', $un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
+                            ->orWhere([['match_id', '=', $un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
+                            ->first();
+                    if (!empty($notify)) {
+                        // send congratulations fcm notification
+                        $user1 = Singleton::whereId($notify->user_id)->first();
+                        $user2 = Singleton::whereId($notify->match_id)->first();
+
+                        if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
+                            $title = __('msg.Profile Matched');
+                            $body = __('msg.Congratulations Your Child Profile is Matched!');
+                            $token = $user1->fcm_token;
+                            $token1 = $user2->fcm_token;
+                            $data = array(
+                                'notType' => "profile_matched",
+                                'user1_id' => $user1->id,
+                                'user1_name' => $user1->name,
+                                'user1_profile' => $user1->photo1,
+                                'user2_id' => $user2->id,
+                                'user2_name' => $user2->name,
+                                'user2_profile' => $user2->photo1,
+                            );
+                            sendFCMNotifications($token, $title, $body, $data);
+                            sendFCMNotifications($token1, $title, $body, $data);
+                        }
+                    }    
+
                     Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'matched']])
                                 ->orWhere([['match_id','=',$user_id],['user_type','=','singleton'], ['match_type', '=', 'matched']])
                                 ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no'],['status' => 'available']);

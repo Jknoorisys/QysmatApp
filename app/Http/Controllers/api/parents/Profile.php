@@ -5,9 +5,11 @@ namespace App\Http\Controllers\api\parents;
 use App\Http\Controllers\Controller;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\ReVerifyRequests;
 use App\Models\Singleton;
 use App\Notifications\AccountLinkedNotification;
 use App\Notifications\RequestAccessNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -55,6 +57,10 @@ class Profile extends Controller
                 Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
             ],
             'login_id'   => 'required||numeric',
+            'is_me'     => [
+                'required' ,
+                Rule::in(['yes','no']),
+            ],
         ]);
 
         if($validator->fails()){
@@ -66,7 +72,18 @@ class Profile extends Controller
         }
 
         try {
-            $user = ParentsModel::where([['id','=',$request->login_id], ['status','=','unblocked'], ['is_email_verified','=','verified']])->first();
+            if ($request->is_me == 'yes') {
+                $profile = ParentsModel::where([['id','=',$request->login_id], ['status','=','unblocked']])->first();
+                if (!empty($profile) && $profile->is_verified != 'pending') {
+                    $user = ParentsModel::where([['id','=',$request->login_id], ['status','=','unblocked'], ['is_email_verified','=','verified']])->first();
+                } else {
+                    $user = ReVerifyRequests::where([['user_id','=',$request->login_id], ['user_type','=','parent'], ['status','!=','verified']])
+                    ->first(['user_id as id','user_type','name','email','mobile','profile_pic','relation_with_singleton','nationality','country_code','ethnic_origin','islamic_sect','location','lat','long','live_photo','id_proof','status as is_verified']);
+                }
+            } else {
+                $user = ParentsModel::where([['id','=',$request->login_id], ['status','=','unblocked'], ['is_email_verified','=','verified']])->first();
+            }
+            
             if(!empty($user)){
                 return response()->json([
                     'status'    => 'success',
@@ -88,6 +105,121 @@ class Profile extends Controller
         }
     }
 
+    // public function updateProfile(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'language' => [
+    //             'required',
+    //             Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+    //         ],
+    //         'login_id'          => 'required||numeric',
+    //         'name'              => ['required', 'string', 'min:3', 'max:255'],
+    //         'email'             => ['required', 'email'],
+    //         // 'mobile'            => 'required||unique:singletons||unique:parents',
+    //         'mobile'            => 'required',
+    //         'relation_with_singleton' => 'required',
+    //         'profile_pic'       => 'image||mimes:jpeg,png,jpg,svg||max:5000',
+    //         'nationality'       => 'required',
+    //         'country_code'      => 'required',
+    //         'ethnic_origin'     => 'required',
+    //         'islamic_sect'      => 'required',
+    //         'location'          => 'required',
+    //         'lat'               => 'required',
+    //         'long'              => 'required',
+    //         // 'live_photo'        => 'required',
+    //         // 'id_proof'          => 'required',
+    //     ]);
+
+    //     // if($validator->fails()){
+    //     //     return response()->json([
+    //     //         'status'    => 'failed',
+    //     //         'message'   => __('msg.Validation Failed!'),
+    //     //         'errors'    => $validator->errors()
+    //     //     ],400);
+    //     // }
+
+    //     $errors = [];
+    //     foreach ($validator->errors()->messages() as $key => $value) {
+    //         // if($key == 'email')
+    //             $key = 'error_message';
+    //             $errors[$key] = is_array($value) ? implode(',', $value) : $value;
+    //     }
+
+    //     if($validator->fails()){
+    //         return response()->json([
+    //             'status'    => 'failed',
+    //             'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
+    //             // 'errors'    => $validator->errors()
+    //         ],400);
+    //     }
+
+    //     try {
+    //         $user = ParentsModel::find($request->login_id);
+    //         if(!empty($user)){
+    //             $user->name          = $request->name ? $request->name : '';
+    //             $user->email         = $request->email ? $request->email : '';
+    //             $user->mobile        = $request->mobile ? $request->mobile : '';
+    //             $user->nationality   = $request->nationality ? $request->nationality : '';
+    //             $user->country_code  = $request->country_code ? $request->country_code : '';
+    //             $user->ethnic_origin = $request->ethnic_origin ? $request->ethnic_origin : '';
+    //             $user->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
+    //             $user->location      = $request->location ? $request->location : '';
+    //             $user->lat           = $request->lat ? $request->lat : '';
+    //             $user->long          = $request->long ? $request->long : '';
+    //             $user->relation_with_singleton          = $request->relation_with_singleton ? $request->relation_with_singleton : '';
+
+    //             $file = $request->file('profile_pic');
+    //             if ($file) {
+    //                 $extension = $file->getClientOriginalExtension();
+    //                 $filename = time().'.'.$extension;
+    //                 $file->move('assets/uploads/parent-photos/', $filename);
+    //                 $user->profile_pic = 'assets/uploads/parent-photos/'.$filename  ;
+    //             }
+
+    //             $file1 = $request->file('live_photo');
+    //             if ($file1) {
+    //                 $extension = $file1->getClientOriginalExtension();
+    //                 $filename = time().'.'.$extension;
+    //                 $file1->move('assets/uploads/parent-live-photos/', $filename);
+    //                 $user->live_photo = 'assets/uploads/parent-live-photos/'.$filename;
+    //             }
+
+    //             $file2 = $request->file('id_proof');
+    //             if ($file2) {
+    //                 $extension = $file2->getClientOriginalExtension();
+    //                 $filename = time().'.'.$extension;
+    //                 $file2->move('assets/uploads/parent-id-proofs/', $filename);
+    //                 $user->id_proof = 'assets/uploads/parent-id-proofs/'.$filename;
+    //             }
+
+    //         $userDetails =  $user->save();
+    //         if($userDetails){
+    //                 return response()->json([
+    //                     'status'    => 'success',
+    //                     'message'   => __('msg.parents.update-profile.success'),
+    //                     'data'      => $user
+    //                 ],200);
+    //         }else{
+    //                 return response()->json([
+    //                     'status'    => 'failed',
+    //                     'message'   => __('msg.parents.update-profile.failure'),
+    //                 ],400);
+    //         }
+    //         }else{
+    //             return response()->json([
+    //                 'status'    => 'failed',
+    //                 'message'   => __('msg.parents.update-profile.invalid'),
+    //             ],400);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status'    => 'failed',
+    //             'message'   => __('msg.error'),
+    //             'error'     => $e->getMessage()
+    //         ],500);
+    //     }
+    // }
+
     public function updateProfile(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -103,6 +235,7 @@ class Profile extends Controller
             'relation_with_singleton' => 'required',
             'profile_pic'       => 'image||mimes:jpeg,png,jpg,svg||max:5000',
             'nationality'       => 'required',
+            'country_code'      => 'required',
             'ethnic_origin'     => 'required',
             'islamic_sect'      => 'required',
             'location'          => 'required',
@@ -138,23 +271,12 @@ class Profile extends Controller
         try {
             $user = ParentsModel::find($request->login_id);
             if(!empty($user)){
-                $user->name          = $request->name ? $request->name : '';
-                $user->email         = $request->email ? $request->email : '';
-                $user->mobile        = $request->mobile ? $request->mobile : '';
-                $user->nationality   = $request->nationality ? $request->nationality : '';
-                $user->ethnic_origin = $request->ethnic_origin ? $request->ethnic_origin : '';
-                $user->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
-                $user->location      = $request->location ? $request->location : '';
-                $user->lat           = $request->lat ? $request->lat : '';
-                $user->long          = $request->long ? $request->long : '';
-                $user->relation_with_singleton          = $request->relation_with_singleton ? $request->relation_with_singleton : '';
-
                 $file = $request->file('profile_pic');
                 if ($file) {
                     $extension = $file->getClientOriginalExtension();
                     $filename = time().'.'.$extension;
                     $file->move('assets/uploads/parent-photos/', $filename);
-                    $user->profile_pic = 'assets/uploads/parent-photos/'.$filename;
+                    $profile_pic = 'assets/uploads/parent-photos/'.$filename  ;
                 }
 
                 $file1 = $request->file('live_photo');
@@ -162,7 +284,7 @@ class Profile extends Controller
                     $extension = $file1->getClientOriginalExtension();
                     $filename = time().'.'.$extension;
                     $file1->move('assets/uploads/parent-live-photos/', $filename);
-                    $user->live_photo = 'assets/uploads/parent-live-photos/'.$filename;
+                    $live_photo = 'assets/uploads/parent-live-photos/'.$filename;
                 }
 
                 $file2 = $request->file('id_proof');
@@ -170,22 +292,46 @@ class Profile extends Controller
                     $extension = $file2->getClientOriginalExtension();
                     $filename = time().'.'.$extension;
                     $file2->move('assets/uploads/parent-id-proofs/', $filename);
-                    $user->id_proof = 'assets/uploads/parent-id-proofs/'.$filename;
+                    $id_proof = 'assets/uploads/parent-id-proofs/'.$filename;
                 }
 
-            $userDetails =  $user->save();
-            if($userDetails){
+                $userDetails = ReVerifyRequests::updateOrInsert(
+                    ['user_id' => $request->login_id, 'user_type' => 'parent'],
+                    [
+                        'user_id'                   => $request->login_id, 
+                        'user_type'                 => 'parent',
+                        'name'                      => $request->name ? $request->name : '',
+                        'email'                     => $request->email ? $request->email : '',
+                        'mobile'                    => $request->mobile ? $request->mobile : '',
+                        'nationality'               => $request->nationality ? $request->nationality : '',
+                        'country_code'              => $request->country_code ? $request->country_code : '',
+                        'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : '',
+                        'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : '',
+                        'islamic_sect'              => $request->islamic_sect ? $request->islamic_sect : '',
+                        'location'                  => $request->location ? $request->location : '',
+                        'lat'                       => $request->lat ? $request->lat : '',
+                        'long'                      => $request->long ? $request->long : '',
+                        'relation_with_singleton'   => $request->relation_with_singleton ? $request->relation_with_singleton : '',
+                        'profile_pic'               => $request->file('profile_pic') ? $profile_pic : '',
+                        'live_photo'                => $request->file('live_photo') ? $live_photo : '',
+                        'id_proof'                  => $request->file('id_proof') ? $id_proof : '',
+                        'status'                    => 'pending'
+                    ]
+                );
+                
+                if($userDetails){
+                    ParentsModel::where('id', '=', $request->login_id)->update(['is_verified' => 'pending']);
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.parents.update-profile.success'),
                         'data'      => $user
                     ],200);
-            }else{
+                }else{
                     return response()->json([
                         'status'    => 'failed',
                         'message'   => __('msg.parents.update-profile.failure'),
                     ],400);
-            }
+                }
             }else{
                 return response()->json([
                     'status'    => 'failed',
@@ -331,11 +477,11 @@ class Profile extends Controller
         }
 
         try {
-            $accessRequest = ParentChild::where([['parent_id','=',$request->login_id],['singleton_id','=',$request->singleton_id],['access_code','=',$request->access_code]])->first();
+            $accessRequest = ParentChild::where([['singleton_id','=',$request->singleton_id],['access_code','=',$request->access_code]])->first();
 
             if(!empty($accessRequest)){
-                ParentChild::where([['parent_id', '=', $accessRequest->parent_id],['singleton_id', '=', $accessRequest->singleton_id],['access_code','=',$request->access_code]])->update(['status' => 'Linked']);
-                Singleton::where('id','=',$accessRequest->singleton_id)->update(['parent_id' => $accessRequest->parent_id]);
+                ParentChild::where([['singleton_id', '=', $accessRequest->singleton_id],['access_code','=',$request->access_code]])->update(['parent_id' => $request->login_id,'status' => 'Linked']);
+                Singleton::where('id','=',$accessRequest->singleton_id)->update(['parent_id' => $request->login_id]);
 
                 $user = Singleton::where([['id','=',$request->singleton_id],['status','!=','Deleted']])->first();
                 $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
@@ -445,6 +591,56 @@ class Profile extends Controller
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.get-child-profile.failure'),
+                ],400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function updatecurrentlocation(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'   => 'required||numeric',
+            'location'   => 'required',
+            'lat'        => 'required',
+            'long'       => 'required',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+            $data = [
+                'location' => $request->location,
+                'lat'      => $request->lat,
+                'long'     => $request->long,
+                'updated_at' => Carbon::now()
+            ];
+            $update = ParentsModel::where('id', '=', $request->login_id)->update($data);
+            if ($update) {
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.parents.update-location.success'),
+                    'data'      => $data,
+                ],200);
+            } else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.update-location.failure'),
                 ],400);
             }
         } catch (\Exception $e) {

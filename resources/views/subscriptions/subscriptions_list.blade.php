@@ -54,6 +54,26 @@
 
 </style>
 
+@if ($premiumStatus->status == 'inactive')
+    <div class="card">
+        <div class="row mt-2">
+            <div class="col-3">
+                <h4 class="text-bold ml-4">{{ __('msg.Enable Premium Features') }}</h4>
+            </div>
+            <div class="col-3">
+                <form action="{{route('changeFeatureStatus')}}" method="post" class="text-center">
+                    @csrf
+                    <input type="hidden" name="status" value="{{$premiumStatus->status == 'active' ? 'inactive' : 'active' }}">
+                    <button type="submit" data-status="{{$premiumStatus->status == 'inactive' ? 'Inactive' : 'Active' }}" data-id="" data-name="{{ __('msg.Premium Features') }}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$premiumStatus->status == 'inactive' ? '' : 'checked'}} /><label for="switch">Toggle</label></button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <p class="ml-4 text-danger">({{ __('msg.Once you activate premium features, you may not be able to deactivate them again') }})</p>
+        </div>
+    </div>
+@endif
+
 <div class="row justify-content-center">
     @foreach ($records as $value)
         <div class="col-4">
@@ -62,9 +82,9 @@
                     <h4 class="card-title text-uppercase text-center">{{$value->subscription_type}}</h4>
                     <h6 class="card-price text-white text-center">{{ $value->id !=1 ? $value->currency : ''}}{{$value->price}}
                         @if ($value->id == 2)
-                            <p style="font-size:14px;">per month</p>
+                            <p style="font-size:14px;">{{ __('msg.per month') }}</p>
                         @elseif ($value->id == 3)
-                            <p style="font-size:14px;">per month per person</p>
+                            <p style="font-size:14px;">{{ __('msg.per month per person') }}</p>
                         @endif
                         <span class="term"></span>
                     </h6>
@@ -75,14 +95,12 @@
                         <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{$feature}}</li>
                         @endforeach
                         <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i><span>{{__('msg.Status')}} : {{$value->status}}</span>
-
-                                <form action="{{route('changeSubscriptionStatus')}}" method="post" class="text-center">
-                                    @csrf
-                                    <input type="hidden" name="id" value="{{$value->id}}">
-                                    <input type="hidden" name="status" value="{{$value->status == 'Active' ? 'Inactive' : 'Active' }}">
-                                    <button type="submit" data-status="{{$value->status == 'Active' ? 'Active' : 'Inactive'}}" data-id="{{$value->id}}" data-name="{{$value->subscription_type}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Inactive' ? '' : 'checked'}} /><label for="switch">Toggle</label></button>
-                                </form>
-
+                            <form action="{{route('changeSubscriptionStatus')}}" method="post" class="text-center">
+                                @csrf
+                                <input type="hidden" name="id" value="{{$value->id}}">
+                                <input type="hidden" name="status" value="{{$value->status == 'Active' ? 'Inactive' : 'Active' }}">
+                                <button type="submit" data-status="{{$value->status == 'Active' ? 'Active' : 'Inactive'}}" data-id="{{$value->id}}" data-name="{{$value->subscription_type}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Inactive' ? '' : 'checked'}} /><label for="switch">Toggle</label></button>
+                            </form>
                         </li>
                     </ul>
                     <div class="d-grid mt-3">

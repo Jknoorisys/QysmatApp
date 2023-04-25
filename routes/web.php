@@ -63,6 +63,7 @@ Route::any('subscriptions' , [Subscriptions::class, 'index'])->middleware('isLog
 Route::post('changeSubscriptionStatus' , [Subscriptions::class, 'changeSubscriptionStatus'])->middleware('isLoggedIn')->name('changeSubscriptionStatus');
 Route::post('updatePrice' , [Subscriptions::class, 'updatePrice'])->middleware('isLoggedIn')->name('updatePrice');
 Route::post('updatePriceFun' , [Subscriptions::class, 'updatePriceFun'])->middleware('isLoggedIn')->name('updatePriceFun');
+Route::post('changeFeatureStatus' , [Subscriptions::class, 'changeFeatureStatus'])->middleware('isLoggedIn')->name('changeFeatureStatus');
 
 // Manage Contact Details
 Route::any('contact_details' , [ContactDetails::class, 'index'])->middleware('isLoggedIn')->name('contact_details');

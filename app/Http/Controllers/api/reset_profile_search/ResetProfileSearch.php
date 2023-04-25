@@ -12,6 +12,7 @@ use App\Models\MessagedUsers;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\PremiumFeatures;
 use App\Models\RecievedMatches;
 use App\Models\ReferredMatches;
 use App\Models\ReportedUsers;
@@ -71,7 +72,8 @@ class ResetProfileSearch extends Controller
                 $premium = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
             }
 
-            if ($premium->active_subscription_id == '1') {
+            $featureStatus = PremiumFeatures::whereId(1)->first();
+            if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.reset-profile.premium'),

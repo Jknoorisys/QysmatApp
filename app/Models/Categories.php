@@ -10,6 +10,8 @@ class Categories extends Model
     use HasFactory;
     protected $fillable = [
         'id',
+        'user_id',
+        'user_type',
         'singleton_id',
         'gender',
         'age_range',

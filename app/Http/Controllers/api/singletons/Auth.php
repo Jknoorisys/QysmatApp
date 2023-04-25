@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Models\ContactDetails as ModelsContactDetails;
+use App\Models\ParentChild;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -118,6 +119,7 @@ class Auth extends Controller
                     $message->to($user['to']);
                     $message->subject(__('msg.Email Verification'));
                 });
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.register.success'),
@@ -300,6 +302,29 @@ class Auth extends Controller
 
                         if($request->user_type == 'singleton'){
                             $user = Singleton::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
+
+                            $accessCode = random_int(100000,999999);
+
+                            $codeExists = ParentChild::where('access_code', '=', $accessCode)->first();
+                            if (!empty($codeExists)) {
+                                $accessCode = random_int(100000,999999);
+                            }
+                                                                                                                                                                                                                                                                                                                                                                                             
+                            $accessRequest = ParentChild::updateOrCreate(
+                                ['singleton_id' => $user->id],
+                                [
+                                    'singleton_id' => $user->id ? $user->id : '',
+                                    'access_code'  => $accessCode ? $accessCode : '',
+                                    'status'       => 'Unlinked',
+                                    'created_at'   => date('Y-m-d H:i:s'),
+                                ]
+                            );
+                            $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $accessCode, 'msg'=> __('msg.Let’s get Connected!'), 'otp_msg'=> __('msg.Your Access Code to get Connected with your Parent/Guardian is')];
+                            // $user =  ['to'=> $user->email];
+                            Mail::send('email_template', $data, function ($message) use ($user) {
+                                $message->to($user->email);
+                                $message->subject(__('msg.Access Request Code'));
+                            });
                         }else{
                             $user = ParentsModel::where([['id','=',$request->user_id],['status','=','Unblocked']])->first();
                         }
@@ -478,7 +503,7 @@ class Auth extends Controller
                         $user->photo_uploaded = 1;
                     }
         
-                    $category = Categories::where('singleton_id',$user->id)->first();
+                    $category = Categories::where([['user_id',$user->id],['user_type', '=', 'singleton']])->first();
                     if (empty($category)) {
                         $user->category_exists = 0;
                     }else{
@@ -582,7 +607,7 @@ class Auth extends Controller
                     $user->photo_uploaded = 1;
                 }
     
-                $category = Categories::where('singleton_id',$user->id)->first();
+                $category = Categories::where([['user_id',$user->id],['user_type', '=', 'singleton']])->first();
                 if (empty($category)) {
                     $user->category_exists = 0;
                 }else{

@@ -60,6 +60,7 @@ class Singletons extends Controller
             }
             $data['details']->features= !empty($features) ? $features : "";
 
+            $data['reverify']            = DB::table('re_verify_requests')->where([['user_id', '=', $id],['user_type', '=', 'singleton'],['status', '=', 'pending']])->first();
             $data['admin']               = $this->admin;
             $data['previous_title']      = __("msg.Manage Singletons");
             $data['url']                 = route('sigletons');
@@ -79,7 +80,41 @@ class Singletons extends Controller
         $verified =  Singleton :: whereId($id)->update(['is_verified' => $is_verified, 'updated_at' => date('Y-m-d H:i:s')]);
         if ($verified) {
             if ($is_verified == 'verified') {
-                $reciever = Singleton::where([['id', '=', $id], ['status', '=', 'Unblocked']])->first();
+                $reciever = Singleton::where('id', '=', $id)->first();
+
+                $reVerify = DB::table('re_verify_requests')->where([['user_id', '=', $id],['user_type', '=', 'singleton']])->first();
+                if (!empty($reVerify)) {
+
+                    $data = [
+                        'name'                      => $reVerify->name ? $reVerify->name : $reciever->name,
+                        // 'email'                     => $reVerify->email ? $reVerify->email : $reciever->email,
+                        'mobile'                    => $reVerify->mobile ? $reVerify->mobile : $reciever->mobile,
+                        'photo1'                    => $reVerify->photo1 ? $reVerify->photo1 : $reciever->photo1,
+                        'photo2'                    => $reVerify->photo2 ? $reVerify->photo2 : $reciever->photo2,
+                        'photo3'                    => $reVerify->photo3 ? $reVerify->photo3 : $reciever->photo3,
+                        'photo4'                    => $reVerify->photo4 ? $reVerify->photo4 : $reciever->photo4,
+                        'photo5'                    => $reVerify->photo5 ? $reVerify->photo5 : $reciever->photo5,
+                        'dob'                       => $reVerify->dob ? $reVerify->dob : $reciever->dob,
+                        'gender'                    => $reVerify->gender ? $reVerify->gender : $reciever->gender,
+                        'age'                       => $reVerify->age ? $reVerify->age : $reciever->age,
+                        'height'                    => $reVerify->height ? $reVerify->height : $reciever->height,
+                        'profession'                => $reVerify->profession ? $reVerify->profession : $reciever->profession,
+                        'nationality'               => $reVerify->nationality ? $reVerify->nationality : $reciever->nationality,
+                        'country_code'              => $reVerify->country_code ? $reVerify->country_code : $reciever->country_code,
+                        'ethnic_origin'             => $reVerify->ethnic_origin ? $reVerify->ethnic_origin : $reciever->ethnic_origin,
+                        'islamic_sect'              => $reVerify->islamic_sect ? $reVerify->islamic_sect : $reciever->islamic_sect,
+                        'short_intro'               => $reVerify->short_intro ? $reVerify->short_intro : $reciever->short_intro,
+                        'location'                  => $reVerify->location ? $reVerify->location : $reciever->location,
+                        'lat'                       => $reVerify->lat ? $reVerify->lat : $reciever->lat,
+                        'long'                      => $reVerify->long ? $reVerify->long : $reciever->long,
+                        'live_photo'                => $reVerify->live_photo ? $reVerify->live_photo : $reciever->live_photo,
+                        'id_proof'                  => $reVerify->id_proof ? $reVerify->id_proof : $reciever->id_proof,
+                    ];
+
+                    Singleton :: whereId($id)->update($data);
+                    DB::table('re_verify_requests')->where([['id', '=', $reVerify->id],['user_id', '=', $id],['user_type', '=', 'singleton']])->update(['status' => $is_verified]);
+                }
+               
                 if (isset($reciever) && !empty($reciever)) {
                     $title = __('msg.Profile Verified');
                     $message = __('msg.Your Profile is Verified by Admin');
@@ -103,6 +138,7 @@ class Singletons extends Controller
                 }
                 return redirect()->to('sigletons')->with('success', __('msg.Singleton Profile Verified Successfully'));
             } else {
+                DB::table('re_verify_requests')->where([['user_id', '=', $id],['user_type', '=', 'singleton']])->update(['status' => $is_verified]);
                 return redirect()->to('sigletons')->with('success', __('msg.Singleton Profile Rejected Successfully'));
             }
         } else {

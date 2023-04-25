@@ -8,6 +8,7 @@ use App\Models\Matches as ModelsMatches;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
+use App\Models\PremiumFeatures;
 use App\Models\RecievedMatches;
 use App\Models\ReferredMatches;
 use App\Models\ReportedUsers;
@@ -530,7 +531,8 @@ class Matches extends Controller
         try {
 
             $premium = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-            if ($premium->active_subscription_id == '1') {
+            $featureStatus = PremiumFeatures::whereId(1)->first();
+            if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.re-match.premium'),
@@ -592,6 +594,32 @@ class Matches extends Controller
                                             ->update(['match_type' => 'matched','is_rematched' => 'yes', 'updated_at' => date('Y-m-d H:i:s')]);
                 
                 if($re_matched){
+
+                    // send congratulations fcm notification
+                    $parent1 = ParentsModel::whereId($request->login_id)->first();
+                    $parent2 = ParentsModel::whereId($userExists->parent_id)->first();
+
+                    $user1 = Singleton::whereId($request->singleton_id)->first();
+                    $user2 = Singleton::whereId($request->re_matched_id)->first();
+
+                    if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
+                        $title = __('msg.Profile Matched');
+                        $body = __('msg.Congratulations Your Child Profile is Matched!');
+                        $token = $parent1->fcm_token;
+                        $token1 = $parent2->fcm_token;
+                        $data = array(
+                            'notType' => "profile_matched",
+                            'user1_id' => $user1->id,
+                            'user1_name' => $user1->name,
+                            'user1_profile' => $user1->photo1,
+                            'user2_id' => $user2->id,
+                            'user2_name' => $user2->name,
+                            'user2_profile' => $user2->photo1,
+                        );
+                        sendFCMNotifications($token, $title, $body, $data);
+                        sendFCMNotifications($token1, $title, $body, $data);
+                    }
+
                     UnMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->re_matched_id]])
                                 ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $request->singleton_id]])
                                 ->delete();
