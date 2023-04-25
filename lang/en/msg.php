@@ -348,8 +348,8 @@ return [
     'New Subscription'                                      => 'New Subscription',
     'has Subscribed.'                                       => 'has Subscribed.',
     'Profile Matched'                                       => 'Profile Matched',
-    'Congratulations Your Profile is Matched!'              => 'Congratulations Your Profile is Matched!',
-    'Congratulations Your Child Profile is Matched!'        => 'Congratulations Your Child Profile is Matched!',
+    'Congratulations It’s a Match!'                         => 'Congratulations It’s a Match!',
+    'Congratulations It’s a Match for your Child!'        => 'Congratulations It’s a Match for your Child!',
 
     // Invoice
     'Invoice' => 'Invoice',
@@ -992,5 +992,12 @@ return [
         'failure' => 'Unable to Generate Toke, Please Try Again...',
         'invalid' => 'Unable to Call',
         'Call Rejected' => 'Call Rejected'
-    ]
+    ],
+
+    'matchFound' => [
+        'success' => 'It’s a Match!!',
+        'failure' => 'Something Went Wrong, Please Try Again...',
+        'user1' => 'User1 Not Found',
+        'user2' => 'User2 Not Found'
+    ],
 ];

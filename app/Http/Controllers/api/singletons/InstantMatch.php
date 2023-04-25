@@ -269,7 +269,7 @@ class InstantMatch extends Controller
 
                             if (isset($user) && !empty($user) && isset($singleton) && !empty($singleton)) {
                                 $title = __('msg.Profile Matched');
-                                $body = __('msg.Congratulations Your Profile is Matched!');
+                                $body = __('msg.Congratulations It’s a Match!');
                                 $token = $user->fcm_token;
                                 $token1 = $singleton->fcm_token;
                                 $data = array(

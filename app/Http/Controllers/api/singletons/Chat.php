@@ -578,7 +578,7 @@ class Chat extends Controller
 
                         if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                             $title = __('msg.Profile Matched');
-                            $body = __('msg.Congratulations Your Child Profile is Matched!');
+                            $body = __('msg.Congratulations It’s a Match!');
                             $token = $parent1->fcm_token;
                             $token1 = $parent2->fcm_token;
                             $data = array(
