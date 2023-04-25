@@ -1341,7 +1341,7 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
 
                         if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                             $title = __('msg.Profile Matched');
-                            $body = __('msg.Congratulations Your Child Profile is Matched!');
+                            $body = __('msg.Congratulations It’s a Match!');
                             $token = $user1->fcm_token;
                             $token1 = $user2->fcm_token;
                             $data = array(

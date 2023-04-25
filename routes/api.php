@@ -91,6 +91,7 @@ Route::prefix('singleton')->group(function () {
     Route::post('reffered-matches' , [SingletonsMatches::class, 'RefferedMatches']);
     Route::post('recieved-matches' , [SingletonsMatches::class, 'RecievedMatches']);
     Route::post('mutual-matches' , [SingletonsMatches::class, 'MutualMatches']);
+    Route::post('match-found' , [SingletonsMatches::class, 'matchFound']);
 
     // Instant Match Request
     Route::post('send-request' , [SingletonsInstantMatch::class, 'sendInstantRequest']);

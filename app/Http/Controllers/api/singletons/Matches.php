@@ -116,7 +116,7 @@ class Matches extends Controller
 
                             if (isset($user) && !empty($user)) {
                                 $title = __('msg.Profile Matched');
-                                $body = __('msg.Congratulations Your Profile is Matched!');
+                                $body = __('msg.Congratulations It’s a Match!');
                                 $token = $user->fcm_token;
                                 $data = array(
                                     'notType' => "profile_matched",
@@ -163,7 +163,7 @@ class Matches extends Controller
 
                             if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                                 $title = __('msg.Profile Matched');
-                                $body = __('msg.Congratulations Your Profile is Matched!');
+                                $body = __('msg.Congratulations It’s a Match!');
                                 $token1 = $user1->fcm_token;
                                 $token2 = $user2->fcm_token;
                                 $data = array(
@@ -735,7 +735,7 @@ class Matches extends Controller
 
                         if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                             $title = __('msg.Profile Matched');
-                            $body = __('msg.Congratulations Your Profile is Matched!');
+                            $body = __('msg.Congratulations It’s a Match!');
                             $token1 = $user1->fcm_token;
                             $token2 = $user2->fcm_token;
                             $data = array(
@@ -814,6 +814,65 @@ class Matches extends Controller
                 ],400);
             }
         } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function matchFound(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'user1_id'  => 'required||numeric',
+            'user2_id' => 'required||numeric',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+            $user1 = Singleton::where([['id', '=', $request->user1_id], ['status', '=', 'Unblocked']])->first();
+            if(empty($user1) || $user1->staus == 'Deleted' || $user1->staus == 'Blocked'){
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.matchFound.user1'),
+                ],400);
+            }
+
+            $user2 = Singleton::where([['id', '=', $request->user2_id], ['status', '=', 'Unblocked']])->first();
+            if(empty($user2) || $user2->staus == 'Deleted' || $user2->staus == 'Blocked'){
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.matchFound.user2'),
+                ],400);
+            }
+
+            if (!empty($user1) && !empty($user2)) {
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.matchFound.success'),
+                    'user1'     => $user1,
+                    'user2'     => $user2,
+                ],200);
+            } else {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.matchFound.failure'),
+                ],400);
+            }
+            
+        } catch (\Throwable $e) {
             return response()->json([
                 'status'    => 'failed',
                 'message'   => __('msg.error'),
