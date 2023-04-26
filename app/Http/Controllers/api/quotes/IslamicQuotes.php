@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\quotes;
 
 use App\Http\Controllers\Controller;
 use App\Models\Quotes;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
@@ -39,7 +40,7 @@ class IslamicQuotes extends Controller
         }
 
         try {
-            $page = Quotes::where('status','=','Active')->inRandomOrder()->get();
+            $page = Quotes::where('status','=','Active')->inRandomOrder()->take(5)->get();
             if(!$page->isEmpty()){
                 return response()->json([
                     'status'    => 'success',
