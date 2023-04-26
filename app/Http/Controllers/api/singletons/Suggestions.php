@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Symfony\Component\Console\Completion\Suggestion;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=utf8");
@@ -125,7 +124,7 @@ class Suggestions extends Controller
                 'long'   => 'required',
             ]);
         }
-        
+
         if($validator->fails()){
             return response()->json([
                 'status'    => 'failed',
