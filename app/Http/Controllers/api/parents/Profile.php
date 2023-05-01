@@ -73,12 +73,18 @@ class Profile extends Controller
 
         try {
             if ($request->is_me == 'yes') {
-                $profile = ParentsModel::where([['id','=',$request->login_id], ['status','=','unblocked']])->first();
+                $profile = ParentsModel::where([['id','=',$request->login_id], ['status','=','Unblocked']])->first();
                 if (!empty($profile) && $profile->is_verified != 'pending') {
-                    $user = ParentsModel::where([['id','=',$request->login_id], ['status','=','unblocked'], ['is_email_verified','=','verified']])->first();
+                    $user = ParentsModel::where([['id','=',$request->login_id], ['status','=','Unblocked'], ['is_email_verified','=','verified']])->first();
                 } else {
+                    $old_user = ParentsModel::where([['id','=',$request->login_id], ['status','=','Unblocked']])->first();
                     $user = ReVerifyRequests::where([['user_id','=',$request->login_id], ['user_type','=','parent'], ['status','!=','verified']])
-                    ->first(['user_id as id','user_type','name','email','mobile','profile_pic','relation_with_singleton','nationality','country_code','ethnic_origin','islamic_sect','location','lat','long','live_photo','id_proof','status as is_verified']);
+                    ->first(['user_id as id','user_type','name','email','mobile','profile_pic','relation_with_singleton','nationality','country_code','nationality_code','ethnic_origin','islamic_sect','location','lat','long','live_photo','id_proof','status as is_verified']);
+                    if ($old_user) {
+                        ($user->profile_pic == '' || empty($user->profile_pic)) ? $old_user->profile_pic : $user->profile_pic;
+                        ($user->live_photo == '' || empty($user->live_photo)) ? $old_user->live_photo : $user->live_photo;
+                        ($user->id_proof == '' || empty($user->id_proof)) ? $old_user->id_proof : $user->photo1;
+                    }
                 }
             } else {
                 $user = ParentsModel::where([['id','=',$request->login_id], ['status','=','unblocked'], ['is_email_verified','=','verified']])->first();
