@@ -859,6 +859,18 @@ class Matches extends Controller
             }
 
             if (!empty($user1) && !empty($user2)) {
+                if ($user1->parent_id && $user1->parent_id != 0) {
+                    $parent = ParentsModel::where('id','=', $user1->parent_id)->first();
+                    $user1->parent_name = $parent ? $parent->name : '';
+                    $user1->parent_profile = $parent ? $parent->profile_pic : '';
+                }
+
+                if ($user2->parent_id && $user2->parent_id != 0) {
+                    $parent = ParentsModel::where('id','=', $user2->parent_id)->first();
+                    $user2->parent_name = $parent ? $parent->name : '';
+                    $user2->parent_profile = $parent ? $parent->profile_pic : '';
+                }
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.matchFound.success'),
