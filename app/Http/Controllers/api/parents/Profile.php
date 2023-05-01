@@ -236,6 +236,7 @@ class Profile extends Controller
             'profile_pic'       => 'image||mimes:jpeg,png,jpg,svg||max:5000',
             'nationality'       => 'required',
             'country_code'      => 'required',
+            'nationality_code'  => 'required',
             'ethnic_origin'     => 'required',
             'islamic_sect'      => 'required',
             'location'          => 'required',
@@ -305,6 +306,7 @@ class Profile extends Controller
                         'mobile'                    => $request->mobile ? $request->mobile : '',
                         'nationality'               => $request->nationality ? $request->nationality : '',
                         'country_code'              => $request->country_code ? $request->country_code : '',
+                        'nationality_code'          => $request->nationality_code ? $request->nationality_code : '',
                         'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : '',
                         'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : '',
                         'islamic_sect'              => $request->islamic_sect ? $request->islamic_sect : '',
@@ -321,10 +323,31 @@ class Profile extends Controller
                 
                 if($userDetails){
                     ParentsModel::where('id', '=', $request->login_id)->update(['is_verified' => 'pending']);
+
+                    $userData = [
+                        'user_id'                   => $request->login_id, 
+                        'user_type'                 => 'parent',
+                        'name'                      => $request->name ? $request->name : $user->name,
+                        'email'                     => $request->email ? $request->email : $user->email,
+                        'mobile'                    => $request->mobile ? $request->mobile : $user->mobile,
+                        'nationality'               => $request->nationality ? $request->nationality : $user->nationality,
+                        'country_code'              => $request->country_code ? $request->country_code : $user->country_code,
+                        'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : $user->ethnic_origin,
+                        'islamic_sect'              => $request->islamic_sect ? $request->islamic_sect : $user->islamic_sect,
+                        'location'                  => $request->location ? $request->location : $user->location,
+                        'lat'                       => $request->lat ? $request->lat : $user->lat,
+                        'long'                      => $request->long ? $request->long : $user->long,
+                        'relation_with_singleton'   => $request->relation_with_singleton ? $request->relation_with_singleton : $user->relation_with_singleton,
+                        'profile_pic'               => $request->file('profile_pic') ? $profile_pic : $request->profile_pic,
+                        'live_photo'                => $request->file('live_photo') ? $live_photo : $user->live_photo,
+                        'id_proof'                  => $request->file('id_proof') ? $id_proof : $user->id_proof,
+                        'is_verified'               => 'pending'
+                    ];
+
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.parents.update-profile.success'),
-                        'data'      => $user
+                        'data'      => $userData
                     ],200);
                 }else{
                     return response()->json([

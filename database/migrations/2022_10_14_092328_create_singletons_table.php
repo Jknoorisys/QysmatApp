@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('profession');
             $table->string('nationality');
             $table->string('country_code');
+            $table->string('nationality_code');
             $table->string('ethnic_origin');
             $table->string('islamic_sect');
             $table->text('short_intro');

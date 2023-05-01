@@ -91,6 +91,7 @@ class ParentsController extends Controller
                         'mobile'                    => $reVerify->mobile ? $reVerify->mobile : $reciever->mobile,
                         'nationality'               => $reVerify->nationality ? $reVerify->nationality : $reciever->nationality,
                         'country_code'              => $reVerify->country_code ? $reVerify->country_code : $reciever->country_code,
+                        'nationality_code'          => $reVerify->nationality_code ? $reVerify->nationality_code : $reciever->nationality_code,
                         'ethnic_origin'             => $reVerify->ethnic_origin ? $reVerify->ethnic_origin : $reciever->ethnic_origin,
                         'islamic_sect'              => $reVerify->islamic_sect ? $reVerify->islamic_sect : $reciever->islamic_sect,
                         'location'                  => $reVerify->location ? $reVerify->location : $reciever->location,

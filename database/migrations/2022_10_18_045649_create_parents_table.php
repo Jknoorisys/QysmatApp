@@ -26,6 +26,7 @@ return new class extends Migration
             $table->enum('is_email_verified',['verified', 'not verified'])->default('not verified');
             $table->string('nationality');
             $table->string('country_code');
+            $table->string('nationality_code');
             $table->string('ethnic_origin');
             $table->string('islamic_sect');
             $table->string('location');
