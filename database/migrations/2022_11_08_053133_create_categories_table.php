@@ -24,6 +24,9 @@ return new class extends Migration
             $table->string('location');
             $table->string('lat');
             $table->string('long');
+            $table->enum('search_by',['radius','country', 'none'])->default('none');
+            $table->string('radius');
+            $table->string('country_code');
             $table->string('height');
             $table->string('islamic_sect');
             $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');

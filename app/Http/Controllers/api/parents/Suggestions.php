@@ -133,6 +133,12 @@ class Suggestions extends Controller
             $validator = Validator::make($request->all(), [
                 'lat'    => 'required',
                 'long'   => 'required',
+                'search_by' => [
+                    'required',
+                    Rule::in(['radius', 'country']),
+                ],
+                'radius'   => ['required_if:search_by,radius'],
+                'country_code'   => ['required_if:search_by,country'],
             ]);
         }
 
@@ -156,6 +162,9 @@ class Suggestions extends Controller
                 $category->location      = $request->location ? $request->location : '';
                 $category->lat           = $request->lat ? $request->lat : '';
                 $category->long          = $request->long ? $request->long : '';
+                $category->search_by     = $request->search_by ? $request->search_by : '';
+                $category->radius        = $request->radius ? $request->radius : '';
+                $category->country_code  = $request->country_code ? $request->country_code : 'none';
                 $category->height        = $request->height ? $request->height : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
 
@@ -184,6 +193,9 @@ class Suggestions extends Controller
                 $category->location      = $request->location ? $request->location : '';
                 $category->lat           = $request->lat ? $request->lat : '';
                 $category->long          = $request->long ? $request->long : '';
+                $category->search_by     = $request->search_by ? $request->search_by : '';
+                $category->radius        = $request->radius ? $request->radius : '';
+                $category->country_code  = $request->country_code ? $request->country_code : 'none';
                 $category->height        = $request->height ? $request->height : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
 
@@ -231,6 +243,26 @@ class Suggestions extends Controller
         }
 
         try {
+            $categoryLocation = ModelsCategories::where([['user_id','=',$request->login_id],['user_type', '=', 'parent'],['singleton_id', '=', $request->singleton_id]])->first();
+            if (!empty($categoryLocation) && !empty($categoryLocation->location)) {
+                $validator = Validator::make($request->all(), [
+                    'lat'   => ['required'],
+                    'long'   => ['required'],
+                ]);
+
+                if($validator->fails()){
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.Validation Failed!'),
+                        'errors'    => $validator->errors()
+                    ],400);
+                }
+
+                if ($request->lat && $request->long) {
+                    ModelsCategories::where([['user_id', '=', $request->login_id],['user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id]])->update(['lat' => $request->lat, 'long' => $request->long]);
+                }
+            }
+
             $category = ModelsCategories::where([['user_id','=',$request->login_id],['user_type', '=', 'parent'],['singleton_id', '=', $request->singleton_id]])->first();
 
             if (!empty($category)) {
@@ -263,30 +295,30 @@ class Suggestions extends Controller
                 // }
 
                 if (!empty($location)) {
-                    $validator = Validator::make($request->all(), [
-                        'search_by' => [
-                            'required',
-                            Rule::in(['radius', 'country']),
-                        ],
-                        'radius'   => ['required_if:search_by,radius'],
-                        'country_code'   => ['required_if:search_by,country'],
-                    ]);
+                    // $validator = Validator::make($request->all(), [
+                    //     'search_by' => [
+                    //         'required',
+                    //         Rule::in(['radius', 'country']),
+                    //     ],
+                    //     'radius'   => ['required_if:search_by,radius'],
+                    //     'country_code'   => ['required_if:search_by,country'],
+                    // ]);
 
-                    if($validator->fails()){
-                        return response()->json([
-                            'status'    => 'failed',
-                            'message'   => __('msg.Validation Failed!'),
-                            'errors'    => $validator->errors()
-                        ],400);
-                    }
+                    // if($validator->fails()){
+                    //     return response()->json([
+                    //         'status'    => 'failed',
+                    //         'message'   => __('msg.Validation Failed!'),
+                    //         'errors'    => $validator->errors()
+                    //     ],400);
+                    // }
 
-                    if ($request->search_by == 'radius') {
+                    if ($category->search_by == 'radius') {
                         $this->db->select('*', DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(`lat`)) * cos(radians(`long`) - radians(?)) + sin(radians(?)) * sin(radians(`lat`)))) AS distance'))
-                            ->having('distance', '<', $request->radius)
+                            ->having('distance', '<', $category->radius)
                             ->orderBy('distance')
                             ->setBindings([$latitude, $longitude, $latitude]);
                     } else {
-                        $this->db->where('country_code','=',$request->country_code);
+                        $this->db->where('country_code','=',$category->country_code);
                     }
                 }
 
