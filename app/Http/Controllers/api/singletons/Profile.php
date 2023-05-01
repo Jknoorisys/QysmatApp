@@ -89,13 +89,24 @@ class Profile extends Controller
                         $user->parent_profile = $parent ? $parent->profile_pic : '';
                     }
                 } else {
+                    $old_user = Singleton::where([['id','=',$request->login_id], ['status','=','unblocked'], ['is_email_verified','=','verified']])->first();
                     $user = DB::table('re_verify_requests as sc')
                     ->where([['sc.user_id','=',$request->login_id], ['sc.user_type','=','singleton'], ['sc.status','!=','verified']])
                     ->leftJoin('singletons', function ($join) {
                         $join->on('sc.user_id', '=', 'singletons.id')
                              ->where('sc.user_type', '=', 'singleton');
                     })
-                    ->first(['sc.user_id as id','sc.user_type','singletons.parent_id','sc.name','sc.email','sc.mobile','sc.photo1','sc.photo2','sc.photo3','sc.photo4','sc.photo5','sc.dob','sc.gender','sc.age','sc.height','sc.profession','sc.short_intro','sc.nationality','sc.country_code','sc.ethnic_origin','sc.islamic_sect','sc.location','sc.lat','sc.long','sc.live_photo','sc.id_proof','sc.status as is_verified']);
+                    ->first(['sc.user_id as id','sc.user_type','singletons.parent_id','sc.name','sc.email','sc.mobile','sc.photo1','sc.photo2','sc.photo3','sc.photo4','sc.photo5','sc.dob','sc.gender','sc.age','sc.height','sc.profession','sc.short_intro','sc.nationality','sc.country_code','sc.nationality_code','sc.ethnic_origin','sc.islamic_sect','sc.location','sc.lat','sc.long','sc.live_photo','sc.id_proof','sc.status as is_verified']);
+                    if ($old_user) {
+                        ($user->photo1 == '' || empty($user->photo1)) ? $old_user->photo1 : $user->photo1;
+                        ($user->photo2 == '' || empty($user->photo2)) ? $old_user->photo2 : $user->photo2;
+                        ($user->photo3 == '' || empty($user->photo3)) ? $old_user->photo3 : $user->photo3;
+                        ($user->photo4 == '' || empty($user->photo4)) ? $old_user->photo4 : $user->photo4;
+                        ($user->photo5 == '' || empty($user->photo5)) ? $old_user->photo5 : $user->photo5;
+                        ($user->live_photo == '' || empty($user->live_photo)) ? $old_user->live_photo : $user->live_photo;
+                        ($user->id_proof == '' || empty($user->id_proof)) ? $old_user->id_proof : $user->photo1;
+                    }
+
                     if ($user->parent_id && $user->parent_id != 0) {
                         $parent = ParentsModel::where('id','=',$user->parent_id)->first();
                         $user->parent_name = $parent ? $parent->name : '';
