@@ -274,6 +274,7 @@ class Profile extends Controller
             'profession'        => 'required',
             'nationality'       => 'required',
             'country_code'      => 'required',
+            'nationality_code'  => 'required',
             'ethnic_origin'     => 'required',
             'islamic_sect'      => 'required',
             'short_intro'       => 'required',
@@ -342,6 +343,7 @@ class Profile extends Controller
                         'profession'                => $request->profession ? $request->profession : '',
                         'nationality'               => $request->nationality ? $request->nationality : '',
                         'country_code'              => $request->country_code ? $request->country_code : '',
+                        'nationality_code'          => $request->nationality_code ? $request->nationality_code : '',
                         'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : '',
                         'islamic_sect'              => $request->islamic_sect ? $request->islamic_sect : '',
                         'short_intro'               => $request->short_intro ? $request->short_intro : '',
@@ -354,27 +356,52 @@ class Profile extends Controller
                     ]
                 );
                 
-            if($userDetails){
-                Singleton::where('id', '=', $request->login_id)->update(['is_verified' => 'pending']);
-                DB::table('categories')->updateOrInsert(
-                    ['user_id' => $request->login_id, 'user_type' => 'singleton'],
-                    [
-                        'user_id' => $request->login_id,
-                        'user_type' => 'singleton',
-                        'gender'       => $request->gender == 'Male' ? 'Female' : 'Male'
-                    ]
-                );
+                if($userDetails){
+                    Singleton::where('id', '=', $request->login_id)->update(['is_verified' => 'pending']);
+                    DB::table('categories')->updateOrInsert(
+                        ['user_id' => $request->login_id, 'user_type' => 'singleton'],
+                        [
+                            'user_id' => $request->login_id,
+                            'user_type' => 'singleton',
+                            'gender'       => $request->gender == 'Male' ? 'Female' : 'Male'
+                        ]
+                    );
+
+                    $userData = [
+                        'user_id'                   => $request->login_id, 
+                        'user_type'                 => 'singleton',
+                        'name'                      => $request->name ? $request->name : $user->name,
+                        'email'                     => $request->email ? $request->email : $user->email,
+                        'mobile'                    => $request->mobile ? $request->mobile : $user->mobile,
+                        'dob'                       => $request->dob ? $request->dob : $user->dob,
+                        'gender'                    => $request->gender ? $request->gender : $user->gender,
+                        'age'                       => $age ? $age : $user->age,
+                        'height'                    => $request->height ? $request->height : $user->height,
+                        'profession'                => $request->profession ? $request->profession : $user->profession,
+                        'nationality'               => $request->nationality ? $request->nationality : $user->nationality,
+                        'country_code'              => $request->country_code ? $request->country_code : $user->country_code,
+                        'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : $user->ethnic_origin,
+                        'islamic_sect'              => $request->islamic_sect ? $request->islamic_sect : $user->islamic_sect,
+                        'short_intro'               => $request->short_intro ? $request->short_intro : $user->short_intro,
+                        'location'                  => $request->location ? $request->location : $user->location,
+                        'lat'                       => $request->lat ? $request->lat : $user->lat,
+                        'long'                      => $request->long ? $request->long : $user->long,
+                        'live_photo'                => $request->file('live_photo') ? $live_photo : $user->live_photo,
+                        'id_proof'                  => $request->file('id_proof') ? $id_proof : $user->id_proof,
+                        'is_verified'               => 'pending'
+                    ];
+
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.update-profile.success'),
-                        'data'      => $user
+                        'data'      => $userData
                     ],200);
-            }else{
+                }else{
                     return response()->json([
                         'status'    => 'failed',
                         'message'   => __('msg.singletons.update-profile.failure'),
                     ],400);
-            }
+                }
             }else{
                 return response()->json([
                     'status'    => 'failed',
@@ -472,6 +499,12 @@ class Profile extends Controller
 
                 if($userDetails){
                     Singleton::where('id', '=', $request->login_id)->update(['is_verified' => 'pending']);
+                    $user->photo1 = $request->file('photo1') ? $photo1 : $user->photo1;
+                    $user->photo2 = $request->file('photo2') ? $photo2 : $user->photo2;
+                    $user->photo3 = $request->file('photo3') ? $photo3 : $user->photo3;
+                    $user->photo4 = $request->file('photo4') ? $photo4 : $user->photo4;
+                    $user->photo5 = $request->file('photo5') ? $photo5 : $user->photo5;
+
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.upload-pictures.success'),

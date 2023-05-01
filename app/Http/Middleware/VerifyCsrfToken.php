@@ -12,6 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        'set-new-password'
+        'set-new-password','login'
     ];
 }
