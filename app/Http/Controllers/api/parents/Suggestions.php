@@ -300,11 +300,18 @@ class Suggestions extends Controller
                     // }
 
                     if ($category->search_by == 'radius') {
-                        $this->db->select('*', DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(`lat`)) * cos(radians(`long`) - radians(?)) + sin(radians(?)) * sin(radians(`lat`)))) AS distance'))
+                        if ($latitude && $longitude) {
+                            $this->db->select('*', DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(`lat`)) * cos(radians(`long`) - radians(?)) + sin(radians(?)) * sin(radians(`lat`)))) AS distance'))
                             ->having('distance', '<', $category->radius)
                             ->orderBy('distance')
                             ->setBindings([$latitude, $longitude, $latitude]);
+                        }
                     } else {
+                        if ($latitude && $longitude) {
+                            $this->db->select('*', DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(`lat`)) * cos(radians(`long`) - radians(?)) + sin(radians(?)) * sin(radians(`lat`)))) AS distance'))
+                            ->orderBy('distance')
+                            ->setBindings([$latitude, $longitude, $latitude]);
+                        }
                         $this->db->where('country_code','=',$category->country_code);
                     }
                 }
