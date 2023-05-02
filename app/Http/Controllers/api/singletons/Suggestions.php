@@ -302,6 +302,9 @@ class Suggestions extends Controller
                             ->orderBy('distance')
                             ->setBindings([$latitude, $longitude, $latitude]);
                     } else {
+                        $this->db->select('*', DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(`lat`)) * cos(radians(`long`) - radians(?)) + sin(radians(?)) * sin(radians(`lat`)))) AS distance'))
+                            ->orderBy('distance')
+                            ->setBindings([$latitude, $longitude, $latitude]);
                         $this->db->where('country_code','=',$category->country_code);
                     }
                 }
