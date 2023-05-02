@@ -265,6 +265,15 @@ class Matches extends Controller
                         ->limit($per_page)
                         ->get(['my_matches.user_id','my_matches.user_type','singletons.*']);
 
+            $loggedInUser = Singleton::find($request->login_id);
+            foreach ($match as $m) {
+                $lat1 = $m->lat;
+                $long1 = $m->long;
+                $lat2 = $loggedInUser->lat;
+                $long2 = $loggedInUser->long;
+                $m->distance = $this->getDistance($lat1, $long1, $lat2, $long2);
+            }
+
             if(!$match->isEmpty()){
                 $users = [];
                 foreach ($match as $m) {
@@ -352,6 +361,16 @@ class Matches extends Controller
                         ->offset(($page_number - 1) * $per_page)
                         ->limit($per_page)
                         ->get(['recieved_matches.user_id','recieved_matches.user_type','recieved_matches.singleton_id','singletons.*']);
+
+            $loggedInUser = Singleton::find($request->login_id);
+            foreach ($match as $m) {
+                $lat1 = $m->lat;
+                $long1 = $m->long;
+                $lat2 = $loggedInUser->lat;
+                $long2 = $loggedInUser->long;
+                $m->distance = $this->getDistance($lat1, $long1, $lat2, $long2);
+            }            
+                        
             if(!$match->isEmpty()){
                 $users = [];
                 foreach ($match as $m) {
@@ -437,6 +456,16 @@ class Matches extends Controller
                         ->offset(($page_number - 1) * $per_page)
                         ->limit($per_page)
                         ->get(['referred_matches.user_id','referred_matches.user_type','referred_matches.singleton_id','singletons.*']);
+
+            $loggedInUser = Singleton::find($request->login_id);
+            foreach ($match as $m) {
+                $lat1 = $m->lat;
+                $long1 = $m->long;
+                $lat2 = $loggedInUser->lat;
+                $long2 = $loggedInUser->long;
+                $m->distance = $this->getDistance($lat1, $long1, $lat2, $long2);
+            }            
+
             if(!$match->isEmpty()){
                 $users = [];
                 foreach ($match as $m) {
@@ -547,7 +576,16 @@ class Matches extends Controller
                         })
                         ->offset(($page_number - 1) * $per_page)
                         ->limit($per_page)
-                        ->get(['matches.user_id','matches.user_type','matches.match_type','matches.is_rematched','singletons.*']);
+                        ->get(['matches.user_id','matches.user_type','matches.match_type','matches.is_rematched','singletons.*']);      
+
+            $loggedInUser = Singleton::find($request->login_id);
+            foreach ($match as $m) {
+                $lat1 = $m->lat;
+                $long1 = $m->long;
+                $lat2 = $loggedInUser->lat;
+                $long2 = $loggedInUser->long;
+                $m->distance = $this->getDistance($lat1, $long1, $lat2, $long2);
+            }
 
             if(!$match->isEmpty()){
                 // $users = [];
@@ -891,5 +929,15 @@ class Matches extends Controller
                 'error'     => $e->getMessage()
             ],500);
         }
+    }
+
+    public function getDistance($lat1, $lon1, $lat2, $lon2) {
+        $radius = 6371; // Earth's radius in km
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+        $a = sin($dLat / 2) * sin($dLat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        $distance = $radius * $c;
+        return $distance;
     }
 }
