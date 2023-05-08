@@ -502,8 +502,8 @@ class Chat extends Controller
                             $match_type = 'matched';
 
                             // send congratulations fcm notification
-                            $user1 = Singleton::whereId($request->singleton_id)->first();
-                            $user2 = Singleton::whereId($request->messaged_user_singleton_id)->first();
+                            $user2 = Singleton::whereId($request->singleton_id)->first();
+                            $user1 = Singleton::whereId($request->messaged_user_singleton_id)->first();
 
                             if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                                 $title = __('msg.Profile Matched');

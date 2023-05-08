@@ -97,7 +97,7 @@ class Profile extends Controller
                                     $join->on('sc.user_id', '=', 'singletons.id')
                                         ->where('sc.user_type', '=', 'singleton');
                                 })
-                                ->first(['sc.user_id as id','sc.user_type','singletons.parent_id','sc.name','sc.email','sc.mobile','sc.photo1','sc.photo2','sc.photo3','sc.photo4','sc.photo5','sc.dob','sc.gender','sc.age','sc.height','sc.profession','sc.short_intro','sc.nationality','sc.country_code','sc.nationality_code','sc.ethnic_origin','sc.islamic_sect','sc.location','sc.lat','sc.long','sc.live_photo','sc.id_proof','sc.status as is_verified']);
+                                ->first(['sc.user_id as id','sc.user_type','singletons.parent_id','sc.name','sc.email','sc.mobile','sc.photo1','sc.photo2','sc.photo3','sc.photo4','sc.photo5','sc.dob','sc.gender','sc.marital_status','sc.age','sc.height','sc.profession','sc.short_intro','sc.nationality','sc.country_code','sc.nationality_code','sc.ethnic_origin','sc.islamic_sect','sc.location','sc.lat','sc.long','sc.live_photo','sc.id_proof','sc.status as is_verified']);
                                 
                     if ($old_user) {
                         $user->photo1 = ($user->photo1 == '' || empty($user->photo1)) ? $old_user->photo1 : $user->photo1;
@@ -283,6 +283,7 @@ class Profile extends Controller
             'mobile'            => 'required',
             'dob'               => 'required',
             'gender'            => 'required',
+            'marital_status'    => 'required',
             'height'            => 'required',
             'profession'        => 'required',
             'nationality'       => 'required',
@@ -351,6 +352,7 @@ class Profile extends Controller
                         'mobile'                    => $request->mobile ? $request->mobile : '',
                         'dob'                       => $request->dob ? $request->dob : '',
                         'gender'                    => $request->gender ? $request->gender : '',
+                        'marital_status'            => $request->marital_status ? $request->marital_status : 'Never Married',
                         'age'                       => $age ? $age : '',
                         'height'                    => $request->height ? $request->height : '',
                         'profession'                => $request->profession ? $request->profession : '',
@@ -388,6 +390,7 @@ class Profile extends Controller
                         'mobile'                    => $request->mobile ? $request->mobile : $user->mobile,
                         'dob'                       => $request->dob ? $request->dob : $user->dob,
                         'gender'                    => $request->gender ? $request->gender : $user->gender,
+                        'marital_status'            => $request->marital_status ? $request->marital_status : $user->marital_status,
                         'age'                       => $age ? $age : $user->age,
                         'height'                    => $request->height ? $request->height : $user->height,
                         'profession'                => $request->profession ? $request->profession : $user->profession,
@@ -612,8 +615,16 @@ class Profile extends Controller
         }
 
         try {
-            $busy = Singleton::where([['id', '=', $request->login_id], ['chat_status', '=','busy']])->first();
-            if (!empty($busy)) {
+            $busy = Singleton::where('id', '=', $request->login_id)->first();
+
+            if (!empty($busy) && $busy->is_verified != 'verified') {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-verified'),
+                ],403);
+            }
+
+            if (!empty($busy) && $busy->chat_status == 'busy') {
                 $singleton_id = $request->login_id;
                 $mutual = Matches ::leftjoin('singletons', function($join) use ($singleton_id) {
                                         $join->on('singletons.id','=','matches.match_id')

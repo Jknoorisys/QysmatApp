@@ -111,8 +111,8 @@ class Matches extends Controller
 
                         if (!empty($notify)) {
                             // send congratulations fcm notification
-                            $user1 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
-                            $user2 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
+                            $user2 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
+                            $user1 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
 
                             if (isset($user) && !empty($user)) {
                                 $title = __('msg.Profile Matched');
@@ -158,8 +158,8 @@ class Matches extends Controller
 
                         if (!empty($notify)) {
                             // send congratulations fcm notification
-                            $user1 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
-                            $user2 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
+                            $user2 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
+                            $user1 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
 
                             if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                                 $title = __('msg.Profile Matched');
@@ -768,8 +768,8 @@ class Matches extends Controller
 
                     if (!empty($notify)) {
                         // send congratulations fcm notification
-                        $user1 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
-                        $user2 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
+                        $user2 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
+                        $user1 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
 
                         if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                             $title = __('msg.Profile Matched');

@@ -633,11 +633,11 @@ class Matches extends Controller
                 if($re_matched){
 
                     // send congratulations fcm notification
-                    $parent1 = ParentsModel::whereId($request->login_id)->first();
-                    $parent2 = ParentsModel::whereId($userExists->parent_id)->first();
+                    $parent2 = ParentsModel::whereId($request->login_id)->first();
+                    $parent1 = ParentsModel::whereId($userExists->parent_id)->first();
 
-                    $user1 = Singleton::whereId($request->singleton_id)->first();
-                    $user2 = Singleton::whereId($request->re_matched_id)->first();
+                    $user2 = Singleton::whereId($request->singleton_id)->first();
+                    $user1 = Singleton::whereId($request->re_matched_id)->first();
 
                     if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                         $title = __('msg.Profile Matched');

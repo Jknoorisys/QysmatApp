@@ -96,6 +96,7 @@ class Singletons extends Controller
                         'photo5'                    => $reVerify->photo5 ? $reVerify->photo5 : $reciever->photo5,
                         'dob'                       => $reVerify->dob ? $reVerify->dob : $reciever->dob,
                         'gender'                    => $reVerify->gender ? $reVerify->gender : $reciever->gender,
+                        'marital_status'            => $reVerify->marital_status ? $reVerify->marital_status : $reciever->marital_status,
                         'age'                       => $reVerify->age ? $reVerify->age : $reciever->age,
                         'height'                    => $reVerify->height ? $reVerify->height : $reciever->height,
                         'profession'                => $reVerify->profession ? $reVerify->profession : $reciever->profession,

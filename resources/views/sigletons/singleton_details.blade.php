@@ -41,8 +41,14 @@
                     </div>
                 </div>
 
-
-                <small class="text-muted p-t-30 db">{{__('msg.Address')}}</small><h6>{{(!empty($reverify) && $reverify->location) ? $reverify->location : $details->location}}</h6>
+                <div class="row">
+                    <div class="col-6">
+                        <small class="text-muted p-t-30 db">{{__('msg.Address')}}</small><h6>{{(!empty($reverify) && $reverify->location) ? $reverify->location : $details->location}}</h6>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted p-t-30 db">{{__('msg.Marital Status')}}</small><h6>{{(!empty($reverify) && $reverify->marital_status) ? $reverify->marital_status : $details->marital_status}}</h6>
+                    </div>
+                </div>
 
                 <hr />
 

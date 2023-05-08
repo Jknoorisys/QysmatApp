@@ -570,11 +570,11 @@ class Chat extends Controller
                                 ->update(['match_type' => 'matched', 'updated_at' => date('Y-m-d H:i:s')]);
 
                         // send congratulations fcm notification
-                        $parent1 = ParentsModel::whereId($linked->parent_id)->first();
-                        $parent2 = ParentsModel::whereId($parent->parent_id)->first();
+                        $parent2 = ParentsModel::whereId($linked->parent_id)->first();
+                        $parent1 = ParentsModel::whereId($parent->parent_id)->first();
 
-                        $user1 = Singleton::whereId($request->login_id)->first();
-                        $user2 = Singleton::whereId($request->messaged_user_id)->first();
+                        $user2 = Singleton::whereId($request->login_id)->first();
+                        $user1 = Singleton::whereId($request->messaged_user_id)->first();
 
                         if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                             $title = __('msg.Profile Matched');

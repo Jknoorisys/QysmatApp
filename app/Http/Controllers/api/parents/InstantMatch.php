@@ -145,7 +145,8 @@ class InstantMatch extends Controller
                         'notType' => "instant_request",
                         'sender_name' => $sender->name,
                         'sender_pic'=> $sender->photo1,
-                        'sender_id'=> $sender->id
+                        'sender_id'=> $sender->id,
+                        'reciever_id'=> $reciever->id
                     );
 
                     $result = sendFCMNotifications($token, $title, $body, $data);;
@@ -200,13 +201,20 @@ class InstantMatch extends Controller
         try {
             $status = $request->status;
 
-            $parent = Singleton::where([['id', '=', $request->swiped_user_id], ['status','=', 'Unblocked'], ['is_verified', '=', 'verified']])->first();
+            $parent = Singleton::where([['id', '=', $request->swiped_user_id], ['status','=', 'Unblocked']])->first();
             if (empty($parent) || ($parent->parent_id == 0)) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.change-request-status.not-linked'),
                 ],400);
             }
+
+            // if (empty($parent) || ($parent->is_verified != 'verified')) {
+            //     return response()->json([
+            //         'status'    => 'failed',
+            //         'message'   => __('msg.parents.change-request-status.not-verified'),
+            //     ],400);
+            // }
 
             $requests = InstantMatchRequest::where([['requested_parent_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_id', '=', $request->singleton_id], ['request_type', '=', 'pending']])->first();
             if (empty($requests)) {
@@ -248,11 +256,11 @@ class InstantMatch extends Controller
                                 ->update(['match_type' => 'matched', 'updated_at' => date('Y-m-d H:i:s')]);
 
                         // send congratulations fcm notification
-                        $parent1 = ParentsModel::whereId($request->login_id)->first();
-                        $parent2 = ParentsModel::whereId($parent->parent_id)->first();
+                        $parent2 = ParentsModel::whereId($request->login_id)->first();
+                        $parent1 = ParentsModel::whereId($parent->parent_id)->first();
 
-                        $user1 = Singleton::whereId($request->singleton_id)->first();
-                        $user2 = Singleton::whereId($request->swiped_user_id)->first();
+                        $user2 = Singleton::whereId($request->singleton_id)->first();
+                        $user1 = Singleton::whereId($request->swiped_user_id)->first();
 
                         if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                             $title = __('msg.Profile Matched');
@@ -286,20 +294,30 @@ class InstantMatch extends Controller
                     }
                 }
 
-                $right               = new MyMatches();
-                $right->user_id      = $request->login_id ? $request->login_id : '';
-                $right->user_type    = $request->user_type ? $request->user_type : '';
-                $right->singleton_id = $request->singleton_id ? $request->singleton_id : '';
-                $right->matched_id   = $request->swiped_user_id ? $request->swiped_user_id : '';
-                $right->save();
+                $right = MyMatches::updateOrInsert(
+                    ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'matched_id' => $request->swiped_user_id, 'singleton_id' => $request->singleton_id],
+                    ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'matched_id' => $request->swiped_user_id, 'singleton_id' => $request->singleton_id]
+                ); 
+
+                // $right               = new MyMatches();
+                // $right->user_id      = $request->login_id ? $request->login_id : '';
+                // $right->user_type    = $request->user_type ? $request->user_type : '';
+                // $right->singleton_id = $request->singleton_id ? $request->singleton_id : '';
+                // $right->matched_id   = $request->swiped_user_id ? $request->swiped_user_id : '';
+                // $right->save();
 
                 if ($right){
-                    $recieved = new RecievedMatches();
-                    $recieved->user_id = $parent->parent_id ? $parent->parent_id : '';
-                    $recieved->user_type = 'parent';
-                    $recieved->singleton_id = $request->swiped_user_id ? $request->swiped_user_id : '';
-                    $recieved->recieved_match_id = $request->singleton_id ? $request->singleton_id : '';
-                    $recieved->save();
+                    $recieved = RecievedMatches::updateOrInsert(
+                        ['user_id' => $parent->parent_id, 'user_type' => 'parent', 'recieved_match_id' => $request->singleton_id, 'singleton_id' => $request->swiped_user_id],
+                        ['user_id' => $parent->parent_id, 'user_type' => 'parent', 'recieved_match_id' => $request->singleton_id, 'singleton_id' => $request->swiped_user_id]
+                    );
+
+                    // $recieved = new RecievedMatches();
+                    // $recieved->user_id = $parent->parent_id ? $parent->parent_id : '';
+                    // $recieved->user_type = 'parent';
+                    // $recieved->singleton_id = $request->swiped_user_id ? $request->swiped_user_id : '';
+                    // $recieved->recieved_match_id = $request->singleton_id ? $request->singleton_id : '';
+                    // $recieved->save();
                 }
             }
 
