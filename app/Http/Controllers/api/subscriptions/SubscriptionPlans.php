@@ -123,6 +123,13 @@ class SubscriptionPlans extends Controller
                 }
                 $page->features= !empty($features) ? $features : "";
 
+                $featureStatus = PremiumFeatures::whereId(1)->first();
+                if ((!empty($featureStatus) && $featureStatus->status == 'active')) {
+                    $page->premium_features = 'disabled';
+                }else{
+                    $page->premium_features = 'enabled';
+                }
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.subscriptions.success'),
