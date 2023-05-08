@@ -494,7 +494,7 @@ class Profile extends Controller
                 Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
             ],
             'login_id'      => 'required||numeric',
-            'singleton_id'  => 'required||numeric',
+            // 'singleton_id'  => 'required||numeric',
             'access_code'   => 'required||numeric',
         ]);
 
@@ -507,13 +507,21 @@ class Profile extends Controller
         }
 
         try {
-            $accessRequest = ParentChild::where([['singleton_id','=',$request->singleton_id],['access_code','=',$request->access_code]])->first();
+            $accessRequest = ParentChild::where('access_code','=',$request->access_code)->first();
 
             if(!empty($accessRequest)){
+
+                if ($accessRequest->status == 'Linked') {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.parents.verify-access-request.invalid'),
+                    ],400);
+                }
+
                 ParentChild::where([['singleton_id', '=', $accessRequest->singleton_id],['access_code','=',$request->access_code]])->update(['parent_id' => $request->login_id,'status' => 'Linked']);
                 Singleton::where('id','=',$accessRequest->singleton_id)->update(['parent_id' => $request->login_id]);
 
-                $user = Singleton::where([['id','=',$request->singleton_id],['status','!=','Deleted']])->first();
+                $user = Singleton::where([['id','=',$accessRequest->singleton_id],['status','!=','Deleted']])->first();
                 $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
                 $user->notify(new AccountLinkedNotification($parent, $user->user_type, 0));
                 $parent->notify(new AccountLinkedNotification($user, $parent->user_type, $accessRequest->singleton_id));

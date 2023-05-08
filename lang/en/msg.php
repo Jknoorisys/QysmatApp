@@ -104,6 +104,7 @@ return [
     'User Unblocked'            => 'User Unblocked',
     'User Deleted'              => 'User Deleted',
     'Search by Name or Email'   => 'Search by Name or Email',
+    'Marital Status'            => 'Marital Status',
 
     // Manage Parents
     'Manage Parents'            => 'Manage Parents',
@@ -581,7 +582,8 @@ return [
             'success' => 'Request Status Changed Successfully!',
             'failure' => "Unable to Change Request Status, Please Try Again...",
             'invalid' => 'No Such Request Found!',
-            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!'
+            'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
+            'not-verified' => 'User Profile is not verified by the Admin!'
         ],
 
         'requests-list' => [
@@ -643,6 +645,7 @@ return [
         'verify-access-request' => [
             'success' => 'Profile Linked Successfully!',
             'failure' => 'Access Code Does not Match! Please Try Again...',
+            'invalid' => 'Child Already Linked with his/her Parent/Guardian',
         ],
 
         'get-linked-profiles' => [

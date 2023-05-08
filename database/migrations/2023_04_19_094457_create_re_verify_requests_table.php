@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('dob');
             $table->string('age');
             $table->enum('gender', ['Male','Female', 'Other']);
+            $table->enum('marital_status', ['none','Never Married','Divorced', 'Widowed'])->default('none');
             $table->string('height');
             $table->string('profession');
             $table->string('nationality');

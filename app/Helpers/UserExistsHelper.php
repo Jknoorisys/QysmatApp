@@ -1336,8 +1336,8 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
                             ->first();
                     if (!empty($notify)) {
                         // send congratulations fcm notification
-                        $user1 = Singleton::whereId($notify->user_id)->first();
-                        $user2 = Singleton::whereId($notify->match_id)->first();
+                        $user2 = Singleton::whereId($notify->user_id)->first();
+                        $user1 = Singleton::whereId($notify->match_id)->first();
 
                         if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                             $title = __('msg.Profile Matched');

@@ -143,7 +143,8 @@ class InstantMatch extends Controller
                         'notType' => "instant_request",
                         'sender_name' => $sender->name,
                         'sender_pic'=> $sender->photo1,
-                        'sender_id'=> $sender->id
+                        'sender_id'=> $sender->id,
+                        'reciever_id'=> $reciever->id
                     );
 
                     $result = sendFCMNotifications($token, $title, $body, $data);
@@ -197,13 +198,20 @@ class InstantMatch extends Controller
         try {
             $status = $request->status;
 
-            $parent = Singleton::where([['id', '=', $request->swiped_user_id], ['status','=', 'Unblocked'], ['is_verified', '=', 'verified']])->first();
+            $parent = Singleton::where([['id', '=', $request->swiped_user_id], ['status','=', 'Unblocked']])->first();
             if (empty($parent) || ($parent->parent_id == 0)) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.change-request-status.not-linked'),
                 ],400);
             }
+
+            // if (empty($parent) || ($parent->is_verified != 'verified')) {
+            //     return response()->json([
+            //         'status'    => 'failed',
+            //         'message'   => __('msg.parents.change-request-status.not-verified'),
+            //     ],400);
+            // }
 
             $requests = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])->first();
             if (empty($requests)) {
@@ -300,18 +308,28 @@ class InstantMatch extends Controller
                         DB::table('matches')->insert($data);
                     }
 
-                    $right              = new MyMatches();
-                    $right->user_id     = $request->login_id ? $request->login_id : '';
-                    $right->user_type   = $request->user_type ? $request->user_type : '';
-                    $right->matched_id  = $request->swiped_user_id ? $request->swiped_user_id : '';
-                    $right->save();
+                    $right = MyMatches::updateOrInsert(
+                        ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'matched_id' => $request->swiped_user_id],
+                        ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'matched_id' => $request->swiped_user_id]
+                    ); 
+
+                    // $right              = new MyMatches();
+                    // $right->user_id     = $request->login_id ? $request->login_id : '';
+                    // $right->user_type   = $request->user_type ? $request->user_type : '';
+                    // $right->matched_id  = $request->swiped_user_id ? $request->swiped_user_id : '';
+                    // $right->save();
 
                     if ($right){
-                        $recieved = new RecievedMatches();
-                        $recieved->user_id = $request->swiped_user_id ? $request->swiped_user_id : '';
-                        $recieved->user_type = 'singleton';
-                        $recieved->recieved_match_id = $request->login_id ? $request->login_id : '';
-                        $recieved->save();
+                        $recieved = RecievedMatches::updateOrInsert(
+                            ['user_id' => $request->swiped_user_id, 'user_type' => 'singleton', 'recieved_match_id' => $request->login_id],
+                            ['user_id' => $request->swiped_user_id, 'user_type' => 'singleton', 'recieved_match_id' => $request->login_id]
+                        );
+    
+                        // $recieved = new RecievedMatches();
+                        // $recieved->user_id = $request->swiped_user_id ? $request->swiped_user_id : '';
+                        // $recieved->user_type = 'singleton';
+                        // $recieved->recieved_match_id = $request->login_id ? $request->login_id : '';
+                        // $recieved->save();
                     }
                 }
             }
