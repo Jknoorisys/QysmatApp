@@ -529,6 +529,7 @@ class Profile extends Controller
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.verify-access-request.success'),
+                    'data'      => $user ? $user : ''
                 ],200);
             }else{
                 return response()->json([
