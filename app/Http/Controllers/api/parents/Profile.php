@@ -29,6 +29,15 @@ class Profile extends Controller
 
         if (isset($_POST['login_id']) && !empty($_POST['login_id'])) {
             $user = ParentsModel::find($_POST['login_id']);
+            if (empty($user)) {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+
             if (empty($user) || $user->status == 'Blocked') {
                 $response = [
                     'status'    => 'failed',
@@ -88,7 +97,7 @@ class Profile extends Controller
                     }
                 }
             } else {
-                $user = ParentsModel::where([['id','=',$request->login_id], ['status','=','unblocked'], ['is_email_verified','=','verified']])->first();
+                $user = ParentsModel::where([['id','=',$request->login_id], ['status','=','Unblocked']])->first();
             }
             
             if(!empty($user)){
@@ -526,6 +535,7 @@ class Profile extends Controller
                 $user->notify(new AccountLinkedNotification($parent, $user->user_type, 0));
                 $parent->notify(new AccountLinkedNotification($user, $parent->user_type, $accessRequest->singleton_id));
 
+                $user->singleton_id = $user ? $accessRequest->singleton_id : '';
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.verify-access-request.success'),

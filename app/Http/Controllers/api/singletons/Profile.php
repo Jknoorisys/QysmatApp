@@ -29,6 +29,15 @@ class Profile extends Controller
 
         if (isset($_POST['login_id']) && !empty($_POST['login_id'])) {
             $user = Singleton::find($_POST['login_id']);
+            if (empty($user)) {
+                $response = [
+                    'status'    => 'failed',
+                    'message'   => __('msg.helper.not-found'),
+                    'status_code' => 403
+                ];
+                echo json_encode($response);die();
+            }
+            
             if (empty($user) || $user->status == 'Blocked') {
                 $response = [
                     'status'    => 'failed',
@@ -116,7 +125,7 @@ class Profile extends Controller
                     }
                 }
             } else {
-                $user = Singleton::where([['id','=',$request->login_id], ['status','=','unblocked'], ['is_email_verified','=','verified']])->first();
+                $user = Singleton::where([['id','=',$request->login_id], ['status','=','Unblocked']])->first();
                 if ($user->parent_id && $user->parent_id != 0) {
                     $parent = ParentsModel::where('id','=',$user->parent_id)->first();
                     $user->parent_name = $parent ? $parent->name : '';
