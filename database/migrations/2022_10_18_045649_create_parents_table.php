@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->enum('user_type', ['singleton','parent'])->default('parent');
             $table->string('name');
+            $table->string('lname');
             $table->string('email')->unique();
             $table->string('mobile');
             $table->string('profile_pic');

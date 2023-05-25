@@ -15,7 +15,7 @@
         <div class="card">
             <div class="card-body">
                 <center class="m-t-30"> <img src="{{ (!empty($reverify) && $reverify->profile_pic) ? $reverify->profile_pic : ($details->profile_pic ? asset($details->profile_pic) : 'assets/images/users/no-image.png')}}" class="rounded-circle" width="150" height="150" />
-                    <h4 class="card-title m-t-10">{{(!empty($reverify) && $reverify->name) ? $reverify->name : $details->name}}</h4>
+                    <h4 class="card-title m-t-10">{{(!empty($reverify) && $reverify->name) ? $reverify->name.' '.$reverify->lname : $details->name.' '.$details->lname}}</h4>
                     <h6 class="card-subtitle">{{(!empty($reverify) && $reverify->email) ? $reverify->email : $details->email}}</h6>
                 </center>
             </div>

@@ -87,6 +87,7 @@ class Singletons extends Controller
 
                     $data = [
                         'name'                      => $reVerify->name ? $reVerify->name : $reciever->name,
+                        'lname'                     => $reVerify->lname ? $reVerify->lname : $reciever->lname,
                         // 'email'                     => $reVerify->email ? $reVerify->email : $reciever->email,
                         'mobile'                    => $reVerify->mobile ? $reVerify->mobile : $reciever->mobile,
                         'photo1'                    => $reVerify->photo1 ? $reVerify->photo1 : $reciever->photo1,

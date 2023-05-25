@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
             $table->integer('parent_id');
             $table->string('name');
+            $table->string('lname');
             $table->string('email')->unique();
             $table->string('mobile');
             $table->string('password');
