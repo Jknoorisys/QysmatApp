@@ -35,6 +35,7 @@ class Auth extends Controller
                 Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
             ],
             'name'          => ['required', 'string', 'min:3', 'max:255'],
+            'lname'         => ['required', 'string', 'min:3', 'max:255'],
             'email'         => ['required', 'email', 'unique:parents', 'unique:singletons'],
             'password'      => ['required', 'min:5', 'max:20'],
             'device_type' => [
@@ -73,6 +74,7 @@ class Auth extends Controller
             $email_otp = random_int(100000, 999999);
             $parent = ParentsModel::create([
                 'name'          => $request->name ? $request->name : '',
+                'lname'         => $request->lname ? $request->lname : '',
                 'email'         => $request->email ? $request->email : '',
                 'user_type'     => 'Parent',
                 'email_otp'     => $email_otp ? $email_otp : '',
@@ -84,8 +86,7 @@ class Auth extends Controller
 
             if($parent){
                 $user = ParentsModel::where('email','=',$request->email)->first();
-                // $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
-                $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.Let’s get you Registered with us!'), 'otp_msg'=> __('msg.Your One time Password to Complete your Registrations is')];
+                $data = ['salutation' => __('msg.Hi'),'name'=> $user->name.' '.$user->lname,'otp'=> $user->email_otp, 'msg'=> __('msg.Let’s get you Registered with us!'), 'otp_msg'=> __('msg.Your One time Password to Complete your Registrations is')];
 
                 $user =  ['to'=> $user->email];
                 Mail::send('email_template', $data, function ($message) use ($user) {
@@ -120,6 +121,7 @@ class Auth extends Controller
                 Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
             ],
             'name'          => ['required', 'string', 'min:3', 'max:255'],
+            'lname'         => ['required', 'string', 'min:3', 'max:255'],
             'email'         => ['required', 'email', 'unique:parents', 'unique:singletons'],
             'password'      => ['required', 'min:5', 'max:20'],
             'device_type' => [
@@ -164,6 +166,7 @@ class Auth extends Controller
             $email_otp = random_int(100000, 999999);
             $parent = ParentsModel::create([
                 'name'          => $request->name ? $request->name : '',
+                'lname'         => $request->lname ? $request->lname : '',
                 'email'         => $request->email ? $request->email : '',
                 'user_type'     => 'Parent',
                 'email_otp'     => $email_otp ? $email_otp : '',
@@ -178,8 +181,7 @@ class Auth extends Controller
 
             if($parent){
                 $user = ParentsModel::where('email','=',$request->email)->first();
-                // $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.We are pleased that you have registered with us. Please Verify your OTP!'), 'otp_msg'=> __('msg.Your OTP is')];
-                $data = ['salutation' => __('msg.Hi'),'name'=> $user->name,'otp'=> $user->email_otp, 'msg'=> __('msg.Let’s get you Registered with us!'), 'otp_msg'=> __('msg.Your One time Password to Complete your Registrations is')];
+                $data = ['salutation' => __('msg.Hi'),'name'=> $user->name.' '.$user->lname,'otp'=> $user->email_otp, 'msg'=> __('msg.Let’s get you Registered with us!'), 'otp_msg'=> __('msg.Your One time Password to Complete your Registrations is')];
 
                 $user =  ['to'=> $user->email];
                 Mail::send('email_template', $data, function ($message) use ($user) {
@@ -375,7 +377,7 @@ class Auth extends Controller
                 );
 
                 if ($password_reset) {
-                    $data = ['salutation' => __('msg.Hi'), 'name'=> $user->name,'url'=> $url, 'msg'=> __('msg.Need to reset your password?'), 'url_msg'=> __('msg.No problem! Just click on the button below and you’ll be on yor way.')];
+                    $data = ['salutation' => __('msg.Hi'), 'name'=> $user->name.' '.$user->lname,'url'=> $url, 'msg'=> __('msg.Need to reset your password?'), 'url_msg'=> __('msg.No problem! Just click on the button below and you’ll be on yor way.')];
                     $user =  ['to'=> $user->email];
                     Mail::send('reset_password_mail', $data, function ($message) use ($user) {
                         $message->to($user['to']);

@@ -88,7 +88,7 @@ class Profile extends Controller
                 } else {
                     $old_user = ParentsModel::where([['id','=',$request->login_id]])->first();
                     $user = ReVerifyRequests::where([['user_id','=',$request->login_id], ['user_type','=','parent'], ['status','!=','verified']])
-                    ->first(['user_id as id','user_type','name','email','mobile','profile_pic','relation_with_singleton','nationality','country_code','nationality_code','ethnic_origin','islamic_sect','location','lat','long','live_photo','id_proof','status as is_verified']);
+                    ->first(['user_id as id','user_type','name','lname','email','mobile','profile_pic','relation_with_singleton','nationality','country_code','nationality_code','ethnic_origin','islamic_sect','location','lat','long','live_photo','id_proof','status as is_verified']);
                     
                     if ($old_user) {
                         $user->profile_pic = ($user->profile_pic == '' || empty($user->profile_pic)) ? $old_user->profile_pic : $user->profile_pic;
@@ -245,6 +245,7 @@ class Profile extends Controller
             ],
             'login_id'          => 'required||numeric',
             'name'              => ['required', 'string', 'min:3', 'max:255'],
+            'lname'             => ['required', 'string', 'min:3', 'max:255'],
             'email'             => ['required', 'email'],
             // 'mobile'            => 'required||unique:singletons||unique:parents',
             'mobile'            => 'required',
@@ -318,6 +319,7 @@ class Profile extends Controller
                         'user_id'                   => $request->login_id, 
                         'user_type'                 => 'parent',
                         'name'                      => $request->name ? $request->name : '',
+                        'lname'                     => $request->lname ? $request->lname : '',
                         'email'                     => $request->email ? $request->email : '',
                         'mobile'                    => $request->mobile ? $request->mobile : '',
                         'nationality'               => $request->nationality ? $request->nationality : '',
@@ -344,6 +346,7 @@ class Profile extends Controller
                         'user_id'                   => $request->login_id, 
                         'user_type'                 => 'parent',
                         'name'                      => $request->name ? $request->name : $user->name,
+                        'lname'                     => $request->lname ? $request->lname : $user->lname,
                         'email'                     => $request->email ? $request->email : $user->email,
                         'mobile'                    => $request->mobile ? $request->mobile : $user->mobile,
                         'nationality'               => $request->nationality ? $request->nationality : $user->nationality,

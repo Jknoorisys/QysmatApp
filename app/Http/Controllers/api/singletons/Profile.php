@@ -106,7 +106,7 @@ class Profile extends Controller
                                     $join->on('sc.user_id', '=', 'singletons.id')
                                         ->where('sc.user_type', '=', 'singleton');
                                 })
-                                ->first(['sc.user_id as id','sc.user_type','singletons.parent_id','sc.name','sc.email','sc.mobile','sc.photo1','sc.photo2','sc.photo3','sc.photo4','sc.photo5','sc.dob','sc.gender','sc.marital_status','sc.age','sc.height','sc.profession','sc.short_intro','sc.nationality','sc.country_code','sc.nationality_code','sc.ethnic_origin','sc.islamic_sect','sc.location','sc.lat','sc.long','sc.live_photo','sc.id_proof','sc.status as is_verified']);
+                                ->first(['sc.user_id as id','sc.user_type','singletons.parent_id','sc.name','sc.lname','sc.email','sc.mobile','sc.photo1','sc.photo2','sc.photo3','sc.photo4','sc.photo5','sc.dob','sc.gender','sc.marital_status','sc.age','sc.height','sc.profession','sc.short_intro','sc.nationality','sc.country_code','sc.nationality_code','sc.ethnic_origin','sc.islamic_sect','sc.location','sc.lat','sc.long','sc.live_photo','sc.id_proof','sc.status as is_verified']);
                                 
                     if ($old_user) {
                         $user->photo1 = ($user->photo1 == '' || empty($user->photo1)) ? $old_user->photo1 : $user->photo1;
@@ -287,6 +287,7 @@ class Profile extends Controller
             ],
             'login_id'          => 'required||numeric',
             'name'              => ['required', 'string', 'min:3', 'max:255'],
+            'lname'             => ['required', 'string', 'min:3', 'max:255'],
             'email'             => ['required', 'email'],
             // 'mobile'            => 'required||unique:singletons||unique:parents',
             'mobile'            => 'required',
@@ -357,6 +358,7 @@ class Profile extends Controller
                         'user_id'                   => $request->login_id, 
                         'user_type'                 => 'singleton',
                         'name'                      => $request->name ? $request->name : '',
+                        'lname'                     => $request->lname ? $request->lname : '',
                         'email'                     => $request->email ? $request->email : '',
                         'mobile'                    => $request->mobile ? $request->mobile : '',
                         'dob'                       => $request->dob ? $request->dob : '',
@@ -396,6 +398,7 @@ class Profile extends Controller
                         'user_type'                 => 'singleton',
                         'name'                      => $request->name ? $request->name : $user->name,
                         'email'                     => $request->email ? $request->email : $user->email,
+                        'lname'                     => $request->lname ? $request->lname : $user->lname,
                         'mobile'                    => $request->mobile ? $request->mobile : $user->mobile,
                         'dob'                       => $request->dob ? $request->dob : $user->dob,
                         'gender'                    => $request->gender ? $request->gender : $user->gender,

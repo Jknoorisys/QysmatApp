@@ -79,7 +79,7 @@
                         @if (!$records->isEmpty())
                             @foreach ($records as $value)
                                 <tr>
-                                    <td class="text-center">{{$value->name}}</td>
+                                    <td class="text-center">{{$value->name.' '.$value->lname}}</td>
                                     <td class="text-center">{{$value->email}}</td>
                                     <td class="text-center">{{$value->status}}</td>
                                     <td class="text-center"><span class="label label-{{ $value->is_verified == 'verified' ? 'success': 'danger'}}">{{ $value->is_verified == 'verified' ? 'Verified': 'Not Verified'}}</span></td>
