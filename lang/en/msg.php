@@ -316,7 +316,7 @@ return [
     'Privacy Policy'            => 'Privacy Policy',
     'Terms & Conditions'        => 'Terms & Conditions',
     'Need to reset your password?' => 'Need to reset your password?',
-    'No problem! Just click on the button below and you’ll be on yor way.' => 'No problem! Just click on the button below and you’ll be on yor way.',
+    'No problem! Just click on the button below and you’ll be on your way.' => 'No problem! Just click on the button below and you’ll be on your way.',
     'Reset Your Password'       => 'Reset Your Password',
     'Access Request Code'       => 'Access Request Code',
     'Let’s get Connected!'      => 'Let’s get Connected!',
