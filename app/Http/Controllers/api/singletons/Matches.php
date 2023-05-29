@@ -114,10 +114,10 @@ class Matches extends Controller
                             $user2 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
                             $user1 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
 
-                            if (isset($user) && !empty($user)) {
+                            if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                                 $title = __('msg.Profile Matched');
                                 $body = __('msg.Congratulations It’s a Match!');
-                                $token = $user->fcm_token;
+                                $token = $user1->fcm_token;
                                 $data = array(
                                     'notType' => "profile_matched",
                                     'user1_id' => $user1 ? $user1->id : '',
@@ -127,7 +127,19 @@ class Matches extends Controller
                                     'user2_name' => $user2 ? $user2->name : '',
                                     'user2_profile' => $user2 ? $user2->photo1 : '',
                                 );
-                                $result = sendFCMNotifications($token, $title, $body, $data);
+                                sendFCMNotifications($token, $title, $body, $data);
+
+                                $token = $user2->fcm_token;
+                                $data1 = array(
+                                    'notType' => "profile_matched",
+                                    'user1_id' => $user2 ? $user2->id : '',
+                                    'user1_name' => $user2 ?  $user2->name : '',
+                                    'user1_profile' => $user2 ?  $user2->photo1 : '',
+                                    'user2_id' => $user1 ? $user1->id : '',
+                                    'user2_name' => $user1 ? $user1->name : '',
+                                    'user2_profile' => $user1 ? $user1->photo1 : '',
+                                );
+                                sendFCMNotifications($token, $title, $body, $data1);
                             }
                         }
                    }
@@ -165,7 +177,6 @@ class Matches extends Controller
                                 $title = __('msg.Profile Matched');
                                 $body = __('msg.Congratulations It’s a Match!');
                                 $token1 = $user1->fcm_token;
-                                $token2 = $user2->fcm_token;
                                 $data = array(
                                     'notType' => "profile_matched",
                                     'user1_id' => $user1 ? $user1->id : '',
@@ -176,7 +187,18 @@ class Matches extends Controller
                                     'user2_profile' => $user2 ? $user2->photo1 : '',
                                 );
                                 sendFCMNotifications($token1, $title, $body, $data);
-                                sendFCMNotifications($token2, $title, $body, $data);
+
+                                $token2 = $user2->fcm_token;
+                                $data1 = array(
+                                    'notType' => "profile_matched",
+                                    'user1_id' => $user2 ? $user2->id : '',
+                                    'user1_name' => $user2 ?  $user2->name : '',
+                                    'user1_profile' => $user2 ?  $user2->photo1 : '',
+                                    'user2_id' => $user1 ? $user1->id : '',
+                                    'user2_name' => $user1 ? $user1->name : '',
+                                    'user2_profile' => $user1 ? $user1->photo1 : '',
+                                );
+                                sendFCMNotifications($token2, $title, $body, $data1);
                             }
                         }
                     }
@@ -775,7 +797,6 @@ class Matches extends Controller
                             $title = __('msg.Profile Matched');
                             $body = __('msg.Congratulations It’s a Match!');
                             $token1 = $user1->fcm_token;
-                            $token2 = $user2->fcm_token;
                             $data = array(
                                 'notType' => "profile_matched",
                                 'user1_id' => $user1 ? $user1->id : '',
@@ -786,7 +807,18 @@ class Matches extends Controller
                                 'user2_profile' => $user2 ? $user2->photo1 : '',
                             );
                            sendFCMNotifications($token1, $title, $body, $data);
-                           sendFCMNotifications($token2, $title, $body, $data);
+
+                           $token2 = $user2->fcm_token;
+                           $data2 = array(
+                               'notType' => "profile_matched",
+                               'user1_id' => $user2 ? $user2->id : '',
+                               'user1_name' => $user2 ?  $user2->name : '',
+                               'user1_profile' => $user2 ?  $user2->photo1 : '',
+                               'user2_id' => $user1 ? $user1->id : '',
+                               'user2_name' => $user1 ? $user1->name : '',
+                               'user2_profile' => $user1 ? $user1->photo1 : '',
+                           );
+                           sendFCMNotifications($token2, $title, $body, $data2);
                         }
                     }
 

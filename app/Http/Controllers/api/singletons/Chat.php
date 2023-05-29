@@ -580,7 +580,6 @@ class Chat extends Controller
                             $title = __('msg.Profile Matched');
                             $body = __('msg.Congratulations It’s a Match!');
                             $token = $parent1->fcm_token;
-                            $token1 = $parent2->fcm_token;
                             $data = array(
                                 'notType' => "profile_matched",
                                 'user1_id' => $user1->id,
@@ -591,7 +590,18 @@ class Chat extends Controller
                                 'user2_profile' => $user2->photo1,
                             );
                             sendFCMNotifications($token, $title, $body, $data);
-                            sendFCMNotifications($token1, $title, $body, $data);
+
+                            $token1 = $parent2->fcm_token;
+                            $data1 = array(
+                                'notType' => "profile_matched",
+                                'user1_id' => $user2->id,
+                                'user1_name' => $user2->name,
+                                'user1_profile' => $user2->photo1,
+                                'user2_id' => $user1->id,
+                                'user2_name' => $user1->name,
+                                'user2_profile' => $user1->photo1,
+                            );
+                            sendFCMNotifications($token1, $title, $body, $data1);
                         }
                     }else{
                         $data = [

@@ -279,7 +279,6 @@ class InstantMatch extends Controller
                                 $title = __('msg.Profile Matched');
                                 $body = __('msg.Congratulations It’s a Match!');
                                 $token = $user->fcm_token;
-                                $token1 = $singleton->fcm_token;
                                 $data = array(
                                     'notType' => "profile_matched",
                                     'user1_id' => $user->id,
@@ -290,7 +289,18 @@ class InstantMatch extends Controller
                                     'user2_profile' => $singleton->photo1,
                                 );
                                 sendFCMNotifications($token, $title, $body, $data);
-                                sendFCMNotifications($token1, $title, $body, $data);
+
+                                $token1 = $singleton->fcm_token;
+                                $data1 = array(
+                                    'notType' => "profile_matched",
+                                    'user1_id' => $singleton->id,
+                                    'user1_name' => $singleton->name,
+                                    'user1_profile' => $singleton->photo1,
+                                    'user2_id' => $user->id,
+                                    'user2_name' => $user->name,
+                                    'user2_profile' => $user->photo1,
+                                );
+                                sendFCMNotifications($token1, $title, $body, $data1);
                             }
                         }
 
