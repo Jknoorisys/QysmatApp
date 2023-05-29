@@ -377,7 +377,7 @@ class Auth extends Controller
                 );
 
                 if ($password_reset) {
-                    $data = ['salutation' => __('msg.Hi'), 'name'=> $user->name.' '.$user->lname,'url'=> $url, 'msg'=> __('msg.Need to reset your password?'), 'url_msg'=> __('msg.No problem! Just click on the button below and you’ll be on yor way.')];
+                    $data = ['salutation' => __('msg.Hi'), 'name'=> $user->name.' '.$user->lname,'url'=> $url, 'msg'=> __('msg.Need to reset your password?'), 'url_msg'=> __('msg.No problem! Just click on the button below and you’ll be on your way.')];
                     $user =  ['to'=> $user->email];
                     Mail::send('reset_password_mail', $data, function ($message) use ($user) {
                         $message->to($user['to']);
