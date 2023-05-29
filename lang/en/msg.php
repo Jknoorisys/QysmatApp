@@ -952,7 +952,12 @@ return [
             'success' => 'Stripe Session Created Successfully.',
             'failure' => 'Unable to Create Stripe Session, Please Try Again...' ,
             'invalid' => 'Invalid Plan, Please Try Again...',
-            'parent-not-premium' => 'Your Father/Gardian does not have Premium Account, Please Try Again...',
+            'parent-not-premium' => 'You can not Purchase a Joint Subscription if your Father/Guardian does not have Premium Account.
+
+
+
+
+',
             'child-not-premium' => 'You does not have any Non-Premium Child, Please Try Again...'
         ],
         'success' => 'Subscribed Successfully!',
@@ -968,7 +973,12 @@ return [
             'success' => 'In App Payment Session Created Successfully.',
             'failure' => 'Unable to Create In App Payment Session, Please Try Again...' ,
             'invalid' => 'Invalid Plan, Please Try Again...',
-            'parent-not-premium' => 'Your Father/Gardian does not have Premium Account, Please Try Again...',
+            'parent-not-premium' => 'You can not Purchase a Joint Subscription if your Father/Guardian does not have Premium Account.
+
+
+
+
+',
             'child-not-premium' => 'You does not have any Non-Premium Child, Please Try Again...'
         ],
         
