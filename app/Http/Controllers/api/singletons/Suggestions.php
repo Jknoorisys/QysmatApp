@@ -261,8 +261,8 @@ class Suggestions extends Controller
                 // $height = $category->height ? $category->height : '';
                 $islamic_sect = $category->islamic_sect ? $category->islamic_sect : '';
                 $age = $category->age_range ? explode('-',$category->age_range) : '';
-                $min_age = $age ? $age[0] : '' ;
-                $max_age = $age ? $age[1] : '';
+                $min_age = $age ? ($age[0] - 1) : '' ;
+                $max_age = $age ? ($age[1] + 1) : '';
 
                 $height = $category->height ? explode('-',$category->height) : '';
                 $min_height = $height ? $height[0] : '' ;
