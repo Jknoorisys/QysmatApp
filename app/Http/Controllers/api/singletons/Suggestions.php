@@ -293,9 +293,7 @@ class Suggestions extends Controller
                     if ($max_height == 'above') {
                         $this->db->where('height','>=', $min_height);
                     }else{
-                        // $this->db->whereBetween('height', [$min_height, $max_height]);
-                        $this->db->where('height','>=', $min_height);
-                        $this->db->orWhere('height','<=', $max_height);
+                        $this->db->whereBetween('height', [$min_height, $max_height]);
                     }
                 }
 
