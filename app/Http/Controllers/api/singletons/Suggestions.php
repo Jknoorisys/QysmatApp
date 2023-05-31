@@ -265,8 +265,8 @@ class Suggestions extends Controller
                 $max_age = $age ? $age[1] : '';
 
                 $height = $category->height ? explode('-',$category->height) : '';
-                $min_height = $height ? (float) $height[0] : '' ;
-                $max_height = $height ? (float) $height[1] : '';
+                $min_height = $height ? $height[0] : '' ;
+                $max_height = $height ? $height[1] : '';
 
                 $this->db = DB::table('singletons');
 
@@ -293,7 +293,11 @@ class Suggestions extends Controller
                     if ($max_height == 'above') {
                         $this->db->where('height','>=', $min_height);
                     }else{
-                        $this->db->whereBetween('height', [$min_height, $max_height]);
+                        // $this->db->whereBetween('height', [$min_height, $max_height]);
+                        $this->db->where(function ($query) use ($min_height, $max_height) {
+                            $query->where('height', '>=', $min_height)
+                                ->orWhere('height', '<=', $max_height);
+                        });
                     }
                 }
 
