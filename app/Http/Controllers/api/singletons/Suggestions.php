@@ -265,8 +265,8 @@ class Suggestions extends Controller
                 $max_age = $age ? $age[1] : '';
 
                 $height = $category->height ? explode('-',$category->height) : '';
-                $min_height = $height ? ($height[0] - 1) : '' ;
-                $max_height = $height ? ($height[1] + 1) : '';
+                $min_height = $height ? (float) $height[0] : '' ;
+                $max_height = $height ? (float) $height[1] : '';
 
                 $this->db = DB::table('singletons');
 
