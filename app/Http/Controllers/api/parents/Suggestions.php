@@ -273,31 +273,7 @@ class Suggestions extends Controller
 
                 $this->db = DB::table('singletons');
 
-                // if(!empty($profession)){
-                //     $this->db->where('profession','LIKE',"%$profession%");
-                // }
-
-                // if(!empty($location)){
-                //     $this->db->where('location','LIKE',"%$location%");
-                // }
-
                 if (!empty($location)) {
-                    // $validator = Validator::make($request->all(), [
-                    //     'search_by' => [
-                    //         'required',
-                    //         Rule::in(['radius', 'country']),
-                    //     ],
-                    //     'radius'   => ['required_if:search_by,radius'],
-                    //     'country_code'   => ['required_if:search_by,country'],
-                    // ]);
-
-                    // if($validator->fails()){
-                    //     return response()->json([
-                    //         'status'    => 'failed',
-                    //         'message'   => __('msg.Validation Failed!'),
-                    //         'errors'    => $validator->errors()
-                    //     ],400);
-                    // }
 
                     if ($category->search_by == 'radius') {
                         if ($latitude && $longitude) {
@@ -320,9 +296,12 @@ class Suggestions extends Controller
                     if ($max_height == 'above') {
                         $this->db->where('height','>=', $min_height);
                     }else{
-                        $this->db->whereBetween('height', [$min_height, $max_height]);
+                        // $this->db->whereBetween('height', [$min_height, $max_height]);
+                        $this->db->where(function ($query) use ($min_height, $max_height) {
+                            $query->where('height', '>=', $min_height)
+                                ->orWhere('height', '<=', $max_height);
+                        });
                     }
-                    // $this->db->whereBetween('height', [$min_height, $max_height]);
                 }
 
                 if(!empty($islamic_sect)){
