@@ -100,6 +100,7 @@ class Singletons extends Controller
                         'marital_status'            => $reVerify->marital_status ? $reVerify->marital_status : $reciever->marital_status,
                         'age'                       => $reVerify->age ? $reVerify->age : $reciever->age,
                         'height'                    => $reVerify->height ? $reVerify->height : $reciever->height,
+                        'height_converted'          => $reVerify->height ? str_replace('.', '', $reVerify->height) : str_replace('.', '', $reciever->height),
                         'profession'                => $reVerify->profession ? $reVerify->profession : $reciever->profession,
                         'nationality'               => $reVerify->nationality ? $reVerify->nationality : $reciever->nationality,
                         'country_code'              => $reVerify->country_code ? $reVerify->country_code : $reciever->country_code,
