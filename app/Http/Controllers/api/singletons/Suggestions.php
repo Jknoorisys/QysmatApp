@@ -141,6 +141,13 @@ class Suggestions extends Controller
 
         try {
             $categoryExists = ModelsCategories::where([['user_id','=',$request->login_id],['user_type', '=', 'singleton']])->first();
+            $request->height ? str_replace('.', '', $request->height) : '';
+            $height = $request->height ? explode('-',$request->height) : '';
+            $min_height = $height ? $height[0] : '' ;
+            $min_height_converted = convertFeetToInches($min_height);
+            $max_height = $height ? $height[1] : '';
+            $max_height_converted = convertFeetToInches($max_height);
+            $height_converted = $min_height_converted.'-'.$max_height_converted;
 
             if (!empty($categoryExists)) {
                 $user = Singleton::where('id',$request->login_id)->first();
@@ -155,7 +162,7 @@ class Suggestions extends Controller
                 $category->radius        = $request->radius ? $request->radius : '';
                 $category->country_code  = $request->country_code ? $request->country_code : 'none';
                 $category->height        = $request->height ? $request->height : '';
-                $category->height_converted  = $request->height ? str_replace('.', '', $request->height) : '';
+                $category->height_converted  = $request->height ? $height_converted : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
 
                 $category_details = $category->save();
@@ -186,7 +193,7 @@ class Suggestions extends Controller
                 $category->radius        = $request->radius ? $request->radius : '';
                 $category->country_code  = $request->country_code ? $request->country_code : 'none';
                 $category->height        = $request->height ? $request->height : '';
-                $category->height_converted = $request->height ? str_replace('.', '', $request->height) : '';
+                $category->height_converted = $request->height ? $height_converted : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
 
                 $category_details = $category->save();
