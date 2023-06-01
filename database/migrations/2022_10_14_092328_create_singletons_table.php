@@ -34,7 +34,7 @@ return new class extends Migration
             $table->enum('gender', ['Male','Female', 'Other']);
             $table->enum('marital_status', ['none','Never Married','Divorced', 'Widowed'])->default('none');
             $table->string('height');
-            $table->integer('height_converted');
+            $table->float('height_converted');
             $table->string('profession');
             $table->string('nationality');
             $table->string('country_code');
