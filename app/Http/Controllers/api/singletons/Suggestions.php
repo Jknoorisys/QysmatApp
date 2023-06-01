@@ -146,7 +146,7 @@ class Suggestions extends Controller
             $min_height = $height ? $height[0] : '' ;
             $min_height_converted = convertFeetToInches($min_height);
             $max_height = $height ? $height[1] : '';
-            $max_height_converted = convertFeetToInches($max_height);
+            $max_height_converted = ($max_height != 'below' && $max_height != 'above') ? convertFeetToInches($max_height) : $max_height;
             $height_converted = $min_height_converted.'-'.$max_height_converted;
 
             if (!empty($categoryExists)) {
