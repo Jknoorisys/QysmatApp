@@ -155,6 +155,7 @@ class Suggestions extends Controller
                 $category->radius        = $request->radius ? $request->radius : '';
                 $category->country_code  = $request->country_code ? $request->country_code : 'none';
                 $category->height        = $request->height ? $request->height : '';
+                $category->height_converted  = $request->height ? str_replace('.', '', $request->height) : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
 
                 $category_details = $category->save();
@@ -185,6 +186,7 @@ class Suggestions extends Controller
                 $category->radius        = $request->radius ? $request->radius : '';
                 $category->country_code  = $request->country_code ? $request->country_code : 'none';
                 $category->height        = $request->height ? $request->height : '';
+                $category->height_converted = $request->height ? str_replace('.', '', $request->height) : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
 
                 $category_details = $category->save();
@@ -261,7 +263,7 @@ class Suggestions extends Controller
                 $min_age = $age ? $age[0] : '' ;
                 $max_age = $age ? $age[1] : '';
 
-                $height = $category->height ? explode('-',$category->height) : '';
+                $height = $category->height_converted ? explode('-',$category->height_converted) : '';
                 $min_height = $height ? $height[0] : '' ;
                 $max_height = $height ? $height[1] : '';
 
@@ -288,9 +290,9 @@ class Suggestions extends Controller
 
                 if(!empty($min_height) && !empty($max_height)){
                     if ($max_height == 'above') {
-                        $this->db->where('height','>=', $min_height);
+                        $this->db->where('height_converted','>=', $min_height);
                     }else{
-                        $this->db->whereBetween('height', [$min_height, $max_height]);
+                        $this->db->whereBetween('height_converted', [$min_height, $max_height]);
                     }
                 }
 

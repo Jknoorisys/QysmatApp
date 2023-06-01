@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('radius');
             $table->string('country_code');
             $table->string('height');
+            $table->string('height_converted');
             $table->string('islamic_sect');
             $table->enum('status',['Active','Inactive', 'Deleted'])->default('Active');
             $table->timestamps();
