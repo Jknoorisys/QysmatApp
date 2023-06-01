@@ -255,13 +255,11 @@ class Suggestions extends Controller
             if (!empty($category)) {
                 $user = Singleton::where('id',$request->singleton_id)->first();
                 $gender = $category->gender ? $category->gender : ($user->gender == 'Male' ? 'Female' : 'Male');
-                // $profession = $category->profession ? $category->profession : '';
                 
                 $location = $category->location ? $category->location : '';
                 $latitude = $category->lat ? $category->lat : '';
                 $longitude = $category->long ? $category->long : '';
 
-                // $height = $category->height ? $category->height : '';
                 $islamic_sect = $category->islamic_sect ? $category->islamic_sect : '';
                 $age = $category->age_range ? explode('-',$category->age_range) : '';
                 $min_age = $age ? $age[0] : '' ;
@@ -296,11 +294,7 @@ class Suggestions extends Controller
                     if ($max_height == 'above') {
                         $this->db->where('height','>=', $min_height);
                     }else{
-                        // $this->db->whereBetween('height', [$min_height, $max_height]);
-                        $this->db->where(function ($query) use ($min_height, $max_height) {
-                            $query->where('height', '>=', $min_height)
-                                ->orWhere('height', '<=', $max_height);
-                        });
+                        $this->db->whereBetween('height', [$min_height, $max_height]);
                     }
                 }
 
@@ -352,25 +346,21 @@ class Suggestions extends Controller
                         $user_counter = Counters::where([['user_id', '=', $request->login_id],['user_type', '=', 'parent'],['singleton_id','=', $request->singleton_id]])->first();
                         if(!empty($user_counter)){
                             if($user_counter->date != date('Y-m-d')){
-                                Counters::where([['user_id', '=', $request->login_id],['user_type', '=', 'parent'],['singleton_id','=', $request->singleton_id]])->update(
-                                    [
-                                        'counter' => ($count <= $user_counter->counter || $count <= 5) ? 0 : $user_counter->counter + 5,
-                                        'date' => date('Y-m-d'),
-                                        'updated_at' => date('Y-m-d H:i:s')
-                                    ]
-                                );
+                                Counters::where([['user_id', '=', $request->login_id],['user_type', '=', 'parent'],['singleton_id','=', $request->singleton_id]])->update([
+                                    'counter' => ($count <= $user_counter->counter || $count <= 5) ? 0 : $user_counter->counter + 5,
+                                    'date' => date('Y-m-d'),
+                                    'updated_at' => date('Y-m-d H:i:s')
+                                ]);
                             }
                         }else{
-                            Counters::insert(
-                                [
-                                    'user_id' => $request->login_id,
-                                    'user_type' => 'parent',
-                                    'singleton_id' => $request->singleton_id,
-                                    'counter' => 0,
-                                    'date' => date('Y-m-d'),
-                                    'created_at' => date('Y-m-d H:i:s')
-                                ]
-                            );
+                            Counters::insert([
+                                'user_id' => $request->login_id,
+                                'user_type' => 'parent',
+                                'singleton_id' => $request->singleton_id,
+                                'counter' => 0,
+                                'date' => date('Y-m-d'),
+                                'created_at' => date('Y-m-d H:i:s')
+                            ]);
                         }
 
                         $slice = $user_counter ? $user_counter->counter : 0;
