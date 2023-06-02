@@ -545,7 +545,7 @@ return [
         'invitation' => [
             'success' => 'Invitation Sent...',
             'failure' => "Unable to Send Invitation, Please Try Again...",
-            'invalid' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+            'invalid' => 'Your profile is not linked with your Parent/Guardian, please ask him/her to enter the access code that you have received in your email.',
             'blocked' => 'Your Child has Blocked this User!',
             'reported' => 'Your Child has Reported this User!',
             'un-matched' => 'Your Child has Un-Matched this User!',
@@ -800,7 +800,7 @@ return [
         'invitation' => [
             'success' => 'Invitation Sent...',
             'failure' => "Unable to Send Invitation, Please Try Again...",
-            'invalid' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+            'invalid' => 'Your profile is not linked with your Parent/Guardian, please ask him/her to enter the access code that you have received in your email.',
             'blocked' => 'Your Parent/Guardian has Blocked this User!',
             'reported' => 'Your Parent/Guardian has Reported this User!',
             'un-matched' => 'Your Parent/Guardian has Un-Matched this User!',
@@ -897,7 +897,7 @@ return [
         'access-details' => [
             'success' => 'Parent Access Request Details Fetched Successfully!',
             'failure' => 'No Access Request Details Found!',
-            'invalid' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+            'invalid' => 'Your profile is not linked with your Parent/Guardian, please ask him/her to enter the access code that you have received in your email.',
         ],
 
         'add-category' => [
@@ -919,7 +919,7 @@ return [
             'success' => 'Suggestions Based on Singleton Categories Fetched Successfully!',
             'failure' => 'No Suggestions Found!',
             'invalid' => 'Category Details Not Found!',
-            'not-linked' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+            'not-linked' => 'Your profile is not linked with your Parent/Guardian, please ask him/her to enter the access code that you have received in your email.',
         ],
 
         'swips' => [
@@ -941,7 +941,7 @@ return [
         'not-found' => 'User Not Found, Create an account first...',
         'blocked' => 'User is Blocked by Admin!',
         'not-verified' => 'Profile not Verified By Admin, Please Try After Some Time...',
-        'singleton-not-linked' => 'Your Profile is Not Linked with Your Parent/Guardian, Please ask Him/Her to Send Access Request.',
+        'singleton-not-linked' => 'Your profile is not linked with your Parent/Guardian, please ask him/her to enter the access code that you have received in your email.',
         'parent-not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
         'busy' => 'Now that you’re in an open conversation, you will no longer be able to use other features on the app during this time',
         'available' => 'No Chat in Progress...',

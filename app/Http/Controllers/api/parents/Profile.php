@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\parents;
 
 use App\Http\Controllers\Controller;
+use App\Models\Categories;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\ReVerifyRequests;
@@ -538,7 +539,9 @@ class Profile extends Controller
                 $user->notify(new AccountLinkedNotification($parent, $user->user_type, 0));
                 $parent->notify(new AccountLinkedNotification($user, $parent->user_type, $accessRequest->singleton_id));
 
+                $gender = $user ? ($user->gender == 'Male' ? 'Female' : 'Male') : '';
                 $user->singleton_id = $user ? $accessRequest->singleton_id : '';
+                DB::table('categories')->insert(['user_id' => $request->login_id, 'singleton_id' => $accessRequest->singleton_id, 'user_type' => 'parent', 'gender' => $gender, 'created_at' => Carbon::now()]);
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.verify-access-request.success'),
