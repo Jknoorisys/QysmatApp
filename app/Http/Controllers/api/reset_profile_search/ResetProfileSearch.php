@@ -18,6 +18,7 @@ use App\Models\ReferredMatches;
 use App\Models\ReportedUsers;
 use App\Models\ResetProfileSearch as ModelsResetProfileSearch;
 use App\Models\Singleton;
+use App\Models\SwipedUpUsers;
 use App\Models\UnMatches;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -84,12 +85,12 @@ class ResetProfileSearch extends Controller
                     ->whereBetween('created_at', [Carbon::now()->subMonth(), Carbon::now()])
                     ->count();
 
-            // if ($formsSubmitted >= 1) {
-            //     return response()->json([
-            //         'status'    => 'failed',
-            //         'message'   => __('msg.reset-profile.reset'),
-            //     ],400);
-            // }
+            if ($formsSubmitted >= 1) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.reset-profile.reset'),
+                ],400);
+            }
 
             $premium->notifications()->where('user_type', '=', $request->user_type)->delete();
 
@@ -106,6 +107,9 @@ class ResetProfileSearch extends Controller
             $chat = ChatHistory::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])
                                 ->orWhere([['messaged_user_id','=',$request->login_id],['messaged_user_type','=',$request->user_type]])->delete();
             $swipe = LastSwipe::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+
+            $swipedup = SwipedUpUsers::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+
 
             if ($request->user_type == 'singleton') {
                 $mutual = Matches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'hold']])
@@ -163,7 +167,7 @@ class ResetProfileSearch extends Controller
                                     ->delete();
             }
 
-            if($match || $unmatch || $refer || $received || $requests || $block || $report || $swipe || $match){
+            if($formsSubmitted){
                 // $delete = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
                 // if ($delete) {
                     ModelsResetProfileSearch::insert(['user_id' => $request->login_id, 'user_type' => $request->user_type, 'created_at' => Carbon::now()]);
