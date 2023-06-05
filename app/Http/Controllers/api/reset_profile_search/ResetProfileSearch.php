@@ -157,6 +157,7 @@ class ResetProfileSearch extends Controller
 
                                     Singleton::where('id', '=', $request->login_id)->update(['chat_status' => 'available']);
                 }
+                Singleton::where('id', '=', $request->login_id)->update(['chat_status' => 'available']);
 
             } else {
                 $mutual = Matches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'matched']])
