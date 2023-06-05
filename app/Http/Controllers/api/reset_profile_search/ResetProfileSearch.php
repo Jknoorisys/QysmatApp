@@ -168,7 +168,7 @@ class ResetProfileSearch extends Controller
                                     ->delete();
             }
 
-            if($formsSubmitted){
+            if($premium){
                 // $delete = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
                 // if ($delete) {
                     ModelsResetProfileSearch::insert(['user_id' => $request->login_id, 'user_type' => $request->user_type, 'created_at' => Carbon::now()]);
