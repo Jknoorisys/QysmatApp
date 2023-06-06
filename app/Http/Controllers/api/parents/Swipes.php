@@ -177,7 +177,7 @@ class Swipes extends Controller
                 $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
                 if (isset($user) && !empty($user)) {
                     $title = __('msg.New Message');
-                    $message = __('msg.You hav a New Match Request!');
+                    $message = __('msg.You have a New Match Request!');
                     $fcm_regid[] = $user->fcm_token;
                     $notification = array(
                         'title'         => $title,
@@ -189,7 +189,7 @@ class Swipes extends Controller
                     );
                     $result = sendFCMNotification($notification, $fcm_regid, 'verification');
 
-                    // $body = __('msg.You hav a New Match Request!');;
+                    // $body = __('msg.You have a New Match Request!');;
                     // $token = $user->fcm_token;
                     // $data = array(
                     //     'notType' => "match_request",
