@@ -119,7 +119,6 @@ class ResetProfileSearch extends Controller
                                 ->orWhere([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'un-matched']])
                                 ->delete();
 
-
                 $matched = Matches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'matched']])
                                     ->orWhere([['match_id','=',$request->login_id],['user_type','=','singleton'], ['match_type', '=', 'matched']])
                                     ->first();
@@ -127,6 +126,10 @@ class ResetProfileSearch extends Controller
                 if (!empty($matched)) {
                     $matched->match_id != $request->login_id ? $un_matched_id = $matched->match_id : $un_matched_id = $matched->user_id;
                     Singleton::where('id', '=', $un_matched_id)->update(['chat_status' => 'available']);
+
+                    $other_liked = Matches::where([['user_id','=',$un_matched_id],['user_type','=',$request->user_type], ['match_type', '=', 'liked']])
+                                ->orWhere([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'un-matched']])
+                                ->delete();
 
                     $other_queue = Matches::leftjoin('singletons', function($join) use ($un_matched_id) {
                                                 $join->on('singletons.id','=','matches.match_id')
