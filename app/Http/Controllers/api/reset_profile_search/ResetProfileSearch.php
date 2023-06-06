@@ -156,8 +156,7 @@ class ResetProfileSearch extends Controller
                                     ->orWhere([['match_id','=',$request->login_id],['user_type','=','singleton'], ['match_type', '=', 'matched']])
                                     ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no', 'status' => 'available']);
 
-                    $liked = Matches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'liked']])
-                    ->delete();
+                    $liked = Matches::where([['user_id','=',$un_matched_id],['match_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'liked']])->delete();
 
                                     Singleton::where('id', '=', $request->login_id)->update(['chat_status' => 'available']);
                 }
