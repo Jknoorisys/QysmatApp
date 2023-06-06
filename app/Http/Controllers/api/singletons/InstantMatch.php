@@ -306,7 +306,7 @@ class InstantMatch extends Controller
 
                         Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])
                                 ->orWhere([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['is_rematched', '=', 'no']])
-                                ->update(['match_type' => $match_type, 'queue' => $queue, 'updated_at' => date('Y-m-d H:i:s')]);
+                                ->update(['match_type' => $match_type, 'is_reset' => 'no', 'queue' => $queue, 'updated_at' => date('Y-m-d H:i:s')]);
                     }else{
                         $data = [
                             'user_id' => $request->login_id,

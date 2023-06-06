@@ -165,7 +165,7 @@ class Swipes extends Controller
 
                     Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])
                             ->orWhere([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['is_rematched', '=', 'no']])
-                            ->update(['match_type' => $match_type, 'queue' => $queue, 'updated_at' => date('Y-m-d H:i:s')]);
+                            ->update(['match_type' => $match_type, 'queue' => $queue, 'is_reset' => 'no', 'updated_at' => date('Y-m-d H:i:s')]);
                 }else{
                     $data = [
                         'user_id' => $request->login_id,
@@ -284,7 +284,7 @@ class Swipes extends Controller
                             }elseif (!empty($match) && ($match->match_type == 'matched' || $match->match_type == 'hold')) {
                                 Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $last_swipe->swiped_user_id]])
                                          ->orWhere([['user_id', '=', $last_swipe->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id]])
-                                         ->update(['match_type' => 'liked', 'queue' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+                                         ->update(['match_type' => 'liked', 'is_reset' => 'no', 'queue' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
                             }
 
                             $swipe = LastSwipe::updateOrCreate(
