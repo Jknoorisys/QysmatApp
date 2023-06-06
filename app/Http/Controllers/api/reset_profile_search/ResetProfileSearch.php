@@ -148,12 +148,12 @@ class ResetProfileSearch extends Controller
                         // Matches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'matched']])
                         //             ->orWhere([['match_id','=',$request->login_id],['user_type','=','singleton'], ['match_type', '=', 'matched']])
                         //             ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no'],['status' => 'available']);
-                        Singleton::where('id', '=', $request->login_id)->orWhere('id', '=', $un_matched_id)->update(['chat_status' => 'available']);
+                        Singleton::where('id', '=', $un_matched_id)->update(['chat_status' => 'available']);
                     }
 
                     $match = Matches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'matched']])
                                     ->orWhere([['match_id','=',$request->login_id],['user_type','=','singleton'], ['match_type', '=', 'matched']])
-                                    ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no'],['status' => 'available']);
+                                    ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no', 'status' => 'available']);
 
                                     Singleton::where('id', '=', $request->login_id)->update(['chat_status' => 'available']);
                 }
