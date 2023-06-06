@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('match_type',['liked', 'matched', 'un-matched', 're-matched', 'hold'])->default('liked');
             $table->integer('queue');
             $table->enum('is_rematched',['no', 'yes'])->default('no');
+            $table->enum('is_reset',['no', 'yes'])->default('no');
             $table->enum('status',['available', 'busy'])->default('available');
             $table->timestamps();
         });
