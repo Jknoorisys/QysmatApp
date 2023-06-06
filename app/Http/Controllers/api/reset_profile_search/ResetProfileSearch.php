@@ -114,7 +114,8 @@ class ResetProfileSearch extends Controller
             if ($request->user_type == 'singleton') {
                 $mutual = Matches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'hold']])
                                     ->orWhere([['match_id','=',$request->login_id],['user_type','=','singleton'], ['match_type', '=', 'hold']])
-                                    ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no']);
+                                    ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no', 'is_reset' => 'yes']);
+
                 $liked = Matches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'liked']])
                                 ->orWhere([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'un-matched']])
                                 ->delete();
@@ -154,12 +155,13 @@ class ResetProfileSearch extends Controller
 
                     $match = Matches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'matched']])
                                     ->orWhere([['match_id','=',$request->login_id],['user_type','=','singleton'], ['match_type', '=', 'matched']])
-                                    ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no', 'status' => 'available']);
-
-                    $liked = Matches::where([['user_id','=',$un_matched_id],['match_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'liked']])->delete();
+                                    ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no', 'status' => 'available', 'is_reset' => 'yes']);
 
                                     Singleton::where('id', '=', $request->login_id)->update(['chat_status' => 'available']);
                 }
+
+                // $liked = Matches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type], ['match_type', '=', 'liked'], ['is_reset' => 'yes']])->delete();
+
                 Singleton::where('id', '=', $request->login_id)->update(['chat_status' => 'available']);
 
             } else {
