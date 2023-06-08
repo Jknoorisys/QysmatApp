@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
             $table->string('name');
             $table->string('lname');
-            $table->string('email')->unique();
+            $table->string('email');
             $table->string('mobile');
             $table->string('photo1');
             $table->string('photo2');
