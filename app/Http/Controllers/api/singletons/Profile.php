@@ -471,6 +471,8 @@ class Profile extends Controller
         try {
             $user = Singleton::find($request->login_id);
             if(!empty($user)){
+                ini_set('memory_limit', '8G');
+                
                 $file1 = $request->file('photo1');
                 if ($file1) {
                     $extension = $file1->getClientOriginalExtension();
