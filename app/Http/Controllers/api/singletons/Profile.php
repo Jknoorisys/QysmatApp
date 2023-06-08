@@ -471,7 +471,6 @@ class Profile extends Controller
         try {
             $user = Singleton::find($request->login_id);
             if(!empty($user)){
-                ini_get('post_max_size', '64G');
                 
                 $file1 = $request->file('photo1');
                 if ($file1) {
