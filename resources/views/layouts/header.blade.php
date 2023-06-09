@@ -218,7 +218,7 @@
                                                 <div class="mail-contnet">
                                                     <h5 class="message-title">{{$notification->data['title']}}</h5>
                                                     <span class="mail-desc">{{$notification->data['msg']}}</span>
-                                                    <span class="time">{{ date('D h:m A', strtotime($notification->data['datetime'])) }}</span>
+                                                    <span class="time">{{ date('D h:m A', strtotime($notification->created_at)) }}</span>
                                                 </div>
                                             </a>
                                         @endforeach

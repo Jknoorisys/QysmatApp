@@ -8,6 +8,11 @@
     .card-price {
         font-size: 2.7rem;
     }
+
+    .image-size {
+        width: 200px;
+        height: 200px;
+    }
 </style>
 <div class="row">
     <!-- Column -->
@@ -150,21 +155,21 @@
                     <div class="card-body">
                         <div class="row">
                             @if ( !empty($details->photo1) || !empty($reverify->photo1))
-                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo1) ? $reverify->photo1 : ($details->photo1 ? asset($details->photo1) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded" width="200" height="200" /></div>
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo1) ? $reverify->photo1 : ($details->photo1 ? asset($details->photo1) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size" alt="image-1" /></div>
                             @endif
                             @if (!empty($details->photo2) || !empty($reverify->photo2))
-                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo2) ? $reverify->photo2 : ($details->photo2 ? asset($details->photo2) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded" width="200" height="200" /></div>
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo2) ? $reverify->photo2 : ($details->photo2 ? asset($details->photo2) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size" alt="image-2" /></div>
                             @endif
                             @if (!empty($details->photo3) || !empty($reverify->photo3))
-                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo3) ? $reverify->photo3 : ($details->photo3 ? asset($details->photo3) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded" width="200" height="200" /></div>
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo3) ? $reverify->photo3 : ($details->photo3 ? asset($details->photo3) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size" alt="image-3" /></div>
                             @endif
                         </div>
                         <div class="row">
                             @if (!empty($details->photo4) || !empty($reverify->photo4))
-                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo4) ? $reverify->photo4 : ($details->photo4 ? asset($details->photo4) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded" width="200" height="200" /></div> 
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo4) ? $reverify->photo4 : ($details->photo4 ? asset($details->photo4) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size" alt="image-4" /></div> 
                             @endif
                             @if (!empty($details->photo5) || !empty($reverify->photo5))
-                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo5) ? $reverify->photo5 : ($details->photo5 ? asset($details->photo5) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded" width="200" height="200" /></div>
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo5) ? $reverify->photo5 : ($details->photo5 ? asset($details->photo5) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size" alt="image-5" /></div>
                             @endif
                         </div>
                     </div>

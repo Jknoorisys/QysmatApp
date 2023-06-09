@@ -156,7 +156,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text qysmat-icon" id="basic-addon2"><i class="mdi mdi-eye-off"></i></span>
                                     </div>
-                                    <input type="password" class="form-control form-control-lg" required name="password" id="password" placeholder="{{ __('msg.Enter Password')}} aria-label="Password" aria-describedby="basic-addon1">
+                                    <input type="password" class="form-control form-control-lg" required name="password" id="password" placeholder="{{ __('msg.Enter Password')}}" aria-label="Password" aria-describedby="basic-addon1">
                                     <span class="err_password text-danger">@error('password') {{$message}} @enderror</span>
                                 </div>
 
