@@ -521,7 +521,6 @@ class Profile extends Controller
 
         try {
             $accessRequest = ParentChild::where('access_code','=',$request->access_code)->first();
-
             if(!empty($accessRequest)){
 
                 if ($accessRequest->status == 'Linked') {
@@ -533,7 +532,7 @@ class Profile extends Controller
 
                 $user = Singleton::where('id','=',$accessRequest->singleton_id)->where('is_verified', '!=', 'verified')->first();
 
-                if (empty($user)) {
+                if (!empty($user)) {
                     return response()->json([
                         'status'    => 'failed',
                         'message'   => __('msg.parents.verify-access-request.not-verified'),
