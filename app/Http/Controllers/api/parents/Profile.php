@@ -531,6 +531,15 @@ class Profile extends Controller
                     ],400);
                 }
 
+                $user = Singleton::where('id','=',$accessRequest->singleton_id)->where('is_verified', '!=', 'verified')->first();
+
+                if (empty($user)) {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.parents.verify-access-request.not-verified'),
+                    ],400);
+                }
+
                 ParentChild::where([['singleton_id', '=', $accessRequest->singleton_id],['access_code','=',$request->access_code]])->update(['parent_id' => $request->login_id,'status' => 'Linked']);
                 Singleton::where('id','=',$accessRequest->singleton_id)->update(['parent_id' => $request->login_id]);
 
