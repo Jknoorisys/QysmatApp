@@ -1387,7 +1387,7 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
 
     function convertFeetToInches($feet)
     {
-        $parts = explode(".", floatVal($feet));
+        $parts = explode(".", $feet);
         $feetValue = intval($parts[0]) ? intval($parts[0]) : 0;
         $inchValue = count($parts) == 2 ? (intval($parts[1]) ? intval($parts[1]) : 0) : 0;
         $inches = ($feetValue * 12) + $inchValue;
