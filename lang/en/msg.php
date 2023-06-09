@@ -646,6 +646,7 @@ return [
             'success' => 'Profile Linked Successfully!',
             'failure' => 'Access Code Does not Match! Please Try Again...',
             'invalid' => 'Child Already Linked with his/her Parent/Guardian',
+            'not-verified' => 'The Child You are trying to Connect with is not Verified By admin ...'
         ],
 
         'get-linked-profiles' => [
