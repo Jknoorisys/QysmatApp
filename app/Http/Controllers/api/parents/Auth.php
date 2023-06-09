@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\parents;
 use App\Http\Controllers\Controller;
 use App\Models\ParentsModel;
 use App\Models\PasswordReset;
+use App\Models\ReVerifyRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -617,7 +618,9 @@ class Auth extends Controller
             if(!empty($user)){
                 if($request->social_id == $user->social_id){
 
-                    if ($user->mobile == '') {
+                    $reverify = ReVerifyRequests::where([['user_id',$user->id],['user_type', '=', 'parent'],['status','!=','verified']])->first();
+
+                    if ($user->mobile == '' && $reverify->mobile == '') {
                         $user->register_profile = 0;
                     }else {
                         $user->register_profile = 1;
@@ -719,8 +722,9 @@ class Auth extends Controller
             
             if(!empty($user)){
                 if(Hash::check($request->password, $user->password)){
+                    $reverify = ReVerifyRequests::where([['user_id',$user->id],['user_type', '=', 'parent'],['status','!=','verified']])->first();
 
-                    if ($user->mobile == '') {
+                    if ($user->mobile == '' && $reverify->mobile == '') {
                         $user->register_profile = 0;
                     }else {
                         $user->register_profile = 1;
