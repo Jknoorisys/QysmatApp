@@ -152,7 +152,7 @@ class Suggestions extends Controller
             if (!empty($categoryExists)) {
                 $user = Singleton::where('id',$request->login_id)->first();
                 $category = ModelsCategories::where([['user_id','=',$request->login_id],['user_type', '=', 'singleton']])->first();
-                $category->gender        = $user->gender == 'Male' ? 'Female' : 'Male';
+                // $category->gender        = $user->gender == 'Male' ? 'Female' : 'Male';
                 $category->age_range     = $request->age_range ? $request->age_range : '';
                 // $category->profession    = $request->profession ? $request->profession : '';
                 $category->location      = $request->location ? $request->location : '';
