@@ -55,16 +55,41 @@
 <script>
     $(document).ready(function() {
 
-        $("#change_password").on('submit', function(e) {
+        // Match Password
+        var new_password = document.getElementById("new_password")
+        , password = document.getElementById("password")
+        , old_password = document.getElementById("old_password");
+
+        function validatePassword(){
+            if(password.value != new_password.value) {
+                password.setCustomValidity("Passwords Don't Match");
+            } else {
+                password.setCustomValidity('');
+            }
+        }
+
+        function validateNewPassword(){
+            if(old_password.value == new_password.value) {
+                new_password.setCustomValidity("New Password Should'nt be Same as Old Password");
+            } else {
+                new_password.setCustomValidity('');
+            }
+        }
+
+        new_password.onchange = validatePassword;
+        password.onkeyup = validatePassword;
+        new_password.onkeyup = validateNewPassword;
+            
+        $("#change_password").on('change', function(e) {
             e.preventDefault();
             let valid = true;
             let form = $(this).get(0);
             let old_password = $("#old_password").val();
-            let err_old_password = "{{__('msg.Enter Valid Password')}}";
+            let err_old_password = "{{__('msg.Enter Old Password')}}";
             let new_password = $("#new_password").val();
-            let err_new_password = "{{__('msg.Enter Valid Password')}}";
+            let err_new_password = "{{__('msg.Enter New Password')}}";
             let password = $("#password").val();
-            let err_password = "{{__('msg.Enter Valid Password')}}";
+            let err_password = "{{__('msg.Confirm Password')}}";
 
                 if (old_password.length === 0) {
                     $(".err_old_password").text(err_old_password);
@@ -93,35 +118,10 @@
                     $('#password').addClass('is-valid');
                     $('#password').removeClass('is-invalid');
                 }
-            if (valid) {
-                form.submit();
-            }
+            // if (valid) {
+            //     form.submit();
+            // }
         });
-
-        // Match Password
-            var new_password = document.getElementById("new_password")
-            , password = document.getElementById("password")
-            , old_password = document.getElementById("old_password");
-
-            function validatePassword(){
-                if(password.value != new_password.value) {
-                    password.setCustomValidity("Passwords Don't Match");
-                } else {
-                    password.setCustomValidity('');
-                }
-            }
-
-            function validateNewPassword(){
-                if(old_password.value == new_password.value) {
-                    new_password.setCustomValidity("New Password Should'nt be Same as Old Password");
-                } else {
-                    new_password.setCustomValidity('');
-                }
-            }
-
-            new_password.onchange = validatePassword;
-            password.onkeyup = validatePassword;
-            new_password.onkeyup = validateNewPassword;
 
         $("#show_hide_old_password a").on('click', function(event) {
                 event.preventDefault();

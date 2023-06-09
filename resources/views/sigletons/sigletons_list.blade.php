@@ -52,8 +52,8 @@
     <div class="card">
        <div class="card-body">
             <div class="table-responsive">
-                <table id="#zero_config" class="table table-sm table-hover">
-                    <form class="m-t-30" action="{{route('sigletons')}}" method="post">
+                <table id="zero_config" class="table table-sm table-hover">
+                    {{-- <form class="m-t-30" action="{{route('sigletons')}}" method="post">
                         @csrf
                         <div class="row">
                             <div class="col-8">
@@ -65,7 +65,7 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </form> --}}
                     <thead>
                         <tr>
                             <th class="text-center">{{ __('msg.Name')}}</th>
@@ -86,8 +86,8 @@
                                     <td class="text-center bt-switch">
 
                                         <div class="row justify-content-center">
-                                            <div class="col-3"></div>
-                                            <div class="col-2 mt-1">
+                                            {{-- <div class="col-3"></div> --}}
+                                            <div class="col-3 mt-1">
                                                 <form action="{{route('changeStatus')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" name="id" value="{{$value->id}}">
@@ -95,21 +95,21 @@
                                                     <button type="submit" data-status="{{$value->status == 'Unblocked' ? 'Unblocked' : 'Blocked'}}" data-id="{{$value->id}}" data-name="{{$value->name}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Unblocked' ? 'checked' : ''}} /><label class="qysmat-lable" for="switch">Toggle</label></button>
                                                 </form>
                                             </div>
-                                            <div class="col-2">
+                                            <div class="col-3">
                                                 <form action="{{route('viewSingleton')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()"> <i class="fas fa-eye"></i> </button>
                                                 </form>
                                             </div>
-                                            <div class="col-2">
+                                            <div class="col-3">
                                                 <form action="{{route('deleteSingleton')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat show_confirm" data-name="{{$value->name}}" data-id="{{$value->id}}" data-toggle="tooltip" title='Delete'> <i class="fas fa-trash"></i> </button>
                                                 </form>
                                             </div>
-                                            <div class="col-3"></div>
+                                            {{-- <div class="col-3"></div> --}}
                                         </div>
                                     </td>
                                 </tr>
