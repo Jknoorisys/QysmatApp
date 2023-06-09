@@ -35,7 +35,7 @@ class ParentsController extends Controller
         $data['previous_title']      = __("msg.Dashboard");
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Parents");
-        $data['records']             = $search ? ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->Where('name', 'LIKE', "%$search%")->orWhere('email', 'LIKE', "%$search%")->orderBy('name')->paginate('10') : ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->orderBy('name')->paginate('10');
+        $data['records']             = $search ? ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->Where('name', 'LIKE', "%$search%")->orWhere('email', 'LIKE', "%$search%")->orderBy('name')->get() : ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->orderBy('name')->get();
         $data['search']              =  $request->search;
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('parents.parents_list', $data);
