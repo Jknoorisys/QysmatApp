@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Models\ContactDetails as ModelsContactDetails;
 use App\Models\ParentChild;
+use App\Models\ReVerifyRequests;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -599,13 +600,14 @@ class Auth extends Controller
 
         if(!empty($user)){
             if(Hash::check($request->password, $user->password)){
-                if ($user->mobile == '') {
+                $reverify = ReVerifyRequests::where([['user_id',$user->id],['user_type', '=', 'singleton'],['status','!=','verified']])->first();
+                if ($user->mobile == '' && $reverify->mobile == '') {
                     $user->register_profile = 0;
                 }else {
                     $user->register_profile = 1;
                 }
     
-                if ($user->photo1 == '' || $user->photo2 == '' || $user->photo3 == '' || $user->photo4 == '' || $user->photo5 == '') {
+                if (($user->photo1 == '' || $user->photo2 == '' || $user->photo3 == '' || $user->photo4 == '' || $user->photo5 == '') && ($reverify->photo1 == '' || $reverify->photo2 == '' || $reverify->photo3 == '' || $reverify->photo4 == '' || $reverify->photo5 == '')) {
                     $user->photo_uploaded = 0;
                 }else {
                     $user->photo_uploaded = 1;
