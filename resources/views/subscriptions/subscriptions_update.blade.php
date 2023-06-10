@@ -7,14 +7,14 @@
                 <div class="col-md-6">
                     <label for="subscription_type" class="form-label">{{__('msg.Subscription')}}</label>
                     <div class="input-group">
-                        <input type="text" value="{{$records->subscription_type}}" class="form-control smp-input" style="font-weight: 300;font-size: 15px;color: #38424C;" name="subscription_type" id="subscription_type" placeholder="{{ __('msg.Enter Subscription Type')}}">
+                        <input type="text" value="{{$records->subscription_type}}" class="form-control smp-input" style="font-weight: 300;font-size: 15px;color: #38424C;" name="subscription_type" id="subscription_type" placeholder="{{ __('msg.Enter Subscription Type')}}" required>
                     </div>
                     <span class="err_subscription_type text-danger">@error('subscription_type') {{$message}} @enderror</span>
                 </div>
                 <div class="col-md-4">
                     <label for="price" class="form-label">{{__('msg.Price')}}</label>
                     <div class="input-group">
-                        <input type="text" value="{{$records->price}}" class="form-control smp-input" style="font-weight: 300;font-size: 15px;color: #38424C;" name="price" id="price" placeholder="{{ __('msg.Enter Subscription Price')}}">
+                        <input type="text" value="{{$records->price}}" class="form-control smp-input" style="font-weight: 300;font-size: 15px;color: #38424C;" name="price" id="price" placeholder="{{ __('msg.Enter Subscription Price')}}" required>
                     </div>
                     <span class="err_price text-danger">@error('price') {{$message}} @enderror</span>
                 </div>
@@ -34,7 +34,7 @@
 <script>
     $(document).ready(function() {
 
-        $("#change_price").on('submit', function(e) {
+        $("#change_price").on('input', function(e) {
             e.preventDefault();
             let valid = true;
             let form = $(this).get(0);
@@ -61,9 +61,9 @@
                     $('#price').addClass('is-valid');
                     $('#price').removeClass('is-invalid');
                 }
-            if (valid) {
-                form.submit();
-            }
+            // if (valid) {
+            //     form.submit();
+            // }
         });
 
     });

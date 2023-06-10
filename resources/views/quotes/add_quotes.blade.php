@@ -37,7 +37,7 @@
 <script>
     $(document).ready(function() {
 
-        $("#add_contact").on('submit', function(e) {
+        $("#add_contact").on('input', function(e) {
             e.preventDefault();
             let valid = true;
             let form = $(this).get(0);
@@ -55,9 +55,9 @@
                 $('#quote').removeClass('is-invalid');
             }
 
-            if (valid) {
-                form.submit();
-            }
+            // if (valid) {
+            //     form.submit();
+            // }
         });
 
     });

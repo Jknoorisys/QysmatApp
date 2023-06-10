@@ -46,6 +46,11 @@
     /* div.dataTables_wrapper div.dataTables_filter label{
         display: none
     } */
+
+    .image-size {
+        width: 200px;
+        height: 200px;
+    }
 </style>
 
 <div class="col-12">
@@ -56,7 +61,7 @@
             <div class="col-2"><a href="{{route('addQuote')}}" class="btn btn-qysmat mb-2">{{ __('msg.Add Islamic Quotes')}}</a></div>
         </div>
             <div class="table-responsive">
-                <table id="zero_config" class="table table-sm table-hover">
+                <table id="zero_config" data-order="[]" class="table table-sm table-hover">
                     <thead>
                         <tr>
                             <th class="text-center">{{ __('msg.Quotes')}}</th>
@@ -100,7 +105,7 @@
                                                 <form action="{{route('updateQuote')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
-                                                    <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()"> <i class="fas fa-edit"></i> </button>
+                                                    <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()"> <i class="fas fa-edit" data-toggle="tooltip" title='Edit'></i> </button>
                                                 </form>
                                             </div>
                                             <div class="col-2">

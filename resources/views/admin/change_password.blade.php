@@ -80,7 +80,7 @@
         password.onkeyup = validatePassword;
         new_password.onkeyup = validateNewPassword;
             
-        $("#change_password").on('change', function(e) {
+        $("#change_password").on('input', function(e) {
             e.preventDefault();
             let valid = true;
             let form = $(this).get(0);
