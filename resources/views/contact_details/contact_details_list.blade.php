@@ -88,7 +88,7 @@
                                                 <form action="{{route('updateContact')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
-                                                    <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()"> <i class="fas fa-edit"></i> </button>
+                                                    <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()" data-toggle="tooltip" title='Edit'> <i class="fas fa-edit"></i> </button>
                                                 </form>
                                             </div>
                                             {{-- <div class="col-2">

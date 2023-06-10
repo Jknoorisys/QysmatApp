@@ -116,11 +116,11 @@
                     <div class="card-body">
                         @if (!empty($reverify) && $reverify->live_photo)
                             <div class="row">
-                                <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $reverify->live_photo ? asset($reverify->live_photo) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded" width="300" height="200" /></div>
+                                <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $reverify->live_photo ? asset($reverify->live_photo) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded image-size" /></div>
                             </div>
                         @elseif ($details->live_photo)
                             <div class="row">
-                                <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded" width="300" height="200" /></div>
+                                <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded image-size" /></div>
                             </div>
                         @endif
                         
