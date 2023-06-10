@@ -175,6 +175,7 @@ return [
     'Contact Detail Deleted!'            => 'Contact Detail Deleted!',
     'Update Contact Details'             => 'Update Contact Details',
     'Save'                               => 'Save',
+    'Search by Contact Type'             => 'Search by Contact Type',
 
     // Manage Static Pages
     'Manage Static Pages'                => 'Manage Static Pages',
@@ -197,6 +198,7 @@ return [
     'Update Page'                        => 'Update Page',
     'Description'                        => 'Description',
     'Short Description'                  => 'Short Description',
+    'Search by Page'                     => 'Search by Page', 
 
     // Manage Web Pages
     'Manage Web Pages'                   => 'Manage Web Pages',
@@ -219,6 +221,7 @@ return [
     'Update Page'                        => 'Update Page',
     'Description'                        => 'Description',
     'Short Description'                  => 'Short Description',
+    'Search by Page'                     => 'Search by Page', 
 
     // Manage FAQs
     'Manage FAQs'                        => 'Manage FAQs',
@@ -236,6 +239,7 @@ return [
     'FAQ Added!'                         => 'FAQ Added!',
     'FAQ Updated!'                       => 'FAQ Updated!',
     'FAQ Deleted!'                       => 'FAQ Deleted!',
+    'Search by Question'                 => 'Search by Question',
 
     // Subscription Plans
     'Only 5 Profile Views per day'                  => 'Only 5 Profile Views per day',
@@ -268,11 +272,13 @@ return [
     'Islamic Quote Added!'              => 'Islamic Quote Added!',
     'Update Islamic Quotes'             => 'Update Islamic Quotes',
     'Islamic Quote Updated!'            => 'Islamic Quote Updated!',
+    'Search by Quote'                   => 'Search by Quote',
 
     // Manage Reported Users
     'Manage Reported Users'             => 'Manage Reported Users',
     'Reported Count'                    => 'Reported Count',
     'Quotes'                            => 'Quotes',
+    'Search by Name'                    => 'Search by Name',
 
     // Manage Deleted Users
     'Manage Deleted Users'              => 'Manage Deleted Users',
