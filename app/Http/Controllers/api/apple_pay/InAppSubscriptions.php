@@ -612,6 +612,7 @@ class InAppSubscriptions extends Controller
                 
                         Mail::send('invoice_email', $data1, function ($message) use ($pdf_name, $email, $pdf) {
                             $message->to($email)->subject('Invoice');
+                            $message->replyTo('noreply@qysmat.com', 'No Reply');
                             $message->attachData($pdf->output(), $pdf_name, ['as' => $pdf_name, 'mime' => 'application/pdf']);
                         });
 
@@ -761,6 +762,7 @@ class InAppSubscriptions extends Controller
                 
                         Mail::send('invoice_email', $data1, function ($message) use ($pdf_name, $email, $pdf) {
                             $message->to($email)->subject('Invoice');
+                            $message->replyTo('noreply@qysmat.com', 'No Reply');
                             $message->attachData($pdf->output(), $pdf_name, ['as' => $pdf_name, 'mime' => 'application/pdf']);
                         });
 

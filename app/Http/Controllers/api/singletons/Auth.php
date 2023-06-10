@@ -120,6 +120,7 @@ class Auth extends Controller
                 $user =  ['to'=> $user->email];
                 Mail::send('email_template', $data, function ($message) use ($user) {
                     $message->to($user['to']);
+                    $message->replyTo('noreply@qysmat.com', 'No Reply');
                     $message->subject(__('msg.Email Verification'));
                 });
 
@@ -240,6 +241,7 @@ class Auth extends Controller
                 $user =  ['to'=> $user->email];
                 Mail::send('email_template', $data, function ($message) use ($user) {
                     $message->to($user['to']);
+                    $message->replyTo('noreply@qysmat.com', 'No Reply');
                     $message->subject(__('msg.Email Verification'));
                 });
                 return response()->json([
@@ -328,6 +330,7 @@ class Auth extends Controller
                             // $user =  ['to'=> $user->email];
                             Mail::send('email_template', $data, function ($message) use ($user) {
                                 $message->to($user->email);
+                                $message->replyTo('noreply@qysmat.com', 'No Reply');
                                 $message->subject(__('msg.Access Request Code'));
                             });
                         }else{
@@ -412,6 +415,7 @@ class Auth extends Controller
                     $user =  ['to'=> $user->email];
                     Mail::send('email_template', $data, function ($message) use ($user) {
                         $message->to($user['to']);
+                        $message->replyTo('noreply@qysmat.com', 'No Reply');
                         $message->subject(__('msg.Email Verification'));
                     });
                     return response()->json([
@@ -698,6 +702,7 @@ class Auth extends Controller
                     $user =  ['to'=> $user->email];
                     Mail::send('reset_password_mail', $data, function ($message) use ($user) {
                         $message->to($user['to']);
+                        $message->replyTo('noreply@qysmat.com', 'No Reply');
                         $message->subject(__('msg.Forget Password'));
                     });
                     return response()->json([
