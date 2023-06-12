@@ -60,7 +60,7 @@
                     <thead>
                         <tr>
                             <th class="text-center">{{ __('msg.Contact Type')}}</th>
-                            <th class="text-center">{{ __('msg.Details')}}</th>
+                            {{-- <th class="text-center">{{ __('msg.Details')}}</th> --}}
                             <th class="text-center">{{ __('msg.Status')}}</th>
                             <th class="text-center">{{ __('msg.Actions')}}</th>
                         </tr>
@@ -70,7 +70,7 @@
                             @foreach ($records as $value)
                                 <tr>
                                     <td class="text-center">{{$value->contact_type}}</td>
-                                    <td class="text-center">{{$value->details}}</td>
+                                    {{-- <td class="text-center">{{$value->details}}</td> --}}
                                     <td class="text-center">{{$value->status}}</td>
                                     <td class="text-center bt-switch">
 
