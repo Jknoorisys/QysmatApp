@@ -132,29 +132,17 @@
 
                             <form action="{{route('login')}}" method="post" class="form-horizontal m-t-20" id="form_login">
                                 @csrf
-                                {{-- <div class="col-md-12">
-                                    <label for="email" class="form-label">{{__('msg.Email')}}</label>
-                                    <div class="input-group">
-                                        <input type="email" class="form-control smp-input bg-light" style="font-weight: 300;font-size: 15px;color: #38424C; border-right:none;" name="email" id="email" placeholder="{{ __('msg.Email Address')}}"><a href="javascript:;" style="line-height: 38px;align-items: center; border:1px solid #dfe0e1;border-left:none;" class="input-group-text text-qysmat bg-light"><i class='fas fa-envelope'></i></a>
-                                    </div><span class="err_email text-danger">@error('email') {{$message}} @enderror</span>
-                                </div><br> --}}
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text qysmat-icon" id="basic-addon1"><i class="mdi mdi-email"></i></span>
                                     </div>
-                                    <input type="email" class="form-control form-control-lg" required name="email" placeholder="Email" aria-label="Username" id="email" placeholder="{{ __('msg.Email Address')}}" aria-describedby="basic-addon1">
-                                    <span class="err_email text-danger">@error('email') {{$message}} @enderror</span>
+                                    <input type="email" class="form-control form-control-lg" required name="email" placeholder="Email" id="email" placeholder="{{ __('msg.Email Address')}}" aria-label="Email" aria-describedby="basic-addon1">
+                                    <div class="err_email text-danger">@error('email') {{$message}} @enderror</div>
                                 </div>
-                                {{-- <div class="col-md-12">
-                                    <label for="password" class="form-label">{{__('msg.Password')}}</label>
-                                    <div class="input-group" id="show_hide_password">
-                                        <input type="password" class="form-control smp-input bg-light" name="password" style="font-weight: 300;font-size: 15px;color: #38424C; border-right:none;" id="password" placeholder="{{ __('msg.Enter Password')}}"> <a href="javascript:;" style="line-height: 38px;align-items: center; border:1px solid #dfe0e1;border-left:none;" class="input-group-text text-qysmat bg-light"><i class='fas fa-eye-slash'></i></a>
-                                    </div>
-                                    <span class="err_password text-danger">@error('password') {{$message}} @enderror</span>
-                                </div> --}}
+                                
                                 <div class="input-group mb-3" id="show_hide_password">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text qysmat-icon" id="basic-addon2"><i class="mdi mdi-eye-off"></i></span>
+                                        <span class="input-group-text qysmat-icon" id="basic-addon1"><i class="mdi mdi-eye-off"></i></span>
                                     </div>
                                     <input type="password" class="form-control form-control-lg" required name="password" id="password" placeholder="{{ __('msg.Enter Password')}}" aria-label="Password" aria-describedby="basic-addon1">
                                     <span class="err_password text-danger">@error('password') {{$message}} @enderror</span>
@@ -211,13 +199,12 @@
                 e.preventDefault();
                 let valid = true;
                 let form = $(this).get(0);
-                let emailPattern = /^\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
                 let email = $("#email").val();
                 let err_email = "{{__('msg.Enter Valid Email Address')}}";
                 let password = $("#password").val();
                 let err_password = "{{__('Enter Valid Password')}}";
 
-                if (email.length === 0 || !emailPattern.test(email)) {
+                if (email.length === 0) {
                     $(".err_email").text(err_email);
                     $('#email').addClass('is-invalid');
                     valid = false;
@@ -225,8 +212,8 @@
                     $(".err_email").text('');
                     $('#email').addClass('is-valid');
                     $('#email').removeClass('is-invalid');
-
                 }
+                
                 if (password.length === 0) {
                     $(".err_password").text(err_password);
                     $('#password').addClass('is-invalid');
