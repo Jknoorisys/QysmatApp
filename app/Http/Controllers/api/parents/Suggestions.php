@@ -131,8 +131,8 @@ class Suggestions extends Controller
 
         if ($request->location && !empty($request->location)) {
             $validator = Validator::make($request->all(), [
-                'lat'    => 'required',
-                'long'   => 'required',
+                // 'lat'    => 'required',
+                // 'long'   => 'required',
                 'search_by' => [
                     'required',
                     Rule::in(['radius', 'country']),
