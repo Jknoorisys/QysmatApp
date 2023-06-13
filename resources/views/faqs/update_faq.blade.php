@@ -41,7 +41,7 @@
             let form = $(this).get(0);
             let question = $("#question").val();
             let err_question = "{{__('msg.Question is Required')}}";
-            let answer = $("#answer").val();
+            let answer = CKEDITOR.instances['answer'].getData();
             let err_answer = "{{__('msg.Answer is Required')}}";
 
                 if (question.length === 0) {
