@@ -105,13 +105,13 @@ class Dashboard extends Controller
         }
     }
 
-    public function readNotifications()
+    public function readNotifications($id)
     {
-        $notification = $this->admin->unreadNotifications->where('user_type','=','admin');
+        $notification = $this->admin->unreadNotifications->where('id','=',$id);
         if ($notification) {
             // $this->admin->unreadNotifications()->where('user_type','=','admin')->delete();
-            $this->admin->unreadNotifications->where('user_type','=','admin')->markAsRead();
-            return back()->with('success', __('msg.Notifications Marked as Read!'));
+            $this->admin->unreadNotifications->where('id','=',$id)->markAsRead();
+            return back()->with('success', __('msg.Notification Marked as Read!'));
         } else {
             return back()->with('fail', __('msg.Please Try Again....'));
         }

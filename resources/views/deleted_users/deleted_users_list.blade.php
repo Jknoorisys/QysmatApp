@@ -40,7 +40,7 @@
     var table = $('#zero_config').DataTable();
     
     // Set custom placeholder for search input
-    var placeholderText = '{{ trans("msg.Search by Name") }}';
+    var placeholderText = '{{ trans("msg.Search here") }}';
     
     // Find the search input element and set the new placeholder
     var searchInput = $('div.dataTables_wrapper input[type="search"]');

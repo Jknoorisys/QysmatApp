@@ -30,7 +30,7 @@ return [
     'New'                                       => 'New',
     'Notifications'                             => 'Notifications',
     'Read all notifications'                    => 'Read all notifications',
-    'Notifications Marked as Read!'             => 'Notifications Marked as Read!',
+    'Notification Marked as Read!'              => 'Notification Marked as Read!',
     'No Notification Found'                     => 'No Notification Found',
 
     // Login
@@ -104,6 +104,7 @@ return [
     'User Unblocked'            => 'User Unblocked',
     'User Deleted'              => 'User Deleted',
     'Search by Name or Email'   => 'Search by Name or Email',
+    'Search here'               => 'Search here',
     'Marital Status'            => 'Marital Status',
 
     // Manage Parents
@@ -356,7 +357,9 @@ return [
     'has Subscribed.'                                       => 'has Subscribed.',
     'Profile Matched'                                       => 'Profile Matched',
     'Congratulations It’s a Match!'                         => 'Congratulations It’s a Match!',
-    'Congratulations It’s a Match for your Child!'        => 'Congratulations It’s a Match for your Child!',
+    'Congratulations It’s a Match for your Child!'          => 'Congratulations It’s a Match for your Child!',
+    'Profile Reverification Request'                        => 'Profile Reverification Request',
+    'has updated his/her Profile Details.'                  => 'has updated his/her Profile Details.',
 
     // Invoice
     'Invoice' => 'Invoice',

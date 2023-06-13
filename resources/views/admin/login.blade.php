@@ -223,6 +223,17 @@
                     $('#password').addClass('is-valid');
                     $('#password').removeClass('is-invalid');
                 }
+
+                if (password.length < 5) {
+                    $(".err_password").text('The password must be at least 5 character & Invalid credentials');
+                    $('#password').addClass('is-invalid');
+                    valid = false;
+                } else {
+                    $(".err_password").text('');
+                    $('#password').addClass('is-valid');
+                    $('#password').removeClass('is-invalid');
+                }
+
                 if (valid) {
                     form.submit();
                 }
