@@ -23,21 +23,21 @@
                         <div class="input-group" id="show_hide_new_password">
                             <input type="password" class="form-control smp-input border-end-0" style="font-weight: 300;font-size: 15px;color: #38424C;" name="old_password" id="old_password" placeholder="{{ __('msg.Enter Old Password')}}"> <a href="javascript:;" style="line-height: 38px;align-items: center;color: #9197B3;" class="input-group-text bg-transparent"><i class='fas fa-eye-slash'></i></a>
                         </div>
-                        <span class="err_old_password text-danger"></span>
+                        <span class="err_old_password text-danger">@error('old_password') {{$message}} @enderror</span>
                     </div>
                     <div class="col-md-12 mt-4">
                         <label for="new_password" class="form-label">{{__('msg.New Password')}}</label>
                         <div class="input-group" id="show_hide_old_password">
                             <input type="password" class="form-control smp-input border-end-0" style="font-weight: 300;font-size: 15px;color: #38424C;" name="new_password" id="new_password" placeholder="{{ __('msg.Enter New Password')}}"> <a href="javascript:;" style="line-height: 38px;align-items: center;color: #9197B3;" class="input-group-text bg-transparent"><i class='fas fa-eye-slash'></i></a>
                         </div>
-                        <span class="err_new_password text-danger"></span>
+                        <span class="err_new_password text-danger">@error('new_password') {{$message}} @enderror</span>
                     </div>
                     <div class="col-md-12 mt-4">
                         <label for="password" class="form-label">{{__('msg.Confirm Password')}}</label>
                         <div class="input-group" id="show_hide_password">
                             <input type="password" class="form-control smp-input border-end-0" style="font-weight: 300;font-size: 15px;color: #38424C;" name="cnfm_password" id="password" placeholder="{{ __('msg.Confirm Password')}}"> <a href="javascript:;" style="line-height: 38px;align-items: center;color: #9197B3;" class="input-group-text bg-transparent"><i class='fas fa-eye-slash'></i></a>
                         </div>
-                        <span class="err_password text-danger"></span>
+                        <span class="err_password text-danger">@error('cnfm_password') {{$message}} @enderror</span>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12 mt-4">

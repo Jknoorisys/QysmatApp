@@ -87,10 +87,19 @@ class Dashboard extends Controller
     public function changePasswordFun(Request $request)
     {
         $request->validate([
-            'old_password' => 'required|min:5|max:12',
-            'new_password' => 'required|min:5|max:12',
-            'cnfm_password' => 'required|min:5|max:12'
-        ]);
+            'old_password' => 'required|min:5',
+            'new_password' => 'required|min:5',
+            'cnfm_password' => 'required|min:5'
+        ],
+        [
+            'old_password.required' => trans('msg.Enter Old Password'),
+            'new_password.required' => trans('msg.Enter New Password'),
+            'cnfm_password.required' => trans('msg.Confirm Password'),
+            'old_password.min' => 'The Old Password must be at least 5 character',
+            'new_password.min' => 'The New Password must be at least 5 character',
+            'cnfm_password.min' => 'The Confirm Password must be at least 5 character',
+        ],
+    );
 
         if (!Hash::check($request->old_password, $this->admin->password)) {
             return back()->with('fail', __('msg.Old Password Do Not Match!'));
