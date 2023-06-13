@@ -361,6 +361,8 @@ return [
     'Congratulations It’s a Match for your Child!'          => 'Congratulations It’s a Match for your Child!',
     'Profile Reverification Request'                        => 'Profile Reverification Request',
     'has updated his/her Profile Details.'                  => 'has updated his/her Profile Details.',
+    'User Reported'                                         => 'User Reported',
+    'has Reported'                                          => 'has Reported',
 
     // Invoice
     'Invoice' => 'Invoice',
