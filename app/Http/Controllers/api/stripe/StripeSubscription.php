@@ -345,7 +345,7 @@ class StripeSubscription extends Controller
                         'plan_period_end' => $subscription ? date("Y-m-d H:i:s", $subscription->current_period_end) : '',
                         'payment_status' => $session->payment_status,
                         'subs_status' => $subscription->status,
-                        'created_at' => date("Y-m-d H:i:s", $subscription->created)
+                        'created_at' => Carbon::now()
                     ];
 
                     $insert = DB::table('transactions')->insert($sub_data);
