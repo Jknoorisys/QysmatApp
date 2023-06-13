@@ -34,7 +34,7 @@ class Admin extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:5|max:12'
+            'password' => 'required|min:5'
         ]);
 
         $admin = AdminModel::where('email', '=', $request->email)->first();
