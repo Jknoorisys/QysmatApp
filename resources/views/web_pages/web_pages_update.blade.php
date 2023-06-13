@@ -57,7 +57,7 @@
             let err_page_name = "{{__('msg.Page Name is Required')}}";
             let page_title = $("#page_title").val();
             let err_page_title = "{{__('msg.Page Title is Required')}}";
-            let description = $("#description").val();
+            let description = CKEDITOR.instances['description'].getData();
             let err_description = "{{__('msg.Page Description is Required')}}";
 
                 if (page_name.length === 0) {

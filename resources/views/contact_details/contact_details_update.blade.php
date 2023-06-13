@@ -13,7 +13,6 @@
                 <div class="col-md-12 mt-4">
                     <label for="details" class="form-label">{{__('msg.Details')}}</label>
                     <div class="input-group">
-                        {{-- <textarea rows="4" class="form-control smp-input" style="font-weight: 300;font-size: 15px;color: #38424C;" name="details" id="details" placeholder="{{ __('msg.Enter Contact Details')}}">{{$records->details}}</textarea> --}}
                         <textarea id="details" name="details" rows="10" placeholder="{{ __('msg.Enter Contact Details')}}" data-sample="2" data-sample-short>{{$records->details}}</textarea>
                     </div>
                     <span class="err_details text-danger">@error('details') {{$message}} @enderror</span>
@@ -31,17 +30,26 @@
 </div>
 
 <script src="assets/libs/jquery/dist/jquery.min.js"></script>
+<script src="assets/libs/ckeditor/ckeditor.js"></script>
+<script src=" assets/libs/ckeditor/samples/js/sample.js"></script>
+
+
+<script data-sample="2">
+    CKEDITOR.replace('details', {
+        height: 200,
+        width:1000,
+    });
+</script>
 
 <script>
     $(document).ready(function() {
-
         $("#add_contact").on('submit', function(e) {
             e.preventDefault();
             let valid = true;
             let form = $(this).get(0);
             let contact_type = $("#contact_type").val();
             let err_contact_type = "{{__('msg.Contact Type is Required')}}";
-            let details = $("#details").val();
+            let details = CKEDITOR.instances['details'].getData();
             let err_details = "{{__('msg.Contact Detail is Required')}}";
 
                 if (contact_type.length === 0) {
@@ -53,6 +61,7 @@
                     $('#contact_type').addClass('is-valid');
                     $('#contact_type').removeClass('is-invalid');
                 }
+                
                 if (details.length === 0) {
                     $(".err_details").text(err_details);
                     $('#details').addClass('is-invalid');
@@ -70,13 +79,4 @@
     });
 </script>
 
-<script src="assets/libs/ckeditor/ckeditor.js"></script>
-<script src=" assets/libs/ckeditor/samples/js/sample.js"></script>
 
-
-<script data-sample="2">
-    CKEDITOR.replace('details', {
-        height: 200,
-        width:1000,
-    });
-</script>

@@ -40,7 +40,7 @@
             let form = $(this).get(0);
             let contact_type = $("#contact_type").val();
             let err_contact_type = "{{__('msg.Contact Type is Required')}}";
-            let details = $("#details").val();
+            let details = CKEDITOR.instances['details'].getData();
             let err_details = "{{__('msg.Contact Detail is Required')}}";
 
                 if (contact_type.length === 0) {
