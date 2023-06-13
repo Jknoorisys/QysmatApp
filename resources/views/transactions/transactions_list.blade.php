@@ -92,7 +92,7 @@
                                         <form action="{{route('viewTransaction')}}" method="post">
                                             @csrf
                                             <input type="hidden" value="{{$value->id}}" id="id" name="id" />
-                                            <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()"> <i class="fas fa-eye"></i> </button>
+                                            <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()" data-toggle="tooltip" title='View'> <i class="fas fa-eye"></i> </button>
                                         </form>
                                     </td>
                                 </tr>
@@ -158,7 +158,7 @@
         var table = $('#zero_config').DataTable();
         
         // Set custom placeholder for search input
-        var placeholderText = '{{ trans("msg.Search by Name") }}';
+        var placeholderText = '{{ trans("msg.Search here") }}';
         
         // Find the search input element and set the new placeholder
         var searchInput = $('div.dataTables_wrapper input[type="search"]');

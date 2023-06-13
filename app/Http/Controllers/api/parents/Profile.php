@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\api\parents;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Categories;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\ReVerifyRequests;
 use App\Models\Singleton;
 use App\Notifications\AccountLinkedNotification;
+use App\Notifications\AdminNotification;
 use App\Notifications\RequestAccessNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -364,6 +366,13 @@ class Profile extends Controller
                         'is_verified'               => 'pending'
                     ];
 
+                    $details = [
+                        'title' => __('msg.Profile Reverification Request'),
+                        'msg'   => __('msg.has updated his/her Profile Details.'),
+                    ];
+
+                    $admin = Admin::find(1);
+                    $admin->notify(new AdminNotification($user, 'admin', 0, $details));
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.parents.update-profile.success'),

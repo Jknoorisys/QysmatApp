@@ -1,3 +1,14 @@
+<style>
+    .notification .badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 5px 10px;
+  border-radius: 50%;
+  background-color: rgb(233, 233, 7);
+  color: white;
+}
+</style>
 <header class="topbar">
     <nav class="navbar top-navbar navbar-expand-md navbar-dark">
         <div class="navbar-header" style="border: none">
@@ -190,9 +201,8 @@
                 <!-- Comment -->
                 <!-- ============================================================== -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="ti-bell font-20"></i>
-
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark " href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="ti-bell font-20"><span class="badge badge-pill text-white text-bold" style="font-size:12px; position:absolute; top:8px; right:0px; background-color:#8F7C5C">{{ $notifications->count() }}</span></i>
                     </a>
                     <div class="dropdown-menu mailbox animated bounceInDown">
                         <span class="with-arrow">
@@ -211,14 +221,14 @@
                                     @if (!$notifications->isEmpty())
                                         @foreach ($notifications as $notification)
                                             <!-- Message -->
-                                            <a href="javascript:void(0)" class="message-item">
+                                            <a href="{{route('readNotifications', $notification->id)}}" class="message-item">
                                                 <span class="btn btn-qysmat btn-circle">
                                                     <i class="fa fa-bell" style="font-size: 18px;"></i>
                                                 </span>
                                                 <div class="mail-contnet">
                                                     <h5 class="message-title">{{$notification->data['title']}}</h5>
                                                     <span class="mail-desc">{{$notification->data['msg']}}</span>
-                                                    <span class="time">{{ date('D h:m A', strtotime($notification->created_at)) }}</span>
+                                                    {{-- <span class="time">{{ date('D h:m A', strtotime($notification->created_at)) }}</span> --}}
                                                 </div>
                                             </a>
                                         @endforeach

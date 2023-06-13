@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\api\singletons;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Categories;
 use App\Models\Matches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\ReVerifyRequests;
 use App\Models\Singleton;
+use App\Notifications\AdminNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -419,6 +421,13 @@ class Profile extends Controller
                         'is_verified'               => 'pending'
                     ];
 
+                    $details = [
+                        'title' => __('msg.Profile Reverification Request'),
+                        'msg'   => __('msg.has updated his/her Profile Details.'),
+                    ];
+
+                    $admin = Admin::find(1);
+                    $admin->notify(new AdminNotification($user, 'admin', 0, $details));
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.update-profile.success'),
@@ -534,6 +543,14 @@ class Profile extends Controller
                     $user->photo4 = $request->file('photo4') ? $photo4 : $user->photo4;
                     $user->photo5 = $request->file('photo5') ? $photo5 : $user->photo5;
 
+                    $details = [
+                        'title' => __('msg.Profile Reverification Request'),
+                        'msg'   => __('msg.has updated his/her Profile Details.'),
+                    ];
+
+                    $admin = Admin::find(1);
+                    $admin->notify(new AdminNotification($user, 'admin', 0, $details));
+                    
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.upload-pictures.success'),
