@@ -75,6 +75,7 @@ return [
     'Date'                      => 'Date',
     'Verified'                  => 'Verified',
     'Actions'                   => 'Actions',
+    'No'                        => 'No',
 
     'Singleton Details'         => 'Singleton Details',
     'Somthing Went Wrong, Please Try Again...'  => 'Somthing Went Wrong, Please Try Again...',
@@ -360,6 +361,8 @@ return [
     'Congratulations It’s a Match for your Child!'          => 'Congratulations It’s a Match for your Child!',
     'Profile Reverification Request'                        => 'Profile Reverification Request',
     'has updated his/her Profile Details.'                  => 'has updated his/her Profile Details.',
+    'User Reported'                                         => 'User Reported',
+    'has Reported'                                          => 'has Reported',
 
     // Invoice
     'Invoice' => 'Invoice',

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\api\parents;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\BlockList;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
+use App\Notifications\AdminNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -154,6 +156,15 @@ class BlockOrReportUser extends Controller
             $user_details = $user->save();
 
             if($user_details){
+                $details = [
+                    'title' => __('msg.User Reported'),
+                    'msg'   => __('msg.has Reported').' '.$userExists->name,
+                ];
+
+                $parent = ParentsModel::find($request->login_id);
+                $admin = Admin::find(1);
+                $admin->notify(new AdminNotification($parent, 'admin', 0, $details));
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.report.success'),

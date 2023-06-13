@@ -7,6 +7,7 @@
                 <table id="zero_config" class="table table-sm table-hover">
                     <thead>
                         <tr>
+                            <th class="text-center">{{ __('msg.No')}}</th>
                             <th class="text-center">{{ __('msg.Name')}}</th>
                             <th class="text-center">{{ __('msg.User Type')}}</th>
                             <th class="text-center">{{ __('msg.Title')}}</th>
@@ -18,6 +19,7 @@
                         @if (!$records->isEmpty())
                             @foreach ($records as $value)
                                 <tr>
+                                    <td class="text-center">{{$loop->iteration}}</td>
                                     <td class="text-center">{{$value->user_name}}</td>
                                     <td class="text-center">{{$value->user_type}}</td>
                                     <td class="text-center">{{$value->title}}</td>
