@@ -64,6 +64,7 @@
                 <table id="zero_config" data-order="[]" class="table table-sm table-hover">
                     <thead>
                         <tr>
+                            <th class="text-center">{{ __('msg.No')}}</th>
                             <th class="text-center">{{ __('msg.Quotes')}}</th>
                             <th class="text-center">{{ __('msg.Image')}}</th>
                             <th class="text-center">{{ __('msg.Status')}}</th>
@@ -74,6 +75,7 @@
                         @if (!$records->isEmpty())
                             @foreach ($records as $value)
                                 <tr>
+                                    <td class="text-center">{{$loop->iteration}}</td>
                                     <td class="text-center">
                                         @if ($value->quotes)
                                          {{$value->quotes}}

@@ -68,6 +68,7 @@
                     </form> --}}
                     <thead>
                         <tr>
+                            <th class="text-center">{{ __('msg.No')}}</th>
                             <th class="text-center">{{ __('msg.Name')}}</th>
                             <th class="text-center">{{ __('msg.Email')}}</th>
                             <th class="text-center">{{ __('msg.Status')}}</th>
@@ -79,6 +80,7 @@
                         @if (!$records->isEmpty())
                             @foreach ($records as $value)
                                 <tr>
+                                    <td class="text-center">{{$loop->iteration}}</td>
                                     <td class="text-center">{{$value->name.' '.$value->lname}}</td>
                                     <td class="text-center">{{$value->email}}</td>
                                     <td class="text-center">{{$value->status}}</td>

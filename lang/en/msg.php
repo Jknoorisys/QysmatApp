@@ -75,6 +75,7 @@ return [
     'Date'                      => 'Date',
     'Verified'                  => 'Verified',
     'Actions'                   => 'Actions',
+    'No'                        => 'No',
 
     'Singleton Details'         => 'Singleton Details',
     'Somthing Went Wrong, Please Try Again...'  => 'Somthing Went Wrong, Please Try Again...',

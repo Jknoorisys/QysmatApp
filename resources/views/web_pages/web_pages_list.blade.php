@@ -59,6 +59,7 @@
                 <table id="zero_config" class="table table-sm table-hover">
                     <thead>
                         <tr>
+                            <th class="text-center">{{ __('msg.No')}}</th>
                             {{-- <th class="text-center">{{ __('msg.Web Page Name')}}</th> --}}
                             <th class="text-center">{{ __('msg.Web Page Title')}}</th>
                             <th class="text-center">{{ __('msg.Status')}}</th>
@@ -69,6 +70,7 @@
                         @if (!$records->isEmpty())
                             @foreach ($records as $value)
                                 <tr>
+                                    <td class="text-center">{{$loop->iteration}}</td>
                                     {{-- <td class="text-center">{{$value->page_name}}</td> --}}
                                     <td class="text-center">{{$value->page_title}}</td>
                                     <td class="text-center">{{$value->status}}</td>
