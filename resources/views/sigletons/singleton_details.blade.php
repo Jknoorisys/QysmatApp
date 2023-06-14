@@ -121,13 +121,13 @@
                                 </div>
                             </div>
                         @elseif ($details->live_photo)
-                        <div class="card">
-                            <div class="el-card-item">
-                                <div class="el-card-avatar el-overlay-1">
-                                    <a class="image-popup-vertical-fit image-size" href="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}"> <img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}" class="image-size" alt="live-photo" /> </a>
+                            <div class="card">
+                                <div class="el-card-item">
+                                    <div class="el-card-avatar el-overlay-1">
+                                        <a class="image-popup-vertical-fit image-size" href="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}"> <img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}" class="image-size" alt="live-photo" /> </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         @endif
 
                         @if (!empty($reverify) && $reverify->id_proof)
@@ -155,7 +155,7 @@
                                 </form>
                             </div>
                         @endif
-                        
+
                     </div>
                 </div>
                 <div class="tab-pane fade" id="current-month" role="tabpanel" aria-labelledby="pills-timeline-tab">
