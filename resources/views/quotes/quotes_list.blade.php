@@ -51,6 +51,7 @@
         width: 200px;
         height: 200px;
     }
+    
 </style>
 
 <div class="col-12">
@@ -78,14 +79,16 @@
                                     <td class="text-center">{{$loop->iteration}}</td>
                                     <td class="text-center">
                                         @if ($value->quotes)
-                                         {{$value->quotes}}
+                                            <span type="button" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ $value->quotes }}">
+                                                {{  strlen($value->quotes) < 100 ? $value->quotes : substr($value->quotes,0,80).'...' }}
+                                            </span>
                                         @else
                                             <i class="fa-solid fa-minus text-qysmat"></i>
                                         @endif
                                     </td>
                                     <td class="text-center">
                                         @if ($value->image)
-                                            <a class="btn default btn-outline image-popup-vertical-fit el-link" href="{{asset($value->image)}}"><i class="fa-solid fa-mountain-sun text-qysmat"></i></a>
+                                            <a class="btn default btn-outline image-popup-vertical-fit el-link" href="{{asset($value->image)}}"  data-toggle="tooltip" title="image"><i class="fa-solid fa-mountain-sun text-qysmat"></i></a>
                                          @else
                                             <i class="fa-solid fa-minus text-qysmat"></i>
                                         @endif
@@ -94,8 +97,8 @@
                                     <td class="text-center bt-switch">
 
                                         <div class="row justify-content-center">
-                                            <div class="col-3"></div>
-                                            <div class="col-2 mt-1">
+                                            {{-- <div class="col-3"></div> --}}
+                                            <div class="col-3 mt-1">
                                                 <form action="{{route('changeQuoteStatus')}}" method="post" class="text-center">
                                                     @csrf
                                                     <input type="hidden" name="id" value="{{$value->id}}">
@@ -103,21 +106,21 @@
                                                     <button type="submit" data-status="{{$value->status == 'Active' ? 'Active' : 'Inactive'}}" data-id="{{$value->id}}" data-name="{{__('msg.Islamic Quote')}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Inactive' ? '' : 'checked'}} /><label class="qysmat-lable" for="switch">Toggle</label></button>
                                                 </form>
                                             </div>
-                                            <div class="col-2">
+                                            <div class="col-3">
                                                 <form action="{{route('updateQuote')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()"> <i class="fas fa-edit" data-toggle="tooltip" title='Edit'></i> </button>
                                                 </form>
                                             </div>
-                                            <div class="col-2">
+                                            <div class="col-3">
                                                 <form action="{{route('deleteQuote')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat show_confirm" data-name="{{__('msg.Islamic Quote')}}" data-id="{{$value->id}}" data-toggle="tooltip" title='Delete'> <i class="fas fa-trash"></i> </button>
                                                 </form>
                                             </div>
-                                            <div class="col-3"></div>
+                                            {{-- <div class="col-3"></div> --}}
                                         </div>
                                     </td>
                                 </tr>
@@ -138,7 +141,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
 <script type="text/javascript">
 
-     $('.show_confirm').click(function(event) {
+    $('.show_confirm').click(function(event) {
         var form =  $(this).closest("form");
         var name = $(this).data("name");
         let id = $(this).data('id');
