@@ -77,18 +77,6 @@
 
                 <small class="text-muted p-t-30 db">{{__('msg.Short Intro')}}</small><h6>{{(!empty($reverify) && $reverify->short_intro) ? $reverify->short_intro : $details->short_intro}}</h6>
 
-                {{-- <div>
-                    <hr>
-                </div>
-
-                <div class="map-box">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d470029.1604841957!2d72.29955005258641!3d23.019996818380896!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e848aba5bd449%3A0x4fcedd11614f6516!2sAhmedabad%2C+Gujarat!5e0!3m2!1sen!2sin!4v1493204785508" width="100%" height="150" frameborder="0" style="border:0" allowfullscreen></iframe>
-                </div> --}}
-                {{-- <small class="text-muted p-t-30 db">Social Profile</small>
-                <br/>
-                <button class="btn btn-circle btn-secondary"><i class="fab fa-facebook-f"></i></button>
-                <button class="btn btn-circle btn-secondary"><i class="fab fa-twitter"></i></button>
-                <button class="btn btn-circle btn-secondary"><i class="fab fa-youtube"></i></button> --}}
             </div>
         </div>
     </div>
@@ -155,21 +143,21 @@
                     <div class="card-body">
                         <div class="row">
                             @if ( !empty($details->photo1) || !empty($reverify->photo1))
-                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo1) ? $reverify->photo1 : ($details->photo1 ? asset($details->photo1) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size" alt="image-1" /></div>
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo1) ? $reverify->photo1 : ($details->photo1 ? asset($details->photo1) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size image-popup-vertical-fit el-link" alt="image-1" /></div>
                             @endif
                             @if (!empty($details->photo2) || !empty($reverify->photo2))
-                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo2) ? $reverify->photo2 : ($details->photo2 ? asset($details->photo2) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size" alt="image-2" /></div>
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo2) ? $reverify->photo2 : ($details->photo2 ? asset($details->photo2) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size image-popup-vertical-fit el-link" alt="image-2" /></div>
                             @endif
                             @if (!empty($details->photo3) || !empty($reverify->photo3))
-                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo3) ? $reverify->photo3 : ($details->photo3 ? asset($details->photo3) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size" alt="image-3" /></div>
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo3) ? $reverify->photo3 : ($details->photo3 ? asset($details->photo3) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size image-popup-vertical-fit el-link" alt="image-3" /></div>
                             @endif
                         </div>
                         <div class="row">
                             @if (!empty($details->photo4) || !empty($reverify->photo4))
-                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo4) ? $reverify->photo4 : ($details->photo4 ? asset($details->photo4) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size" alt="image-4" /></div> 
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo4) ? $reverify->photo4 : ($details->photo4 ? asset($details->photo4) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size image-popup-vertical-fit el-link" alt="image-4" /></div> 
                             @endif
                             @if (!empty($details->photo5) || !empty($reverify->photo5))
-                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo5) ? $reverify->photo5 : ($details->photo5 ? asset($details->photo5) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size" alt="image-5" /></div>
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo5) ? $reverify->photo5 : ($details->photo5 ? asset($details->photo5) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size image-popup-vertical-fit el-link" alt="image-5" /></div>
                             @endif
                         </div>
                     </div>
