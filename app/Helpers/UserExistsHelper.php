@@ -950,11 +950,13 @@ use Willywes\AgoraSDK\RtcTokenBuilder;
             'item2_unit_price' => $item2 ? $item2->price->unit_amount : '',
             'item2' => count($subscription->items->data),
         ];
+
+        $subscriptionDetails = DB::table('transactions')->where('subscription_id', '=', $invoice->subscription)->first();
         $pdf = Pdf::loadView('invoice', $data);
         $pdf_name = 'invoice_'.time().'.pdf';
         $path = Storage::put('invoices/'.$pdf_name,$pdf->output());
         $invoice_url = ('storage/app/invoices/'.$pdf_name);
-        DB::table('transactions')->where('subscription_id', '=', $subscription->id)->update(['invoice_url' => $invoice_url]);
+        $subscriptionDetails ? DB::table('transactions')->where('id', '=', $subscriptionDetails->id)->update(['invoice_url' => $invoice_url]) : '';
         $email = $invoice->customer_email;
         $data1 = ['salutation' => __('msg.Dear'),'name'=> $invoice->customer_name, 'msg'=> __('msg.This email serves to confirm the successful setup of your subscription with Us.'), 'msg1'=> __('msg.We are delighted to welcome you as a valued subscriber and are confident that you will enjoy the benefits of Premium Services.'),'msg2' => __('msg.Thank you for your trust!')];
 
