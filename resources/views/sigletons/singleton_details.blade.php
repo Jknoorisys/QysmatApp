@@ -141,9 +141,9 @@
                 </div>
                 <div class="tab-pane fade" id="current-month" role="tabpanel" aria-labelledby="pills-timeline-tab">
                     <div class="card-body">
-                        <div class="row">
+                        {{-- <div class="row">
                             @if ( !empty($details->photo1) || !empty($reverify->photo1))
-                                <div class="col-lg-4 col-md-12 m-b-20 image-popup-vertical-fit el-link"><img src="{{ (!empty($reverify) && $reverify->photo1) ? $reverify->photo1 : ($details->photo1 ? asset($details->photo1) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size image-popup-vertical-fit el-link" alt="image-1" /></div>
+                                <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo1) ? $reverify->photo1 : ($details->photo1 ? asset($details->photo1) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size image-popup-vertical-fit el-link" alt="image-1" /></div>
                             @endif
                             @if (!empty($details->photo2) || !empty($reverify->photo2))
                                 <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo2) ? $reverify->photo2 : ($details->photo2 ? asset($details->photo2) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size image-popup-vertical-fit el-link" alt="image-2" /></div>
@@ -151,15 +151,63 @@
                             @if (!empty($details->photo3) || !empty($reverify->photo3))
                                 <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo3) ? $reverify->photo3 : ($details->photo3 ? asset($details->photo3) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size image-popup-vertical-fit el-link" alt="image-3" /></div>
                             @endif
+                        </div> --}}
+                        <div class="card-columns el-element-overlay">
+                            @if ( !empty($details->photo1) || !empty($reverify->photo1))
+                                <div class="card">
+                                    <div class="el-card-item">
+                                        <div class="el-card-avatar el-overlay-1">
+                                            <a class="image-popup-vertical-fit" href="{{ (!empty($reverify) && $reverify->photo1) ? $reverify->photo1 : ($details->photo1 ? asset($details->photo1) : 'assets/images/users/no-image.png') }}"> <img src="{{ (!empty($reverify) && $reverify->photo1) ? $reverify->photo1 : ($details->photo1 ? asset($details->photo1) : 'assets/images/users/no-image.png') }}" alt="image-1" /> </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            
+                            @if ( !empty($details->photo2) || !empty($reverify->photo2))
+                                <div class="card">
+                                    <div class="el-card-item">
+                                        <div class="el-card-avatar el-overlay-1">
+                                            <a class="image-popup-vertical-fit" href="{{ (!empty($reverify) && $reverify->photo2) ? $reverify->photo2 : ($details->photo2 ? asset($details->photo2) : 'assets/images/users/no-image.png') }}"> <img src="{{ (!empty($reverify) && $reverify->photo2) ? $reverify->photo2 : ($details->photo2 ? asset($details->photo2) : 'assets/images/users/no-image.png') }}" alt="image-2" /> </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            @if ( !empty($details->photo3) || !empty($reverify->photo3))
+                                <div class="card">
+                                    <div class="el-card-item">
+                                        <div class="el-card-avatar el-overlay-1">
+                                            <a class="image-popup-vertical-fit" href="{{ (!empty($reverify) && $reverify->photo3) ? $reverify->photo3 : ($details->photo3 ? asset($details->photo3) : 'assets/images/users/no-image.png') }}"> <img src="{{ (!empty($reverify) && $reverify->photo3) ? $reverify->photo3 : ($details->photo3 ? asset($details->photo3) : 'assets/images/users/no-image.png') }}" alt="image-3" /> </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            @if ( !empty($details->photo4) || !empty($reverify->photo4))
+                                <div class="card">
+                                    <div class="el-card-item">
+                                        <div class="el-card-avatar el-overlay-1">
+                                            <a class="image-popup-vertical-fit" href="{{ (!empty($reverify) && $reverify->photo4) ? $reverify->photo4 : ($details->photo4 ? asset($details->photo4) : 'assets/images/users/no-image.png') }}"> <img src="{{ (!empty($reverify) && $reverify->photo4) ? $reverify->photo4 : ($details->photo4 ? asset($details->photo4) : 'assets/images/users/no-image.png') }}" alt="image-4" /> </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            @if ( !empty($details->photo5) || !empty($reverify->photo5))
+                                <div class="card">
+                                    <div class="el-card-item">
+                                        <div class="el-card-avatar el-overlay-1">
+                                            <a class="image-popup-vertical-fit" href="{{ (!empty($reverify) && $reverify->photo5) ? $reverify->photo5 : ($details->photo5 ? asset($details->photo5) : 'assets/images/users/no-image.png') }}"> <img src="{{ (!empty($reverify) && $reverify->photo5) ? $reverify->photo5 : ($details->photo5 ? asset($details->photo5) : 'assets/images/users/no-image.png') }}" alt="image-5" /> </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
-                        <div class="row">
+                        {{-- <div class="row">
                             @if (!empty($details->photo4) || !empty($reverify->photo4))
                                 <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo4) ? $reverify->photo4 : ($details->photo4 ? asset($details->photo4) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size image-popup-vertical-fit el-link" alt="image-4" /></div> 
                             @endif
                             @if (!empty($details->photo5) || !empty($reverify->photo5))
                                 <div class="col-lg-4 col-md-12 m-b-20"><img src="{{ (!empty($reverify) && $reverify->photo5) ? $reverify->photo5 : ($details->photo5 ? asset($details->photo5) : 'assets/images/users/no-image.png') }}" class="img-fluid rounded image-size image-popup-vertical-fit el-link" alt="image-5" /></div>
                             @endif
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
                 <div class="tab-pane fade" id="previous-month" role="tabpanel" aria-labelledby="pills-setting-tab">
