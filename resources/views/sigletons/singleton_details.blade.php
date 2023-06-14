@@ -102,7 +102,7 @@
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="last-month" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <div class="card-body">
-                        @if (!empty($reverify) && $reverify->live_photo)
+                        {{-- @if (!empty($reverify) && $reverify->live_photo)
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $reverify->live_photo ? asset($reverify->live_photo) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded image-size" /></div>
                             </div>
@@ -110,8 +110,26 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded image-size" /></div>
                             </div>
-                        @endif
+                        @endif --}}
                         
+                        @if ( !empty($reverify) && $reverify->live_photo)
+                            <div class="card">
+                                <div class="el-card-item">
+                                    <div class="el-card-avatar el-overlay-1">
+                                        <a class="image-popup-vertical-fit image-size" href="{{ $reverify->live_photo ? asset($reverify->live_photo) : 'assets/images/users/no-image.png'}}"> <img src="{{ $reverify->live_photo ? asset($reverify->live_photo) : 'assets/images/users/no-image.png'}}" class="image-size" alt="live-photo" /> </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @elseif ($details->live_photo)
+                        <div class="card">
+                            <div class="el-card-item">
+                                <div class="el-card-avatar el-overlay-1">
+                                    <a class="image-popup-vertical-fit image-size" href="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}"> <img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}" class="image-size" alt="live-photo" /> </a>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
                         @if (!empty($reverify) && $reverify->id_proof)
                             <div class="row">
                                 <div class="col-lg-4 col-md-12 m-b-20"><a href="{{asset($reverify->id_proof ? asset($reverify->id_proof) : 'assets/images/users/no-image.png')}}" class="btn btn-qysmat image-popup-vertical-fit el-link">{{__('msg.View ID Proof')}}</a></div>
@@ -137,6 +155,7 @@
                                 </form>
                             </div>
                         @endif
+                        
                     </div>
                 </div>
                 <div class="tab-pane fade" id="current-month" role="tabpanel" aria-labelledby="pills-timeline-tab">
