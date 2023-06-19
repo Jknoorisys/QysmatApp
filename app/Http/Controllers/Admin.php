@@ -20,6 +20,14 @@ class Admin extends Controller
         }
         return view('admin.login');
     }
+    
+    public function storeToken(Request $request)
+    {
+        $admin = AdminModel::find(1);
+        $data = ['device_token' => $request->token];
+        AdminModel::where('id', '=', 1)->update($data);
+        return response()->json(['Token successfully stored.']);
+    }
 
     public function setLanguage($lang)
     {
@@ -42,6 +50,7 @@ class Admin extends Controller
             if (Hash::check($request->password, $admin->password)) {
                 $request->session()->put('loginId', $admin->id);
                 $request->session()->put('is_logged_in' , 1);
+                
                 return redirect()->to('dashboard');
             } else {
                 return back()->with('fail', __('msg.Invalid Password'));
