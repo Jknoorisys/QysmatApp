@@ -1403,7 +1403,7 @@ use App\Models\Admin as AdminModel;
 
         $FcmToken = AdminModel::whereNotNull('device_token')->pluck('device_token')->all();
             
-        $serverKey = 'AAAAqLPpYG0:APA91bETLN-2pGe_GdIwMwoXVKFrUq0_7Stl-ieJnuE-SgeHzm2G1cBoQkAaolpbhKWTRfVC12qyQQcqWVREQLQ1ar1SOM2Z_tRjYPKLlHjaWYuRhnI6sE2EXDj8eN4VPUb77qpbHoCi'; // ADD SERVER KEY HERE PROVIDED BY FCM
+        $serverKey = 'AAAATICgKX0:APA91bHhUj1lJ3o_AX9PkU-il3O-qpZ8O2U7KvKv6nRD4xdjTVkQZBbrhXrhWMDgp6WxDvAG7rXqQb0wh8RUsZX8FO5dcLvgnbRRc343cxgEo8nA_MQkIcM08xK58qUadkAjrj_TBkaR'; // ADD SERVER KEY HERE PROVIDED BY FCM
     
         $data = [
             "registration_ids" => $FcmToken,
