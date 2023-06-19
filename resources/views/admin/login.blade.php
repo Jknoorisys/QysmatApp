@@ -150,7 +150,7 @@
 
                                 <div class="pb-4 pt-4 col-md-12">
                                     <div class="d-grid">
-                                        <button type="submit" onclick="startFCM()" class="btn btn-block btn-qysmat" style="font-weight: 300;font-size: 15px;">{{ __('msg.LOGIN')}}&nbsp;&nbsp;<i class="fas fa-long-arrow-alt-right"></i></button>
+                                        <button type="submit" class="btn btn-block btn-qysmat" style="font-weight: 300;font-size: 15px;">{{ __('msg.LOGIN')}}&nbsp;&nbsp;<i class="fas fa-long-arrow-alt-right"></i></button>
                                     </div>
                                 </div>
                             </form>
@@ -258,7 +258,7 @@
 </script>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+{{-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase.js"></script>
 <script>
     var firebaseConfig = {
@@ -310,7 +310,7 @@
         };
         new Notification(title, options);
     });
-</script>
+</script> --}}
 </body>
 
 </html>

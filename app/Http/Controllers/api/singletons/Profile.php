@@ -428,7 +428,7 @@ class Profile extends Controller
 
                     $admin = Admin::find(1);
                     $admin->notify(new AdminNotification($user, 'admin', 0, $details));
-                    $send = sendWebNotification($details['title'], 'Someone '.$details['msg'])  ;
+                    // $send = sendWebNotification($details['title'], 'Someone '.$details['msg'])  ;
 
                     return response()->json([
                         'status'    => 'success',
