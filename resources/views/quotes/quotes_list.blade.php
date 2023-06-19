@@ -79,7 +79,7 @@
                                     <td class="text-center">{{$loop->iteration}}</td>
                                     <td class="text-center">
                                         @if ($value->quotes)
-                                            <span type="button" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ $value->quotes }}">
+                                            <span type="button" data-container="body" data-toggle="popover" data-placement="right" data-content="{{ $value->quotes }}">
                                                 {{  strlen($value->quotes) < 100 ? $value->quotes : substr($value->quotes,0,80).'...' }}
                                             </span>
                                         @else
