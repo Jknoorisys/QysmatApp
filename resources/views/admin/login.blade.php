@@ -262,13 +262,13 @@
 <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase.js"></script>
 <script>
     var firebaseConfig = {
-        apiKey: "AIzaSyAsvCLBEQT_PLQXK42Vuw-FOC3sbi6y2Bs",
-        authDomain: "laravel-358511.firebaseapp.com",
-        projectId: "laravel-358511",
-        storageBucket: "laravel-358511.appspot.com",
-        messagingSenderId: "724572921965",
-        appId: "1:724572921965:web:3e0e657509097a2cd39f64",
-        measurementId: "G-J7BF5XD51M"
+        apiKey: "AIzaSyBAnS7S9mfjLn0Ht1lKZIjGmNmQmujbYLI",
+        authDomain: "qysmat-b40c2.firebaseapp.com",
+        projectId: "qysmat-b40c2",
+        storageBucket: "qysmat-b40c2.appspot.com",
+        messagingSenderId: "328575494525",
+        appId: "1:328575494525:web:2f66e61dfa741c3a044414",
+        measurementId: "G-VTS8N91KC0"
     };
     firebase.initializeApp(firebaseConfig);
     const messaging = firebase.messaging();
