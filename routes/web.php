@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/' , [Admin::class,'index'])->name('/');
 Route::get('lang/{lang}' , ['as'=>'lang.switch', 'uses'=>'App\Http\Controllers\Admin@setLanguage']);
 Route::post('login' , [Admin::class,'login'])->name('login');
+Route::post('store-token' , [Admin::class,'storeToken'])->name('store-token');
 Route::any('logout' , [Admin::class,'logout'])->name('logout');
 Route::any('dashboard' , [Dashboard::class,'index'])->middleware('isLoggedIn')->name('dashboard');
 Route::get('changePassword' , [Dashboard::class,'changePassword'])->middleware('isLoggedIn')->name('changePassword');

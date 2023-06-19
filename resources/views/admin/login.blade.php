@@ -150,7 +150,7 @@
 
                                 <div class="pb-4 pt-4 col-md-12">
                                     <div class="d-grid">
-                                        <button type="submit" class="btn btn-block btn-qysmat" style="font-weight: 300;font-size: 15px;">{{ __('msg.LOGIN')}}&nbsp;&nbsp;<i class="fas fa-long-arrow-alt-right"></i></button>
+                                        <button type="submit" onclick="startFCM()" class="btn btn-block btn-qysmat" style="font-weight: 300;font-size: 15px;">{{ __('msg.LOGIN')}}&nbsp;&nbsp;<i class="fas fa-long-arrow-alt-right"></i></button>
                                     </div>
                                 </div>
                             </form>
@@ -255,6 +255,61 @@
             });
 
         });
+</script>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.3.2/firebase.js"></script>
+<script>
+    var firebaseConfig = {
+        apiKey: "AIzaSyAsvCLBEQT_PLQXK42Vuw-FOC3sbi6y2Bs",
+        authDomain: "laravel-358511.firebaseapp.com",
+        projectId: "laravel-358511",
+        storageBucket: "laravel-358511.appspot.com",
+        messagingSenderId: "724572921965",
+        appId: "1:724572921965:web:3e0e657509097a2cd39f64",
+        measurementId: "G-J7BF5XD51M"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+    function startFCM() {
+        messaging
+            .requestPermission()
+            .then(function () {
+                return messaging.getToken()
+            })
+            .then(function (response) {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: '{{ route("store-token") }}',
+                    type: 'POST',
+                    data: {
+                        token: response
+                    },
+                    dataType: 'JSON',
+                    success: function (response) {
+                        alert('Token stored.');
+                    },
+                    error: function (error) {
+                        alert(error);
+                    },
+                });
+            }).catch(function (error) {
+                alert(error);
+            });
+    }
+    messaging.onMessage(function (payload) {
+        const title = payload.notification.title;
+        const options = {
+            body: payload.notification.body,
+            icon: payload.notification.icon,
+        };
+        new Notification(title, options);
+    });
 </script>
 </body>
 
