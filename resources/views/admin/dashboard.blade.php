@@ -10,8 +10,8 @@
     label {
     cursor: pointer;
     text-indent: -9999px;
-    width: 40px;
-    height: 17px;
+    width: 32px;
+    height: 15px;
     background: rgb(145, 143, 143);
     /* display: block; */
     border-radius: 100px;
@@ -22,9 +22,9 @@
     content: '';
     position: absolute;
     top: 2.2px;
-    left: 4px;
-    width: 12px;
-    height: 12px;
+    left: 3px;
+    width: 10px;
+    height: 10px;
     background: #fff;
     border-radius: 100px;
     transition: 0.2s;
