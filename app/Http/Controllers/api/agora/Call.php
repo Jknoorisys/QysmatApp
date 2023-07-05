@@ -85,7 +85,7 @@ class Call extends Controller
             if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.reset-profile.premium'),
+                    'message'   => __('msg.agora.premium'),
                 ],400);
             }
 
@@ -95,8 +95,24 @@ class Call extends Controller
                 $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
             }
 
+            $block = BlockList ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['blocked_user_id', '=', $request->receiver_id], ['blocked_user_type', '=', $request->receiver_user_type]])
+                                ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['blocked_user_id', '=', $request->caller_id], ['blocked_user_type', '=', $request->caller_user_type]])->first();
+
+            $report = ReportedUsers ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['reported_user_id', '=', $request->receiver_id], ['reported_user_type', '=', $request->receiver_user_type]])
+                                    ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['reported_user_id', '=', $request->caller_id], ['reported_user_type', '=', $request->caller_user_type]])->first();
+
+            $unMatch = UnMatches ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['un_matched_id', '=', $request->receiver_id]])
+                                ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['un_matched_id', '=', $request->caller_id]])->first();
+
+            if (!empty($block) || !empty($report) || !empty($unMatch)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.agora.invalid'),
+                ],400);
+            }
+
             $channelName = $request->channel_name;
-            $agora  =   GetToken($request->login_id, $channelName);
+            $agora  =   GetToken($request->caller_id, $channelName);
 
             if ($agora) {
                 $title = $premium->name;
