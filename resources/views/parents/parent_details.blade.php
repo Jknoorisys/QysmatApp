@@ -13,6 +13,14 @@
         width: 200px;
         height: 200px;
     }
+
+    .nav-pills.custom-pills .nav-link.active {
+        color: #8f7c5c;
+        opacity: 1;
+        background-color: transparent;
+        font-weight: bold;
+        border-bottom: 2px solid #8f7c5c;
+    }
 </style>
 <div class="row">
     <!-- Column -->
@@ -61,26 +69,16 @@
             <!-- Tabs -->
             <ul class="nav nav-pills custom-pills" id="pills-tab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="pills-profile-tab" data-toggle="pill" href="#last-month" role="tab" aria-controls="pills-profile" aria-selected="false">{{__('msg.Verify Profile')}}</a>
+                    <a class="nav-link active text-qysmat" id="pills-profile-tab" data-toggle="pill" href="#last-month" role="tab" aria-controls="pills-profile" aria-selected="false">{{__('msg.Verify Profile')}}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="pills-setting-tab" data-toggle="pill" href="#previous-month" role="tab" aria-controls="pills-setting" aria-selected="false">{{__('msg.Subscription Plan')}}</a>
+                    <a class="nav-link text-qysmat" id="pills-setting-tab" data-toggle="pill" href="#previous-month" role="tab" aria-controls="pills-setting" aria-selected="false">{{__('msg.Subscription Plan')}}</a>
                 </li>
             </ul>
             <!-- Tabs -->
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="last-month" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <div class="card-body">
-                        {{-- @if (!empty($reverify) && $reverify->live_photo)
-                            <div class="row">
-                                <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $reverify->live_photo ? asset($reverify->live_photo) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded image-size" /></div>
-                            </div>
-                        @elseif ($details->live_photo)
-                            <div class="row">
-                                <div class="col-lg-12 col-md-12 m-b-20"><img src="{{ $details->live_photo ? asset($details->live_photo) : 'assets/images/users/no-image.png'}}" class="img-fluid rounded image-size" /></div>
-                            </div>
-                        @endif --}}
-
                         @if ( !empty($reverify) && $reverify->live_photo)
                             <div class="card">
                                 <div class="el-card-item">

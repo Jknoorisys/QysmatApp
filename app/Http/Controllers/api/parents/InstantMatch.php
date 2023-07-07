@@ -93,13 +93,13 @@ class InstantMatch extends Controller
                 ],400);
             }
 
-            $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['matched_id', '=', $request->requested_id], ['singleton_id', '=', $request->singleton_id]])->first();
-            if(empty($Match)){
-                return response()->json([
-                    'status'    => 'failed',
-                    'message'   => __('msg.parents.send-request.match-list'),
-                ],400);
-            }
+            // $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['matched_id', '=', $request->requested_id], ['singleton_id', '=', $request->singleton_id]])->first();
+            // if(empty($Match)){
+            //     return response()->json([
+            //         'status'    => 'failed',
+            //         'message'   => __('msg.parents.send-request.match-list'),
+            //     ],400);
+            // }
 
             $formsSubmitted = InstantMatchRequest::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type]])
                     ->whereBetween('created_at', [Carbon::now()->subWeek(), Carbon::now()])

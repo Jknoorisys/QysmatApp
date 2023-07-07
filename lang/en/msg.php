@@ -107,6 +107,7 @@ return [
     'Search by Name or Email'   => 'Search by Name or Email',
     'Search here'               => 'Search here',
     'Marital Status'            => 'Marital Status',
+    'Parent Details'            => 'Parent Details',
 
     // Manage Parents
     'Manage Parents'            => 'Manage Parents',
