@@ -108,6 +108,7 @@ return [
     'Search here'               => 'Search here',
     'Marital Status'            => 'Marital Status',
     'Parent Details'            => 'Parent Details',
+    'Relation with Singleton'   => 'Relation with Singleton',
 
     // Manage Parents
     'Manage Parents'            => 'Manage Parents',

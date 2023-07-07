@@ -244,7 +244,7 @@
                             <div class="col-lg-3 col-xlg-3 col-md-5">
                                 <div class="card">
                                     <div class="card-body">
-                                        <center class="m-t-30">
+                                        <center class="m-t-10">
                                             <div class="el-card-item">
                                                 <div class="el-card-avatar el-overlay-1">
                                                     <a class="image-popup-vertical-fit image-size" href="{{ (!empty($parent_details) && $parent_details->profile_pic) ? asset($parent_details->profile_pic) : 'assets/images/users/no-image.png' }}"> <img src="{{ (!empty($parent_details) && $parent_details->profile_pic) ? asset($parent_details->profile_pic) : 'assets/images/users/no-image.png'}}" class="rounded-circle" width="150" height="150" /> </a>
@@ -263,6 +263,7 @@
                                             <small class="text-muted">{{__('msg.Email')}}</small><h6>{{(!empty($parent_details) && $parent_details->email) ? $parent_details->email : ''}}</h6>
                                             <small class="text-muted p-t-30 db">{{__('msg.Phone')}}</small><h6>{{(!empty($parent_details) && $parent_details->mobile) ? $parent_details->mobile : ''}}</h6>
                                             <small class="text-muted p-t-30 db">{{__('msg.Address')}}</small><h6>{{(!empty($parent_details) && $parent_details->location) ? $parent_details->location : ''}}</h6>
+                                            <small class="text-muted p-t-30 db">{{__('msg.Relation with Singleton')}}</small><h6>{{(!empty($parent_details) && $parent_details->relation_with_singleton) ? $parent_details->relation_with_singleton : ''}}</h6>
                                             <hr />
                         
                                         <div class="row">
