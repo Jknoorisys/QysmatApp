@@ -241,10 +241,15 @@
                 <div class="tab-pane fade show" id="parent-details" role="tabpanel" aria-labelledby="pills-profile-tab">
                     @if (!empty($parent_details))
                         <div class="row">
-                            <div class="col-lg-4 col-xlg-3 col-md-5">
+                            <div class="col-lg-3 col-xlg-3 col-md-5">
                                 <div class="card">
                                     <div class="card-body">
-                                        <center class="m-t-30"> <img src="{{ (!empty($parent_details) && $parent_details->profile_pic) ? asset($parent_details->profile_pic) : 'assets/images/users/no-image.png'}}" class="rounded-circle" width="150" height="150" />
+                                        <center class="m-t-30">
+                                            <div class="el-card-item">
+                                                <div class="el-card-avatar el-overlay-1">
+                                                    <a class="image-popup-vertical-fit image-size" href="{{ (!empty($parent_details) && $parent_details->profile_pic) ? asset($parent_details->profile_pic) : 'assets/images/users/no-image.png' }}"> <img src="{{ (!empty($parent_details) && $parent_details->profile_pic) ? asset($parent_details->profile_pic) : 'assets/images/users/no-image.png'}}" class="rounded-circle" width="150" height="150" /> </a>
+                                                </div>
+                                            </div>
                                             <h4 class="card-title m-t-10">{{(!empty($parent_details) && $parent_details->name) ? $parent_details->name.' '.$parent_details->lname : ''}}</h4>
                                             <h6 class="card-subtitle">{{(!empty($parent_details) && $parent_details->email) ? $parent_details->email : $parent_details->email}}</h6>
                                         </center>
@@ -252,7 +257,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-4 col-xlg-3 col-md-5">
+                            <div class="col-lg-6 col-xlg-6 col-md-6">
                                 <div class="card">
                                     <div class="card-body">
                                             <small class="text-muted">{{__('msg.Email')}}</small><h6>{{(!empty($parent_details) && $parent_details->email) ? $parent_details->email : ''}}</h6>
