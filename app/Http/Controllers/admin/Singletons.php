@@ -58,8 +58,10 @@ class Singletons extends Controller
             }else {
                 $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant match request (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
             }
-            $data['details']->features= !empty($features) ? $features : "";
 
+            $parent_id                   = $data['details']->parent_id;
+            $data['details']->features   = !empty($features) ? $features : "";
+            $data['parent_details']      = !empty($parent_id) ? DB::table('parents')->where([['id', '=', $parent_id],['status', '!=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->first() : '';
             $data['reverify']            = DB::table('re_verify_requests')->where([['user_id', '=', $id],['user_type', '=', 'singleton'],['status', '=', 'pending']])->first();
             $data['admin']               = $this->admin;
             $data['previous_title']      = __("msg.Manage Singletons");
