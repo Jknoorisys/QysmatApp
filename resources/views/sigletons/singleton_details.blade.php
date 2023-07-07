@@ -244,7 +244,7 @@
                             <div class="col-lg-3 col-xlg-3 col-md-5">
                                 <div class="card">
                                     <div class="card-body">
-                                        <center class="m-t-30">
+                                        <center class="m-t-10">
                                             <div class="el-card-item">
                                                 <div class="el-card-avatar el-overlay-1">
                                                     <a class="image-popup-vertical-fit image-size" href="{{ (!empty($parent_details) && $parent_details->profile_pic) ? asset($parent_details->profile_pic) : 'assets/images/users/no-image.png' }}"> <img src="{{ (!empty($parent_details) && $parent_details->profile_pic) ? asset($parent_details->profile_pic) : 'assets/images/users/no-image.png'}}" class="rounded-circle" width="150" height="150" /> </a>
