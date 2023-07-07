@@ -263,6 +263,7 @@
                                             <small class="text-muted">{{__('msg.Email')}}</small><h6>{{(!empty($parent_details) && $parent_details->email) ? $parent_details->email : ''}}</h6>
                                             <small class="text-muted p-t-30 db">{{__('msg.Phone')}}</small><h6>{{(!empty($parent_details) && $parent_details->mobile) ? $parent_details->mobile : ''}}</h6>
                                             <small class="text-muted p-t-30 db">{{__('msg.Address')}}</small><h6>{{(!empty($parent_details) && $parent_details->location) ? $parent_details->location : ''}}</h6>
+                                            <small class="text-muted p-t-30 db">{{__('msg.Relation with Singleton')}}</small><h6>{{(!empty($parent_details) && $parent_details->relation_with_singleton) ? $parent_details->relation_with_singleton : ''}}</h6>
                                             <hr />
                         
                                         <div class="row">

@@ -36,22 +36,10 @@
                 <hr>
 
             <div class="card-body">
-
-                {{-- <div class="row"> --}}
-                    {{-- <div class="col-6"> --}}
-                        <small class="text-muted">{{__('msg.Email')}}</small><h6>{{(!empty($reverify) && $reverify->email) ? $reverify->email : $details->email}}</h6>
-                    {{-- </div>
-                    <div class="col-6"> --}}
-                        <small class="text-muted p-t-30 db">{{__('msg.Phone')}}</small><h6>{{(!empty($reverify) && $reverify->mobile) ? $reverify->mobile : $details->mobile}}</h6>
-                    {{-- </div> --}}
-                {{-- </div> --}}
-
+                <small class="text-muted">{{__('msg.Email')}}</small><h6>{{(!empty($reverify) && $reverify->email) ? $reverify->email : $details->email}}</h6>
+                <small class="text-muted p-t-30 db">{{__('msg.Phone')}}</small><h6>{{(!empty($reverify) && $reverify->mobile) ? $reverify->mobile : $details->mobile}}</h6>
                 <small class="text-muted p-t-30 db">{{__('msg.Address')}}</small><h6>{{(!empty($reverify) && $reverify->location) ? $reverify->location : $details->location}}</h6>
-
-                {{-- <hr />
-
-                <small class="text-muted p-t-30 db">{{__('msg.Relation With Singleton')}}</small><h6>{{$details->relation_with_sibngleton}}</h6> --}}
-
+                <small class="text-muted p-t-30 db">{{__('msg.Relation with Singleton')}}</small><h6>{{(!empty($reverify) && $reverify->relation_with_singleton) ? $reverify->relation_with_singleton : $details->relation_with_singleton}}</h6>
                 <hr />
 
                 <div class="row">
