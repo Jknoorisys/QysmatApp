@@ -22,6 +22,7 @@ return new class extends Migration
             $table->enum('messaged_user_type', ['singleton','parent'])->default('singleton');
             $table->integer('messaged_user_singleton_id');
             $table->text('message');
+            $table->timestamp('read_at')->nullable();
             $table->enum('status',['active','inactive'])->default('active');
             $table->timestamps();
         });
