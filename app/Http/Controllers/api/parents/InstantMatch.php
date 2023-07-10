@@ -17,8 +17,7 @@ use App\Models\ReferredMatches;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
 use App\Models\UnMatches;
-use App\Notifications\AcceptChatRequest;
-use App\Notifications\ChatRequest;
+use App\Notifications\InstantMatchNotification;
 use App\Notifications\ReferNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -125,8 +124,8 @@ class InstantMatch extends Controller
             $sender = Singleton::where([['id', '=', $request->singleton_id], ['status', '=', 'Unblocked']])->first();
             $reciever = ParentsModel::where([['id', '=', $userExists->parent_id], ['status', '=', 'Unblocked']])->first();
 
-            $from = InstantMatchRequest::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['requested_parent_id', '=', $userExists->parent_id], ['requested_id', '=', $request->requested_id], ['request_type', '=', 'pending']])->first();
-            if (!empty($from)) {
+            $form = InstantMatchRequest::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['requested_parent_id', '=', $userExists->parent_id], ['requested_id', '=', $request->requested_id], ['request_type', '=', 'pending']])->first();
+            if (!empty($form)) {
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.send-request.duplicate'),
@@ -151,6 +150,8 @@ class InstantMatch extends Controller
 
                     $result = sendFCMNotifications($token, $title, $body, $data);;
                 }
+
+                $reciever->notify(new InstantMatchNotification($premium, $reciever->user_type, $request->requested_id));
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.send-request.success'),

@@ -31,7 +31,7 @@ class MatchNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['database'];
     }
 
     /**
@@ -63,7 +63,7 @@ class MatchNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Match Request'),
-            'msg'       => $this->user->name.' '.__('msg.has Sent you a Match Request.'),
+            'msg'       => $this->user->name.' '.$this->user->lname.' '.__('msg.has Sent you a Match Request.'),
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

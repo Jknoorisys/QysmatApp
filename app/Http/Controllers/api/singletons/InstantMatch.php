@@ -17,8 +17,7 @@ use App\Models\ReferredMatches;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
 use App\Models\UnMatches;
-use App\Notifications\AcceptChatRequest;
-use App\Notifications\ChatRequest;
+use App\Notifications\InstantMatchNotification;
 use App\Notifications\ReferNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -149,6 +148,8 @@ class InstantMatch extends Controller
 
                     $result = sendFCMNotifications($token, $title, $body, $data);
                 }
+
+                $reciever->notify(new InstantMatchNotification($sender, $reciever->user_type, 0));
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.send-request.success'),

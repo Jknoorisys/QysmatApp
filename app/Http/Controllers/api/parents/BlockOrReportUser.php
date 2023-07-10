@@ -10,6 +10,7 @@ use App\Models\ParentsModel;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
 use App\Notifications\AdminNotification;
+use App\Notifications\BlockNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -41,15 +42,10 @@ class BlockOrReportUser extends Controller
             ],
             'login_id'      => 'required||numeric',
             'singleton_id'  => 'required||numeric',
-            'user_type'     => [
-                                    'required' ,
-                                    Rule::in(['parent']),
-                                ],
+            'user_type'     => ['required',Rule::in(['parent'])],
             'blocked_user_id'   => 'required||numeric',
-            'blocked_user_type' => [
-                'required' ,
-                Rule::in(['singleton','parent']),
-            ],
+            'blocked_user_type' => ['required',Rule::in(['singleton','parent'])],
+            'blocked_user_singleton_id' => 'required_if:blocked_user_type,parent',
         ]);
 
         if($validator->fails()){
@@ -83,6 +79,11 @@ class BlockOrReportUser extends Controller
             $user_details                    = $user->save();
 
             if($user_details){
+
+                $blocked_user_singleton_id = $request->blocked_user_singleton_id ? $request->blocked_user_singleton_id : 0;
+                $sender = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+                $userExists->notify(new BlockNotification($sender, $userExists->user_type, $blocked_user_singleton_id));
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.block.success'),

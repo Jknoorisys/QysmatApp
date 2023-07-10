@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AcceptChatRequest extends Notification
+class UnmatchNotification extends Notification
 {
     use Queueable;
 
@@ -16,10 +16,12 @@ class AcceptChatRequest extends Notification
      *
      * @return void
      */
-    public function __construct($user, $user_type)
+    public function __construct($user, $user_type, $singleton_id, $msg)
     {
         $this->user         = $user;
         $this->user_type    = $user_type;
+        $this->singleton_id = $singleton_id;
+        $this->msg = $msg;
     }
 
     /**
@@ -30,7 +32,7 @@ class AcceptChatRequest extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail','database'];
+        return ['database'];
     }
 
     /**
@@ -42,10 +44,9 @@ class AcceptChatRequest extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->greeting(__('msg.Hi').'!')
-                    ->line( __('msg.Your Chat Request is Accepted By').' '.$this->user->name);
-                    // ->line( __('msg.To See His/Her Profile, Click on the Link Below'))
-                    // ->action(__('msg.Click Here'), url('/'));
+                    ->line('The introduction to the notification.')
+                    ->action('Notification Action', url('/'))
+                    ->line('Thank you for using our application!');
     }
 
     /**
@@ -61,9 +62,8 @@ class AcceptChatRequest extends Notification
             'user_type' => $this->user->user_type,
             'name'      => $this->user->name,
             'email'     => $this->user->email,
-            'title'     => __('msg.Chat Request Accepted'),
-            'msg'       => __('msg.Your Chat Request is Accepted By').' '.$this->user->name,
-            'status'    => 'Accepted',
+            'title'     => __('msg.Unmatched'),
+            'msg'       => $this->user->name.' '.$this->user->lname.' '.$this->msg,
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

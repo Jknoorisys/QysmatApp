@@ -14,6 +14,7 @@ use App\Models\ReferredMatches;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\UnMatches;
+use App\Notifications\UnmatchNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -105,6 +106,11 @@ class Matches extends Controller
                     if (!empty($referredMatchExists)) {
                         ReferredMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['referred_match_id', '=', $request->un_matched_id]])->delete();
                     }
+
+                    $sender = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+                    $reciever = ParentsModel::where([['id', '=', $userExists->parent_id], ['status', '=', 'Unblocked']])->first();
+                    $msg = __("msg.has Unmatched Your Child's Profile");
+                    $reciever->notify(new UnmatchNotification($sender, $reciever->user_type, $request->un_matched_id, $msg));
 
                     return response()->json([
                         'status'    => 'success',

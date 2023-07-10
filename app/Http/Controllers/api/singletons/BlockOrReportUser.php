@@ -10,6 +10,7 @@ use App\Models\ParentsModel;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
 use App\Notifications\AdminNotification;
+use App\Notifications\BlockNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -81,6 +82,11 @@ class BlockOrReportUser extends Controller
             $user_details                    = $user->save();
 
             if($user_details){
+                $sender = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+                $reciever = Singleton::where([['id', '=', $request->blocked_user_id], ['status', '=', 'Unblocked']])->first();
+
+                $reciever->notify(new BlockNotification($sender, $reciever->user_type, 0));
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.block.success'),
