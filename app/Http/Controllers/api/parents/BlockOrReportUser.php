@@ -45,7 +45,6 @@ class BlockOrReportUser extends Controller
             'user_type'     => ['required',Rule::in(['parent'])],
             'blocked_user_id'   => 'required||numeric',
             'blocked_user_type' => ['required',Rule::in(['singleton','parent'])],
-            'blocked_user_singleton_id' => 'required_if:blocked_user_type,parent',
         ]);
 
         if($validator->fails()){
@@ -59,8 +58,10 @@ class BlockOrReportUser extends Controller
         try {
             if($request->blocked_user_type == 'singleton'){
                 $userExists = Singleton::find($request->blocked_user_id);
+                $blocked_user_singletons = '';
             }else{
                 $userExists = ParentsModel::find($request->blocked_user_id);
+                $blocked_user_singletons = $userExists ? ParentChild::where([['parent_id', '=', $request->blocked_user_id],['status', '=','Linked']])->get() : 0;
             }
 
             if(empty($userExists) || $userExists->staus == 'Deleted' || $userExists->staus == 'Blocked'){
@@ -80,10 +81,15 @@ class BlockOrReportUser extends Controller
 
             if($user_details){
 
-                $blocked_user_singleton_id = $request->blocked_user_singleton_id ? $request->blocked_user_singleton_id : 0;
                 $sender = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-                $userExists->notify(new BlockNotification($sender, $userExists->user_type, $blocked_user_singleton_id));
-
+                if (!empty($blocked_user_singletons)) {
+                    foreach ($blocked_user_singletons as $singleton) {
+                        $userExists->notify(new BlockNotification($sender, $userExists->user_type, $singleton->id));
+                    }
+                } else {
+                    $userExists->notify(new BlockNotification($sender, $userExists->user_type, 0));
+                }
+                
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.block.success'),
