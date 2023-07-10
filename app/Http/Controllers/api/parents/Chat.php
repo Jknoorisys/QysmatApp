@@ -16,6 +16,7 @@ use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
 use App\Models\UnMatches;
 use App\Notifications\ReferNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -165,27 +166,31 @@ class Chat extends Controller
             $messaged                    = $message->save();
 
             if (!empty($messaged)) {
+                $unreadCounter = ChatHistory::where([['chat_histories.user_id', '=', $request->messaged_user_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.singleton_id', '=', $request->messaged_user_singleton_id],['chat_histories.messaged_user_id', '=', $request->login_id],['chat_histories.messaged_user_type', '=', $request->user_type]])                        
+                                                ->whereNull('read_at')->count();
+
                 $title = __('msg.New Message');
                 $reciever = ParentsModel::where([['id', '=', $request->messaged_user_id], ['status', '=', 'Unblocked']])->first();
                 if (isset($reciever) && !empty($reciever)) {
                     $fcm_regid[] = $reciever->fcm_token;
-                    $notification = array(
-                        'title'         => $title,
-                        'message'       => $request->message,
-                        'click_action'  => 'FLUTTER_NOTIFICATION_CLICK',
-                        'date'          => date('Y-m-d H:i'),
-                        'type'          => 'chat',
-                        'response'      => ''
-                    );
-                    
-                    $result = sendFCMNotification($notification, $fcm_regid, 'chat');
-                    
-                    // $body = $request->message;
-                    // $token = $reciever->fcm_token;
-                    // $data = array(
-                    //     'notType' => "chat",
+                    // $notification = array(
+                    //     'title'         => $title,
+                    //     'message'       => $request->message,
+                    //     'click_action'  => 'FLUTTER_NOTIFICATION_CLICK',
+                    //     'date'          => date('Y-m-d H:i'),
+                    //     'type'          => 'chat',
+                    //     'response'      => ''
                     // );
-                    // $result = sendFCMNotifications($token, $title, $body, $data);
+                    
+                    // $result = sendFCMNotification($notification, $fcm_regid, 'chat');
+                    
+                    $body = $request->message;
+                    $token = $reciever->fcm_token;
+                    $data = array(
+                        'notType' => "chat",
+                        'unread_counter' => $unreadCounter,
+                    );
+                    $result = sendFCMNotifications($token, $title, $body, $data);
                 }
 
                 return response()->json([
@@ -275,7 +280,12 @@ class Chat extends Controller
                     $value->messaged_user_id = $messaged_user_id;
                     $value->messaged_user_singleton_id = $messaged_user_singleton_id;
                 }
-            
+
+                $unreadCounter = ChatHistory::where([['user_id', '=', $value->messaged_user_id],['user_type', '=', 'parent'],['singleton_id', '=', $value->messaged_user_singleton_id],
+                                                ['messaged_user_id', '=', $value->user_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $value->singleton_id]])                        
+                                            ->whereNull('read_at')->count();
+
+                $list[$key]->unread_counter = $unreadCounter;
             }
 
             if(!$list->isEmpty()){
@@ -345,6 +355,9 @@ class Chat extends Controller
                                     ->get();
 
             if(!$chat->isEmpty()){
+                $markAsRead = DB::table('chat_histories')->where([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['singleton_id', '=', $request->messaged_user_singleton_id],
+                                                                    ['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type],['messaged_user_singleton_id', '=', $request->singleton_id]])
+                                                        ->update(['read_at' => Carbon::now()]);
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.chat-history.success'),
