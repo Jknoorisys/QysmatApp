@@ -10,6 +10,7 @@ use App\Models\ParentsModel;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
 use App\Notifications\AdminNotification;
+use App\Notifications\BlockNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -41,15 +42,9 @@ class BlockOrReportUser extends Controller
             ],
             'login_id'      => 'required||numeric',
             'singleton_id'  => 'required||numeric',
-            'user_type'     => [
-                                    'required' ,
-                                    Rule::in(['parent']),
-                                ],
+            'user_type'     => ['required',Rule::in(['parent'])],
             'blocked_user_id'   => 'required||numeric',
-            'blocked_user_type' => [
-                'required' ,
-                Rule::in(['singleton','parent']),
-            ],
+            'blocked_user_type' => ['required',Rule::in(['singleton','parent'])],
         ]);
 
         if($validator->fails()){
@@ -63,8 +58,10 @@ class BlockOrReportUser extends Controller
         try {
             if($request->blocked_user_type == 'singleton'){
                 $userExists = Singleton::find($request->blocked_user_id);
+                $blocked_user_singletons = '';
             }else{
                 $userExists = ParentsModel::find($request->blocked_user_id);
+                $blocked_user_singletons = $userExists ? ParentChild::where([['parent_id', '=', $request->blocked_user_id],['status', '=','Linked']])->get() : 0;
             }
 
             if(empty($userExists) || $userExists->staus == 'Deleted' || $userExists->staus == 'Blocked'){
@@ -83,6 +80,16 @@ class BlockOrReportUser extends Controller
             $user_details                    = $user->save();
 
             if($user_details){
+
+                $sender = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+                if (!empty($blocked_user_singletons)) {
+                    foreach ($blocked_user_singletons as $singleton) {
+                        $userExists->notify(new BlockNotification($sender, $userExists->user_type, $singleton->id));
+                    }
+                } else {
+                    $userExists->notify(new BlockNotification($sender, $userExists->user_type, 0));
+                }
+                
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.block.success'),

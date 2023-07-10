@@ -15,8 +15,6 @@ use App\Models\ReferredMatches;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
 use App\Models\UnMatches;
-use App\Notifications\AcceptChatRequest;
-use App\Notifications\ChatRequest;
 use App\Notifications\ReferNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

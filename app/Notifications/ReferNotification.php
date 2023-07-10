@@ -31,7 +31,7 @@ class ReferNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['database'];
     }
 
     /**
@@ -63,7 +63,7 @@ class ReferNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Match Referred'),
-            'msg'       => $this->user->name.' '.__('msg.has Referred a Match.'),
+            'msg'       => $this->user->name.' '.$this->user->lname.' '.__('msg.has Referred a Match.'),
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

@@ -7,21 +7,20 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AdminNotification extends Notification
+class BlockNotification extends Notification
 {
     use Queueable;
-    
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $user_type, $singleton_id, $details)
+    public function __construct($user, $user_type, $singleton_id)
     {
         $this->user         = $user;
         $this->user_type    = $user_type;
         $this->singleton_id = $singleton_id;
-        $this->details      = $details;
     }
 
     /**
@@ -33,6 +32,20 @@ class AdminNotification extends Notification
     public function via($notifiable)
     {
         return ['database'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+                    ->line('The introduction to the notification.')
+                    ->action('Notification Action', url('/'))
+                    ->line('Thank you for using our application!');
     }
 
     /**
@@ -48,8 +61,8 @@ class AdminNotification extends Notification
             'user_type' => $this->user->user_type,
             'name'      => $this->user->name,
             'email'     => $this->user->email,
-            'title'     => $this->details['title'],
-            'msg'       => $this->user->name.' '.$this->user->lname.' '.$this->details['msg'],
+            'title'     => __('msg.Blocked'),
+            'msg'       => __('msg.You are Blocked by').' '.$this->user->name.' '.$this->user->lname,
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

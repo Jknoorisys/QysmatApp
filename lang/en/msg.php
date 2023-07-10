@@ -365,6 +365,12 @@ return [
     'has updated his/her Profile Details.'                  => 'has updated his/her Profile Details.',
     'User Reported'                                         => 'User Reported',
     'has Reported'                                          => 'has Reported',
+    'has Sent you an Instant Match Request.'                => 'has Sent you an Instant Match Request.',
+    'Blocked'                                               => 'Blocked',
+    'You are Blocked by'                                    => 'You are Blocked by',
+    'Unmatched'                                             => 'Unmatched',
+    'has Unmatched Your Profile'                            => 'has Unmatched Your Profile',
+    "has Unmatched Your Child's Profile"                    => "has Unmatched Your Child's Profile",
 
     // Invoice
     'Invoice' => 'Invoice',

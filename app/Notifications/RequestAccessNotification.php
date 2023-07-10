@@ -64,7 +64,7 @@ class RequestAccessNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Access Request'),
-            'msg'       => $this->user->name.' '.__('msg.has Sent you an Access Request.'),
+            'msg'       => $this->user->name.' '.$this->user->lname.' '.__('msg.has Sent you an Access Request.'),
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

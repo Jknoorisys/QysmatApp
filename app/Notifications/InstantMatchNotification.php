@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ChatRequest extends Notification
+class InstantMatchNotification extends Notification
 {
     use Queueable;
 
@@ -16,10 +16,11 @@ class ChatRequest extends Notification
      *
      * @return void
      */
-    public function __construct($user, $user_type)
+    public function __construct($user, $user_type, $singleton_id)
     {
         $this->user         = $user;
         $this->user_type    = $user_type;
+        $this->singleton_id = $singleton_id;
     }
 
     /**
@@ -30,7 +31,7 @@ class ChatRequest extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail','database'];
+        return ['database'];
     }
 
     /**
@@ -42,10 +43,9 @@ class ChatRequest extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->greeting(__('msg.Hi').'!')
-                    ->line(__('msg.You Have a Chat Request From').' '.$this->user->name);
-                    // ->line(__('msg.To Accept His/Her Chat Request, Click on the Link Below'))
-                    // ->action(__('msg.Click Here'), url('/'));
+                    ->line('The introduction to the notification.')
+                    ->action('Notification Action', url('/'))
+                    ->line('Thank you for using our application!');
     }
 
     /**
@@ -61,9 +61,8 @@ class ChatRequest extends Notification
             'user_type' => $this->user->user_type,
             'name'      => $this->user->name,
             'email'     => $this->user->email,
-            'title'     => __('msg.Chat Request'),
-            'msg'       => __('msg.You have a Chat Request From').' '.$this->user->name,
-            'status'    => 'Pending',
+            'title'     => __('msg.Instant Match Request'),
+            'msg'       => $this->user->name.' '.$this->user->lname.' '.__('msg.has Sent you an Instant Match Request.'),
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }
