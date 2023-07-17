@@ -384,6 +384,7 @@ class Suggestions extends Controller
                         return response()->json([
                             'status'    => 'success',
                             'message'   => __('msg.parents.get-suggestions.success'),
+                            'unread_messages' => $unreadCounter,
                             'data'      => $users
                         ],200);
                     }else{
@@ -393,7 +394,7 @@ class Suggestions extends Controller
                         return response()->json([
                             'status'    => 'failed',
                             'message'   => __('msg.parents.get-suggestions.failure'),
-                            'data'      => $users
+                            'unread_messages' => $unreadCounter,
                         ],400);
                     }
                 }else{
