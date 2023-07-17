@@ -616,17 +616,17 @@ class Matches extends Controller
                     $singleton_ids = $m->id;
                     // $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_ids], ['blocked_user_type', '=', 'singleton']])->first();
                     // $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $singleton_ids], ['reported_user_type', '=', 'singleton']])->first();
-                    // $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_ids]])->first();
+                    $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_ids]])->first();
                     // if (empty($block) && empty($report) && empty($unMatch)) {
                     //     $users[] = $m;
                     // }
 
-                    // if (empty($block) && empty($report)) {
-                    //     // $users[] = $m;
-                    //     $m->visibility = 'enabled';
-                    // }else{
-                    //     $m->visibility = 'disabled';
-                    // }
+                    if (empty($unMatch)) {
+                        // $users[] = $m;
+                        $m->visibility = 'enabled';
+                    }else{
+                        $m->visibility = 'disabled';
+                    }
 
                     // empty($block) ? $m->blocked = '' : 'Blocked';
                     // empty($report) ? $m->Reported = '' : 'Reported';
