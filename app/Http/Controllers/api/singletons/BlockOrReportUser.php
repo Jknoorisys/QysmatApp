@@ -160,7 +160,7 @@ class BlockOrReportUser extends Controller
             if($user_details){
                 $details = [
                     'title' => __('msg.User Reported'),
-                    'msg'   => __('msg.has Reported').' '.$userExists->name,
+                    'msg'   => __('msg.has Reported').' '.$userExists->name.' '.$userExists->lname,
                 ];
 
                 $singleton = Singleton::find($request->login_id);

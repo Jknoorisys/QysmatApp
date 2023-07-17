@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\parents;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Categories;
+use App\Models\ChatHistory;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\ReVerifyRequests;
@@ -645,7 +646,7 @@ class Profile extends Controller
         }
 
         try {
-            $profiles = DB::table('parent_children')
+            $profile = DB::table('parent_children')
                         ->where('parent_children.parent_id','=',$request->login_id)
                         ->where('singletons.id','=',$request->singleton_id)
                         ->where('parent_children.status','=', 'Linked')
@@ -653,11 +654,14 @@ class Profile extends Controller
                         ->select('singletons.*')
                         ->first();
 
-            if(!empty($profiles)){
+            if(!empty($profile)){
+                $unreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->singleton_id]])                        
+                                            ->whereNull('read_at')->count();
+                $profile->unread_messages = $unreadCounter;
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.get-child-profile.success'),
-                    'data'      => $profiles
+                    'data'      => $profile
                 ],200);
             }else{
                 return response()->json([
