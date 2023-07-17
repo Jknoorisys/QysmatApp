@@ -387,9 +387,13 @@ class Suggestions extends Controller
                             'data'      => $users
                         ],200);
                     }else{
+                        $unreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->singleton_id]])                        
+                                            ->whereNull('read_at')->count();
+                        $users['unread_messages'] = $unreadCounter;
                         return response()->json([
                             'status'    => 'failed',
                             'message'   => __('msg.parents.get-suggestions.failure'),
+                            'data'      => $users
                         ],400);
                     }
                 }else{
