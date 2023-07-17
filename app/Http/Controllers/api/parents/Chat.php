@@ -170,6 +170,8 @@ class Chat extends Controller
                                                     ['chat_histories.messaged_user_id', '=', $request->login_id],['chat_histories.messaged_user_type', '=', $request->user_type],['chat_histories.messaged_user_singleton_id', '=', $request->singleton_id]])                        
                                                 ->whereNull('read_at')->count();
 
+                $overallUnreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->singleton_id]])                        
+                                                ->whereNull('read_at')->count();
                 $title = __('msg.New Message');
                 $reciever = ParentsModel::where([['id', '=', $request->messaged_user_id], ['status', '=', 'Unblocked']])->first();
                 if (isset($reciever) && !empty($reciever)) {
@@ -190,6 +192,7 @@ class Chat extends Controller
                     $data = array(
                         'notType' => "chat",
                         'unread_counter' => $unreadCounter,
+                        'overall_unread_counter' => $overallUnreadCounter,
                     );
                     $result = sendFCMNotifications($token, $title, $body, $data);
                 }
@@ -289,16 +292,21 @@ class Chat extends Controller
                 $list[$key]->unread_counter = $unreadCounter;
             }
 
+            $overallUnreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->singleton_id]])                        
+                                            ->whereNull('read_at')->count();
+
             if(!$list->isEmpty()){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.messaged-users.success'),
+                    'overall_unread_counter' => $overallUnreadCounter,
                     'data'      => $list
                 ],200);
             }else{
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.messaged-users.failure'),
+                    'overall_unread_counter' => $overallUnreadCounter,
                 ],400);
             }
         } catch (\Exception $e) {
