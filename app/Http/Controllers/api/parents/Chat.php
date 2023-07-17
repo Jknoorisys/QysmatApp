@@ -166,11 +166,11 @@ class Chat extends Controller
             $messaged                    = $message->save();
 
             if (!empty($messaged)) {
-                $unreadCounter = ChatHistory::where([['chat_histories.user_id', '=', $request->messaged_user_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.singleton_id', '=', $request->messaged_user_singleton_id],
-                                                    ['chat_histories.messaged_user_id', '=', $request->login_id],['chat_histories.messaged_user_type', '=', $request->user_type],['chat_histories.messaged_user_singleton_id', '=', $request->singleton_id]])                        
-                                                ->whereNull('read_at')->count();
+                // $unreadCounter = ChatHistory::where([['user_id', '=', $request->messaged_user_id],['user_type', '=', 'parent'],['singleton_id', '=', $request->messaged_user_singleton_id],
+                //                                     ['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type],['messaged_user_singleton_id', '=', $request->singleton_id]])                        
+                //                                 ->whereNull('read_at')->count();
 
-                $overallUnreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->singleton_id]])                        
+                $overallUnreadCounter = ChatHistory::where([['user_id', '=', $request->messaged_user_id],['user_type', '=', 'parent'],['singleton_id', '=', $request->messaged_user_singleton_id]])                        
                                                 ->whereNull('read_at')->count();
                 $title = __('msg.New Message');
                 $reciever = ParentsModel::where([['id', '=', $request->messaged_user_id], ['status', '=', 'Unblocked']])->first();
@@ -191,7 +191,7 @@ class Chat extends Controller
                     $token = $reciever->fcm_token;
                     $data = array(
                         'notType' => "chat",
-                        'unread_counter' => $unreadCounter,
+                        // 'unread_counter' => $unreadCounter,
                         'overall_unread_counter' => $overallUnreadCounter,
                     );
                     $result = sendFCMNotifications($token, $title, $body, $data);
