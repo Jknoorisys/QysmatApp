@@ -177,6 +177,8 @@ class Chat extends Controller
                 $unreadCounter = ChatHistory::where([['chat_histories.user_id', '=', $request->messaged_user_id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $request->login_id],['chat_histories.messaged_user_type', '=', $request->user_type]])                        
                                                 ->whereNull('read_at')->count();
 
+                $overallUnreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'singleton']])                        
+                                        ->whereNull('read_at')->count();
                 $title = __('msg.New Message');
                 $reciever = Singleton::where([['id', '=', $request->messaged_user_id], ['status', '=', 'Unblocked']])->first();
                 if (isset($reciever) && !empty($reciever)) {
@@ -195,7 +197,8 @@ class Chat extends Controller
                     $token = $reciever->fcm_token;
                     $data = array(
                         'notType' => "chat",
-                        'unread_counter' => $unreadCounter
+                        'unread_counter' => $unreadCounter,
+                        'overall_unread_counter' => $overallUnreadCounter,
                     );
                     
                     $result = sendFCMNotifications($token, $title, $body, $data);
@@ -281,19 +284,23 @@ class Chat extends Controller
                 }else{
                     $list[$key]->chat_status = 'enabled';
                 }
-            }                
+            }   
 
+            $overallUnreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'singleton']])                        
+            ->whereNull('read_at')->count();
 
             if(!$list->isEmpty()){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.messaged-users.success'),
+                    'overall_unread_counter' => $overallUnreadCounter,
                     'data'      => $list,
                 ],200);
             }else{
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.messaged-users.failure'),
+                    'overall_unread_counter' => $overallUnreadCounter,
                 ],400);
             }
         } catch (\Exception $e) {
