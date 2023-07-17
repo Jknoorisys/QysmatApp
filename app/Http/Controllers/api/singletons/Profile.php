@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\singletons;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Categories;
+use App\Models\ChatHistory;
 use App\Models\Matches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
@@ -136,6 +137,10 @@ class Profile extends Controller
             }
             
             if(!empty($user)){
+                $unreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'singleton']])                        
+                                            ->whereNull('read_at')->count();
+                $user->unread_messages = $unreadCounter;
+
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.get-profile.success'),

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\parents;
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
 use App\Models\Categories as ModelsCategories;
+use App\Models\ChatHistory;
 use App\Models\Counters;
 use App\Models\Matches;
 use App\Models\MyMatches;
@@ -377,6 +378,9 @@ class Suggestions extends Controller
                     }
 
                     if(!empty($users)){
+                        $unreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->singleton_id]])                        
+                                            ->whereNull('read_at')->count();
+                        $users['unread_messages'] = $unreadCounter;
                         return response()->json([
                             'status'    => 'success',
                             'message'   => __('msg.parents.get-suggestions.success'),
