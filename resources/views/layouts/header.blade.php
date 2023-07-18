@@ -202,7 +202,7 @@
                 <!-- ============================================================== -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle waves-effect waves-dark " href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="ti-bell font-20"><span class="badge badge-pill text-white text-bold" style="font-size:12px; position:absolute; top:8px; right:0px; background-color:#8F7C5C">{{ $notifications->count() }}</span></i>
+                        <a href="{{ route('markAllread') }}"><i class="ti-bell font-20"><span class="badge badge-pill text-white text-bold" style="font-size:12px; position:absolute; top:8px; right:0px; background-color:#8F7C5C">{{ $notifications->count() }}</span></i></a>
                     </a>
                     <div class="dropdown-menu mailbox animated bounceInDown">
                         <span class="with-arrow">
