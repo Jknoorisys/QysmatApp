@@ -280,7 +280,7 @@ class Suggestions extends Controller
 
                 $this->db = DB::table('singletons');
 
-                if (!empty($location)) {
+                if ($category->search_by != 'none') {
 
                     if ($category->search_by == 'radius') {
                         if ($latitude && $longitude) {

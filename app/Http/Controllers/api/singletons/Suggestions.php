@@ -249,7 +249,6 @@ class Suggestions extends Controller
 
             $categoryLocation = ModelsCategories::where([['user_id','=', $request->login_id],['user_type', '=', 'singleton']])->first();
             if (!empty($categoryLocation) && !empty($categoryLocation->location)) {
-
                 if ($request->lat && $request->long) {
                     ModelsCategories::where([['user_id', '=', $request->login_id],['user_type', '=', 'singleton']])->update(['lat' => ($request->lat ? $request->lat : ''), 'long' => ($request->long ? $request->long : '')]);
                 }
@@ -276,7 +275,7 @@ class Suggestions extends Controller
 
                 $this->db = DB::table('singletons');
 
-                if (!empty($location)) {
+                if ($category->search_by != 'none') {
 
                     if ($category->search_by == 'radius') {
                         if ($latitude && $longitude) {
