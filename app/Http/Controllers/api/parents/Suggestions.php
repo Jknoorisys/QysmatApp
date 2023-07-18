@@ -295,7 +295,7 @@ class Suggestions extends Controller
                             ->orderBy('distance')
                             ->setBindings([$latitude, $longitude, $latitude]);
                         }
-                        $this->db->where('country_code','=',$category->country_code);
+                        $this->db->where('nationality_code','=',$category->country_code);
                     }
                 }
 
