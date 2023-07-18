@@ -118,7 +118,7 @@ class Profile extends Controller
                         $user->photo4 = ($user->photo4 == '' || empty($user->photo4)) ? $old_user->photo4 : $user->photo4;
                         $user->photo5 = ($user->photo5 == '' || empty($user->photo5)) ? $old_user->photo5 : $user->photo5;
                         $user->live_photo = ($user->live_photo == '' || empty($user->live_photo)) ? $old_user->live_photo : $user->live_photo;
-                        $user->id_proof = ($user->id_proof == '' || empty($user->id_proof)) ? $old_user->id_proof : $user->photo1;
+                        $user->id_proof = ($user->id_proof == '' || empty($user->id_proof)) ? $old_user->id_proof : $user->id_proof;
                     }
 
                     if ($user->parent_id && $user->parent_id != 0) {
