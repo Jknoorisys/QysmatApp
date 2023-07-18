@@ -38,6 +38,7 @@ Route::any('dashboard' , [Dashboard::class,'index'])->middleware('isLoggedIn')->
 Route::get('changePassword' , [Dashboard::class,'changePassword'])->middleware('isLoggedIn')->name('changePassword');
 Route::post('changePasswordFun' , [Dashboard::class,'changePasswordFun'])->middleware('isLoggedIn')->name('changePasswordFun');
 Route::get('readNotifications/{id}' , [Dashboard::class,'readNotifications'])->middleware('isLoggedIn')->name('readNotifications');
+Route::get('markAllread' , [Dashboard::class,'markAllread'])->middleware('isLoggedIn')->name('markAllread');
 
 Route::post('set-new-password' , [Admin::class, 'setUserNewPassword'])->name('set-new-password');
 
