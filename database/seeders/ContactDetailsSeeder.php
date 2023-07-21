@@ -43,19 +43,7 @@ class ContactDetailsSeeder extends Seeder
             [
                 'contact_type'  => 'linkedin',
                 'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'contact_type'  => 'whatsapp',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'contact_type'  => 'skype',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'contact_type'  => 'telegram',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
+            ]
         ]);
     }
 }

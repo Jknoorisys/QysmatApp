@@ -32,41 +32,6 @@ class WebPagesSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s')
             ],
             [
-                'page_name'  => 'social_links',
-                'page_title' => 'Instagram',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'social_links',
-                'page_title' => 'Facebook',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'social_links',
-                'page_title' => 'WhatsApp',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'social_links',
-                'page_title' => 'Twitter',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'social_links',
-                'page_title' => 'LinkedIn',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'social_links',
-                'page_title' => 'Telegram',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'social_links',
-                'page_title' => 'Skype',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
                 'page_name'  => 'download_links',
                 'page_title' => 'Play Store',
                 'created_at' => date('Y-m-d H:i:s')
