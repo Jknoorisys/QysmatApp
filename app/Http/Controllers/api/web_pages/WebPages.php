@@ -30,7 +30,7 @@ class WebPages extends Controller
 
             'page_name' => [
                 'required' ,
-                Rule::in(['about_us','privacy_policy','terms_and_conditions','faqs','download_links']),
+                Rule::in(['about_us','privacy_policy','terms_and_conditions','cookies','faqs','download_links','app_details']),
             ],
         ]);
 
@@ -57,7 +57,7 @@ class WebPages extends Controller
                         'message'   => __('msg.web-pages.failure'),
                     ],400);
                 }
-            } elseif ($request->page_name == 'download_links') {
+            } elseif ($request->page_name == 'download_links' || $request->page_name == 'app_details') {
                 $page = ModelsWebPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->get();
                 if(!$page->isEmpty()){
                     return response()->json([

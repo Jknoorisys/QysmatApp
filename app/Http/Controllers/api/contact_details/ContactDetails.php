@@ -26,7 +26,7 @@ class ContactDetails extends Controller
             ],
             'contact_type' => [
                 'required' ,
-                Rule::in(['email','phone','address','instagram','facebook','whatsapp','twitter','linkedin','skype','telegram']),
+                Rule::in(['email','phone','address','instagram','facebook','twitter','linkedin']),
             ],
         ]);
 

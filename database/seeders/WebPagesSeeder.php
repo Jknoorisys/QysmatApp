@@ -32,6 +32,11 @@ class WebPagesSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s')
             ],
             [
+                'page_name'  => 'cookies',
+                'page_title' => 'Cookies',
+                'created_at' => date('Y-m-d H:i:s')
+            ],
+            [
                 'page_name'  => 'download_links',
                 'page_title' => 'Play Store',
                 'created_at' => date('Y-m-d H:i:s')
@@ -39,6 +44,16 @@ class WebPagesSeeder extends Seeder
             [
                 'page_name'  => 'download_links',
                 'page_title' => 'iOS App Store',
+                'created_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'page_name'  => 'app_details',
+                'page_title' => 'Active Install',
+                'created_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'page_name'  => 'app_details',
+                'page_title' => 'Clients Reviews',
                 'created_at' => date('Y-m-d H:i:s')
             ],
         ]);
