@@ -3,30 +3,17 @@
 namespace App\Http\Controllers\api\agora;
 
 use App\Http\Controllers\Controller;
-use App\Models\BankDetails as ModelsBankDetails;
 use App\Models\BlockList;
 use App\Models\CallHistory;
-use App\Models\Matches;
-use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\PremiumFeatures;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\UnMatches;
-use Carbon\Carbon;
-use DateTime;
-use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-// use Willywes\AgoraSDK\RtcTokenBuilder;
-use Illuminate\Support\Str;
-
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=utf8");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control");
 
 class Call extends Controller
 {

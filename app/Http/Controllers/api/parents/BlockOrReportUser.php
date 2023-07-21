@@ -17,10 +17,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=utf8");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control");
-
 class BlockOrReportUser extends Controller
 {
     public function  __construct()

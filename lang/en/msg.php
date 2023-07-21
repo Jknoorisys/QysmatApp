@@ -463,6 +463,11 @@ return [
         'failure' => 'Page Not Found!',
     ],
 
+    'web-pages' => [
+        'success' => 'Page Details Fetched Successfully!',
+        'failure' => 'Page Not Found!',
+    ],
+
     'subscriptions'  => [
         'success' => 'Subsription Details Fetched Successfully!',
         'failure' => 'Subsription Plan Not Found!',
