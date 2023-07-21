@@ -156,7 +156,16 @@
                               <tr>
                                 <th width="66.67%" valign="top" class="r6-c" style="font-weight: normal;">
                                   <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r1-o" style="table-layout: fixed; width: 100%;">
-                                    <!-- -->
+                                    <!-- Contact Details -->
+                                    <?php 
+                                        $contactDetails = App\Models\ContactDetails::whereIn('contact_type', ['address', 'email', 'phone', 'instagram', 'facebook', 'twitter'])->get();
+                                        $address = $contactDetails->firstWhere('contact_type', 'address');
+                                        $email = $contactDetails->firstWhere('contact_type', 'email');
+                                        $phone = $contactDetails->firstWhere('contact_type', 'phone');
+                                        $instagram = $contactDetails->firstWhere('contact_type', 'instagram');
+                                        $facebook = $contactDetails->firstWhere('contact_type', 'facebook');
+                                        $twitter = $contactDetails->firstWhere('contact_type', 'twitter');
+                                     ?>
                                     <tr>
                                       <td valign="top" class="r7-i">
                                         <table width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation">
@@ -166,7 +175,7 @@
                                                 <tr>
                                                   <td align="left" valign="top" class="r20-i nl2go-default-textstyle" style="color: #392f65; font-family: Inter; font-size: 16px; line-height: 1.5; text-align: left;">
                                                     <div>
-                                                      <div class="nl2go_class_14_white_b" style="color: #fff; font-family: Inter; font-size: 14px; font-weight: 700;">Qysmat</div>
+                                                      <div class="nl2go_class_14_white_b" style="color: #fff; font-family: Inter; font-size: 14px; font-weight: 700;">{{ env('APP_NAME'); }}</div>
                                                     </div>
                                                   </td>
                                                 </tr>
@@ -179,7 +188,7 @@
                                                 <tr>
                                                   <td align="left" valign="top" class="r20-i nl2go-default-textstyle" style="color: #392f65; font-family: Inter; font-size: 16px; line-height: 1.5; text-align: left;">
                                                     <div>
-                                                      <div class="nl2go_class_14_white_l" style="color: #fff; font-family: Inter; font-size: 14px; font-weight: 300;">New address, 123<br>London<br><a href="http://" style="color: #fff; text-decoration: none;">contact@qysmat.com</a></div>
+                                                      <div class="nl2go_class_14_white_l" style="color: #fff; font-family: Inter; font-size: 14px; font-weight: 300;">{{ strip_tags($address->details); }}<br>{{ strip_tags($phone->details); }}<br><a href="http://" style="color: #fff; text-decoration: none;">{{ strip_tags($email->details); }}</a></div>
                                                     </div>
                                                   </td>
                                                 </tr>
@@ -218,7 +227,7 @@
                                                                       <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r28-o" style="table-layout: fixed; width: 100%;">
                                                                         <!-- -->
                                                                         <tr>
-                                                                          <td class="r5-i" style="font-size: 0px; line-height: 0px; padding-bottom: 5px; padding-top: 5px;"><a href="https://nooridev.co.in/qysmat/"><img src="https://sendinblue-templates.s3.eu-west-3.amazonaws.com/icons/original_light/facebook_32px.png" width="32" border="0" class="" style="display: block; width: 100%;"></a></td>
+                                                                          <td class="r5-i" style="font-size: 0px; line-height: 0px; padding-bottom: 5px; padding-top: 5px;"><a href="{{ strip_tags($facebook->details); }}"><img src="https://sendinblue-templates.s3.eu-west-3.amazonaws.com/icons/original_light/facebook_32px.png" width="32" border="0" class="" style="display: block; width: 100%;"></a></td>
                                                                           <td class="nl2go-responsive-hide" width="10" style="font-size: 0px; line-height: 1px;">­ </td>
                                                                         </tr>
                                                                       </table>
@@ -227,7 +236,7 @@
                                                                       <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r28-o" style="table-layout: fixed; width: 100%;">
                                                                         <!-- -->
                                                                         <tr>
-                                                                          <td class="r5-i" style="font-size: 0px; line-height: 0px; padding-bottom: 5px; padding-top: 5px;"><a href="https://nooridev.co.in/qysmat/"><img src="https://sendinblue-templates.s3.eu-west-3.amazonaws.com/icons/original_light/instagram_32px.png" width="32" border="0" class="" style="display: block; width: 100%;"></a></td>
+                                                                          <td class="r5-i" style="font-size: 0px; line-height: 0px; padding-bottom: 5px; padding-top: 5px;"><a href="{{ strip_tags($instagram->details); }}"><img src="https://sendinblue-templates.s3.eu-west-3.amazonaws.com/icons/original_light/instagram_32px.png" width="32" border="0" class="" style="display: block; width: 100%;"></a></td>
                                                                           <td class="nl2go-responsive-hide" width="10" style="font-size: 0px; line-height: 1px;">­ </td>
                                                                         </tr>
                                                                       </table>
@@ -236,7 +245,7 @@
                                                                       <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r28-o" style="table-layout: fixed; width: 100%;">
                                                                         <!-- -->
                                                                         <tr>
-                                                                          <td class="r5-i" style="font-size: 0px; line-height: 0px; padding-bottom: 5px; padding-top: 5px;"><a href="https://nooridev.co.in/qysmat/"><img src="https://sendinblue-templates.s3.eu-west-3.amazonaws.com/icons/original_light/twitter_32px.png" width="32" border="0" class="" style="display: block; width: 100%;"></a></td>
+                                                                          <td class="r5-i" style="font-size: 0px; line-height: 0px; padding-bottom: 5px; padding-top: 5px;"><a href="{{ strip_tags($twitter->details); }}"><img src="https://sendinblue-templates.s3.eu-west-3.amazonaws.com/icons/original_light/twitter_32px.png" width="32" border="0" class="" style="display: block; width: 100%;"></a></td>
                                                                           <td class="nl2go-responsive-hide" width="10" style="font-size: 0px; line-height: 1px;">­ </td>
                                                                         </tr>
                                                                       </table>
