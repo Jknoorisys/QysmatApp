@@ -30,6 +30,7 @@ use App\Http\Controllers\api\singletons\ZoomAPI;
 use App\Http\Controllers\api\static_pages\StaticPages;
 use App\Http\Controllers\api\stripe\StripeSubscription;
 use App\Http\Controllers\api\subscriptions\SubscriptionPlans;
+use App\Http\Controllers\api\web_pages\WebPages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -180,6 +181,11 @@ Route::prefix('parent')->group(function () {
 // Static Pages
 Route::prefix('static-pages')->group(function () {
     Route::post('get-page' , [StaticPages::class, 'index']);
+});
+
+// Web Pages
+Route::prefix('web-pages')->group(function () {
+    Route::post('get-page' , [WebPages::class, 'index']);
 });
 
 // Contact Details

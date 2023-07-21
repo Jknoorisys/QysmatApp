@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\api\static_pages;
+namespace App\Http\Controllers\api\web_pages;
 
 use App\Http\Controllers\Controller;
 use App\Models\Faqs;
 use App\Models\StaticPages as ModelsStaticPages;
+use App\Models\WebPages as ModelsWebPages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class StaticPages extends Controller
+class WebPages extends Controller
 {
     public function  __construct()
     {
@@ -25,10 +26,10 @@ class StaticPages extends Controller
                 'required' ,
                 Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
             ],
-            // 'page_name'   => ['required','alpha_dash'],
+
             'page_name' => [
                 'required' ,
-                Rule::in(['about_us','privacy_policy','terms_and_conditions','faqs']),
+                Rule::in(['about_us','privacy_policy','terms_and_conditions','faqs','social_links','download_links']),
             ],
         ]);
 
@@ -46,70 +47,43 @@ class StaticPages extends Controller
                 if(!$page->isEmpty()){
                     return response()->json([
                         'status'    => 'success',
-                        'message'   => __('msg.static-pages.success'),
+                        'message'   => __('msg.web-pages.success'),
                         'data'      => $page
                     ],200);
                 }else{
                     return response()->json([
                         'status'    => 'failed',
-                        'message'   => __('msg.static-pages.failure'),
+                        'message'   => __('msg.web-pages.failure'),
+                    ],400);
+                }
+            } elseif (($request->page_name == 'social_links') || ($request->page_name == 'download_links')) {
+                $page = ModelsWebPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->get();
+                if(!$page->isEmpty()){
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.web-pages.success'),
+                        'data'      => $page
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.web-pages.failure'),
                     ],400);
                 }
             } else {
-                $page = ModelsStaticPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->first();
+                $page = ModelsWebPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->first();
                 if(!empty($page)){
                     return response()->json([
                         'status'    => 'success',
-                        'message'   => __('msg.static-pages.success'),
+                        'message'   => __('msg.web-pages.success'),
                         'data'      => $page
                     ],200);
                 }else{
                     return response()->json([
                         'status'    => 'failed',
-                        'message'   => __('msg.static-pages.failure'),
+                        'message'   => __('msg.web-pages.failure'),
                     ],400);
                 }
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.error'),
-                'error'     => $e->getMessage()
-            ],500);
-        }
-    }
-
-    public function getFAQs(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'language' => [
-                'required' ,
-                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
-            ],
-            'page_name'   => ['required','alpha_dash'],
-        ]);
-
-        if($validator->fails()){
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.Validation Failed!'),
-                'errors'    => $validator->errors()
-            ],400);
-        }
-
-        try {
-            $page = ModelsStaticPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->first();
-            if(!empty($page)){
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.static-pages.success'),
-                    'data'      => $page
-                ],200);
-            }else{
-                return response()->json([
-                    'status'    => 'failed',
-                    'message'   => __('msg.static-pages.failure'),
-                ],400);
             }
         } catch (\Exception $e) {
             return response()->json([
