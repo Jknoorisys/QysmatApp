@@ -48,7 +48,7 @@ class WebPagesSeeder extends Seeder
             ],
             [
                 'page_name'  => 'app_details',
-                'page_title' => 'Active Install',
+                'page_title' => 'Active Installs',
                 'created_at' => date('Y-m-d H:i:s')
             ],
             [
