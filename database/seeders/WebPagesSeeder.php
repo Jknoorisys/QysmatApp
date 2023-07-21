@@ -36,16 +36,16 @@ class WebPagesSeeder extends Seeder
                 'page_title' => 'Cookies',
                 'created_at' => date('Y-m-d H:i:s')
             ],
-            [
-                'page_name'  => 'download_links',
-                'page_title' => 'Play Store',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'page_name'  => 'download_links',
-                'page_title' => 'iOS App Store',
-                'created_at' => date('Y-m-d H:i:s')
-            ],
+            // [
+            //     'page_name'  => 'download_links',
+            //     'page_title' => 'Play Store',
+            //     'created_at' => date('Y-m-d H:i:s')
+            // ],
+            // [
+            //     'page_name'  => 'download_links',
+            //     'page_title' => 'iOS App Store',
+            //     'created_at' => date('Y-m-d H:i:s')
+            // ],
             [
                 'page_name'  => 'app_details',
                 'page_title' => 'Active Installs',
