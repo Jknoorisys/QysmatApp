@@ -24,7 +24,6 @@ class ContactDetails extends Controller
                 'required' ,
                 Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
             ],
-            // 'contact_type'   => ['required','alpha_dash'],
             'contact_type' => [
                 'required' ,
                 Rule::in(['email','phone','address','instagram','facebook','whatsapp','twitter','linkedin','skype','telegram']),

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\web_pages;
 
 use App\Http\Controllers\Controller;
+use App\Models\ContactDetails;
 use App\Models\Faqs;
 use App\Models\StaticPages as ModelsStaticPages;
 use App\Models\WebPages as ModelsWebPages;
@@ -29,7 +30,7 @@ class WebPages extends Controller
 
             'page_name' => [
                 'required' ,
-                Rule::in(['about_us','privacy_policy','terms_and_conditions','faqs','social_links','download_links']),
+                Rule::in(['about_us','privacy_policy','terms_and_conditions','faqs','download_links']),
             ],
         ]);
 
@@ -56,7 +57,7 @@ class WebPages extends Controller
                         'message'   => __('msg.web-pages.failure'),
                     ],400);
                 }
-            } elseif (($request->page_name == 'social_links') || ($request->page_name == 'download_links')) {
+            } elseif ($request->page_name == 'download_links') {
                 $page = ModelsWebPages::where([['page_name','=',$request->page_name], ['status','=','Active']])->get();
                 if(!$page->isEmpty()){
                     return response()->json([
