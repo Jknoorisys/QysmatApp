@@ -13,7 +13,7 @@
                 <div class="col-md-12 mt-4">
                     <label for="details" class="form-label">{{__('msg.Details')}}</label>
                     <div class="input-group">
-                        <textarea id="details" name="details" rows="10" placeholder="{{ __('msg.Enter Contact Details')}}" data-sample="2" data-sample-short></textarea>
+                        <textarea id="details" name="details" rows="10" placeholder="{{ __('msg.Enter Contact Details')}}" style="width: 100%"></textarea>
                     </div>
                     <span class="err_details text-danger">@error('details') {{$message}} @enderror</span>
                 </div>
@@ -40,7 +40,8 @@
             let form = $(this).get(0);
             let contact_type = $("#contact_type").val();
             let err_contact_type = "{{__('msg.Contact Type is Required')}}";
-            let details = CKEDITOR.instances['details'].getData();
+            // let details = CKEDITOR.instances['details'].getData();
+            let details = $("#details").val();
             let err_details = "{{__('msg.Contact Detail is Required')}}";
 
                 if (contact_type.length === 0) {
@@ -73,9 +74,9 @@
 <script src=" assets/libs/ckeditor/samples/js/sample.js"></script>
 
 
-<script data-sample="2">
+{{-- <script data-sample="2">
     CKEDITOR.replace('details', {
         height: 200,
         width:1000,
     });
-</script>
+</script> --}}
