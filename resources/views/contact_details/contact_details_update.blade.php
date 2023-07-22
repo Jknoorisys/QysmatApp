@@ -6,14 +6,14 @@
                 <div class="col-md-12">
                     <label for="contact_type" class="form-label">{{__('msg.Contact Type')}}</label>
                     <div class="input-group">
-                        <input type="text" class="form-control smp-input" value="{{$records->contact_type}}" style="font-weight: 300;font-size: 15px;color: #38424C;" name="contact_type" id="contact_type" placeholder="{{ __('msg.Enter Contact Type')}}">
+                        <input type="text" class="form-control smp-input" readonly value="{{$records->contact_type}}" style="font-weight: 300;font-size: 15px;color: #38424C;" name="contact_type" id="contact_type" placeholder="{{ __('msg.Enter Contact Type')}}">
                     </div>
                     <span class="err_contact_type text-danger">@error('contact_type') {{$message}} @enderror</span>
                 </div>
                 <div class="col-md-12 mt-4">
                     <label for="details" class="form-label">{{__('msg.Details')}}</label>
                     <div class="input-group">
-                        <textarea id="details" name="details" rows="10" placeholder="{{ __('msg.Enter Contact Details')}}" data-sample="2" data-sample-short>{{$records->details}}</textarea>
+                        <textarea id="details" name="details" rows="10" placeholder="{{ __('msg.Enter Contact Details')}}" style="width: 100%">{{$records->details}}</textarea>
                     </div>
                     <span class="err_details text-danger">@error('details') {{$message}} @enderror</span>
                 </div>
@@ -34,12 +34,12 @@
 <script src=" assets/libs/ckeditor/samples/js/sample.js"></script>
 
 
-<script data-sample="2">
+{{-- <script data-sample="2">
     CKEDITOR.replace('details', {
         height: 200,
         width:1000,
     });
-</script>
+</script> --}}
 
 <script>
     $(document).ready(function() {
@@ -49,7 +49,8 @@
             let form = $(this).get(0);
             let contact_type = $("#contact_type").val();
             let err_contact_type = "{{__('msg.Contact Type is Required')}}";
-            let details = CKEDITOR.instances['details'].getData();
+            // let details = CKEDITOR.instances['details'].getData();
+            let details = $("#details").val();
             let err_details = "{{__('msg.Contact Detail is Required')}}";
 
                 if (contact_type.length === 0) {

@@ -19,13 +19,6 @@
                     <span class="err_page_title text-danger">@error('page_title') {{$message}} @enderror</span>
                 </div>
                 <div class="col-md-12 mt-4">
-                    <label for="short_description" class="form-label">{{__('msg.Short Description')}}</label>
-                    <div class="input-group">
-                        <textarea rows="4" class="form-control smp-input" style="font-weight: 300;font-size: 15px;color: #38424C;" name="short_description" id="short_description" placeholder="{{ __('msg.Enter Short Description')}}">{{$records->short_description}}</textarea>
-                    </div>
-                    <span class="err_short_description text-danger">@error('short_description') {{$message}} @enderror</span>
-                </div>
-                <div class="col-md-12 mt-4">
                     <label for="description" class="form-label">{{__('msg.Description')}}</label>
                     <div class="input-group">
                         <textarea id="description" name="description" rows="10" placeholder="{{ __('msg.Enter Web Page Description')}}" data-sample="2" data-sample-short>{{$records->description}}</textarea>
