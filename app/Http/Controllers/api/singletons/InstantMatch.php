@@ -95,6 +95,16 @@ class InstantMatch extends Controller
             //     ],400);
             // }
 
+            $metched = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_type', '=', 'matched']])
+                                    ->orWhere([['match_id', '=', $request->login_id],['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
+                                    ->first();
+            if (!empty($metched)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.swips.matched'),
+                ],400);
+            }
+
             $formsSubmitted = InstantMatchRequest::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type]])
                     ->whereBetween('created_at', [Carbon::now()->subWeek(), Carbon::now()])
                     ->count();
