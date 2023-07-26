@@ -32,8 +32,8 @@ class WebPagesSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s')
             ],
             [
-                'page_name'  => 'cookies',
-                'page_title' => 'Cookies',
+                'page_name'  => 'installs',
+                'page_title' => 'App Installs',
                 'created_at' => date('Y-m-d H:i:s')
             ],
             [
