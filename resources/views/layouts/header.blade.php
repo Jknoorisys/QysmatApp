@@ -381,15 +381,15 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
-                        <img src="{{ $admin->profile ? asset('uploads/admin-profile/'.$admin->profile) : 'assets/images/users/5.jpg'}}" alt="user" class="rounded-circle" width="31">
+                        <img src="{{ $admin->profile ? asset('uploads/admin-profile/'.$admin->profile) : 'assets/images/users/avatar.png'}}" alt="user" class="rounded-circle" width="31">
                     </a>
                     <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
                         <span class="with-arrow">
-                            <span class="bg-qysmat"></span>
+                            <span class="bg-light"></span>
                         </span>
-                        <div class="d-flex no-block align-items-center p-15 bg-qysmat text-white m-b-10">
+                        <div class="d-flex no-block align-items-center p-15 bg-light text-black m-b-10">
                             <div class="">
-                                <img src="{{ $admin->profile ? asset('uploads/admin-profile'.$admin->profile) : 'assets/images/users/5.jpg'}}" alt="user" class="img-circle" width="60">
+                                <img src="{{ $admin->profile ? asset('uploads/admin-profile'.$admin->profile) : 'assets/images/users/avatar.png'}}" alt="user" class="img-circle" width="60">
                             </div>
 
                             <div class="m-l-10">
