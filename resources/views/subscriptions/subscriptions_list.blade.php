@@ -107,7 +107,7 @@
                         <form action="{{route('updatePrice')}}" method="post" class="text-center">
                             @csrf
                             <input type="hidden" name="id" value="{{$value->id}}">
-                            <button type="button" class="btn btn-qysmat my-2 radius-30" onclick="this.form.submit()">{{__('msg.Update Price')}}</button>
+                            <button type="button" class="btn btn-qysmat my-2 radius-30" {{ $value->id ==1 ? 'disabled' : '' }} onclick="this.form.submit()">{{__('msg.Update Price')}}</button>
                         </form>
                     </div>
                 </div>
