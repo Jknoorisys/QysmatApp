@@ -968,6 +968,23 @@ use App\Models\Admin as AdminModel;
         return $path;
     }
 
+    // function GetToken($user_id, $channelName){
+    
+    //     $appID         =   env('APP_ID');
+    //     $appCertificate    =   env('APP_CERTIFICATE');
+    //     // $channelName  =   (string) random_int(100000000, 9999999999999999);
+    //     $uid = $user_id;
+    //     $uidStr = ($user_id) . '';
+    //     $role = RtcTokenBuilder::RolePublisher;
+    //     $expireTimeInSeconds = 3600;
+    //     $currentTimestamp = (new \DateTime("now", new \DateTimeZone('UTC')))->getTimestamp();
+    //     $privilegeExpiredTs = $currentTimestamp + $expireTimeInSeconds;
+    
+    //     $token = RtcTokenBuilder::buildTokenWithUid($appID, $appCertificate, $channelName, $uid, $role, $privilegeExpiredTs);
+    //     $data = ['token' => $token, 'channel' => $channelName];
+    //     return $data;
+    // }
+
     function GetToken($user_id, $channelName){
     
         $appID         =   env('APP_ID');

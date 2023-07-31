@@ -95,12 +95,12 @@
                         <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i>{{$feature}}</li>
                         @endforeach
                         <li class="list-group-item"><i class="fas fa-check mr-2 btn-sm"></i><span>{{__('msg.Status')}} : {{$value->status}}</span>
-                            <form action="{{route('changeSubscriptionStatus')}}" method="post" class="text-center">
+                            {{-- <form action="{{route('changeSubscriptionStatus')}}" method="post" class="text-center">
                                 @csrf
                                 <input type="hidden" name="id" value="{{$value->id}}">
                                 <input type="hidden" name="status" value="{{$value->status == 'Active' ? 'Inactive' : 'Active' }}">
                                 <button type="submit" data-status="{{$value->status == 'Active' ? 'Active' : 'Inactive'}}" data-id="{{$value->id}}" data-name="{{$value->subscription_type}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Inactive' ? '' : 'checked'}} /><label for="switch">Toggle</label></button>
-                            </form>
+                            </form> --}}
                         </li>
                     </ul>
                     <div class="d-grid mt-3">
