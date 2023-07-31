@@ -187,10 +187,18 @@ class Call extends Controller
                 $sender_pic = $premium ? $premium->profile_pic : '';
             }
 
-            if ($premium->active_subscription_id == '1') {
+            // if ($premium->active_subscription_id == '1') {
+            //     return response()->json([
+            //         'status'    => 'failed',
+            //         'message'   => __('msg.reset-profile.premium'),
+            //     ],400);
+            // }
+
+            $featureStatus = PremiumFeatures::whereId(1)->first();
+            if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.reset-profile.premium'),
+                    'message'   => __('msg.agora.premium'),
                 ],400);
             }
 
