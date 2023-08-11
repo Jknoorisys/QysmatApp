@@ -454,7 +454,8 @@ return [
         'success' => 'Profile Search Reset Successfully!',
         'failure' => 'Unable to Reset Profile Search, Please Try Again...',
         'invalid' => 'No User found in Your Un-Match List, Please Try Again...',
-        'premium' => 'Premium Feature',
+        // 'premium' => 'Premium Feature',
+        'premium' => 'Not Applicable',
         'reset'   => 'You have already used this Feature for this month, Try Again next month...',
     ],
 
@@ -589,7 +590,8 @@ return [
             'invalid' => 'User, You want to Re-Match Not Found!',
             'not-found' => 'User Not Found!',
             'rematched' => 'You Already Rematched this User...',
-            'premium' => 'Only for Premium Users'
+            // 'premium' => 'Only for Premium Users'
+            'premium' => 'Not Applicable',
         ],
 
         'send-request' => [
@@ -597,7 +599,8 @@ return [
             'failure' => "Unable to Send Request, Please Try Again...",
             'invalid' => 'User, You want to Send Request Not Found!',
             'match-list'   => 'User, You want to Send Request Not Found in Match-List',
-            'premium' => 'Only for Premium Users',
+            // 'premium' => 'Only for Premium Users',
+            'premium' => 'Not Applicable',
             'limit'   => 'You have already Sent the 3 Requests for this week, Please Try Again Next Week...',
             'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
             'duplicate' => 'You have already Sent Request to this User'
@@ -845,7 +848,8 @@ return [
             'invalid' => 'User, You want to Re-Match Not Found!',
             'not-found' => 'User Not Found!',
             'rematched' => 'You Already Rematched this User...',
-            'premium' => 'Only for Premium Users'
+            // 'premium' => 'Only for Premium Users'
+            'premium' => 'Not Applicable',
         ],
 
         'send-request' => [
@@ -853,7 +857,8 @@ return [
             'failure' => "Unable to Send Request, Please Try Again...",
             'invalid' => 'User, You want to Send Request Not Found!',
             'match-list'   => 'User, You want to Send Request Not Found in Match-List',
-            'premium' => 'Only for Premium Users',
+            // 'premium' => 'Only for Premium Users',
+            'premium' => 'Not Applicable',
             'limit'   => 'You have already Sent the 3 Requests for this week, Please Try Again Next Week...',
             'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!',
             'duplicate' => 'You have already Sent Request to this User'
@@ -864,7 +869,8 @@ return [
             'failure' => "Unable to Change Request Status, Please Try Again...",
             'invalid' => 'Requested User Not Found!',
             'match-list'   => 'User, You want to Send Request Not Found in Match-List',
-            'premium' => 'Only for Premium Users',
+            // 'premium' => 'Only for Premium Users',
+            'premium' => 'Not Applicable',
             'limit'   => 'You have already Sent the 3 Requests for this week, Please Try Again Next Week...',
             'not-linked' => 'User Profile is not Linked with His/Her Parent/Gardian!'
         ],
