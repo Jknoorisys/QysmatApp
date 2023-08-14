@@ -577,7 +577,7 @@ class Matches extends Controller
                                   ->orWhere([['matches.match_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton']]);
                         })
                         ->where(function($query) {
-                            $query->whereIn('match_type', '=', 'matched')
+                            $query->where('match_type', '=', 'matched')
                                   ->orWhere([['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
                                   ->orWhere('match_type', '=', 're-matched');
                         })
