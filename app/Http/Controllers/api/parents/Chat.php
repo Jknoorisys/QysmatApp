@@ -160,70 +160,12 @@ class Chat extends Controller
 
             if (!empty($messaged)) {
 
-                $parent_id = $request->login_id;
-
-            $list = MessagedUsers::leftjoin('parents', function($join) use ($parent_id) {
-                                        $join->on('parents.id','=','messaged_users.messaged_user_id')
-                                            ->where('messaged_users.messaged_user_id','!=',$parent_id);
-                                        $join->orOn('parents.id','=','messaged_users.user_id')
-                                            ->where('messaged_users.user_id','!=',$parent_id);
-                                    })
-                                    ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type], ['messaged_users.singleton_id', '=', $request->singleton_id]])
-                                    ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type], ['messaged_users.messaged_user_singleton_id', '=', $request->singleton_id]])
-                                    ->select('messaged_users.user_id','messaged_users.singleton_id','messaged_users.messaged_user_id','messaged_users.messaged_user_singleton_id','parents.*')
-                                    ->orderBy('messaged_users.id', 'desc')
-                                    ->get();
-
-            $ids = [];
-            foreach ($list as $key => $value) {
-                $blockedUserChat = BlockList::where([['user_id','=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['blocked_user_id', '=', $value->messaged_user_singleton_id],['blocked_user_type', '=', 'singleton']])->first();
-                $reportedUserChat = ModelsReportedUsers::where([['user_id','=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['reported_user_id', '=', $value->messaged_user_singleton_id],['reported_user_type', '=', 'singleton']])->first();
-               
-                $unMatchedUserChat = UnMatches::where(function ($query) use ($value, $request) {
-                    $query->where([
-                        ['user_id', '=', $request->login_id],
-                        ['user_type', '=', $request->user_type],
-                        ['singleton_id', '=', $request->singleton_id],
-                        ['un_matched_id', '=', $value->messaged_user_singleton_id]
-                    ])->orWhere([
-                        ['user_id', '=', $value->messaged_user_id],
-                        ['user_type', '=', 'parent'],
-                        ['singleton_id', '=', $value->messaged_user_singleton_id],
-                        ['un_matched_id', '=', $request->singleton_id]
-                    ]);
-                })->first();
-
-                if ($value->user_id != $parent_id) {
-                    $user_id = $value->messaged_user_id;
-                    $singleton_id = $value->messaged_user_singleton_id;
-                    $messaged_user_id = $value->user_id;
-                    $messaged_user_singleton_id = $value->singleton_id;
-                    $value->user_id = $user_id;
-                    $value->singleton_id = $singleton_id;
-                    $value->messaged_user_id = $messaged_user_id;
-                    $value->messaged_user_singleton_id = $messaged_user_singleton_id;
-                }
-
-                if (!empty($unMatchedUserChat) && !empty($blockUserChat) && !empty($reportedUserChat)) {
-                    $ids[] = $value->messaged_user_id;
-                }
-            }
-
-            $overallUnreadCounter_db = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->singleton_id]])->whereNull('read_at');                        
-            
-            if (!empty($ids)) {
-                $overallUnreadCounter_db->whereNotIn('id', $ids);
-            }
-            
-            $overallUnreadCounter = $overallUnreadCounter_db->count();
-
-
                 $unreadCounter = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', 'parent'],['singleton_id', '=', $request->singleton_id],
                                                     ['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->messaged_user_singleton_id]])                        
                                                 ->whereNull('read_at')->count();
 
-                // $overallUnreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->messaged_user_singleton_id]])                        
-                //                                 ->whereNull('read_at')->count();
+                $overallUnreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->messaged_user_singleton_id]])                        
+                                                ->whereNull('read_at')->count();
                 $title = __('msg.New Message');
                 $reciever = ParentsModel::where([['id', '=', $request->messaged_user_id], ['status', '=', 'Unblocked']])->first();
                 if (isset($reciever) && !empty($reciever)) {
@@ -300,14 +242,24 @@ class Chat extends Controller
             $filteredList = [];
             $ids = [];
             foreach ($list as $key => $value) {
-                $block = BlockList::where([['user_id','=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['blocked_user_id', '=', $value->messaged_user_singleton_id],['blocked_user_type', '=', 'singleton']])->first();
-                $report = ModelsReportedUsers::where([['user_id','=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['reported_user_id', '=', $value->messaged_user_singleton_id],['reported_user_type', '=', 'singleton']])->first();
-                // $unMatch = UnMatches::where([
-                //     ['user_id', '=', $value->user_id],
-                //     ['user_type', '=', $value->user_type],
-                //     ['singleton_id', '=', $request->singleton_id],
-                //     ['un_matched_id', '=', $value->messaged_user_singleton_id]
-                // ])->first();
+                // $block = BlockList::where([['user_id','=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['blocked_user_id', '=', $value->messaged_user_singleton_id],['blocked_user_type', '=', 'singleton']])->first();
+                // $report = ModelsReportedUsers::where([['user_id','=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['reported_user_id', '=', $value->messaged_user_singleton_id],['reported_user_type', '=', 'singleton']])->first();
+                
+                $block = BlockList::where([
+                    ['user_id', '=', $request->messaged_user_id],
+                    ['user_type', '=', 'parent'],
+                    ['singleton_id', '=', $value->messaged_user_singleton_id],
+                    ['blocked_user_id', '=', $request->singleton_id],
+                    ['blocked_user_type', '=', 'singleton']
+                ])->first();  
+                
+                $report = ModelsReportedUsers::where([
+                    ['user_id', '=', $request->messaged_user_id],
+                    ['user_type', '=', 'parent'],
+                    ['singleton_id', '=', $value->messaged_user_singleton_id],
+                    ['reported_user_id', '=', $request->singleton_id],
+                    ['reported_user_type', '=', 'singleton']
+                ])->first();  
 
                 $unMatch = UnMatches::where(function ($query) use ($value, $request) {
                     $query->where([
