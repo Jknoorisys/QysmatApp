@@ -687,7 +687,6 @@ class Chat extends Controller
                 Rule::in(['parent']),
             ],
             'messaged_user_singleton_id'   => 'required||numeric',
-            'page_number'  => 'required||numeric',
         ]);
 
         if($validator->fails()){
