@@ -11,6 +11,7 @@ use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\PremiumFeatures;
+use App\Models\RematchRequests;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\SwipedUpUsers;
@@ -295,14 +296,16 @@ class Suggestions extends Controller
                     }
                 }
 
-                if ($max_height == 'above') {
-                    $this->db->where('height_converted','>=', $min_height);
-                }elseif ($max_height == 'below') {
-                    $this->db->where('height_converted','<=', $min_height);
-                }else{
-                    $this->db->whereBetween('height_converted', [$min_height, $max_height]);
+                if(!empty($min_height) && !empty($max_height)){
+                    if ($max_height == 'above') {
+                        $this->db->where('height_converted','>=', $min_height);
+                    }elseif ($max_height == 'below') {
+                        $this->db->where('height_converted','<=', $min_height);
+                    }else{
+                        $this->db->whereBetween('height_converted', [$min_height, $max_height]);
+                    }
                 }
-
+               
                 if(!empty($islamic_sect)){
                     $this->db->where('islamic_sect','=',$islamic_sect);
                 }
@@ -324,25 +327,138 @@ class Suggestions extends Controller
                 $suggestion = $this->db->get();
 
                 if(!$suggestion->isEmpty()){
-                    $users = [];
+                    $users1 = [];
+                    $likedMeUsers = [];
                     $count = 0;
                     foreach ($suggestion as $m) {
                         $singleton_id = $m->id;
                         $swiped_up = SwipedUpUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id], ['swiped_user_id', '=', $singleton_id]])->first();
-                        $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
-                        $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
-                        $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
+                        
+                        // $block = BlockList::where([
+                        //     ['user_id', '=', $request->login_id],
+                        //     ['user_type', '=', 'parent'],
+                        //     ['blocked_user_id', '=', $singleton_id],
+                        //     ['blocked_user_type', '=', 'singleton'],
+                        //     ['singleton_id', '=', $request->singleton_id]
+                        // ])->first();
+
+                        $block = BlockList::where(function ($query) use ($request, $singleton_id, $m) {
+                                        $query->where([
+                                            ['user_id', '=', $request->login_id],
+                                            ['user_type', '=', 'parent'],
+                                            ['blocked_user_id', '=', $singleton_id],
+                                            ['blocked_user_type', '=', 'singleton'],
+                                            ['singleton_id', '=', $request->singleton_id]
+                                        ])->orWhere([
+                                            ['user_id', '=', $m->parent_id],
+                                            ['user_type', '=', 'parent'],
+                                            ['blocked_user_id', '=', $request->singleton_id],
+                                            ['blocked_user_type', '=', 'singleton'],
+                                            ['singleton_id', '=', $singleton_id]
+                                        ]);
+                                    })->first();
+
+                        // $report = ReportedUsers::where([
+                        //                 ['user_id', '=', $request->login_id],
+                        //                 ['user_type', '=', 'parent'],
+                        //                 ['reported_user_id', '=', $singleton_id],
+                        //                 ['reported_user_type', '=', 'singleton'],
+                        //                 ['singleton_id', '=', $request->singleton_id]
+                        //             ])->first();
+                                    
+
+                        $report = ReportedUsers::where(function ($query) use ($request, $singleton_id, $m) {
+                                        $query->where([
+                                            ['user_id', '=', $request->login_id],
+                                            ['user_type', '=', 'parent'],
+                                            ['reported_user_id', '=', $singleton_id],
+                                            ['reported_user_type', '=', 'singleton'],
+                                            ['singleton_id', '=', $request->singleton_id]
+                                        ])->orWhere([
+                                            ['user_id', '=', $m->parent_id],
+                                            ['user_type', '=', 'parent'],
+                                            ['reported_user_id', '=', $request->singleton_id],
+                                            ['reported_user_type', '=', 'singleton'],
+                                            ['singleton_id', '=', $singleton_id]
+                                        ]);
+                                    })->first();
+
+                        // $unMatch = UnMatches::where([
+                        //                 ['user_id', '=', $request->login_id],
+                        //                 ['user_type', '=', 'parent'],
+                        //                 ['un_matched_id', '=', $singleton_id],
+                        //                 ['singleton_id', '=', $request->singleton_id]
+                        //             ])->first();
+                                    
+                        $unMatch = UnMatches::where(function ($query) use ($request, $singleton_id, $m) {
+                                                $query->where([
+                                                    ['user_id', '=', $request->login_id],
+                                                    ['user_type', '=', 'parent'],
+                                                    ['un_matched_id', '=', $singleton_id],
+                                                    ['singleton_id', '=', $request->singleton_id]
+                                                ])->orWhere([
+                                                    ['user_id', '=', $m->parent_id],
+                                                    ['user_type', '=', 'parent'],
+                                                    ['un_matched_id', '=', $request->singleton_id],
+                                                    ['singleton_id', '=', $singleton_id]
+                                                ]);
+                                            })->first();
+
                         $Match = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['matched_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
-                        // $not_linked = ParentChild ::where([['singleton_id','=', $singleton_id], ['status', '=', 'Unlinked']])->first();
-                        $not_linked = Singleton ::where([['id','=', $singleton_id], ['parent_id', '=', '']])->orWhere([['id','=', $singleton_id], ['parent_id', '=', '0']])->first();
+
+                        $not_linked = Singleton::where('id', '=', $singleton_id)
+                                                ->whereIn('parent_id', ['', '0'])
+                                                ->first();
+
                         $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $singleton_id], ['singleton_id', '=', $request->singleton_id], ['match_type', '!=', 'liked']])
                                             ->orWhere([['user_id', '=', $m->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $singleton_id], ['match_type', '!=', 'liked']])
                                             ->first();
 
                         if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && empty($not_linked) && empty($mutual) && empty($swiped_up)) {
-                            $users[] = $m;
-                            $count = $count + 1;
+                            // $users[] = $m;
+                            // $count = $count + 1;
+                            $liked_me = Matches::where([['matches.user_id', '=', $m->parent_id],['matches.match_id', '=', $request->singleton_id], ['matches.user_type', '=', 'parent'],['is_rematched', '=', 'no'],['is_reset', '=', 'no'],['match_type', '=', 'liked']])
+                            ->join('singletons', 'matches.singleton_id', '=', 'singletons.id')
+                            ->first('singletons.*');
+
+                            if (!empty($liked_me)) {
+                                $likedMeUsers[] = $liked_me;
+                            } else {
+                                $users1[] = $m;
+                                $count = $count + 1;
+                            }
                         }
+                    }
+
+                    $users1 = array_merge($likedMeUsers, $users1);
+
+                    $rematchedProfiles = RematchRequests::where([['rematch_requests.user_type', '=', 'parent'], ['rematch_requests.match_id', '=', $request->singleton_id], ['rematch_requests.is_rematched', '=', 'no']])
+                                                ->join('singletons', 'rematch_requests.singleton_id', '=', 'singletons.id')
+                                                ->get('singletons.*');
+
+                    $remaches = json_decode($rematchedProfiles, true);
+                    $users2 = array_merge($remaches, $users1);
+                    $users3 = collect($users2)->unique('id')->values()->all();
+
+                    if (count($users3) >= 100) {
+                        $users = $users3;
+                    } else {
+                        $others_liked_me = Matches::where([['matches.match_id', '=', $request->singleton_id], ['matches.user_type', '=', 'parent'],['is_rematched', '=', 'no'],['is_reset', '=', 'no'],['match_type', '=', 'liked']])
+                                                    ->join('singletons', 'matches.singleton_id', '=', 'singletons.id')
+                                                    ->orderBy('singletons.id')
+                                                    ->get('singletons.*');
+
+                        $randomProfiles = Singleton::inRandomOrder()
+                                        ->where([
+                                            ['is_verified', '=', 'verified'],
+                                            ['status', '=', 'Unblocked']
+                                        ])
+                                        ->whereNotIn('parent_id', ['', '0'])
+                                        ->get();
+                   
+                        $users4 = array_merge($users3, json_decode($others_liked_me, true), json_decode($randomProfiles, true));
+                        $users5 = collect($users4)->unique('id')->values()->all();
+                        $users = $users5;
                     }
 
                     $premium = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();

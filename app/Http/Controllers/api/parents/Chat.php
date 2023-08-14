@@ -241,10 +241,31 @@ class Chat extends Controller
                                     ->orderBy('messaged_users.id', 'desc')
                                     ->get();
 
+            $filteredList = [];
+            $ids = [];
             foreach ($list as $key => $value) {
-                $block = BlockList::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['singleton_id', '=', $request->singleton_id],['blocked_user_id', '=', $value->messaged_user_id],['blocked_user_type', '=', 'parent']])->first();
-                $report = ModelsReportedUsers::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['singleton_id', '=', $request->singleton_id],['reported_user_id', '=', $value->messaged_user_id],['reported_user_type', '=', 'parent']])->first();
-                $unMatch = UnMatches::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['singleton_id', '=', $request->singleton_id],['un_matched_id', '=', $value->messaged_user_singleton_id]])->first();
+                $block = BlockList::where([['user_id','=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['blocked_user_id', '=', $value->messaged_user_singleton_id],['blocked_user_type', '=', 'singleton']])->first();
+                $report = ModelsReportedUsers::where([['user_id','=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['reported_user_id', '=', $value->messaged_user_singleton_id],['reported_user_type', '=', 'singleton']])->first();
+                // $unMatch = UnMatches::where([
+                //     ['user_id', '=', $value->user_id],
+                //     ['user_type', '=', $value->user_type],
+                //     ['singleton_id', '=', $request->singleton_id],
+                //     ['un_matched_id', '=', $value->messaged_user_singleton_id]
+                // ])->first();
+
+                $unMatch = UnMatches::where(function ($query) use ($value, $request) {
+                    $query->where([
+                        ['user_id', '=', $request->login_id],
+                        ['user_type', '=', $request->user_type],
+                        ['singleton_id', '=', $request->singleton_id],
+                        ['un_matched_id', '=', $value->messaged_user_singleton_id]
+                    ])->orWhere([
+                        ['user_id', '=', $value->messaged_user_id],
+                        ['user_type', '=', 'parent'],
+                        ['singleton_id', '=', $value->messaged_user_singleton_id],
+                        ['un_matched_id', '=', $request->singleton_id]
+                    ]);
+                })->first();
 
                 $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=','parent'],['chat_histories.singleton_id', '=', $value->singleton_id],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'parent']])
                                             ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', 'parent'],['chat_histories.singleton_id', '=', $value->messaged_user_singleton_id],])                        
@@ -253,7 +274,7 @@ class Chat extends Controller
                                             ->first();
 
                 $list[$key]->last_message = $last_message->message;
-                if (!empty($block) || !empty($report) || !empty($unMatch)) {
+                if (!empty($unMatch)) {
                     $list[$key]->chat_status = 'disabled';
                 }else{
                     $list[$key]->chat_status = 'enabled';
@@ -275,17 +296,27 @@ class Chat extends Controller
                                             ->whereNull('read_at')->count();
 
                 $list[$key]->unread_counter = $unreadCounter;
+                if (empty($block) && empty($report)) {
+                    $filteredList[] = $value;
+                }else{
+                    $ids[] = $value->messaged_user_id;
+                }
             }
 
-            $overallUnreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->singleton_id]])                        
-                                            ->whereNull('read_at')->count();
-
-            if(!$list->isEmpty()){
+            $overallUnreadCounter_db = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->singleton_id]])->whereNull('read_at');                        
+            
+            if (!empty($ids)) {
+                $overallUnreadCounter_db->whereNotIn('id', $ids);
+            }
+            
+            $overallUnreadCounter = $overallUnreadCounter_db->count();
+            
+            if(!empty($filteredList)){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.messaged-users.success'),
                     'overall_unread_counter' => $overallUnreadCounter,
-                    'data'      => $list
+                    'data'      => $filteredList
                 ],200);
             }else{
                 return response()->json([
@@ -571,6 +602,98 @@ class Chat extends Controller
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.invitation.invalid'),
+                ],400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
+
+    function deleteChat(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'  => 'required||numeric',
+            'user_type' => [
+                'required' ,
+                Rule::in(['singleton']),
+            ],
+            'messaged_user_id'  => 'required||numeric',
+            'messaged_user_type' => [
+                'required' ,
+                Rule::in(['parent']),
+            ],
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+
+            if($request->user_type == 'singleton'){
+                $userExists = Singleton::find($request->login_id);
+            }else{
+                $userExists = ParentsModel::find($request->login_id);
+            }
+
+            $chatHistory = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type],['singleton_id', '=', $request->singleton_id]])
+                                ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type],['singleton_id', '=', $request->messaged_user_singleton_id]])
+                                ->get();                  
+            
+            if(!$chatHistory->isEmpty()){
+                foreach ($chatHistory as $chatRecord) {
+                    if (!empty($chatRecord->deleted_by) && isset($chatRecord->deleted_by) && ($chatRecord->deleted_by !=  $request->login_id)) {
+                        $delete = $chatRecord->delete();
+                    } else {
+                        $chatRecord->deleted_by = $request->login_id;
+                        $delete = $chatRecord->save();
+                    }
+                }
+            
+                if ($delete) {
+                    $chat = MessagedUsers::where(function ($query) use ($request) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['singleton_id', '=', $request->singleton_id],
+                            ['messaged_user_id', '=', $request->messaged_user_id],
+                            ['messaged_user_type', '=', $request->messaged_user_type],
+                        ])->orWhere([
+                            ['user_id', '=', $request->messaged_user_id],
+                            ['user_type', '=', $request->messaged_user_type],
+                            ['singleton_id', '=', $request->messaged_user_singleton_id],
+                            ['messaged_user_id', '=', $request->login_id],
+                            ['messaged_user_type', '=', $request->user_type],
+                        ]);
+                    })->first();
+
+                    if (!empty($chat->deleted_by) && isset($chat->deleted_by) && ($chatRecord->deleted_by !=  $request->login_id)) {
+                        $delete = $chat->delete();
+                    } else {
+                        $chat->deleted_by = $request->login_id;
+                        $delete = $chat->save();
+                    }
+                }
+
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.singletons.delete-chat.success'),
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.delete-chat.failure'),
                 ],400);
             }
         } catch (\Exception $e) {

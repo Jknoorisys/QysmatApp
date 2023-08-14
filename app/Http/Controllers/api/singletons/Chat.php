@@ -241,19 +241,66 @@ class Chat extends Controller
                                         $join->orOn('singletons.id','=','messaged_users.user_id')
                                             ->where('messaged_users.user_id','!=',$singleton_id);
                                     })
-                                    ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type]])
-                                    ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type]])
+                                    ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
+                                    ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
                                     ->select('messaged_users.messaged_user_id','singletons.*','messaged_users.user_id')
                                     ->orderBy('messaged_users.id', 'desc')
                                     ->get(); 
 
+            $filteredList = [];
+            $ids = [];
             foreach ($list as $key => $value) {
-                $block = BlockList::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['blocked_user_id', '=', $value->messaged_user_id],['blocked_user_type', '=', 'singleton']])->first();
-                $report = ModelsReportedUsers::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['reported_user_id', '=', $value->messaged_user_id],['reported_user_type', '=', 'singleton']])->first();
-                $unMatch = UnMatches::where([['user_id','=', $value->user_id],['user_type', '=', $value->user_type],['un_matched_id', '=', $value->messaged_user_id]])->first();
 
-                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'singleton']])
-                                        ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', $request->user_type]])                        
+                $block = BlockList::where(function ($query) use ($value, $request) {
+                    $query->where([
+                        ['user_id','=', $request->login_id],
+                        ['user_type', '=', $request->user_type],
+                        ['blocked_user_id', '=', $value->messaged_user_id],
+                        ['blocked_user_type', '=', 'singleton']
+                    ]);
+                    // ->orWhere([
+                    //     ['user_id','=', $value->messaged_user_id],
+                    //     ['user_type', '=', 'singleton'],
+                    //     ['blocked_user_id', '=', $request->login_id],
+                    //     ['blocked_user_type', '=', $request->user_type]
+                    // ]);
+                })->first();
+
+                $report = ModelsReportedUsers::where(function ($query) use ($value, $request) {
+                    $query->where([
+                        ['user_id','=', $request->login_id],
+                        ['user_type', '=', $request->user_type],
+                        ['reported_user_id', '=', $value->messaged_user_id],
+                        ['reported_user_type', '=', 'singleton']
+                    ]);
+                    // ->orWhere([
+                    //     ['user_id','=', $value->messaged_user_id],
+                    //     ['user_type', '=', 'singleton'],
+                    //     ['reported_user_id', '=', $request->login_id],
+                    //     ['reported_user_type', '=', $request->user_type]
+                    // ]);
+                })->first();
+
+                $unMatch = UnMatches::where(function ($query) use ($value, $request) {
+                    $query->where([
+                        ['user_id', '=', $request->login_id],
+                        ['user_type', '=', $request->user_type],
+                        ['un_matched_id', '=', $value->messaged_user_id],
+                    ])->orWhere([
+                        ['un_matched_id', '=', $request->login_id],
+                        ['user_type', '=', 'singleton'],
+                        ['user_id', '=', $value->messaged_user_id],
+                    ]);
+                })->first();
+
+                if (!empty($unMatch)) {
+                    $list[$key]->chat_status = 'disabled';
+                }else{
+                    $list[$key]->chat_status = 'enabled';
+                }
+
+                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'singleton'], ['deleted_by', '!=', $request->login_id]])
+                                        ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])                        
                                         ->select('chat_histories.message')
                                         ->orderBy('chat_histories.id', 'desc')
                                         ->first();
@@ -264,22 +311,27 @@ class Chat extends Controller
                 $list[$key]->last_message = $last_message->message;
                 $list[$key]->unread_counter = $unreadCounter;
                 
-                if (!empty($block) || !empty($report) || !empty($unMatch)) {
-                    $list[$key]->chat_status = 'disabled';
+                if (empty($block) && empty($report)) {
+                    $filteredList[] = $value;
                 }else{
-                    $list[$key]->chat_status = 'enabled';
+                    $ids[] = $value->messaged_user_id;
                 }
             }   
 
-            $overallUnreadCounter = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'singleton']])                        
-            ->whereNull('read_at')->count();
+            $overallUnreadCounter_db = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'singleton']])->whereNull('read_at');                        
+            
+            if (!empty($ids)) {
+                $overallUnreadCounter_db->whereNotIn('id', $ids);
+            }
+            
+            $overallUnreadCounter = $overallUnreadCounter_db->count();
 
-            if(!$list->isEmpty()){
+            if(!empty($filteredList)){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.messaged-users.success'),
                     'overall_unread_counter' => $overallUnreadCounter,
-                    'data'      => $list,
+                    'data'      => $filteredList,
                 ],200);
             }else{
                 return response()->json([
@@ -329,12 +381,12 @@ class Chat extends Controller
 
             $per_page = 10;
             $page_number = $request->input(key:'page_number', default:1);
-            $total = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])
-                                ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
+            $total = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type], ['deleted_by', '!=', $request->login_id]])
+                                ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
                                 ->count();
 
-            $chat = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])
-                                ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
+            $chat = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type], ['deleted_by', '!=', $request->login_id]])
+                                ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
                                 ->orderBy('id', 'desc')
                                 ->offset(($page_number - 1) * $per_page)
                                 ->limit($per_page)
@@ -626,6 +678,96 @@ class Chat extends Controller
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.invitation.invalid'),
+                ],400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
+
+    function deleteChat(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'  => 'required||numeric',
+            'user_type' => [
+                'required' ,
+                Rule::in(['singleton']),
+            ],
+            'messaged_user_id'  => 'required||numeric',
+            'messaged_user_type' => [
+                'required' ,
+                Rule::in(['singleton']),
+            ],
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+
+            if($request->user_type == 'singleton'){
+                $userExists = Singleton::find($request->login_id);
+            }else{
+                $userExists = ParentsModel::find($request->login_id);
+            }
+
+            $chatHistory = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type]])
+                                ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
+                                ->get();
+            
+            if(!$chatHistory->isEmpty()){
+                foreach ($chatHistory as $chatRecord) {
+                    if (!empty($chatRecord->deleted_by) && isset($chatRecord->deleted_by) && ($chatRecord->deleted_by !=  $request->login_id)) {
+                        $delete = $chatRecord->delete();
+                    } else {
+                        $chatRecord->deleted_by = $request->login_id;
+                        $delete = $chatRecord->save();
+                    }
+                }
+            
+                if ($delete) {
+                    $chat = MessagedUsers::where(function ($query) use ($request) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['messaged_user_id', '=', $request->messaged_user_id],
+                            ['messaged_user_type', '=', $request->messaged_user_type],
+                        ])->orWhere([
+                            ['user_id', '=', $request->messaged_user_id],
+                            ['user_type', '=', $request->messaged_user_type],
+                            ['messaged_user_id', '=', $request->login_id],
+                            ['messaged_user_type', '=', $request->user_type],
+                        ]);
+                    })->first();
+
+                    if (!empty($chat->deleted_by) && isset($chat->deleted_by) && ($chatRecord->deleted_by !=  $request->login_id)) {
+                        $delete = $chat->delete();
+                    } else {
+                        $chat->deleted_by = $request->login_id;
+                        $delete = $chat->save();
+                    }
+                }
+
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.singletons.delete-chat.success'),
+                ],200);
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.delete-chat.failure'),
                 ],400);
             }
         } catch (\Exception $e) {

@@ -11,10 +11,12 @@ use App\Models\ParentsModel;
 use App\Models\PremiumFeatures;
 use App\Models\RecievedMatches;
 use App\Models\ReferredMatches;
+use App\Models\RematchRequests;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\UnMatches;
 use App\Notifications\UnmatchNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -297,16 +299,19 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
-                    // $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
-                    // $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton']])->first();
-                    $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
+                    // $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
 
-                    // if (empty($block) && empty($report)) {
-                    //     // $users[] = $m;
-                    //     $m->visibility = 'enabled';
-                    // }else{
-                    //     $m->visibility = 'disabled';
-                    // }
+                    $unMatch = UnMatches::where(function ($query) use ($request, $singleton_id) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['un_matched_id', '=', $singleton_id],
+                        ])->orWhere([
+                            ['un_matched_id', '=', $request->login_id],
+                            ['user_type', '=', 'singleton'],
+                            ['user_id', '=', $singleton_id],
+                        ]);
+                    })->first();
 
                     if (empty($unMatch)) {
                         $users[] = $m;
@@ -394,16 +399,19 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
-                    // $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
-                    // $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton']])->first();
-                    $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
+                    // $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
 
-                    // if (empty($block) && empty($report)) {
-                    //     // $users[] = $m;
-                    //     $m->visibility = 'enabled';
-                    // }else{
-                    //     $m->visibility = 'disabled';
-                    // }
+                    $unMatch = UnMatches::where(function ($query) use ($request, $singleton_id) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['un_matched_id', '=', $singleton_id],
+                        ])->orWhere([
+                            ['un_matched_id', '=', $request->login_id],
+                            ['user_type', '=', 'singleton'],
+                            ['user_id', '=', $singleton_id],
+                        ]);
+                    })->first();
 
                     if (empty($unMatch)) {
                         $users[] = $m;
@@ -489,16 +497,19 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
-                    // $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_id], ['blocked_user_type', '=', 'singleton']])->first();
-                    // $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $singleton_id], ['reported_user_type', '=', 'singleton']])->first();
-                    $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
+                    // $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
 
-                    // if (empty($block) && empty($report)) {
-                    //     // $users[] = $m;
-                    //     $m->visibility = 'enabled';
-                    // }else{
-                    //     $m->visibility = 'disabled';
-                    // }
+                    $unMatch = UnMatches::where(function ($query) use ($request, $singleton_id) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['un_matched_id', '=', $singleton_id],
+                        ])->orWhere([
+                            ['un_matched_id', '=', $request->login_id],
+                            ['user_type', '=', 'singleton'],
+                            ['user_id', '=', $singleton_id],
+                        ]);
+                    })->first();
 
                     if (empty($unMatch)) {
                         $users[] = $m;
@@ -561,8 +572,6 @@ class Matches extends Controller
             $singleton_id = $request->login_id;
             $page_number = $request->input(key:'page_number', default:1);
             $total = DB::table('matches')
-                        // ->where([['matches.user_id', '=', $request->login_id], ['matches.user_type', '=', $request->user_type]])
-                        // ->orWhere([['matches.match_id', '=', $request->login_id], ['matches.user_type', '=', 'singleton']])
                         ->where(function($query) use ($singleton_id) {
                             $query->where([['matches.user_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton']])
                                   ->orWhere([['matches.match_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton']]);
@@ -575,8 +584,6 @@ class Matches extends Controller
                         ->count();
 
             $match = DB::table('matches')
-                        // ->where([['matches.user_id', '=', $request->login_id], ['matches.user_type', '=', $request->user_type]])
-                        // ->orWhere([['matches.match_id', '=', $request->login_id], ['matches.user_type', '=', 'singleton']])
                         ->where(function($query) use ($singleton_id) {
                             $query->where([['matches.user_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton']])
                                   ->orWhere([['matches.match_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton']]);
@@ -586,7 +593,6 @@ class Matches extends Controller
                                   ->orWhere('match_type', '=', 'un-matched')
                                   ->orWhere('match_type', '=', 're-matched');
                         })
-                        // ->join('singletons', 'matches.match_id', '=', 'singletons.id')
                         ->leftjoin('singletons', function($join) use ($singleton_id) {
                             $join->on('singletons.id','=','matches.match_id')
                                  ->where('matches.match_id','!=',$singleton_id);
@@ -607,15 +613,20 @@ class Matches extends Controller
             }
 
             if(!$match->isEmpty()){
-                // $users = [];
                 foreach ($match as $m) {
                     $singleton_ids = $m->id;
-                    // $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $singleton_ids], ['blocked_user_type', '=', 'singleton']])->first();
-                    // $report = ReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $singleton_ids], ['reported_user_type', '=', 'singleton']])->first();
-                    $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_ids]])->first();
-                    // if (empty($block) && empty($report) && empty($unMatch)) {
-                    //     $users[] = $m;
-                    // }
+
+                    $unMatch = UnMatches::where(function ($query) use ($request, $singleton_ids) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['un_matched_id', '=', $singleton_ids],
+                        ])->orWhere([
+                            ['un_matched_id', '=', $request->login_id],
+                            ['user_type', '=', 'singleton'],
+                            ['user_id', '=', $singleton_ids],
+                        ]);
+                    })->first();
 
                     if (empty($unMatch)) {
                         // $users[] = $m;
@@ -623,25 +634,14 @@ class Matches extends Controller
                     }else{
                         $m->visibility = 'disabled';
                     }
-
-                    // empty($block) ? $m->blocked = '' : 'Blocked';
-                    // empty($report) ? $m->Reported = '' : 'Reported';
-                    // empty($unMatch) ? $m->Unmatched = '' : 'Unmatched';
                 }
 
-                // if(!empty($users)){
-                    return response()->json([
-                        'status'    => 'success',
-                        'message'   => __('msg.singletons.match.success'),
-                        'data'      => $match,
-                        'total'     => $total
-                    ],200);
-                // }else{
-                //     return response()->json([
-                //         'status'    => 'failed',
-                //         'message'   => __('msg.singletons.match.failure'),
-                //     ],400);
-                // }
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => __('msg.singletons.match.success'),
+                    'data'      => $match,
+                    'total'     => $total
+                ],200);
             }else{
                 return response()->json([
                     'status'    => 'failed',
@@ -656,6 +656,218 @@ class Matches extends Controller
             ],500);
         }
     }
+
+    // public function reMatch(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'language' => [
+    //             'required' ,
+    //             Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+    //         ],
+    //         'login_id'  => 'required||numeric',
+    //         'user_type' => [
+    //             'required' ,
+    //             Rule::in(['singleton']),
+    //         ],
+    //         're_matched_id'   => 'required||numeric',
+    //     ]);
+
+    //     if($validator->fails()){
+    //         return response()->json([
+    //             'status'    => 'failed',
+    //             'message'   => __('msg.Validation Failed!'),
+    //             'errors'    => $validator->errors()
+    //         ],400);
+    //     }
+
+    //     try {
+    //         $singleton_id = $request->login_id;
+    //         $re_matched_id = $request->re_matched_id;
+    //         $premium = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+    //         $featureStatus = PremiumFeatures::whereId(1)->first();
+    //         if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
+    //             return response()->json([
+    //                 'status'    => 'failed',
+    //                 'message'   => __('msg.singletons.re-match.premium'),
+    //             ],400);
+    //         }
+
+    //         $userExists = Singleton::find($request->re_matched_id);
+    //         if(empty($userExists) || $userExists->staus == 'Deleted' || $userExists->staus == 'Blocked'){
+    //             return response()->json([
+    //                 'status'    => 'failed',
+    //                 'message'   => __('msg.singletons.re-match.invalid'),
+    //             ],400);
+    //         }
+
+    //         $rematched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id]])
+    //                                     ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id]])
+    //                                     ->first();
+
+    //         if(!empty($rematched) && $rematched->is_rematched == 'yes'){
+    //             return response()->json([
+    //                 'status'    => 'failed',
+    //                 'message'   => __('msg.singletons.re-match.rematched'),
+    //             ],400);
+    //         }
+
+    //         $blocked = BlockList::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $request->re_matched_id], ['blocked_user_type', '=', 'singleton']])
+    //                                     ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['blocked_user_id', '=', $request->login_id], ['blocked_user_type', '=', 'singleton']])
+    //                                     ->first();
+
+    //         if(!empty($blocked)){
+    //             return response()->json([
+    //                 'status'    => 'failed',
+    //                 'message'   => __('msg.singletons.re-match.failure'),
+    //             ],400);
+    //         }
+
+    //         $reported = ReportedUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $request->re_matched_id], ['reported_user_type', '=', 'singleton']])
+    //                                     ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['reported_user_id', '=', $request->login_id], ['reported_user_type', '=', 'singleton']])
+    //                                     ->first();
+
+    //         if(!empty($reported)){
+    //             return response()->json([
+    //                 'status'    => 'failed',
+    //                 'message'   => __('msg.singletons.re-match.failure'),
+    //             ],400);
+    //         }
+
+    //         $unmatched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id], ['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
+    //                                     ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
+    //                                     ->first();
+
+    //         if(!empty($unmatched)){
+               
+    //             $matched = ModelsMatches::where([['matches.user_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched'], ['matches.status', '=', 'available']])
+    //                                     ->orWhere([['matches.match_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched'], ['matches.status', '=', 'available']])
+    //                                     ->first(['matches.*']);
+
+    //             $queue = ModelsMatches::leftjoin('singletons', function($join) use ($re_matched_id) {
+    //                                         $join->on('singletons.id','=','matches.match_id')
+    //                                             ->where('matches.match_id','!=',$re_matched_id);
+    //                                         $join->orOn('singletons.id','=','matches.user_id')
+    //                                             ->where('matches.user_id','!=',$re_matched_id);
+    //                                     })
+    //                                     ->where('singletons.chat_status', '=','available')
+    //                                     ->where(function($query) use ($re_matched_id){
+    //                                         $query->where([['matches.user_id', '=', $re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']])
+    //                                               ->orWhere([['matches.match_id', '=', $re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']]);
+    //                                     })
+    //                                     ->orderBy('matches.queue', 'DESC')->first(['matches.*']);
+
+    //             $other_queue = ModelsMatches::
+    //                                     leftjoin('singletons', function($join) use ($singleton_id) {
+    //                                         $join->on('singletons.id','=','matches.match_id')
+    //                                             ->where('matches.match_id','!=',$singleton_id);
+    //                                         $join->orOn('singletons.id','=','matches.user_id')
+    //                                             ->where('matches.user_id','!=',$singleton_id);
+    //                                     })
+    //                                     ->where('singletons.chat_status', '=','available')
+    //                                     ->where(function($query) use ($singleton_id){
+    //                                         $query->where([['matches.user_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']])
+    //                                               ->orWhere([['matches.match_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']]);
+    //                                     })
+    //                                     ->orderBy('matches.queue', 'DESC')->first(['matches.*']);
+
+    //             if (empty($matched)) {
+    //                 $notify = ModelsMatches::where([['matches.user_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched']])
+    //                 ->orWhere([['matches.match_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched']])
+    //                 ->first(['matches.*']);
+
+    //                 if (!empty($notify)) {
+    //                     // send congratulations fcm notification
+    //                     $user2 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
+    //                     $user1 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
+
+    //                     if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
+    //                         $title = __('msg.Profile Matched');
+    //                         $body = __('msg.Congratulations It’s a Match!');
+    //                         $token1 = $user1->fcm_token;
+    //                         $data = array(
+    //                             'notType' => "profile_matched",
+    //                             'user1_id' => $user1 ? $user1->id : '',
+    //                             'user1_name' => $user1 ?  $user1->name : '',
+    //                             'user1_profile' => $user1 ?  $user1->photo1 : '',
+    //                             'user2_id' => $user2 ? $user2->id : '',
+    //                             'user2_name' => $user2 ? $user2->name : '',
+    //                             'user2_profile' => $user2 ? $user2->photo1 : '',
+    //                         );
+    //                        sendFCMNotifications($token1, $title, $body, $data);
+
+    //                        $token2 = $user2->fcm_token;
+    //                        $data2 = array(
+    //                            'notType' => "profile_matched",
+    //                            'user1_id' => $user2 ? $user2->id : '',
+    //                            'user1_name' => $user2 ?  $user2->name : '',
+    //                            'user1_profile' => $user2 ?  $user2->photo1 : '',
+    //                            'user2_id' => $user1 ? $user1->id : '',
+    //                            'user2_name' => $user1 ? $user1->name : '',
+    //                            'user2_profile' => $user1 ? $user1->photo1 : '',
+    //                        );
+    //                        sendFCMNotifications($token2, $title, $body, $data2);
+    //                     }
+    //                 }
+
+    //                 $queue_no = 0;
+    //                 $match_type = 'matched';
+                    
+    //             } elseif (!empty($queue) && !empty($matched)) {
+    //                 $queue_no = $queue ? $queue->queue+1 : 0;
+    //                 $match_type = 'hold';
+    //             } else{
+    //                 $queue_no =  $other_queue ?  $other_queue->queue +1 : 0;
+    //                 $match_type = 'hold';
+    //             }
+
+                
+    //             $re_matched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id], ['match_type', '=', 'un-matched']])
+    //                             ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['match_type', '=', 'un-matched']])
+    //                             ->update(['match_type' => $match_type, 'is_reset' => 'no', 'queue' => $queue_no, 'is_rematched' => 'yes', 'updated_at' => date('Y-m-d H:i:s'), 'status' => 'available']);
+                
+                
+    //             if($re_matched){
+    //                 UnMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->re_matched_id]])
+    //                             ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['un_matched_id', '=', $request->login_id]])
+    //                             ->delete();
+
+
+    //                 $myMatch = MyMatches::updateOrInsert(
+    //                     ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'matched_id' => $request->re_matched_id],
+    //                     ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'matched_id' => $request->re_matched_id]
+    //                 );
+    
+    //                 if ($myMatch){
+    //                     $recieved = RecievedMatches::updateOrInsert(
+    //                         ['user_id' => $request->re_matched_id, 'user_type' => 'singleton', 'recieved_match_id' => $request->login_id],
+    //                         ['user_id' => $request->re_matched_id, 'user_type' => 'singleton', 'recieved_match_id' => $request->login_id]
+    //                     ); 
+    //                 }
+                    
+    //                 return response()->json([
+    //                     'status'    => 'success',
+    //                     'message'   => __('msg.singletons.re-match.success'),
+    //                 ],200);
+    //             }else{
+    //                 return response()->json([
+    //                     'status'    => 'failed',
+    //                     'message'   => __('msg.singletons.re-match.failure'),
+    //                 ],400);
+    //             }
+    //         }else{
+    //             return response()->json([
+    //                 'status'    => 'failed',
+    //                 'message'   => __('msg.singletons.re-match.not-found'),
+    //             ],400);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status'    => 'failed',
+    //             'message'   => __('msg.error'),
+    //             'error'     => $e->getMessage()
+    //         ],500);
+    //     }
+    // }
 
     public function reMatch(Request $request)
     {
@@ -738,92 +950,25 @@ class Matches extends Controller
                                         ->first();
 
             if(!empty($unmatched)){
-               
-                $matched = ModelsMatches::where([['matches.user_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched'], ['matches.status', '=', 'available']])
-                                        ->orWhere([['matches.match_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched'], ['matches.status', '=', 'available']])
-                                        ->first(['matches.*']);
-
-                $queue = ModelsMatches::leftjoin('singletons', function($join) use ($re_matched_id) {
-                                            $join->on('singletons.id','=','matches.match_id')
-                                                ->where('matches.match_id','!=',$re_matched_id);
-                                            $join->orOn('singletons.id','=','matches.user_id')
-                                                ->where('matches.user_id','!=',$re_matched_id);
-                                        })
-                                        ->where('singletons.chat_status', '=','available')
-                                        ->where(function($query) use ($re_matched_id){
-                                            $query->where([['matches.user_id', '=', $re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']])
-                                                  ->orWhere([['matches.match_id', '=', $re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']]);
-                                        })
-                                        ->orderBy('matches.queue', 'DESC')->first(['matches.*']);
-
-                $other_queue = ModelsMatches::
-                                        leftjoin('singletons', function($join) use ($singleton_id) {
-                                            $join->on('singletons.id','=','matches.match_id')
-                                                ->where('matches.match_id','!=',$singleton_id);
-                                            $join->orOn('singletons.id','=','matches.user_id')
-                                                ->where('matches.user_id','!=',$singleton_id);
-                                        })
-                                        ->where('singletons.chat_status', '=','available')
-                                        ->where(function($query) use ($singleton_id){
-                                            $query->where([['matches.user_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']])
-                                                  ->orWhere([['matches.match_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'hold'], ['matches.status', '=', 'available'], ['is_rematched', '=', 'no']]);
-                                        })
-                                        ->orderBy('matches.queue', 'DESC')->first(['matches.*']);
-
-                if (empty($matched)) {
-                    $notify = ModelsMatches::where([['matches.user_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched']])
-                    ->orWhere([['matches.match_id', '=', $request->re_matched_id], ['matches.user_type', '=', 'singleton'], ['matches.match_type', '=', 'matched']])
-                    ->first(['matches.*']);
-
-                    if (!empty($notify)) {
-                        // send congratulations fcm notification
-                        $user2 = Singleton::where([['id', '=', $notify->user_id],['user_type', '=', 'singleton']])->first();
-                        $user1 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
-
-                        if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
-                            $title = __('msg.Profile Matched');
-                            $body = __('msg.Congratulations It’s a Match!');
-                            $token1 = $user1->fcm_token;
-                            $data = array(
-                                'notType' => "profile_matched",
-                                'user1_id' => $user1 ? $user1->id : '',
-                                'user1_name' => $user1 ?  $user1->name : '',
-                                'user1_profile' => $user1 ?  $user1->photo1 : '',
-                                'user2_id' => $user2 ? $user2->id : '',
-                                'user2_name' => $user2 ? $user2->name : '',
-                                'user2_profile' => $user2 ? $user2->photo1 : '',
-                            );
-                           sendFCMNotifications($token1, $title, $body, $data);
-
-                           $token2 = $user2->fcm_token;
-                           $data2 = array(
-                               'notType' => "profile_matched",
-                               'user1_id' => $user2 ? $user2->id : '',
-                               'user1_name' => $user2 ?  $user2->name : '',
-                               'user1_profile' => $user2 ?  $user2->photo1 : '',
-                               'user2_id' => $user1 ? $user1->id : '',
-                               'user2_name' => $user1 ? $user1->name : '',
-                               'user2_profile' => $user1 ? $user1->photo1 : '',
-                           );
-                           sendFCMNotifications($token2, $title, $body, $data2);
-                        }
-                    }
-
-                    $queue_no = 0;
-                    $match_type = 'matched';
-                    
-                } elseif (!empty($queue) && !empty($matched)) {
-                    $queue_no = $queue ? $queue->queue+1 : 0;
-                    $match_type = 'hold';
-                } else{
-                    $queue_no =  $other_queue ?  $other_queue->queue +1 : 0;
-                    $match_type = 'hold';
-                }
-
                 
-                $re_matched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id], ['match_type', '=', 'un-matched']])
-                                ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['match_type', '=', 'un-matched']])
-                                ->update(['match_type' => $match_type, 'is_reset' => 'no', 'queue' => $queue_no, 'is_rematched' => 'yes', 'updated_at' => date('Y-m-d H:i:s'), 'status' => 'available']);
+                $data = [
+                    'user_id' => $request->login_id,
+                    'user_type' => $request->user_type,
+                    'matched_table_id' => $unmatched->id,
+                    'match_id' => $request->re_matched_id,
+                    'matched_parent_id' => $unmatched->matched_parent_id,
+                    'created_at' => Carbon::now()
+                ];
+                
+                $uniqueKeys = [
+                    'user_id' => $request->login_id,
+                    'user_type' => $request->user_type,
+                    'matched_table_id' => $unmatched->id,
+                    'match_id' => $request->re_matched_id,
+                    'matched_parent_id' => $unmatched->matched_parent_id,
+                ];
+                
+                $re_matched = DB::table('rematch_requests')->updateOrInsert($uniqueKeys, $data);
                 
                 
                 if($re_matched){
@@ -831,18 +976,10 @@ class Matches extends Controller
                                 ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['un_matched_id', '=', $request->login_id]])
                                 ->delete();
 
-
                     $myMatch = MyMatches::updateOrInsert(
                         ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'matched_id' => $request->re_matched_id],
                         ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'matched_id' => $request->re_matched_id]
                     );
-    
-                    if ($myMatch){
-                        $recieved = RecievedMatches::updateOrInsert(
-                            ['user_id' => $request->re_matched_id, 'user_type' => 'singleton', 'recieved_match_id' => $request->login_id],
-                            ['user_id' => $request->re_matched_id, 'user_type' => 'singleton', 'recieved_match_id' => $request->login_id]
-                        ); 
-                    }
                     
                     return response()->json([
                         'status'    => 'success',
