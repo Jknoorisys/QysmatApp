@@ -174,6 +174,7 @@ Route::prefix('parent')->group(function () {
     Route::post('messaged-users-list' , [ParentsChat::class, 'messagedUsers']);
     Route::post('chat-history' , [ParentsChat::class, 'chatHistory']);
     Route::post('invite-child' , [ParentsChat::class, 'inviteChild']);
+    Route::post('delete-chat' , [ParentsChat::class, 'deleteChat']);
 
     // Notifications
     Route::post('get-notifications' , [ParentsNotifications::class, 'index']);
