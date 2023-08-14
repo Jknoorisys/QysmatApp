@@ -680,11 +680,14 @@ class Chat extends Controller
                 'required' ,
                 Rule::in(['parent']),
             ],
-            'messaged_user_id'  => 'required||numeric',
+            'singleton_id'       => 'required||numeric',
+            'messaged_user_id'   => 'required||numeric',
             'messaged_user_type' => [
                 'required' ,
                 Rule::in(['parent']),
             ],
+            'messaged_user_singleton_id'   => 'required||numeric',
+            'page_number'  => 'required||numeric',
         ]);
 
         if($validator->fails()){
