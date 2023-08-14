@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-body">
                 <center class="m-t-30">
-                    <img src="{{ $admin->profile ? asset('uploads/admin-profile/'.$admin->profile) : 'assets/images/users/5.jpg'}}" class="rounded-circle" width="150" />
+                    <img src="{{ $admin->profile ? asset('uploads/admin-profile/'.$admin->profile) : 'assets/images/users/avatar.png'}}" class="rounded-circle" width="150" />
                     <h4 class="card-title m-t-10">{{$admin->name}}</h4>
                     <h6 class="card-subtitle">{{$admin->email}}</h6>
                 </center>
