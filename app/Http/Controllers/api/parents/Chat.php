@@ -678,7 +678,7 @@ class Chat extends Controller
             'login_id'  => 'required||numeric',
             'user_type' => [
                 'required' ,
-                Rule::in(['singleton']),
+                Rule::in(['parent']),
             ],
             'messaged_user_id'  => 'required||numeric',
             'messaged_user_type' => [
