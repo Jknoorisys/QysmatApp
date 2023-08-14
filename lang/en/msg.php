@@ -826,6 +826,11 @@ return [
             'failure' => "Unable to Close Chat, Please Try Again...",
         ],
 
+        'delete-chat' => [
+            'success' => 'Chat Deleted!',
+            'failure' => "Unable to Delete Chat, Please Try Again...",
+        ],
+
         'invitation' => [
             'success' => 'Invitation Sent...',
             'failure' => "Unable to Send Invitation, Please Try Again...",

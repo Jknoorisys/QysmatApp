@@ -115,7 +115,7 @@ class InstantMatch extends Controller
                     'message'   => __('msg.singletons.send-request.limit'),
                 ],400);
             }
-            
+
 
             $data = [
                 'user_id' => $request->login_id,

@@ -3,19 +3,9 @@
 namespace App\Http\Controllers\api\reset_profile_search;
 
 use App\Http\Controllers\Controller;
-use App\Models\BlockList;
-use App\Models\ChatHistory;
-use App\Models\InstantMatchRequest;
-use App\Models\LastSwipe;
-use App\Models\Matches;
-use App\Models\MessagedUsers;
-use App\Models\MyMatches;
-use App\Models\ParentChild;
+
 use App\Models\ParentsModel;
 use App\Models\PremiumFeatures;
-use App\Models\RecievedMatches;
-use App\Models\ReferredMatches;
-use App\Models\ReportedUsers;
 use App\Models\ResetProfileSearch as ModelsResetProfileSearch;
 use App\Models\Singleton;
 use App\Models\SwipedUpUsers;
@@ -23,7 +13,6 @@ use App\Models\UnMatches;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 

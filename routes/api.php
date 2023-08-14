@@ -108,6 +108,7 @@ Route::prefix('singleton')->group(function () {
     Route::post('chat-history' , [Chat::class, 'chatHistory']);
     Route::post('close-chat' , [Chat::class, 'closeChat']);
     Route::post('invite-parent' , [Chat::class, 'inviteParent']);
+    Route::post('delete-chat' , [Chat::class, 'deleteChat']);
 
     // Notifications
     Route::post('get-notifications' , [Notifications::class, 'index']);

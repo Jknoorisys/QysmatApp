@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('messaged_user_singleton_id');
             $table->text('message');
             $table->timestamp('read_at')->nullable();
+            $table->integer('deleted_by');
             $table->enum('status',['active','inactive'])->default('active');
             $table->timestamps();
         });
