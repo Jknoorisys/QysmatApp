@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\api\reset_profile_search;
 
 use App\Http\Controllers\Controller;
-
+use App\Models\Matches;
 use App\Models\ParentsModel;
 use App\Models\PremiumFeatures;
 use App\Models\ResetProfileSearch as ModelsResetProfileSearch;
@@ -239,6 +239,9 @@ class ResetProfileSearch extends Controller
             // $swipe = LastSwipe::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
             $swipedup = SwipedUpUsers::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
             $unmatch = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
+            $un_match = Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
+            ->orWhere([['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
+            ->updat(['match_type', '=', 'liked']);
 
             if($premium){
                 ModelsResetProfileSearch::insert(['user_id' => $request->login_id, 'user_type' => $request->user_type, 'created_at' => Carbon::now()]);

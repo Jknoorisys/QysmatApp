@@ -577,8 +577,8 @@ class Matches extends Controller
                                   ->orWhere([['matches.match_id', '=', $singleton_id], ['matches.user_type', '=', 'singleton']]);
                         })
                         ->where(function($query) {
-                            $query->where('match_type', '=', 'matched')
-                                  ->orWhere('match_type', '=', 'un-matched')
+                            $query->whereIn('match_type', '=', 'matched')
+                                  ->orWhere([['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
                                   ->orWhere('match_type', '=', 're-matched');
                         })
                         ->count();
@@ -590,7 +590,7 @@ class Matches extends Controller
                         })
                         ->where(function($query) {
                             $query->where('match_type', '=', 'matched')
-                                  ->orWhere('match_type', '=', 'un-matched')
+                                  ->orWhere([['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
                                   ->orWhere('match_type', '=', 're-matched');
                         })
                         ->leftjoin('singletons', function($join) use ($singleton_id) {
