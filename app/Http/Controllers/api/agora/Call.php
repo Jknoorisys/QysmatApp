@@ -45,8 +45,13 @@ class Call extends Controller
                 Rule::in(['audio','video']),
             ],
             'channel_name' => 'required',
+
             'singleton_id' => [
                 'required_if:caller_user_type,parent',
+            ],
+
+            'receiver_singleton_id' => [
+                'required_if:receiver_user_type,parent',
             ],
         ]);
 
@@ -78,18 +83,27 @@ class Call extends Controller
 
             if ($request->receiver_user_type == 'singleton') {
                 $reciever = Singleton::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
-            } else {
-                $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
-            }
 
-            $block = BlockList ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['blocked_user_id', '=', $request->receiver_id], ['blocked_user_type', '=', $request->receiver_user_type]])
+                $block = BlockList ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['blocked_user_id', '=', $request->receiver_id], ['blocked_user_type', '=', $request->receiver_user_type]])
                                 ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['blocked_user_id', '=', $request->caller_id], ['blocked_user_type', '=', $request->caller_user_type]])->first();
 
-            $report = ReportedUsers ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['reported_user_id', '=', $request->receiver_id], ['reported_user_type', '=', $request->receiver_user_type]])
+                $report = ReportedUsers ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['reported_user_id', '=', $request->receiver_id], ['reported_user_type', '=', $request->receiver_user_type]])
                                     ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['reported_user_id', '=', $request->caller_id], ['reported_user_type', '=', $request->caller_user_type]])->first();
+                                    
+                $unMatch = UnMatches ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['un_matched_id', '=', $request->receiver_id]])
+                                    ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['un_matched_id', '=', $request->caller_id]])->first();
+            } else {
+                $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
 
-            $unMatch = UnMatches ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['un_matched_id', '=', $request->receiver_id]])
-                                ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['un_matched_id', '=', $request->caller_id]])->first();
+                $block = BlockList ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['blocked_user_id', '=', $request->receiver_singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])
+                                ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['blocked_user_id', '=', $request->singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->receiver_singleton_id]])->first();
+
+                $report = ReportedUsers ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['reported_user_id', '=', $request->receiver_singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])
+                                    ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['reported_user_id', '=', $request->singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->receiver_singleton_id]])->first();
+
+                $unMatch = UnMatches ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['un_matched_id', '=', $request->receiver_singleton_id], ['singleton_id', '=', $request->singleton_id]])
+                                    ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['un_matched_id', '=', $request->singleton_id], ['singleton_id', '=', $request->receiver_singleton_id]])->first();                    
+            }
 
             if (!empty($block) || !empty($report) || !empty($unMatch)) {
                 return response()->json([
