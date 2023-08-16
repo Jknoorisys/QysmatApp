@@ -173,7 +173,14 @@ class SubscriptionPlans extends Controller
                 $user = ParentsModel::where([['id', '=', $request->login_id],['status', '=', 'Unblocked']])->first();
             }
 
-            if($user->active_subscription_id != 1){
+            $featureStatus = PremiumFeatures::whereId(1)->first();
+            if ((!empty($featureStatus) && $featureStatus->status == 'active')) {
+                $user->premium_features = 'disabled';
+            }else{
+                $user->premium_features = 'enabled';
+            }
+
+            if($user->active_subscription_id != 1 || $user->premium_features == 'enabled'){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.premium.success'),
