@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api\singletons;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\BlockList;
+use App\Models\Matches;
+use App\Models\MessagedUsers;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
 use App\Models\Singleton;
@@ -78,6 +80,27 @@ class BlockOrReportUser extends Controller
             $user_details                    = $user->save();
 
             if($user_details){
+                $close = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked']])
+                ->orWhere([['id', '=', $request->blocked_user_id],['user_type', '=', 'singleton'],['status', '=', 'Unblocked']])            
+                ->update(['chat_status' => 'available']);
+        
+                if($close){
+                    Matches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['match_id', '=', $request->blocked_user_id],['match_type', '=', 'matched']])
+                                    ->orWhere([['user_id', '=', $request->blocked_user_id],['user_type', '=', 'singleton'],['match_id', '=', $request->login_id],['match_type', '=', 'matched']])
+                                    ->update([
+                                        'status' => 'available',
+                                        'updated_at'   => date('Y-m-d H:i:s')
+                                    ]);
+                    $data = [
+                        'conversation' => 'no',
+                        'updated_at'   => date('Y-m-d H:i:s')
+                    ];
+
+                    MessagedUsers::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->blocked_user_id],['user_type', '=', 'singleton']])
+                                            ->orWhere([['user_id', '=', $request->blocked_user_id],['user_type', '=', 'singleton'],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
+                                            ->update($data);
+                }
+
                 $sender = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
                 $reciever = Singleton::where([['id', '=', $request->blocked_user_id], ['status', '=', 'Unblocked']])->first();
 
@@ -154,6 +177,27 @@ class BlockOrReportUser extends Controller
             $user_details = $user->save();
 
             if($user_details){
+                $close = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked']])
+                ->orWhere([['id', '=', $request->reported_user_id],['user_type', '=', 'singleton'],['status', '=', 'Unblocked']])            
+                ->update(['chat_status' => 'available']);
+        
+                if($close){
+                    Matches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['match_id', '=', $request->reported_user_id],['match_type', '=', 'matched']])
+                                    ->orWhere([['user_id', '=', $request->reported_user_id],['user_type', '=', 'singleton'],['match_id', '=', $request->login_id],['match_type', '=', 'matched']])
+                                    ->update([
+                                        'status' => 'available',
+                                        'updated_at'   => date('Y-m-d H:i:s')
+                                    ]);
+                    $data = [
+                        'conversation' => 'no',
+                        'updated_at'   => date('Y-m-d H:i:s')
+                    ];
+
+                    MessagedUsers::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->reported_user_id],['user_type', '=', 'singleton']])
+                                            ->orWhere([['user_id', '=', $request->reported_user_id],['user_type', '=', 'singleton'],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
+                                            ->update($data);
+                }
+
                 $details = [
                     'title' => __('msg.User Reported'),
                     'msg'   => __('msg.has Reported').' '.$userExists->name.' '.$userExists->lname,
