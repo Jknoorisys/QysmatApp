@@ -526,6 +526,22 @@ class Matches extends Controller
                         ]);
                     })->first();
 
+                    $unMatched = ModelsMatches::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', 'parent'],
+                            ['match_id', '=', $m->singleton_id],
+                            ['singleton_id', '=', $request->singleton_id],
+                            ['match_type', '=', 'un-matched'],
+                        ])->orWhere([
+                            ['user_id', '=', $m->parent_id],
+                            ['user_type', '=', 'parent'],
+                            ['match_id', '=', $request->singleton_id],
+                            ['singleton_id', '=', $m->singleton_id],
+                            ['match_type', '=', 'un-matched'],
+                        ]);
+                    })->first();
+
                     if (empty($unMatch)) {
                         // $users[] = $m;
                         $m->visibility = 'enabled';
