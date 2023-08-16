@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\singletons;
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
 use App\Models\Matches as ModelsMatches;
+use App\Models\MessagedUsers;
 use App\Models\MyMatches;
 use App\Models\ParentChild;
 use App\Models\ParentsModel;
@@ -218,6 +219,27 @@ class Matches extends Controller
                 $user_details                    = $user->save();
 
                 if($user_details){
+                    $close = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked']])
+                                ->orWhere([['id', '=', $request->un_matched_id],['user_type', '=', 'singleton'],['status', '=', 'Unblocked']])            
+                                ->update(['chat_status' => 'available']);
+                        
+                    if($close){
+                        ModelsMatches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['match_id', '=', $request->un_matched_id],['match_type', '=', 'matched']])
+                                        ->orWhere([['user_id', '=', $request->un_matched_id],['user_type', '=', 'singleton'],['match_id', '=', $request->login_id],['match_type', '=', 'matched']])
+                                        ->update([
+                                            'status' => 'available',
+                                            'updated_at'   => date('Y-m-d H:i:s')
+                                        ]);
+                        $data = [
+                            'conversation' => 'no',
+                            'updated_at'   => date('Y-m-d H:i:s')
+                        ];
+
+                        MessagedUsers::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['messaged_user_id', '=', $request->un_matched_id],['user_type', '=', 'singleton']])
+                                                ->orWhere([['user_id', '=', $request->un_matched_id],['user_type', '=', 'singleton'],['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type]])
+                                                ->update($data);
+                    }
+                    
                     $sender = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
                     $reciever = Singleton::where([['id', '=', $request->un_matched_id], ['status', '=', 'Unblocked']])->first();
                     $msg = __('msg.has Unmatched Your Profile');

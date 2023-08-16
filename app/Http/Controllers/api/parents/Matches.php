@@ -542,7 +542,7 @@ class Matches extends Controller
                         ]);
                     })->first();
 
-                    if (empty($unMatch)) {
+                    if (empty($unMatch) && empty($unMatched)) {
                         // $users[] = $m;
                         $m->visibility = 'enabled';
                     }else{
