@@ -601,7 +601,8 @@ class Suggestions extends Controller
                         $randomProfiles = Singleton::inRandomOrder()
                                         ->where([
                                             ['is_verified', '=', 'verified'],
-                                            ['status', '=', 'Unblocked']
+                                            ['status', '=', 'Unblocked'],
+                                            ['gender', '=', $gender]
                                         ])
                                         ->whereNotIn('parent_id', ['', '0'])
                                         ->get();
