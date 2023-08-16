@@ -308,8 +308,8 @@ class Chat extends Controller
                     $list[$key]->chat_status = 'enabled';
                 }
 
-                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'singleton'],['deleted_by', '!=', $value->user_id]])
-                                        ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', $request->user_type],['deleted_by', '!=', $value->messaged_user_id]])                        
+                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'singleton'], ['deleted_by', '!=', $request->login_id]])
+                                        ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])                        
                                         ->select('chat_histories.message')
                                         ->orderBy('chat_histories.id', 'desc')
                                         ->first();
@@ -325,7 +325,7 @@ class Chat extends Controller
                 }else{
                     $ids[] = $value->messaged_user_id;
                 }
-            }   
+            }  return $list;
 
             $overallUnreadCounter_db = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'singleton'], ['chat_histories.deleted_by', '!=', $request->login_id]])->whereNull('read_at');                        
             
