@@ -275,14 +275,30 @@ class Chat extends Controller
                     ]);
                 })->first();
 
-                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=','parent'],['chat_histories.singleton_id', '=', $value->singleton_id],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'parent']])
-                                            ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', 'parent'],['chat_histories.singleton_id', '=', $value->messaged_user_singleton_id],])                        
+                $unMatched = Matches::where(function ($query) use ($request, $value) {
+                    $query->where([
+                        ['user_id', '=', $request->login_id],
+                        ['user_type', '=', 'parent'],
+                        ['match_id', '=', $value->messaged_user_singleton_id],
+                        ['singleton_id', '=', $request->singleton_id],
+                        ['match_type', '=', 'un-matched'],
+                    ])->orWhere([
+                        ['user_id', '=', $value->messaged_user_id],
+                        ['user_type', '=', 'parent'],
+                        ['match_id', '=', $request->singleton_id],
+                        ['singleton_id', '=', $value->messaged_user_singleton_id],
+                        ['match_type', '=', 'un-matched'],
+                    ]);
+                })->first();
+
+                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=','parent'],['chat_histories.singleton_id', '=', $value->singleton_id],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'parent'],['deleted_by', '!=', $request->login_id]])
+                                            ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', 'parent'],['chat_histories.singleton_id', '=', $value->messaged_user_singleton_id],['deleted_by', '!=', $request->login_id]])                        
                                             ->select('chat_histories.message')
                                             ->orderBy('chat_histories.id', 'desc')
                                             ->first();
 
-                $list[$key]->last_message = $last_message->message;
-                if (!empty($unMatch)) {
+                $list[$key]->last_message = $last_message ? $last_message->message : trans('msg.Deleted');
+                if (!empty($unMatch) && !empty($unMatched)) {
                     $list[$key]->chat_status = 'disabled';
                 }else{
                     $list[$key]->chat_status = 'enabled';
