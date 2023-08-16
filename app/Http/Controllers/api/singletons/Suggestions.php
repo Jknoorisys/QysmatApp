@@ -439,8 +439,12 @@ class Suggestions extends Controller
 
             $category = ModelsCategories::where([['user_id', '=', $request->login_id],['user_type', '=', 'singleton']])->first();
 
+            $user = Singleton::where('id',$request->login_id)->first();
+            $user_lat = $user->lat;
+            $user_long = $user->long;
+
             if (!empty($category)) {
-                $user = Singleton::where('id',$request->login_id)->first();
+                
                 $gender = $category->gender ? $category->gender : '';
                 
                 $location = $category->location ? $category->location : '';
@@ -504,7 +508,6 @@ class Suggestions extends Controller
                 $this->db->where('is_verified','=','verified');
                 $this->db->where('gender','=', $gender);
                 $this->db->where('parent_id', '!=', $linked->parent_id);
-                $this->db->orderBy('id', 'ASC');
                 $suggestion = $this->db->get();
 
                 if(!$suggestion->isEmpty()){
