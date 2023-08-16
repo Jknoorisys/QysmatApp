@@ -600,8 +600,63 @@ class Suggestions extends Controller
                     if (count($users3) >= 100) {
                         $users = $users3;
                     } else {
+                        $blocked = BlockList::leftjoin('singletons', function($join) use ($request) {
+                                        $join->on('singletons.id','=','block_lists.blocked_user_id')
+                                            ->where([
+                                                    ['block_lists.user_id', '=', $request->login_id],
+                                                    ['block_lists.user_type', '=', 'singleton'],
+                                                    ['block_lists.blocked_user_type', '=', 'singleton'],
+                                                ]);
+                                        $join->orOn('singletons.id','=','block_lists.user_id')
+                                            ->where([
+                                                    ['block_lists.blocked_user_id', '=', $request->login_id],
+                                                    ['block_lists.blocked_user_type', '=', 'singleton'],
+                                                    ['block_lists.user_type', '=', 'singleton'],
+                                                ]);
+                                    })
+                                    ->get('singletons.*');
+
+                        $reported = ReportedUsers::leftjoin('singletons', function($join) use ($request) {
+                            $join->on('singletons.id','=','reported_users.reported_user_id')
+                                ->where([
+                                        ['reported_users.user_id', '=', $request->login_id],
+                                        ['reported_users.user_type', '=', 'singleton'],
+                                        ['reported_users.reported_user_type', '=', 'singleton'],
+                                    ]);
+                            $join->orOn('singletons.id','=','reported_users.user_id')
+                                ->where([
+                                        ['reported_users.reported_user_id', '=', $request->login_id],
+                                        ['reported_users.reported_user_type', '=', 'singleton'],
+                                        ['reported_users.user_type', '=', 'singleton'],
+                                    ]);
+                        })
+                        ->get('singletons.*');
+
+                        $unMatched = UnMatches::leftjoin('singletons', function($join) use ($request) {
+                            $join->on('singletons.id','=','un_matches.un_matched_id')
+                                ->where([
+                                        ['un_matches.user_id', '=', $request->login_id],
+                                        ['un_matches.user_type', '=', 'singleton'],
+                                    ]);
+                            $join->orOn('singletons.id','=','un_matches.user_id')
+                                ->where([
+                                        ['un_matches.un_matched_id', '=', $request->login_id],
+                                        ['un_matches.user_type', '=', 'singleton'],
+                                    ]);
+                        })->get('singletons.*');
+
+                        $Matched = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton']])->get();
+
+                        $excludeIds = array_filter(array_merge(
+                            $blocked->pluck('id')->toArray(),
+                            $reported->pluck('id')->toArray(),
+                            $unMatched->pluck('id')->toArray(),
+                            $Matched->pluck('matched_id')->toArray(),
+                        ));
+                        
                         $others_liked_me = Matches::where([['matches.match_id', '=', $request->login_id], ['matches.user_type', '=', 'singleton'],['is_rematched', '=', 'no'],['is_reset', '=', 'no'],['match_type', '=', 'liked']])
                                                     ->join('singletons', 'matches.user_id', '=', 'singletons.id')
+                                                    ->whereNotIn('singletons.id', $excludeIds)
                                                     ->orderBy('singletons.id')
                                                     ->get('singletons.*');
 
@@ -612,6 +667,7 @@ class Suggestions extends Controller
                                             ['gender', '=', $gender]
                                         ])
                                         ->whereNotIn('parent_id', ['', '0'])
+                                        ->whereNotIn('id', $excludeIds)
                                         ->get();
                    
                         $users4 = array_merge($users3, json_decode($others_liked_me, true), json_decode($randomProfiles, true));
