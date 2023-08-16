@@ -235,8 +235,8 @@ class Chat extends Controller
                                         $join->orOn('singletons.id','=','messaged_users.user_id')
                                             ->where('messaged_users.user_id','!=',$singleton_id);
                                     })
-                                    ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
-                                    ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
+                                    ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type]])
+                                    ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type]])
                                     ->select('messaged_users.messaged_user_id','singletons.*','messaged_users.user_id')
                                     ->orderBy('messaged_users.id', 'desc')
                                     ->get(); 
@@ -308,8 +308,8 @@ class Chat extends Controller
                     $list[$key]->chat_status = 'enabled';
                 }
 
-                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'singleton']])
-                                        ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', $request->user_type]])                        
+                $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'singleton'],['deleted_by', '!=', $value->user_id]])
+                                        ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', $request->user_type],['deleted_by', '!=', $value->messaged_user_id]])                        
                                         ->select('chat_histories.message')
                                         ->orderBy('chat_histories.id', 'desc')
                                         ->first();
@@ -317,7 +317,7 @@ class Chat extends Controller
                 $unreadCounter = ChatHistory::where([['chat_histories.user_id', '=', $value->id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $request->login_id],['chat_histories.messaged_user_type', '=', $request->user_type]])                        
                                                 ->whereNull('read_at')->count();
 
-                $list[$key]->last_message = $last_message->message;
+                $list[$key]->last_message = $last_message ? $last_message->message : trans('msg.Deleted');
                 $list[$key]->unread_counter = $unreadCounter;
                 
                 if (empty($block) && empty($report)) {
