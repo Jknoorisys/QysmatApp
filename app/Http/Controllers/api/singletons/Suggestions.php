@@ -594,6 +594,7 @@ class Suggestions extends Controller
                     $users2 = array_merge($remaches, $users1);
                     $users3 = collect($users2)->unique('id')->values()->all();
 
+                    return $users3;
                     if (count($users3) >= 1) {
                         $users = $users3;
                     } else {
