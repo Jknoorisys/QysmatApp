@@ -590,7 +590,7 @@ class Suggestions extends Controller
                     $users2 = array_merge($remaches, $users1);
                     $users3 = collect($users2)->unique('id')->values()->all();
 
-                    if (count($users3) >= 100) {
+                    if (count($users3) >= 5) {
                         $users = $users3;
                     } else {
                         $others_liked_me = Matches::where([['matches.match_id', '=', $request->login_id], ['matches.user_type', '=', 'singleton'],['is_rematched', '=', 'no'],['is_reset', '=', 'no'],['match_type', '=', 'liked']])
