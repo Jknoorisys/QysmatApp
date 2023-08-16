@@ -628,7 +628,21 @@ class Matches extends Controller
                         ]);
                     })->first();
 
-                    if (empty($unMatch)) {
+                    $unMatched = ModelsMatches::where(function ($query) use ($request, $singleton_ids) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['match_id', '=', $singleton_ids],
+                            ['match_type', '=', 'un-matched'],
+                        ])->orWhere([
+                            ['match_id', '=', $request->login_id],
+                            ['user_type', '=', 'singleton'],
+                            ['user_id', '=', $singleton_ids],
+                            ['match_type', '=', 'un-matched'],
+                        ]);
+                    })->first();
+
+                    if (empty($unMatch) && empty($unMatched)) {
                         // $users[] = $m;
                         $m->visibility = 'enabled';
                     }else{
@@ -658,7 +672,7 @@ class Matches extends Controller
     }
 
     // public function reMatch(Request $request)
-    // {
+    // {un-matched
     //     $validator = Validator::make($request->all(), [
     //         'language' => [
     //             'required' ,
