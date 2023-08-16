@@ -302,7 +302,21 @@ class Chat extends Controller
                     ]);
                 })->first();
 
-                if (!empty($unMatch)) {
+                $unMatched = Matches::where(function ($query) use ($request, $value) {
+                    $query->where([
+                        ['user_id', '=', $request->login_id],
+                        ['user_type', '=', $request->user_type],
+                        ['match_id', '=', $value->messaged_user_id],
+                        ['match_type', '=', 'un-matched'],
+                    ])->orWhere([
+                        ['match_id', '=', $request->login_id],
+                        ['user_type', '=', 'singleton'],
+                        ['user_id', '=', $value->messaged_user_id],
+                        ['match_type', '=', 'un-matched'],
+                    ]);
+                })->first();
+
+                if (!empty($unMatch) && !empty($unMatched)) {
                     $list[$key]->chat_status = 'disabled';
                 }else{
                     $list[$key]->chat_status = 'enabled';
