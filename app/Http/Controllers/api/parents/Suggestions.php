@@ -324,6 +324,7 @@ class Suggestions extends Controller
                 $this->db->where('is_verified','=','verified');
                 $this->db->where('gender','=',$gender);
                 $this->db->where('parent_id', '!=', $request->login_id);
+                $this->db->orderBy('id', 'DESC');
                 $suggestion = $this->db->get();
 
                 if(!$suggestion->isEmpty()){
@@ -445,7 +446,7 @@ class Suggestions extends Controller
                     } else {
                         $others_liked_me = Matches::where([['matches.match_id', '=', $request->singleton_id], ['matches.user_type', '=', 'parent'],['is_rematched', '=', 'no'],['is_reset', '=', 'no'],['match_type', '=', 'liked']])
                                                     ->join('singletons', 'matches.singleton_id', '=', 'singletons.id')
-                                                    ->orderBy('singletons.id')
+                                                    ->orderBy('singletons.id', 'DESC')
                                                     ->get('singletons.*');
 
                         $randomProfiles = Singleton::inRandomOrder()
