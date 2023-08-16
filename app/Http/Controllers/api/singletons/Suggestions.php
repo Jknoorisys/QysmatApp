@@ -504,7 +504,7 @@ class Suggestions extends Controller
                 $this->db->where('is_verified','=','verified');
                 $this->db->where('gender','=', $gender);
                 $this->db->where('parent_id', '!=', $linked->parent_id);
-                // $this->db->orderBy('id', 'ASC');
+                $this->db->orderBy('id', 'ASC');
                 $suggestion = $this->db->get();
 
                 if(!$suggestion->isEmpty()){
@@ -566,8 +566,12 @@ class Suggestions extends Controller
                                             ->first();
                                         
                         if (empty($block) && empty($report) && empty($unMatch) && empty($Match) && empty($not_linked) && empty($mutual) && empty($swiped_up)) {
-                            $liked_me = Matches::where([['matches.user_id', '=', $singleton_id],['matches.match_id', '=', $request->login_id], ['matches.user_type', '=', 'singleton'],['is_rematched', '=', 'no'],['is_reset', '=', 'no'],['match_type', '=', 'liked']])
-                                        ->join('singletons', 'matches.user_id', '=', 'singletons.id')
+                            // $liked_me = Matches::where([['matches.user_id', '=', $singleton_id],['matches.match_id', '=', $request->login_id], ['matches.user_type', '=', 'singleton'],['is_rematched', '=', 'no'],['is_reset', '=', 'no'],['match_type', '=', 'liked']])
+                            //             ->join('singletons', 'matches.user_id', '=', 'singletons.id')
+                            //             ->first('singletons.*');
+
+                            $liked_me = MyMatches::where([['my_matches.user_id', '=', $singleton_id],['my_matches.matched_id', '=', $request->login_id], ['my_matches.user_type', '=', 'singleton']])
+                                        ->join('singletons', 'my_matches.user_id', '=', 'singletons.id')
                                         ->first('singletons.*');
 
                             if (!empty($liked_me)) {
@@ -590,7 +594,7 @@ class Suggestions extends Controller
                     $users2 = array_merge($remaches, $users1);
                     $users3 = collect($users2)->unique('id')->values()->all();
 
-                    if (count($users3) >= 5) {
+                    if (count($users3) >= 1) {
                         $users = $users3;
                     } else {
                         $others_liked_me = Matches::where([['matches.match_id', '=', $request->login_id], ['matches.user_type', '=', 'singleton'],['is_rematched', '=', 'no'],['is_reset', '=', 'no'],['match_type', '=', 'liked']])
