@@ -241,7 +241,7 @@ class ResetProfileSearch extends Controller
             $unmatch = UnMatches::where([['user_id','=',$request->login_id],['user_type','=',$request->user_type]])->delete();
             $un_match = Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
             ->orWhere([['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['match_type', '=', 'un-matched'], ['is_rematched', '=', 'no']])
-            ->update(['match_type', '=', 'liked']);
+            ->update(['match_type' => 'liked']);
 
             if($premium){
                 ModelsResetProfileSearch::insert(['user_id' => $request->login_id, 'user_type' => $request->user_type, 'created_at' => Carbon::now()]);
