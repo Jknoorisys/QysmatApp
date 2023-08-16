@@ -325,7 +325,7 @@ class Chat extends Controller
                 }else{
                     $ids[] = $value->messaged_user_id;
                 }
-            }  return $list;
+            }
 
             $overallUnreadCounter_db = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'singleton'], ['chat_histories.deleted_by', '!=', $request->login_id]])->whereNull('read_at');                        
             
