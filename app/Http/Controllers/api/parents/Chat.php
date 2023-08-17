@@ -159,7 +159,7 @@ class Chat extends Controller
 
             if (!empty($messaged)) {
 
-                if (!empty($conversation) && $conversation->deleted_by == $request->login_id) {
+                if (!empty($conversation)) {
                     $conversation->deleted_by = '0';
                     $conversation->save;
                 }

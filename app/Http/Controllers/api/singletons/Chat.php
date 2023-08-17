@@ -164,6 +164,11 @@ class Chat extends Controller
             $messaged                    = $message->save();
 
             if (!empty($messaged)) {
+                if (!empty($conversation)) {
+                    $conversation->deleted_by = '0';
+                    $conversation->save;
+                }
+                
                 $unreadCounter = ChatHistory::where([['chat_histories.user_id', '=', $request->login_id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $request->messaged_user_id],['chat_histories.messaged_user_type', '=', 'singleton']])                        
                                                 ->whereNull('read_at')->count();
 
