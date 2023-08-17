@@ -242,54 +242,52 @@ class Chat extends Controller
             $filteredList = [];
             $ids = [];
             foreach ($list as $key => $value) {
-                // $block = BlockList::where([['user_id','=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['blocked_user_id', '=', $value->messaged_user_singleton_id],['blocked_user_type', '=', 'singleton']])->first();
-                // $report = ModelsReportedUsers::where([['user_id','=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id],['reported_user_id', '=', $value->messaged_user_singleton_id],['reported_user_type', '=', 'singleton']])->first();
                 
-                $block = BlockList::where([
-                    ['user_id', '=', $request->messaged_user_id],
-                    ['user_type', '=', 'parent'],
-                    ['singleton_id', '=', $value->messaged_user_singleton_id],
-                    ['blocked_user_id', '=', $request->singleton_id],
-                    ['blocked_user_type', '=', 'singleton']
-                ])->first();  
+                // $block = BlockList::where([
+                //     ['user_id', '=', $request->messaged_user_id],
+                //     ['user_type', '=', 'parent'],
+                //     ['singleton_id', '=', $value->messaged_user_singleton_id],
+                //     ['blocked_user_id', '=', $request->singleton_id],
+                //     ['blocked_user_type', '=', 'singleton']
+                // ])->first();  
                 
-                $report = ModelsReportedUsers::where([
-                    ['user_id', '=', $request->messaged_user_id],
-                    ['user_type', '=', 'parent'],
-                    ['singleton_id', '=', $value->messaged_user_singleton_id],
-                    ['reported_user_id', '=', $request->singleton_id],
-                    ['reported_user_type', '=', 'singleton']
-                ])->first();  
+                // $report = ModelsReportedUsers::where([
+                //     ['user_id', '=', $request->messaged_user_id],
+                //     ['user_type', '=', 'parent'],
+                //     ['singleton_id', '=', $value->messaged_user_singleton_id],
+                //     ['reported_user_id', '=', $request->singleton_id],
+                //     ['reported_user_type', '=', 'singleton']
+                // ])->first();  
 
-                $unMatch = UnMatches::where(function ($query) use ($value, $request) {
-                    $query->where([
-                        ['user_id', '=', $request->login_id],
-                        ['user_type', '=', $request->user_type],
-                        ['singleton_id', '=', $request->singleton_id],
-                        ['un_matched_id', '=', $value->messaged_user_singleton_id]
-                    ])->orWhere([
-                        ['user_id', '=', $value->messaged_user_id],
-                        ['user_type', '=', 'parent'],
-                        ['singleton_id', '=', $value->messaged_user_singleton_id],
-                        ['un_matched_id', '=', $request->singleton_id]
-                    ]);
-                })->first();
+                // $unMatch = UnMatches::where(function ($query) use ($value, $request) {
+                //     $query->where([
+                //         ['user_id', '=', $request->login_id],
+                //         ['user_type', '=', $request->user_type],
+                //         ['singleton_id', '=', $request->singleton_id],
+                //         ['un_matched_id', '=', $value->messaged_user_singleton_id]
+                //     ])->orWhere([
+                //         ['user_id', '=', $value->messaged_user_id],
+                //         ['user_type', '=', 'parent'],
+                //         ['singleton_id', '=', $value->messaged_user_singleton_id],
+                //         ['un_matched_id', '=', $request->singleton_id]
+                //     ]);
+                // })->first();
 
-                $unMatched = Matches::where(function ($query) use ($request, $value) {
-                    $query->where([
-                        ['user_id', '=', $request->login_id],
-                        ['user_type', '=', 'parent'],
-                        ['match_id', '=', $value->messaged_user_singleton_id],
-                        ['singleton_id', '=', $request->singleton_id],
-                        ['match_type', '=', 'un-matched'],
-                    ])->orWhere([
-                        ['user_id', '=', $value->messaged_user_id],
-                        ['user_type', '=', 'parent'],
-                        ['match_id', '=', $request->singleton_id],
-                        ['singleton_id', '=', $value->messaged_user_singleton_id],
-                        ['match_type', '=', 'un-matched'],
-                    ]);
-                })->first();
+                // $unMatched = Matches::where(function ($query) use ($request, $value) {
+                //     $query->where([
+                //         ['user_id', '=', $request->login_id],
+                //         ['user_type', '=', 'parent'],
+                //         ['match_id', '=', $value->messaged_user_singleton_id],
+                //         ['singleton_id', '=', $request->singleton_id],
+                //         ['match_type', '=', 'un-matched'],
+                //     ])->orWhere([
+                //         ['user_id', '=', $value->messaged_user_id],
+                //         ['user_type', '=', 'parent'],
+                //         ['match_id', '=', $request->singleton_id],
+                //         ['singleton_id', '=', $value->messaged_user_singleton_id],
+                //         ['match_type', '=', 'un-matched'],
+                //     ]);
+                // })->first();
 
                 $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=','parent'],['chat_histories.singleton_id', '=', $value->singleton_id],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'parent'],['deleted_by', '!=', $request->login_id]])
                                             ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'parent'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', 'parent'],['chat_histories.singleton_id', '=', $value->messaged_user_singleton_id],['deleted_by', '!=', $request->login_id]])                        
@@ -298,11 +296,11 @@ class Chat extends Controller
                                             ->first();
 
                 $list[$key]->last_message = $last_message ? $last_message->message : trans('msg.Deleted');
-                if (!empty($unMatch) && !empty($unMatched)) {
-                    $list[$key]->chat_status = 'disabled';
-                }else{
-                    $list[$key]->chat_status = 'enabled';
-                }
+                // if (!empty($unMatch) && !empty($unMatched)) {
+                //     $list[$key]->chat_status = 'disabled';
+                // }else{
+                //     $list[$key]->chat_status = 'enabled';
+                // }
 
                 if ($value->user_id != $parent_id) {
                     $user_id = $value->messaged_user_id;
@@ -320,27 +318,27 @@ class Chat extends Controller
                                             ->whereNull('read_at')->count();
 
                 $list[$key]->unread_counter = $unreadCounter;
-                if (empty($block) && empty($report)) {
-                    $filteredList[] = $value;
-                }else{
-                    $ids[] = $value->messaged_user_id;
-                }
+                // if (empty($block) && empty($report)) {
+                //     $filteredList[] = $value;
+                // }else{
+                //     $ids[] = $value->messaged_user_id;
+                // }
             }
 
             $overallUnreadCounter_db = ChatHistory::where([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->singleton_id]])->whereNull('read_at');                        
             
-            if (!empty($ids)) {
-                $overallUnreadCounter_db->whereNotIn('id', $ids);
-            }
+            // if (!empty($ids)) {
+            //     $overallUnreadCounter_db->whereNotIn('id', $ids);
+            // }
             
             $overallUnreadCounter = $overallUnreadCounter_db->count();
             
-            if(!empty($filteredList)){
+            if(!$list->isEmpty()){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.messaged-users.success'),
                     'overall_unread_counter' => $overallUnreadCounter,
-                    'data'      => $filteredList
+                    'data'      => $list
                 ],200);
             }else{
                 return response()->json([
