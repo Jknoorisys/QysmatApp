@@ -91,6 +91,21 @@ class Profile extends Controller
                     ->first(['user_id as id','user_type','name','lname','email','mobile','profile_pic','relation_with_singleton','nationality','country_code','nationality_code','ethnic_origin','islamic_sect','location','lat','long','live_photo','id_proof','status as is_verified']);
                     
                     if ($old_user) {
+                        $user->name = ($user->name == '' || empty($user->name)) ? $old_user->name : $user->name;
+                        $user->lname = ($user->lname == '' || empty($user->lname)) ? $old_user->lname : $user->lname;
+                        $user->email = ($user->email == '' || empty($user->email)) ? $old_user->email : $user->email;
+                        $user->mobile = ($user->mobile == '' || empty($user->mobile)) ? $old_user->mobile : $user->mobile;
+                        $user->relation_with_singleton = ($user->relation_with_singleton == '' || empty($user->relation_with_singleton)) ? $old_user->relation_with_singleton : $user->relation_with_singleton;
+                        $user->nationality = ($user->nationality == '' || empty($user->nationality)) ? $old_user->nationality : $user->nationality;
+                        $user->country_code = ($user->country_code == '' || empty($user->country_code)) ? $old_user->country_code : $user->country_code;
+                        $user->nationality_code = ($user->nationality_code == '' || empty($user->nationality_code)) ? $old_user->nationality_code : $user->nationality_code;
+                        $user->ethnic_origin = ($user->ethnic_origin == '' || empty($user->ethnic_origin)) ? $old_user->ethnic_origin : $user->ethnic_origin;
+                        $user->islamic_sect = ($user->islamic_sect == '' || empty($user->islamic_sect)) ? $old_user->islamic_sect : $user->islamic_sect;
+                        $user->location = ($user->location == '' || empty($user->location)) ? $old_user->location : $user->location;
+                        $user->lat = ($user->lat == '' || empty($user->lat)) ? $old_user->lat : $user->lat;
+                        $user->long = ($user->long == '' || empty($user->long)) ? $old_user->long : $user->long;
+                        $user->is_verified = ($user->is_verified == '' || empty($user->is_verified)) ? $old_user->is_verified : $user->is_verified;
+
                         $user->profile_pic = ($user->profile_pic == '' || empty($user->profile_pic)) ? $old_user->profile_pic : $user->profile_pic;
                         $user->live_photo = ($user->live_photo == '' || empty($user->live_photo)) ? $old_user->live_photo : $user->live_photo;
                         $user->id_proof = ($user->id_proof == '' || empty($user->id_proof)) ? $old_user->id_proof : $user->id_proof;
