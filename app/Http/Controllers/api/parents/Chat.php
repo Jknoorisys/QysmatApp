@@ -159,10 +159,10 @@ class Chat extends Controller
 
             if (!empty($messaged)) {
 
-                if (!empty($conversation)) {
-                    $conversation->deleted_by = '0';
-                    $conversation->save;
-                }
+                MessagedUsers::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id],['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', $request->messaged_user_type], ['messaged_user_singleton_id', '=', $request->messaged_user_singleton_id]])
+                ->orWhere([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type], ['messaged_user_singleton_id', '=', $request->singleton_id],['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type], ['singleton_id', '=', $request->messaged_user_singleton_id]])
+                ->update(['deleted_by' => '0']);
+                
                 $unreadCounter = ChatHistory::where([['user_id', '=', $request->login_id],['user_type', '=', 'parent'],['singleton_id', '=', $request->singleton_id],
                                                     ['messaged_user_id', '=', $request->messaged_user_id],['messaged_user_type', '=', 'parent'],['messaged_user_singleton_id', '=', $request->messaged_user_singleton_id]])                        
                                                 ->whereNull('read_at')->count();
