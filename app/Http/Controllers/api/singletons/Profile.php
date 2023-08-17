@@ -108,6 +108,28 @@ class Profile extends Controller
                                 ->first(['sc.user_id as id','sc.user_type','singletons.parent_id','sc.name','sc.lname','sc.email','sc.mobile','sc.photo1','sc.photo2','sc.photo3','sc.photo4','sc.photo5','sc.dob','sc.gender','sc.marital_status','sc.age','sc.height','sc.profession','sc.short_intro','sc.nationality','sc.country_code','sc.nationality_code','sc.ethnic_origin','sc.islamic_sect','sc.location','sc.lat','sc.long','sc.live_photo','sc.id_proof','sc.status as is_verified']);
                                 
                     if ($old_user) {
+                        $user->parent_id = ($user->parent_id == '' || empty($user->parent_id)) ? $old_user->parent_id : $user->parent_id;
+                        $user->name = ($user->name == '' || empty($user->name)) ? $old_user->name : $user->name;
+                        $user->lname = ($user->lname == '' || empty($user->lname)) ? $old_user->lname : $user->lname;
+                        $user->email = ($user->email == '' || empty($user->email)) ? $old_user->email : $user->email;
+                        $user->mobile = ($user->mobile == '' || empty($user->mobile)) ? $old_user->mobile : $user->mobile;
+                        $user->dob = ($user->dob == '' || empty($user->dob)) ? $old_user->dob : $user->dob;
+                        $user->gender = ($user->gender == '' || empty($user->gender)) ? $old_user->gender : $user->gender;
+                        $user->marital_status = ($user->marital_status == '' || empty($user->marital_status)) ? $old_user->marital_status : $user->marital_status;
+                        $user->age = ($user->age == '' || empty($user->age)) ? $old_user->age : $user->age;
+                        $user->height = ($user->height == '' || empty($user->height)) ? $old_user->height : $user->height;
+                        $user->profession = ($user->profession == '' || empty($user->profession)) ? $old_user->profession : $user->profession;
+                        $user->short_intro = ($user->short_intro == '' || empty($user->short_intro)) ? $old_user->short_intro : $user->short_intro;
+                        $user->nationality = ($user->nationality == '' || empty($user->nationality)) ? $old_user->nationality : $user->nationality;
+                        $user->country_code = ($user->country_code == '' || empty($user->country_code)) ? $old_user->country_code : $user->country_code;
+                        $user->nationality_code = ($user->nationality_code == '' || empty($user->nationality_code)) ? $old_user->nationality_code : $user->nationality_code;
+                        $user->ethnic_origin = ($user->ethnic_origin == '' || empty($user->ethnic_origin)) ? $old_user->ethnic_origin : $user->ethnic_origin;
+                        $user->islamic_sect = ($user->islamic_sect == '' || empty($user->islamic_sect)) ? $old_user->islamic_sect : $user->islamic_sect;
+                        $user->location = ($user->location == '' || empty($user->location)) ? $old_user->location : $user->location;
+                        $user->lat = ($user->lat == '' || empty($user->lat)) ? $old_user->lat : $user->lat;
+                        $user->long = ($user->long == '' || empty($user->long)) ? $old_user->long : $user->long;
+                        $user->is_verified = ($user->is_verified == '' || empty($user->is_verified)) ? $old_user->is_verified : $user->is_verified;
+
                         $user->photo1 = ($user->photo1 == '' || empty($user->photo1)) ? $old_user->photo1 : $user->photo1;
                         $user->photo2 = ($user->photo2 == '' || empty($user->photo2)) ? $old_user->photo2 : $user->photo2;
                         $user->photo3 = ($user->photo3 == '' || empty($user->photo3)) ? $old_user->photo3 : $user->photo3;

@@ -190,22 +190,76 @@ class Matches extends Controller
                     $singleton_id = $m->id;
                     $parent_id = $m->parent_id;
 
+                    $block = BlockList::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', $request->login_id],
+                            ['user_type', $request->user_type],
+                            ['blocked_user_id', $m->id],
+                            ['blocked_user_type', 'singleton'],
+                            ['singleton_id', '=', $request->singleton_id]
+                        ])->orWhere([
+                            ['blocked_user_id', $request->singleton_id],
+                            ['blocked_user_type', 'singleton'],
+                            ['user_id', $m->parent_id],
+                            ['user_type', 'parent'],
+                            ['singleton_id', '=', $m->id]
+                        ]);
+                    })->first();
+                    
+                    $report = ReportedUsers::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', $request->login_id],
+                            ['user_type', $request->user_type],
+                            ['reported_user_id', $m->id],
+                            ['reported_user_type', 'singleton'],
+                            ['singleton_id', '=', $request->singleton_id]
+                        ])->orWhere([
+                            ['reported_user_id', $request->singleton_id],
+                            ['reported_user_type', 'singleton'],
+                            ['user_id', $m->parent_id],
+                            ['user_type', 'parent'],
+                            ['singleton_id', '=', $m->id]
+                        ]);
+                    })->first();
+                    
                     $unMatch = UnMatches::where(function ($query) use ($request, $m) {
                         $query->where([
                             ['user_id', '=', $request->login_id],
-                            ['user_type', '=', 'parent'],
-                            ['un_matched_id', '=', $m->singleton_id],
+                            ['user_type', '=', $request->user_type],
+                            ['un_matched_id', '=', $m->id],
                             ['singleton_id', '=', $request->singleton_id]
                         ])->orWhere([
                             ['user_id', '=', $m->parent_id],
                             ['user_type', '=', 'parent'],
                             ['un_matched_id', '=', $request->singleton_id],
-                            ['singleton_id', '=', $m->singleton_id]
+                            ['singleton_id', '=', $m->id]
                         ]);
                     })->first();
                     
-                    if (empty($unMatch)) {
+                    $unMatched = ModelsMatches::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['match_id', '=', $m->id],
+                            ['singleton_id', '=', $request->singleton_id],
+                            ['match_type', '=', 'un-matched'],
+                        ])->orWhere([
+                            ['user_id', '=', $m->parent_id],
+                            ['user_type', '=', 'parent'],
+                            ['match_id', '=', $request->singleton_id],
+                            ['singleton_id', '=', $m->id],
+                            ['match_type', '=', 'un-matched'],
+                        ]);
+                    })->first();
+
+                    if (empty($block) && empty($report)) {
                         $users[] = $m;
+                    }
+
+                    if (empty($unMatch) && empty($unMatched)) {
+                        $m->visibility = 'enabled';
+                    }else{
+                        $m->visibility = 'disabled';
                     }
                 }
 
@@ -291,22 +345,76 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
+                    $block = BlockList::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', $request->login_id],
+                            ['user_type', $request->user_type],
+                            ['blocked_user_id', $m->id],
+                            ['blocked_user_type', 'singleton'],
+                            ['singleton_id', '=', $request->singleton_id]
+                        ])->orWhere([
+                            ['blocked_user_id', $request->singleton_id],
+                            ['blocked_user_type', 'singleton'],
+                            ['user_id', $m->parent_id],
+                            ['user_type', 'parent'],
+                            ['singleton_id', '=', $m->id]
+                        ]);
+                    })->first();
+                    
+                    $report = ReportedUsers::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', $request->login_id],
+                            ['user_type', $request->user_type],
+                            ['reported_user_id', $m->id],
+                            ['reported_user_type', 'singleton'],
+                            ['singleton_id', '=', $request->singleton_id]
+                        ])->orWhere([
+                            ['reported_user_id', $request->singleton_id],
+                            ['reported_user_type', 'singleton'],
+                            ['user_id', $m->parent_id],
+                            ['user_type', 'parent'],
+                            ['singleton_id', '=', $m->id]
+                        ]);
+                    })->first();
+                    
                     $unMatch = UnMatches::where(function ($query) use ($request, $m) {
                         $query->where([
                             ['user_id', '=', $request->login_id],
-                            ['user_type', '=', 'parent'],
-                            ['un_matched_id', '=', $m->singleton_id],
+                            ['user_type', '=', $request->user_type],
+                            ['un_matched_id', '=', $m->id],
                             ['singleton_id', '=', $request->singleton_id]
                         ])->orWhere([
                             ['user_id', '=', $m->parent_id],
                             ['user_type', '=', 'parent'],
                             ['un_matched_id', '=', $request->singleton_id],
-                            ['singleton_id', '=', $m->singleton_id]
+                            ['singleton_id', '=', $m->id]
+                        ]);
+                    })->first();
+                    
+                    $unMatched = ModelsMatches::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['match_id', '=', $m->id],
+                            ['singleton_id', '=', $request->singleton_id],
+                            ['match_type', '=', 'un-matched'],
+                        ])->orWhere([
+                            ['user_id', '=', $m->parent_id],
+                            ['user_type', '=', 'parent'],
+                            ['match_id', '=', $request->singleton_id],
+                            ['singleton_id', '=', $m->id],
+                            ['match_type', '=', 'un-matched'],
                         ]);
                     })->first();
 
-                    if (empty($unMatch)) {
+                    if (empty($block) && empty($report)) {
                         $users[] = $m;
+                    }
+
+                    if (empty($unMatch) && empty($unMatched)) {
+                        $m->visibility = 'enabled';
+                    }else{
+                        $m->visibility = 'disabled';
                     }
                 }
 
@@ -392,22 +500,76 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
+                    $block = BlockList::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', $request->login_id],
+                            ['user_type', $request->user_type],
+                            ['blocked_user_id', $m->id],
+                            ['blocked_user_type', 'singleton'],
+                            ['singleton_id', '=', $request->singleton_id]
+                        ])->orWhere([
+                            ['blocked_user_id', $request->singleton_id],
+                            ['blocked_user_type', 'singleton'],
+                            ['user_id', $m->parent_id],
+                            ['user_type', 'parent'],
+                            ['singleton_id', '=', $m->id]
+                        ]);
+                    })->first();
+                    
+                    $report = ReportedUsers::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', $request->login_id],
+                            ['user_type', $request->user_type],
+                            ['reported_user_id', $m->id],
+                            ['reported_user_type', 'singleton'],
+                            ['singleton_id', '=', $request->singleton_id]
+                        ])->orWhere([
+                            ['reported_user_id', $request->singleton_id],
+                            ['reported_user_type', 'singleton'],
+                            ['user_id', $m->parent_id],
+                            ['user_type', 'parent'],
+                            ['singleton_id', '=', $m->id]
+                        ]);
+                    })->first();
+                    
                     $unMatch = UnMatches::where(function ($query) use ($request, $m) {
                         $query->where([
                             ['user_id', '=', $request->login_id],
-                            ['user_type', '=', 'parent'],
-                            ['un_matched_id', '=', $m->singleton_id],
+                            ['user_type', '=', $request->user_type],
+                            ['un_matched_id', '=', $m->id],
                             ['singleton_id', '=', $request->singleton_id]
                         ])->orWhere([
                             ['user_id', '=', $m->parent_id],
                             ['user_type', '=', 'parent'],
                             ['un_matched_id', '=', $request->singleton_id],
-                            ['singleton_id', '=', $m->singleton_id]
+                            ['singleton_id', '=', $m->id]
+                        ]);
+                    })->first();
+                    
+                    $unMatched = ModelsMatches::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['match_id', '=', $m->id],
+                            ['singleton_id', '=', $request->singleton_id],
+                            ['match_type', '=', 'un-matched'],
+                        ])->orWhere([
+                            ['user_id', '=', $m->parent_id],
+                            ['user_type', '=', 'parent'],
+                            ['match_id', '=', $request->singleton_id],
+                            ['singleton_id', '=', $m->id],
+                            ['match_type', '=', 'un-matched'],
                         ]);
                     })->first();
 
-                    if (empty($unMatch)) {
+                    if (empty($block) && empty($report)) {
                         $users[] = $m;
+                    }
+
+                    if (empty($unMatch) && empty($unMatched)) {
+                        $m->visibility = 'enabled';
+                    }else{
+                        $m->visibility = 'disabled';
                     }
                 }
 
@@ -509,53 +671,102 @@ class Matches extends Controller
             }
 
             if(!$match->isEmpty()){
-                // $users = [];
+                $users = [];
                 foreach ($match as $m) {
                     $singleton_ids = $m->id;
+                    $block = BlockList::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', $request->login_id],
+                            ['user_type', $request->user_type],
+                            ['blocked_user_id', $m->id],
+                            ['blocked_user_type', 'singleton'],
+                            ['singleton_id', '=', $request->singleton_id]
+                        ])->orWhere([
+                            ['blocked_user_id', $request->singleton_id],
+                            ['blocked_user_type', 'singleton'],
+                            ['user_id', $m->parent_id],
+                            ['user_type', 'parent'],
+                            ['singleton_id', '=', $m->id]
+                        ]);
+                    })->first();
+                    
+                    $report = ReportedUsers::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', $request->login_id],
+                            ['user_type', $request->user_type],
+                            ['reported_user_id', $m->id],
+                            ['reported_user_type', 'singleton'],
+                            ['singleton_id', '=', $request->singleton_id]
+                        ])->orWhere([
+                            ['reported_user_id', $request->singleton_id],
+                            ['reported_user_type', 'singleton'],
+                            ['user_id', $m->parent_id],
+                            ['user_type', 'parent'],
+                            ['singleton_id', '=', $m->id]
+                        ]);
+                    })->first();
+                    
                     $unMatch = UnMatches::where(function ($query) use ($request, $m) {
                         $query->where([
                             ['user_id', '=', $request->login_id],
-                            ['user_type', '=', 'parent'],
-                            ['un_matched_id', '=', $m->singleton_id],
+                            ['user_type', '=', $request->user_type],
+                            ['un_matched_id', '=', $m->id],
                             ['singleton_id', '=', $request->singleton_id]
                         ])->orWhere([
                             ['user_id', '=', $m->parent_id],
                             ['user_type', '=', 'parent'],
                             ['un_matched_id', '=', $request->singleton_id],
-                            ['singleton_id', '=', $m->singleton_id]
+                            ['singleton_id', '=', $m->id]
                         ]);
                     })->first();
-
+                    
                     $unMatched = ModelsMatches::where(function ($query) use ($request, $m) {
                         $query->where([
                             ['user_id', '=', $request->login_id],
-                            ['user_type', '=', 'parent'],
-                            ['match_id', '=', $m->singleton_id],
+                            ['user_type', '=', $request->user_type],
+                            ['match_id', '=', $m->id],
                             ['singleton_id', '=', $request->singleton_id],
                             ['match_type', '=', 'un-matched'],
                         ])->orWhere([
                             ['user_id', '=', $m->parent_id],
                             ['user_type', '=', 'parent'],
                             ['match_id', '=', $request->singleton_id],
-                            ['singleton_id', '=', $m->singleton_id],
+                            ['singleton_id', '=', $m->id],
                             ['match_type', '=', 'un-matched'],
                         ]);
                     })->first();
 
+                    if (empty($block) && empty($report)) {
+                        $users[] = $m;
+                    }
+
                     if (empty($unMatch) && empty($unMatched)) {
-                        // $users[] = $m;
                         $m->visibility = 'enabled';
                     }else{
                         $m->visibility = 'disabled';
                     }
                 }
 
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.parents.match.success'),
-                    'data'      => $match,
-                    'total'     => $total
-                ],200);
+                // return response()->json([
+                //     'status'    => 'success',
+                //     'message'   => __('msg.parents.match.success'),
+                //     'data'      => $match,
+                //     'total'     => $total
+                // ],200);
+
+                if(!empty($users)){
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.match.success'),
+                        'data'      => $users,
+                        'total'     => $total
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.match.failure'),
+                    ],400);
+                }
                 
             }else{
                 return response()->json([

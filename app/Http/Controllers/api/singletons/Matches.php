@@ -321,7 +321,30 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
-                    // $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
+
+                    $block = BlockList::where([
+                        ['user_id', $request->login_id],
+                        ['user_type', $request->user_type],
+                        ['blocked_user_id', $singleton_id],
+                        ['blocked_user_type', 'singleton']
+                    ])->orWhere([
+                        ['blocked_user_id', $request->login_id],
+                        ['blocked_user_type', $request->user_type],
+                        ['user_id', $singleton_id],
+                        ['user_type', 'singleton']
+                    ])->first();
+                    
+                    $report = ReportedUsers::where([
+                        ['user_id', $request->login_id],
+                        ['user_type', $request->user_type],
+                        ['reported_user_id', $singleton_id],
+                        ['reported_user_type', 'singleton']
+                    ])->orWhere([
+                        ['reported_user_id', $request->login_id],
+                        ['reported_user_type', $request->user_type],
+                        ['user_id', $singleton_id],
+                        ['user_type', 'singleton']
+                    ])->first();
 
                     $unMatch = UnMatches::where(function ($query) use ($request, $singleton_id) {
                         $query->where([
@@ -335,9 +358,33 @@ class Matches extends Controller
                         ]);
                     })->first();
 
-                    if (empty($unMatch)) {
+                    $unMatched = ModelsMatches::where(function ($query) use ($request, $singleton_id) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['match_id', '=', $singleton_id],
+                            ['match_type', '=', 'un-matched'],
+                        ])->orWhere([
+                            ['match_id', '=', $request->login_id],
+                            ['user_type', '=', 'singleton'],
+                            ['user_id', '=', $singleton_id],
+                            ['match_type', '=', 'un-matched'],
+                        ]);
+                    })->first();
+
+                    if (empty($block) && empty($report)) {
                         $users[] = $m;
                     }
+
+                    if (empty($unMatch) && empty($unMatched)) {
+                        $m->visibility = 'enabled';
+                    }else{
+                        $m->visibility = 'disabled';
+                    }
+
+                    // if (empty($unMatch)) {
+                    //     $users[] = $m;
+                    // }
 
                 }
 
@@ -421,7 +468,29 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
-                    // $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
+                    $block = BlockList::where([
+                        ['user_id', $request->login_id],
+                        ['user_type', $request->user_type],
+                        ['blocked_user_id', $singleton_id],
+                        ['blocked_user_type', 'singleton']
+                    ])->orWhere([
+                        ['blocked_user_id', $request->login_id],
+                        ['blocked_user_type', $request->user_type],
+                        ['user_id', $singleton_id],
+                        ['user_type', 'singleton']
+                    ])->first();
+                    
+                    $report = ReportedUsers::where([
+                        ['user_id', $request->login_id],
+                        ['user_type', $request->user_type],
+                        ['reported_user_id', $singleton_id],
+                        ['reported_user_type', 'singleton']
+                    ])->orWhere([
+                        ['reported_user_id', $request->login_id],
+                        ['reported_user_type', $request->user_type],
+                        ['user_id', $singleton_id],
+                        ['user_type', 'singleton']
+                    ])->first();
 
                     $unMatch = UnMatches::where(function ($query) use ($request, $singleton_id) {
                         $query->where([
@@ -435,9 +504,33 @@ class Matches extends Controller
                         ]);
                     })->first();
 
-                    if (empty($unMatch)) {
+                    $unMatched = ModelsMatches::where(function ($query) use ($request, $singleton_id) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['match_id', '=', $singleton_id],
+                            ['match_type', '=', 'un-matched'],
+                        ])->orWhere([
+                            ['match_id', '=', $request->login_id],
+                            ['user_type', '=', 'singleton'],
+                            ['user_id', '=', $singleton_id],
+                            ['match_type', '=', 'un-matched'],
+                        ]);
+                    })->first();
+
+                    if (empty($block) && empty($report)) {
                         $users[] = $m;
                     }
+
+                    if (empty($unMatch) && empty($unMatched)) {
+                        $m->visibility = 'enabled';
+                    }else{
+                        $m->visibility = 'disabled';
+                    }
+
+                    // if (empty($unMatch)) {
+                    //     $users[] = $m;
+                    // }
                 }
 
                 if(!empty($users)){
@@ -519,7 +612,29 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
-                    // $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $singleton_id]])->first();
+                    $block = BlockList::where([
+                        ['user_id', $request->login_id],
+                        ['user_type', $request->user_type],
+                        ['blocked_user_id', $singleton_id],
+                        ['blocked_user_type', 'singleton']
+                    ])->orWhere([
+                        ['blocked_user_id', $request->login_id],
+                        ['blocked_user_type', $request->user_type],
+                        ['user_id', $singleton_id],
+                        ['user_type', 'singleton']
+                    ])->first();
+                    
+                    $report = ReportedUsers::where([
+                        ['user_id', $request->login_id],
+                        ['user_type', $request->user_type],
+                        ['reported_user_id', $singleton_id],
+                        ['reported_user_type', 'singleton']
+                    ])->orWhere([
+                        ['reported_user_id', $request->login_id],
+                        ['reported_user_type', $request->user_type],
+                        ['user_id', $singleton_id],
+                        ['user_type', 'singleton']
+                    ])->first();
 
                     $unMatch = UnMatches::where(function ($query) use ($request, $singleton_id) {
                         $query->where([
@@ -533,9 +648,33 @@ class Matches extends Controller
                         ]);
                     })->first();
 
-                    if (empty($unMatch)) {
+                    $unMatched = ModelsMatches::where(function ($query) use ($request, $singleton_id) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['match_id', '=', $singleton_id],
+                            ['match_type', '=', 'un-matched'],
+                        ])->orWhere([
+                            ['match_id', '=', $request->login_id],
+                            ['user_type', '=', 'singleton'],
+                            ['user_id', '=', $singleton_id],
+                            ['match_type', '=', 'un-matched'],
+                        ]);
+                    })->first();
+
+                    if (empty($block) && empty($report)) {
                         $users[] = $m;
                     }
+
+                    if (empty($unMatch) && empty($unMatched)) {
+                        $m->visibility = 'enabled';
+                    }else{
+                        $m->visibility = 'disabled';
+                    }
+
+                    // if (empty($unMatch)) {
+                    //     $users[] = $m;
+                    // }
                 }
 
                 if(!empty($users)){
@@ -635,8 +774,33 @@ class Matches extends Controller
             }
 
             if(!$match->isEmpty()){
+                $users = [];
                 foreach ($match as $m) {
                     $singleton_ids = $m->id;
+
+                    $block = BlockList::where([
+                        ['user_id', $request->login_id],
+                        ['user_type', $request->user_type],
+                        ['blocked_user_id', $singleton_ids],
+                        ['blocked_user_type', 'singleton']
+                    ])->orWhere([
+                        ['blocked_user_id', $request->login_id],
+                        ['blocked_user_type', $request->user_type],
+                        ['user_id', $singleton_ids],
+                        ['user_type', 'singleton']
+                    ])->first();
+                    
+                    $report = ReportedUsers::where([
+                        ['user_id', $request->login_id],
+                        ['user_type', $request->user_type],
+                        ['reported_user_id', $singleton_ids],
+                        ['reported_user_type', 'singleton']
+                    ])->orWhere([
+                        ['reported_user_id', $request->login_id],
+                        ['reported_user_type', $request->user_type],
+                        ['user_id', $singleton_ids],
+                        ['user_type', 'singleton']
+                    ])->first();
 
                     $unMatch = UnMatches::where(function ($query) use ($request, $singleton_ids) {
                         $query->where([
@@ -664,20 +828,37 @@ class Matches extends Controller
                         ]);
                     })->first();
 
+                    if (empty($block) && empty($report)) {
+                        $users[] = $m;
+                    }
+
                     if (empty($unMatch) && empty($unMatched)) {
-                        // $users[] = $m;
                         $m->visibility = 'enabled';
                     }else{
                         $m->visibility = 'disabled';
                     }
                 }
 
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => __('msg.singletons.match.success'),
-                    'data'      => $match,
-                    'total'     => $total
-                ],200);
+                // return response()->json([
+                //     'status'    => 'success',
+                //     'message'   => __('msg.singletons.match.success'),
+                //     'data'      => $users,
+                //     'total'     => $total
+                // ],200);
+
+                if(!empty($users)){
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.match.success'),
+                        'data'      => $users,
+                        'total'     => $total
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.match.failure'),
+                    ],400);
+                }
             }else{
                 return response()->json([
                     'status'    => 'failed',
