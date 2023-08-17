@@ -235,8 +235,8 @@ class Chat extends Controller
                                         $join->orOn('singletons.id','=','messaged_users.user_id')
                                             ->where('messaged_users.user_id','!=',$singleton_id);
                                     })
-                                    ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type]])
-                                    ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type]])
+                                    ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
+                                    ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
                                     ->select('messaged_users.messaged_user_id','singletons.*','messaged_users.user_id')
                                     ->orderBy('messaged_users.id', 'desc')
                                     ->get(); 
