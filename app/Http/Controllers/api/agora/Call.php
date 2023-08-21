@@ -328,7 +328,7 @@ class Call extends Controller
             }
 
             $title = $premium->name;
-            $body = __('msg.Call Rejected');
+            $body = __('msg.agora.Call Rejected');
 
             if (isset($reciever) && !empty($reciever)) {
                 $token = $reciever->fcm_token;
