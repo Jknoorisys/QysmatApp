@@ -434,7 +434,7 @@ class Suggestions extends Controller
 
                     $rematchedProfiles = RematchRequests::where([['rematch_requests.user_type', '=', 'parent'], ['rematch_requests.match_id', '=', $request->singleton_id], ['rematch_requests.is_rematched', '=', 'no']])
                                                 ->join('singletons', 'rematch_requests.singleton_id', '=', 'singletons.id')
-                                                ->get('singletons.*' , DB::raw('yes as is_rematched'));
+                                                ->get('singletons.*' , DB::raw("'yes' as is_rematched"));
                     $remaches = json_decode($rematchedProfiles, true);
                     $users2 = array_merge($remaches, $users1);
                     $users3 = collect($users2)->unique('id')->values()->all();
