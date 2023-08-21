@@ -65,7 +65,8 @@ class Chat extends Controller
         }
 
         try {
-            $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $request->messaged_user_singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
+            $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $request->messaged_user_singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])
+                                ->orWhere([['user_id', '=', $request->messaged_user_id], ['user_type', '=', $request->messaged_user_type], ['blocked_user_id', '=', $request->singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->messaged_user_singleton_id]])->first();
             if (!empty($block)) {
                 return response()->json([
                     'status'    => 'failed',
@@ -73,7 +74,8 @@ class Chat extends Controller
                 ],400);
             }
 
-            $report = ModelsReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $request->messaged_user_singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
+            $report = ModelsReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $request->messaged_user_singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])
+            ->orWhere([['user_id', '=', $request->messaged_user_id], ['user_type', '=', $request->messaged_user_type], ['reported_user_id', '=', $request->singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->messaged_user_singleton_id]])->first();
             if (!empty($report)) {
                 return response()->json([
                     'status'    => 'failed',
@@ -81,7 +83,8 @@ class Chat extends Controller
                 ],400);
             }
 
-            $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->messaged_user_singleton_id], ['singleton_id', '=', $request->singleton_id]])->first();
+            $unMatch = UnMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->messaged_user_singleton_id], ['singleton_id', '=', $request->singleton_id]])
+            ->orWhere([['user_id', '=', $request->messaged_user_id], ['user_type', '=', $request->messaged_user_type], ['un_matched_id', '=', $request->singleton_id], ['singleton_id', '=', $request->messaged_user_singleton_id]])->first();
             if (!empty($unMatch)) {
                 return response()->json([
                     'status'    => 'failed',
