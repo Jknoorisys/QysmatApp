@@ -70,7 +70,7 @@ class Chat extends Controller
             if (!empty($block)) {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.parents.send-message.blocked'),
+                    'message'   => __('msg.parents.send-message.failure'),
                 ],400);
             }
 
@@ -79,7 +79,7 @@ class Chat extends Controller
             if (!empty($report)) {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.parents.send-message.reported'),
+                    'message'   => __('msg.parents.send-message.failure'),
                 ],400);
             }
 
@@ -88,7 +88,7 @@ class Chat extends Controller
             if (!empty($unMatch)) {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.parents.send-message.un-matched'),
+                    'message'   => __('msg.parents.send-message.failure'),
                 ],400);
             }
 
