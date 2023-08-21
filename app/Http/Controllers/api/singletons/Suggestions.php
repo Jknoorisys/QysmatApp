@@ -440,8 +440,6 @@ class Suggestions extends Controller
             $category = ModelsCategories::where([['user_id', '=', $request->login_id],['user_type', '=', 'singleton']])->first();
 
             $user = Singleton::where('id',$request->login_id)->first();
-            $user_lat = $user->lat;
-            $user_long = $user->long;
 
             if (!empty($category)) {
                 
@@ -591,7 +589,7 @@ class Suggestions extends Controller
 
                     $rematchedProfiles = RematchRequests::where([['rematch_requests.user_type', '=', 'singleton'], ['rematch_requests.match_id', '=', $request->login_id], ['rematch_requests.is_rematched', '=', 'no']])
                                                 ->join('singletons', 'rematch_requests.user_id', '=', 'singletons.id')
-                                                ->get('singletons.*');
+                                                ->get('singletons.*' , DB::raw('yes as is_rematched'));
 
                     $remaches = json_decode($rematchedProfiles, true);
                     $users2 = array_merge($remaches, $users1);
