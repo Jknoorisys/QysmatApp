@@ -142,7 +142,7 @@ class InstantMatch extends Controller
                 $title = __('msg.Instant Match Request');
                 $body = __('msg.You have a Instant Match Request from').' '.$sender->name;
 
-                if (isset($reciever) && !empty($reciever)) {
+                if (isset($reciever) && !empty($reciever) && $reciever->chat_status != 'busy') {
                     $token = $reciever->fcm_token;
                     $data = array(
                         'notType' => "instant_request",
