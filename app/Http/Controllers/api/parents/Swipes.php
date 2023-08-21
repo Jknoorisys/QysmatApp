@@ -157,12 +157,17 @@ class Swipes extends Controller
                     DB::table('matches')->insert($data);
                 }
 
-                $right               = new MyMatches();
-                $right->user_id      = $request->login_id ? $request->login_id : '';
-                $right->user_type    = $request->user_type ? $request->user_type : '';
-                $right->singleton_id = $request->singleton_id ? $request->singleton_id : '';
-                $right->matched_id   = $request->swiped_user_id ? $request->swiped_user_id : '';
-                $right->save();
+                // $right               = new MyMatches();
+                // $right->user_id      = $request->login_id ? $request->login_id : '';
+                // $right->user_type    = $request->user_type ? $request->user_type : '';
+                // $right->singleton_id = $request->singleton_id ? $request->singleton_id : '';
+                // $right->matched_id   = $request->swiped_user_id ? $request->swiped_user_id : '';
+                // $right->save();
+
+                $right = MyMatches::updateOrInsert(
+                    ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'singleton_id' => $request->singleton_id , 'matched_id' => $request->swiped_user_id],
+                    ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'singleton_id' => $request->singleton_id , 'matched_id' => $request->swiped_user_id]
+                );
 
                 if ($right){
                     $recieved = new RecievedMatches();
