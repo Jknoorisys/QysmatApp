@@ -123,7 +123,7 @@ class Swipes extends Controller
                         $queue_no = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton']])
                                 ->orderBy('queue','desc')
                                 ->first();
-                        $queue = $queue_no->queue + 1;
+                        $queue = $queue_no ? $queue_no->queue + 1 : 0;
                         $match_type = 'hold';
                     }else{
                         $queue = 0;
