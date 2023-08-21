@@ -65,7 +65,7 @@ class Chat extends Controller
         }
 
         try {
-            $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $request->messaged_user_id], ['blocked_user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id]])->first();
+            $block = BlockList ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['blocked_user_id', '=', $request->messaged_user_singleton_id], ['blocked_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
             if (!empty($block)) {
                 return response()->json([
                     'status'    => 'failed',
@@ -73,7 +73,7 @@ class Chat extends Controller
                 ],400);
             }
 
-            $report = ModelsReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $request->messaged_user_id], ['reported_user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id]])->first();
+            $report = ModelsReportedUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['reported_user_id', '=', $request->messaged_user_singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->singleton_id]])->first();
             if (!empty($report)) {
                 return response()->json([
                     'status'    => 'failed',
@@ -96,7 +96,7 @@ class Chat extends Controller
             if (empty($not_in_list4)) {
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => __('msg.singletons.send-message.failure'),
+                    'message'   => __('msg.parents.send-message.failure'),
                 ],400);
             }
 
@@ -117,24 +117,6 @@ class Chat extends Controller
                                             ->orWhere([['messaged_user_id', '=', $request->login_id],['messaged_user_type', '=', $request->user_type], ['messaged_user_singleton_id', '=', $request->singleton_id],['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type], ['singleton_id', '=', $request->messaged_user_singleton_id]])
                                             ->update($data);
     
-                    if ($reply) {
-                        $busy = Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked'],['chat_status', '=', 'busy']])
-                                       ->orWhere([['id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['status', '=', 'Unblocked'],['chat_status', '=', 'busy']])
-                                       ->first();
-    
-                        if (empty($busy)) {
-                            Singleton::where([['id', '=', $request->login_id],['user_type', '=', $request->user_type],['status', '=', 'Unblocked']])
-                                        ->orWhere([['id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['status', '=', 'Unblocked']])
-                                        ->update(['chat_status' => 'busy']);
-    
-                            Matches::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['match_id', '=', $request->messaged_user_id],['match_type', '=', 'matched']])
-                                    ->orWhere([['user_id', '=', $request->messaged_user_id],['user_type', '=', $request->messaged_user_type],['match_id', '=', $request->login_id],['match_type', '=', 'matched']])
-                                    ->update([
-                                        'status' => 'busy',
-                                        'updated_at'   => date('Y-m-d H:i:s')
-                                    ]);
-                        }
-                    }
                 }
             } else {
                 $data = [
@@ -145,6 +127,7 @@ class Chat extends Controller
                     'messaged_user_type' => $request->messaged_user_type,
                     'messaged_user_singleton_id' => $request->messaged_user_singleton_id
                 ];
+                MessagedUsers::insert($data);
             }
 
             $message                     = new ChatHistory();
