@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\agora;
 use App\Http\Controllers\Controller;
 use App\Models\BlockList;
 use App\Models\CallHistory;
+use App\Models\Matches;
 use App\Models\ParentsModel;
 use App\Models\PremiumFeatures;
 use App\Models\ReportedUsers;
@@ -92,6 +93,10 @@ class Call extends Controller
                                     
                 $unMatch = UnMatches ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['un_matched_id', '=', $request->receiver_id]])
                                     ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['un_matched_id', '=', $request->caller_id]])->first();
+
+                $mutual =  Matches::where([['user_id', '=', $request->caller_id],['user_type', '=', $request->caller_user_type],['match_id', '=', $request->receiver_id],['match_type', '=', 'matched']])
+                                    ->orWhere([['user_id', '=', $request->receiver_id],['user_type', '=', $request->receiver_user_type],['match_id', '=', $request->caller_id],['match_type', '=', 'matched']])
+                                    ->first();
             } else {
                 $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
 
@@ -102,7 +107,18 @@ class Call extends Controller
                                     ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['reported_user_id', '=', $request->singleton_id], ['reported_user_type', '=', 'singleton'], ['singleton_id', '=', $request->receiver_singleton_id]])->first();
 
                 $unMatch = UnMatches ::where([['user_id', '=', $request->caller_id], ['user_type', '=', $request->caller_user_type], ['un_matched_id', '=', $request->receiver_singleton_id], ['singleton_id', '=', $request->singleton_id]])
-                                    ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['un_matched_id', '=', $request->singleton_id], ['singleton_id', '=', $request->receiver_singleton_id]])->first();                    
+                                    ->orWhere([['user_id', '=', $request->receiver_id], ['user_type', '=', $request->receiver_user_type], ['un_matched_id', '=', $request->singleton_id], ['singleton_id', '=', $request->receiver_singleton_id]])->first(); 
+                
+                $mutual = Matches::where([['user_id', '=', $request->caller_id],['user_type', '=', $request->caller_user_type],['match_id', '=', $request->receiver_singleton_id],['match_type', '=', 'matched'], ['singleton_id', '=', $request->singleton_id]])
+                                ->orWhere([['user_id', '=', $request->receiver_id],['user_type', '=', $request->receiver_user_type],['match_id', '=', $request->singleton_id],['match_type', '=', 'matched'], ['singleton_id', '=', $request->receiver_singleton_id]])
+                                ->first();
+            }
+
+            if (empty($mutual)) {
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.agora.invalid'),
+                ],400);
             }
 
             if (!empty($block) || !empty($report) || !empty($unMatch)) {
