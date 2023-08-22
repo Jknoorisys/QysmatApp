@@ -139,8 +139,8 @@ class InstantMatch extends Controller
             // $requests = InstantMatchRequest::insert($data);
 
             $requests = InstantMatchRequest::updateOrInsert(
-                ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'requested_id' => $request->requested_id, 'requested_parent_id' => $request->requested_parent_id],
-                ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'requested_id' => $request->requested_id, 'requested_parent_id' => $request->requested_parent_id, 'request_type' => 'pending']
+                ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'requested_id' => $request->requested_id, 'requested_parent_id' => $userExists->parent_id],
+                ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'requested_id' => $request->requested_id, 'requested_parent_id' => $userExists->parent_id, 'request_type' => 'pending']
             );
 
             if($requests){
