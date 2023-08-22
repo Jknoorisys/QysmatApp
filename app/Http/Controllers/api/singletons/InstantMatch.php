@@ -116,7 +116,6 @@ class InstantMatch extends Controller
                 ],400);
             }
 
-
             $data = [
                 'user_id' => $request->login_id,
                 'user_type' => $request->user_type,
@@ -212,13 +211,6 @@ class InstantMatch extends Controller
                     'message'   => __('msg.parents.change-request-status.not-linked'),
                 ],400);
             }
-
-            // if (empty($parent) || ($parent->is_verified != 'verified')) {
-            //     return response()->json([
-            //         'status'    => 'failed',
-            //         'message'   => __('msg.parents.change-request-status.not-verified'),
-            //     ],400);
-            // }
 
             $requests = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])->first();
             if (empty($requests)) {
@@ -330,23 +322,11 @@ class InstantMatch extends Controller
                         ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'matched_id' => $request->swiped_user_id]
                     ); 
 
-                    // $right              = new MyMatches();
-                    // $right->user_id     = $request->login_id ? $request->login_id : '';
-                    // $right->user_type   = $request->user_type ? $request->user_type : '';
-                    // $right->matched_id  = $request->swiped_user_id ? $request->swiped_user_id : '';
-                    // $right->save();
-
                     if ($right){
                         $recieved = RecievedMatches::updateOrInsert(
                             ['user_id' => $request->swiped_user_id, 'user_type' => 'singleton', 'recieved_match_id' => $request->login_id],
                             ['user_id' => $request->swiped_user_id, 'user_type' => 'singleton', 'recieved_match_id' => $request->login_id]
                         );
-    
-                        // $recieved = new RecievedMatches();
-                        // $recieved->user_id = $request->swiped_user_id ? $request->swiped_user_id : '';
-                        // $recieved->user_type = 'singleton';
-                        // $recieved->recieved_match_id = $request->login_id ? $request->login_id : '';
-                        // $recieved->save();
                     }
                 }
             }
@@ -401,7 +381,10 @@ class InstantMatch extends Controller
                     ->where([['instant_match_requests.requested_id', '=', $request->login_id], ['instant_match_requests.user_type', '=', $request->user_type], ['instant_match_requests.request_type', '=', 'pending']])
                     ->get(['instant_match_requests.id as request_id', 'singletons.*']);
 
-            if(!$requests->isEmpty()){
+            $matched = Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
+                                ->orWhere([['match_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])->get();
+
+            if(!$requests->isEmpty() && $matched->isEmpty()){
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.requests-list.success'),
