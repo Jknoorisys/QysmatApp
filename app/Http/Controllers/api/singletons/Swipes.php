@@ -213,11 +213,21 @@ class Swipes extends Controller
                     ]
                 );
             }elseif ($request->swipe == 'left') {
-                $left                 = new UnMatches();
-                $left->user_id        = $request->login_id ? $request->login_id : '';
-                $left->user_type      = $request->user_type ? $request->user_type : '';
-                $left->un_matched_id  = $request->swiped_user_id ? $request->swiped_user_id : '';
-                $left->save();
+                // $left                 = new UnMatches();
+                // $left->user_id        = $request->login_id ? $request->login_id : '';
+                // $left->user_type      = $request->user_type ? $request->user_type : '';
+                // $left->un_matched_id  = $request->swiped_user_id ? $request->swiped_user_id : '';
+                // $left->save();
+
+                $left   =  UnMatches::updateOrInsert(
+                    ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'un_matched_id' => $request->swiped_user_id],
+                    ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'un_matched_id' => $request->swiped_user_id]
+                );
+
+                UnMatches::updateOrInsert(
+                    ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'un_matched_id' => $request->swiped_user_id],
+                    ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'un_matched_id' => $request->swiped_user_id]
+                );
                 $swipe = LastSwipe::updateOrCreate(
                     ['user_id' => $request->login_id, 'user_type' => $request->user_type],
                     [
