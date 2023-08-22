@@ -106,17 +106,7 @@ class InstantMatch extends Controller
                     'message'   => __('msg.parents.send-request.limit'),
                 ],400);
             }
-            
-
-            $data = [
-                'user_id' => $request->login_id,
-                'user_type' => $request->user_type,
-                'singleton_id' => $request->singleton_id,
-                'requested_parent_id' => $userExists->parent_id,
-                'requested_id' => $request->requested_id,
-                'created_at' => Carbon::now(),
-            ];
-
+          
             $sender = Singleton::where([['id', '=', $request->singleton_id], ['status', '=', 'Unblocked']])->first();
             $reciever = ParentsModel::where([['id', '=', $userExists->parent_id], ['status', '=', 'Unblocked']])->first();
 
@@ -128,7 +118,21 @@ class InstantMatch extends Controller
                 ],400);
             }
 
-            $requests = InstantMatchRequest::insert($data);
+            // $data = [
+            //     'user_id' => $request->login_id,
+            //     'user_type' => $request->user_type,
+            //     'singleton_id' => $request->singleton_id,
+            //     'requested_parent_id' => $userExists->parent_id,
+            //     'requested_id' => $request->requested_id,
+            //     'created_at' => Carbon::now(),
+            // ];
+
+            // $requests = InstantMatchRequest::insert($data);
+
+            $requests = InstantMatchRequest::updateOrInsert(
+                ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'singleton_id' => $request->singleton_id, 'requested_id' => $request->requested_id, 'requested_parent_id' => $userExists->parent_id],
+                ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'singleton_id' => $request->singleton_id, 'requested_id' => $request->requested_id, 'requested_parent_id' => $userExists->parent_id, 'request_type' => 'pending']
+            );
 
             if($requests){
                 $title = __('msg.Instant Match Request');
