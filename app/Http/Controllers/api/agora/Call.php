@@ -220,38 +220,6 @@ class Call extends Controller
 
             $insert = CallHistory::insert($data);
             if ($insert) {
-
-                if ($request->caller_user_type == 'singleton') {
-                    $premium = Singleton::where([['id', '=', $request->caller_id], ['status', '=', 'Unblocked']])->first();
-                    $sender_pic = $premium ? $premium->photo1 : '';
-                } else {
-                    $premium = ParentsModel::where([['id', '=', $request->caller_id], ['status', '=', 'Unblocked']])->first();
-                    $sender_pic = $premium ? $premium->profile_pic : '';
-                }
-
-                if ($request->receiver_user_type == 'singleton') {
-                    $reciever = Singleton::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
-                } else {
-                    $reciever = ParentsModel::where([['id', '=', $request->receiver_id], ['status', '=', 'Unblocked']])->first();
-                }
-    
-                $title = $premium->name;
-                $body = __('msg.Call Rejected');
-    
-                if (isset($reciever) && !empty($reciever) && $request->call_status == 'rejected') {
-                    $token = $reciever->fcm_token;
-                    $data = array(
-                        'notType'        => 'canceled',
-                        'from_user_name' => $premium->name,
-                        'from_user_id'   => $premium->id,
-                        'from_user_pic'  => $sender_pic,
-                        'to_user_id'     => $reciever->id,
-                        'to_user_type'   => $reciever->user_type,
-                    );
-    
-                    sendFCMNotifications($token, $title, $body, $data);
-                }
-                
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.agora.create.success'),
