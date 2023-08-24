@@ -118,6 +118,16 @@ class InstantMatch extends Controller
                 ],400);
             }
 
+            $remetched = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['singleton_id', '=', $request->singleton_id], ['match_id', '=', $request->requested_id], ['is_rematched', '=', 'yes']])
+                        ->orWhere([['match_id', '=', $request->singleton_id],['user_type', '=', 'parent'], ['singleton_id', '=', $request->requested_id], ['user_id', '=', $userExists->parent_id], ['is_rematched', '=', 'yes']])
+                        ->first();
+            if (!empty($remetched)) {
+                return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.parents.re-match.rematched'),
+                ],400);
+            }
+
             // $data = [
             //     'user_id' => $request->login_id,
             //     'user_type' => $request->user_type,
