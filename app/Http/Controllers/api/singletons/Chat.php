@@ -236,31 +236,31 @@ class Chat extends Controller
         try {
             $singleton_id = $request->login_id;
             
-            // $list = MessagedUsers::leftjoin('singletons', function($join) use ($singleton_id) {
-            //                             $join->on('singletons.id','=','messaged_users.messaged_user_id')
-            //                                 ->where('messaged_users.messaged_user_id','!=',$singleton_id);
-            //                             $join->orOn('singletons.id','=','messaged_users.user_id')
-            //                                 ->where('messaged_users.user_id','!=',$singleton_id);
-            //                         })
-            //                         ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
-            //                         ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
-            //                         ->select('messaged_users.messaged_user_id','singletons.*','messaged_users.user_id')
-            //                         ->orderBy('messaged_users.id', 'desc')
-            //                         ->get(); 
-
             $list = MessagedUsers::leftjoin('singletons', function($join) use ($singleton_id) {
-                $join->on('singletons.id','=','messaged_users.messaged_user_id')
-                    ->where('messaged_users.messaged_user_id','!=',$singleton_id);
-                $join->orOn('singletons.id','=','messaged_users.user_id')
-                    ->where('messaged_users.user_id','!=',$singleton_id);
-            })
-            ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type]])
-            ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type]])
-            ->select('messaged_users.messaged_user_id','singletons.*','messaged_users.user_id','messaged_users.deleted_by')
-            ->orderBy('messaged_users.id', 'desc')
-            ->get(); 
+                                        $join->on('singletons.id','=','messaged_users.messaged_user_id')
+                                            ->where('messaged_users.messaged_user_id','!=',$singleton_id);
+                                        $join->orOn('singletons.id','=','messaged_users.user_id')
+                                            ->where('messaged_users.user_id','!=',$singleton_id);
+                                    })
+                                    ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
+                                    ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])
+                                    ->select('messaged_users.messaged_user_id','singletons.*','messaged_users.user_id')
+                                    ->orderBy('messaged_users.id', 'desc')
+                                    ->get(); 
 
-            $filteredList = [];
+            // $list = MessagedUsers::leftjoin('singletons', function($join) use ($singleton_id) {
+            //     $join->on('singletons.id','=','messaged_users.messaged_user_id')
+            //         ->where('messaged_users.messaged_user_id','!=',$singleton_id);
+            //     $join->orOn('singletons.id','=','messaged_users.user_id')
+            //         ->where('messaged_users.user_id','!=',$singleton_id);
+            // })
+            // ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type]])
+            // ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type]])
+            // ->select('messaged_users.messaged_user_id','singletons.*','messaged_users.user_id')
+            // ->orderBy('messaged_users.id', 'desc')
+            // ->get(); 
+
+            // $filteredList = [];
             // $ids = [];
             
             foreach ($list as $key => $value) {
@@ -328,14 +328,14 @@ class Chat extends Controller
                 $list[$key]->last_message = $last_message ? $last_message->message : trans('msg.Deleted');
                 $list[$key]->unread_counter = $unreadCounter;
 
-                if ($busy) {
-                    $list[$key]->last_message = trans('msg.Deleted');
-                    $filteredList[] = $value;
-                }
+                // if ($busy) {
+                //     $list[$key]->last_message = trans('msg.Deleted');
+                //     $filteredList[] = $value;
+                // }
 
-                if ($value->deleted_by != $request->login_id) {
-                    $filteredList[] = $value;
-                }
+                // if ($value->deleted_by != $request->login_id) {
+                //     $filteredList[] = $value;
+                // }
 
                 // if (empty($block) && empty($report)) {
                 //     $filteredList[] = $value;
@@ -357,7 +357,7 @@ class Chat extends Controller
                     'status'    => 'success',
                     'message'   => __('msg.singletons.messaged-users.success'),
                     'overall_unread_counter' => $overallUnreadCounter,
-                    'data'      => $filteredList,
+                    'data'      => $list,
                 ],200);
             }else{
                 return response()->json([
