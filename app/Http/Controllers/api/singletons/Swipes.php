@@ -188,11 +188,16 @@ class Swipes extends Controller
                 );
 
                 if ($right){
-                    $recieved = new RecievedMatches();
-                    $recieved->user_id = $request->swiped_user_id ? $request->swiped_user_id : '';
-                    $recieved->user_type = 'singleton';
-                    $recieved->recieved_match_id = $request->login_id ? $request->login_id : '';
-                    $recieved->save();
+                    $right = MyMatches::updateOrInsert(
+                        ['user_id' => $request->swiped_user_id, 'user_type' => 'singleton', 'recieved_match_id' => $request->login_id],
+                        ['user_id' => $request->swiped_user_id, 'user_type' => 'singleton', 'recieved_match_id' => $request->login_id]
+                    );
+
+                    // $recieved = new RecievedMatches();
+                    // $recieved->user_id = $request->swiped_user_id ? $request->swiped_user_id : '';
+                    // $recieved->user_type = 'singleton';
+                    // $recieved->recieved_match_id = $request->login_id ? $request->login_id : '';
+                    // $recieved->save();
                 }
 
                 if (!empty($rematchRequest)) {

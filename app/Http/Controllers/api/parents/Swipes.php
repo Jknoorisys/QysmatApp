@@ -170,12 +170,18 @@ class Swipes extends Controller
                 );
 
                 if ($right){
-                    $recieved = new RecievedMatches();
-                    $recieved->user_id = $parent->parent_id ? $parent->parent_id : '';
-                    $recieved->user_type = 'parent';
-                    $recieved->singleton_id = $request->swiped_user_id ? $request->swiped_user_id : '';
-                    $recieved->recieved_match_id = $request->singleton_id ? $request->singleton_id : '';
-                    $recieved->save();
+
+                    $recieved = MyMatches::updateOrInsert(
+                        ['user_id' => $parent->parent_id, 'user_type' => 'parent', 'singleton_id' => $request->swiped_user_id, 'recieved_match_id' => $request->singleton_id],
+                        ['user_id' => $parent->parent_id, 'user_type' => 'parent', 'singleton_id' => $request->swiped_user_id, 'recieved_match_id' => $request->singleton_id]
+                    ); 
+
+                    // $recieved = new RecievedMatches();
+                    // $recieved->user_id = $parent->parent_id ? $parent->parent_id : '';
+                    // $recieved->user_type = 'parent';
+                    // $recieved->singleton_id = $request->swiped_user_id ? $request->swiped_user_id : '';
+                    // $recieved->recieved_match_id = $request->singleton_id ? $request->singleton_id : '';
+                    // $recieved->save();
                 }
 
                 $user = ParentsModel::where([['id','=',$parent->parent_id],['status','!=','Deleted']])->first();
