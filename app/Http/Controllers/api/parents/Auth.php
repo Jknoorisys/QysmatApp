@@ -26,6 +26,16 @@ class Auth extends Controller
 
     public function index(Request $request)
     {
+        $messages = [
+            'name.required' => 'First name is required.',
+            'name.min' => 'First name must be at least :min characters.',
+            'name.max' => 'First name must not exceed :max characters.',
+            'lname.required' => 'Last name is required.',
+            'lname.min' => 'Last name must be at least :min characters.',
+            'lname.max' => 'Last name must not exceed :max characters.',
+        ];
+
+        
         $validator = Validator::make($request->all(), [
             'language' => [
                 'required',
@@ -39,9 +49,13 @@ class Auth extends Controller
                 'required',
                 Rule::in(['android','ios']),
             ],
+            'user_type' => [
+                'required',
+                Rule::in(['singleton','parent']),
+            ],
             'fcm_token'     => 'required',
             'device_token'  => 'required',
-        ]);
+        ], $messages);
 
         $errors = [];
         foreach ($validator->errors()->messages() as $key => $value) {
@@ -113,6 +127,16 @@ class Auth extends Controller
 
     public function socialRegistration(Request $request)
     {
+        $messages = [
+            'name.required' => 'First name is required.',
+            'name.min' => 'First name must be at least :min characters.',
+            'name.max' => 'First name must not exceed :max characters.',
+            'lname.required' => 'Last name is required.',
+            'lname.min' => 'Last name must be at least :min characters.',
+            'lname.max' => 'Last name must not exceed :max characters.',
+        ];
+
+        
         $validator = Validator::make($request->all(), [
             'language' => [
                 'required',
@@ -126,15 +150,13 @@ class Auth extends Controller
                 'required',
                 Rule::in(['android','ios']),
             ],
+            'user_type' => [
+                'required',
+                Rule::in(['singleton','parent']),
+            ],
             'fcm_token'     => 'required',
             'device_token'  => 'required',
-            'is_social'     => ['required', Rule::in(['0','1'])],
-            'social_type'   => [
-                'required',
-                Rule::in(['google','facebook','apple']),
-            ],
-            'social_id'     => 'required',
-        ]);
+        ], $messages);
 
         $errors = [];
         foreach ($validator->errors()->messages() as $key => $value) {
