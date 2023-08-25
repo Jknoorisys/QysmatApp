@@ -31,6 +31,16 @@ class Auth extends Controller
 
     public function index(Request $request)
     {
+        $messages = [
+            'name.required' => 'First name is required.',
+            'name.min' => 'First name must be at least :min characters.',
+            'name.max' => 'First name must not exceed :max characters.',
+            'lname.required' => 'Last name is required.',
+            'lname.min' => 'Last name must be at least :min characters.',
+            'lname.max' => 'Last name must not exceed :max characters.',
+        ];
+
+        
         $validator = Validator::make($request->all(), [
             'language' => [
                 'required',
@@ -50,7 +60,7 @@ class Auth extends Controller
             ],
             'fcm_token'     => 'required',
             'device_token'  => 'required',
-        ]);
+        ], $messages);
 
         $errors = [];
         foreach ($validator->errors()->messages() as $key => $value) {
@@ -139,6 +149,15 @@ class Auth extends Controller
 
     public function socialRegistration(Request $request)
     {
+        $messages = [
+            'name.required' => 'First name is required.',
+            'name.min' => 'First name must be at least :min characters.',
+            'name.max' => 'First name must not exceed :max characters.',
+            'lname.required' => 'Last name is required.',
+            'lname.min' => 'Last name must be at least :min characters.',
+            'lname.max' => 'Last name must not exceed :max characters.',
+        ];
+
         $validator = Validator::make($request->all(), [
             'language' => [
                 'required',
@@ -164,7 +183,7 @@ class Auth extends Controller
                 Rule::in(['google','facebook','apple']),
             ],
             'social_id'     => 'required',
-        ]);
+        ], $messages);
 
         $errors = [];
         foreach ($validator->errors()->messages() as $key => $value) {
