@@ -171,7 +171,7 @@ class Swipes extends Controller
 
                 if ($right){
 
-                    $recieved = MyMatches::updateOrInsert(
+                    $recieved = RecievedMatches::updateOrInsert(
                         ['user_id' => $parent->parent_id, 'user_type' => 'parent', 'singleton_id' => $request->swiped_user_id, 'recieved_match_id' => $request->singleton_id],
                         ['user_id' => $parent->parent_id, 'user_type' => 'parent', 'singleton_id' => $request->swiped_user_id, 'recieved_match_id' => $request->singleton_id]
                     ); 
