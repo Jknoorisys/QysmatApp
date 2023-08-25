@@ -682,12 +682,14 @@ class Chat extends Controller
                             ['singleton_id', '=', $request->singleton_id],
                             ['messaged_user_id', '=', $request->messaged_user_id],
                             ['messaged_user_type', '=', $request->messaged_user_type],
+                            ['messaged_user_singleton_id', '=', $request->messaged_user_singleton_id],
                         ])->orWhere([
                             ['user_id', '=', $request->messaged_user_id],
                             ['user_type', '=', $request->messaged_user_type],
                             ['singleton_id', '=', $request->messaged_user_singleton_id],
                             ['messaged_user_id', '=', $request->login_id],
                             ['messaged_user_type', '=', $request->user_type],
+                            ['messaged_user_singleton_id', '=', $request->singleton_id],
                         ]);
                     })->first();
 
