@@ -605,7 +605,6 @@ class Suggestions extends Controller
                                                 ->selectRaw("'yes' as is_rematched")
                                                 ->get();
 
-                                                return $rematchedProfiles;
                     $remaches = json_decode($rematchedProfiles, true);
                     $users2 = array_merge($remaches, $users1);
                     $users3 = collect($users2)->unique('id')->values()->all();
