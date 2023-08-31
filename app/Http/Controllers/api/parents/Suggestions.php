@@ -265,8 +265,9 @@ class Suggestions extends Controller
             $category = ModelsCategories::where([['user_id','=',$request->login_id],['user_type', '=', 'parent'],['singleton_id', '=', $request->singleton_id]])->first();
 
             $user = Singleton::where('id',$request->singleton_id)->first();
-            $user_lat = $user ? $user->lat : '';
-            $user_long = $user ? $user->long : '';
+            $parent = ParentsModel::where('id',$request->login_id)->first();
+            $user_lat = $parent ? $parent->lat : '';
+            $user_long = $parent ? $parent->long : '';
 
             if (!empty($category)) {
                 $gender = $category->gender ? $category->gender : ($user->gender == 'Male' ? 'Female' : 'Male');
