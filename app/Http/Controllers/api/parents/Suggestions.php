@@ -258,8 +258,11 @@ class Suggestions extends Controller
 
             $category = ModelsCategories::where([['user_id','=',$request->login_id],['user_type', '=', 'parent'],['singleton_id', '=', $request->singleton_id]])->first();
 
+            $user = Singleton::where('id',$request->singleton_id)->first();
+            $user_lat = $user ? $user->lat : '';
+            $user_long = $user ? $user->long : '';
+
             if (!empty($category)) {
-                $user = Singleton::where('id',$request->singleton_id)->first();
                 $gender = $category->gender ? $category->gender : ($user->gender == 'Male' ? 'Female' : 'Male');
                 
                 $location = $category->location ? $category->location : '';
@@ -291,9 +294,18 @@ class Suggestions extends Controller
                             $this->db->select('*', DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(`lat`)) * cos(radians(`long`) - radians(?)) + sin(radians(?)) * sin(radians(`lat`)))) AS distance'))
                             ->orderBy('distance')
                             ->setBindings([$latitude, $longitude, $latitude]);
+                        }else{
+                            $this->db->select('*', DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(`lat`)) * cos(radians(`long`) - radians(?)) + sin(radians(?)) * sin(radians(`lat`)))) AS distance'))
+                            ->orderBy('distance')
+                            ->setBindings([$user_lat, $user_long, $user_lat]);
                         }
+
                         $this->db->where('nationality_code','=',$category->country_code);
                     }
+                }else {
+                     $this->db->select('*', DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(`lat`)) * cos(radians(`long`) - radians(?)) + sin(radians(?)) * sin(radians(`lat`)))) AS distance'))
+                            ->orderBy('distance')
+                            ->setBindings([$user_lat, $user_long, $user_lat]);
                 }
 
                 if(!empty($min_height) && !empty($max_height)){
@@ -433,7 +445,11 @@ class Suggestions extends Controller
 
                     $rematchedProfiles = RematchRequests::where([['rematch_requests.user_type', '=', 'parent'], ['rematch_requests.match_id', '=', $request->singleton_id], ['rematch_requests.is_rematched', '=', 'no']])
                                                 ->join('singletons', 'rematch_requests.singleton_id', '=', 'singletons.id')
-                                                ->select('singletons.*' , DB::raw("'yes' as is_rematched"))->get();
+                                                ->selectRaw('singletons.*, (6371 * ACOS(COS(RADIANS(' . $user_lat . ')) * COS(RADIANS(`lat`)) * COS(RADIANS(`long`) - RADIANS(' . $user_long . ')) + SIN(RADIANS(' . $user_lat . ')) * SIN(RADIANS(`lat`)))) AS distance')
+                                                // ->select('singletons.*' , DB::raw("'yes' as is_rematched"))
+                                                ->selectRaw("'yes' as is_rematched")
+                                                ->get();
+
                     $remaches = json_decode($rematchedProfiles, true);
                     $users2 = array_merge($remaches, $users1);
                     $users3 = collect($users2)->unique('id')->values()->all();
@@ -501,7 +517,9 @@ class Suggestions extends Controller
                         $others_liked_me = Matches::where([['matches.match_id', '=', $request->singleton_id], ['matches.user_type', '=', 'parent'],['is_rematched', '=', 'no'],['is_reset', '=', 'no'],['match_type', '=', 'liked']])
                                                     ->join('singletons', 'matches.singleton_id', '=', 'singletons.id')
                                                     ->whereNotIn('singletons.id', $excludeIds)
-                                                    ->orderBy('singletons.id')
+                                                    // ->orderBy('singletons.id')
+                                                    ->selectRaw('singletons.*, (6371 * ACOS(COS(RADIANS(' . $user_lat . ')) * COS(RADIANS(`lat`)) * COS(RADIANS(`long`) - RADIANS(' . $user_long . ')) + SIN(RADIANS(' . $user_lat . ')) * SIN(RADIANS(`lat`)))) AS distance')
+                                                    ->orderBy('distance')
                                                     ->get('singletons.*');
 
                         $randomProfiles = Singleton::inRandomOrder()
@@ -514,6 +532,8 @@ class Suggestions extends Controller
                                         ])
                                         ->whereNotIn('id', $excludeIds)
                                         ->whereNotIn('parent_id', ['', '0'])
+                                        ->selectRaw('*, (6371 * ACOS(COS(RADIANS(' . $user_lat . ')) * COS(RADIANS(`lat`)) * COS(RADIANS(`long`) - RADIANS(' . $user_long . ')) + SIN(RADIANS(' . $user_lat . ')) * SIN(RADIANS(`lat`)))) AS distance')
+                                        ->orderBy('distance')
                                         ->get();
                    
                         $users4 = array_merge($users3, json_decode($others_liked_me, true), json_decode($randomProfiles, true));
