@@ -662,7 +662,9 @@ class Suggestions extends Controller
                                         ->where([
                                             ['is_verified', '=', 'verified'],
                                             ['status', '=', 'Unblocked'],
-                                            ['gender', '=', $gender]
+                                            ['gender', '=', $gender],
+                                            ['id','!=',$request->login_id],
+                                            ['parent_id', '!=', $linked->parent_id]
                                         ])
                                         ->whereNotIn('parent_id', ['', '0'])
                                         ->whereNotIn('id', $excludeIds)
