@@ -250,17 +250,24 @@ class Suggestions extends Controller
 
         try {
             $categoryLocation = ModelsCategories::where([['user_id','=',$request->login_id],['user_type', '=', 'parent'],['singleton_id', '=', $request->singleton_id]])->first();
-            if (!empty($categoryLocation) && !empty($categoryLocation->location)) {
-                if ($request->lat && $request->long) {
-                    ModelsCategories::where([['user_id', '=', $request->login_id],['user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id]])->update(['lat' => ($request->lat ? $request->lat : ''), 'long' => ($request->long ? $request->long : '')]);
-                }
+            // if (!empty($categoryLocation) && !empty($categoryLocation->location)) {
+            //     if ($request->lat && $request->long) {
+            //         ModelsCategories::where([['user_id', '=', $request->login_id],['user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id]])->update(['lat' => ($request->lat ? $request->lat : ''), 'long' => ($request->long ? $request->long : '')]);
+            //         ParentsModel::where([['id', '=', $request->login_id],['user_type', '=', 'parent']])->update(['lat' => ($request->lat ? $request->lat : ''), 'long' => ($request->long ? $request->long : '')]);
+            //     }
+            // }
+
+            if ($request->lat && $request->long && $request->location) {
+                ModelsCategories::where([['user_id', '=', $request->login_id],['user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id]])->update(['lat' => ($request->lat ? $request->lat : ''), 'long' => ($request->long ? $request->long : ''), 'location' => ($request->location ? $request->location : '')]);
+                ParentsModel::where([['id', '=', $request->login_id],['user_type', '=', 'parent']])->update(['lat' => ($request->lat ? $request->lat : ''), 'long' => ($request->long ? $request->long : ''), 'location' => ($request->location ? $request->location : '')]);
             }
 
             $category = ModelsCategories::where([['user_id','=',$request->login_id],['user_type', '=', 'parent'],['singleton_id', '=', $request->singleton_id]])->first();
 
             $user = Singleton::where('id',$request->singleton_id)->first();
-            $user_lat = $user ? $user->lat : '';
-            $user_long = $user ? $user->long : '';
+            $parent = ParentsModel::where('id',$request->login_id)->first();
+            $user_lat = $parent ? $parent->lat : '';
+            $user_long = $parent ? $parent->long : '';
 
             if (!empty($category)) {
                 $gender = $category->gender ? $category->gender : ($user->gender == 'Male' ? 'Female' : 'Male');
