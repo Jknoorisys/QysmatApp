@@ -431,10 +431,16 @@ class Suggestions extends Controller
             }
 
             $categoryLocation = ModelsCategories::where([['user_id','=', $request->login_id],['user_type', '=', 'singleton']])->first();
-            if (!empty($categoryLocation) && !empty($categoryLocation->location)) {
-                if ($request->lat && $request->long) {
-                    ModelsCategories::where([['user_id', '=', $request->login_id],['user_type', '=', 'singleton']])->update(['lat' => ($request->lat ? $request->lat : ''), 'long' => ($request->long ? $request->long : '')]);
-                }
+            // if (!empty($categoryLocation) && !empty($categoryLocation->location)) {
+            //     if ($request->lat && $request->long) {
+            //         ModelsCategories::where([['user_id', '=', $request->login_id],['user_type', '=', 'singleton']])->update(['lat' => ($request->lat ? $request->lat : ''), 'long' => ($request->long ? $request->long : '')]);
+            //         Singleton::where([['id', '=', $request->login_id],['user_type', '=', 'singleton']])->update(['lat' => ($request->lat ? $request->lat : ''), 'long' => ($request->long ? $request->long : '')]);
+            //     }
+            // }
+
+            if ($request->lat && $request->long && $request->location) {
+                ModelsCategories::where([['user_id', '=', $request->login_id],['user_type', '=', 'singleton']])->update(['lat' => ($request->lat ? $request->lat : ''), 'long' => ($request->long ? $request->long : ''), 'location' => ($request->location ? $request->location : '')]);
+                Singleton::where([['id', '=', $request->login_id],['user_type', '=', 'singleton']])->update(['lat' => ($request->lat ? $request->lat : ''), 'long' => ($request->long ? $request->long : ''), 'location' => ($request->location ? $request->location : '')]);
             }
 
             $category = ModelsCategories::where([['user_id', '=', $request->login_id],['user_type', '=', 'singleton']])->first();
