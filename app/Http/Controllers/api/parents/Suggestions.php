@@ -319,7 +319,6 @@ class Suggestions extends Controller
                 }
 
                 $this->db->where('id','!=',$request->singleton_id);
-                $this->db->where('parent_id','!=',$request->login_id);
                 $this->db->where('status','=','Unblocked');
                 $this->db->where('is_verified','=','verified');
                 $this->db->where('gender','=',$gender);
@@ -509,7 +508,9 @@ class Suggestions extends Controller
                                         ->where([
                                             ['is_verified', '=', 'verified'],
                                             ['status', '=', 'Unblocked'],
-                                            ['gender' ,'=', $gender]
+                                            ['gender' ,'=', $gender],
+                                            ['id','!=',$request->singleton_id],
+                                            ['parent_id', '!=', $request->login_id]
                                         ])
                                         ->whereNotIn('id', $excludeIds)
                                         ->whereNotIn('parent_id', ['', '0'])
