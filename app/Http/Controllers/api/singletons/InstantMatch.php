@@ -205,7 +205,7 @@ class InstantMatch extends Controller
             'swiped_user_id'   => 'required||numeric',
             'status'          => [
                 'required' ,
-                Rule::in(['matched','un-matched','rejected']),
+                Rule::in(['matched','un-matched','rejected','maybe']),
             ],
         ]);
 
@@ -239,6 +239,9 @@ class InstantMatch extends Controller
             if ($status == 'rejected') {
                 $update = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])
                                     ->update(['request_type' => 'rejected', 'updated_at' => Carbon::now()]);
+            }elseif ($status == 'maybe') {
+                $update = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])
+                                    ->update(['request_type' => 'hold', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
             }elseif ($status == 'un-matched') {
                 $update = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])
                                     ->update(['request_type' => 'un-matched', 'updated_at' => Carbon::now()]);
