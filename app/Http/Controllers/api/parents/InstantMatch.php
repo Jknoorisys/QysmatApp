@@ -110,7 +110,7 @@ class InstantMatch extends Controller
             $sender = Singleton::where([['id', '=', $request->singleton_id], ['status', '=', 'Unblocked']])->first();
             $reciever = ParentsModel::where([['id', '=', $userExists->parent_id], ['status', '=', 'Unblocked']])->first();
 
-            $form = InstantMatchRequest::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['requested_parent_id', '=', $userExists->parent_id], ['requested_id', '=', $request->requested_id], ['request_type', '=', 'pending']])->first();
+            $form = InstantMatchRequest::where([['user_id', '=', $request->login_id],['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['requested_parent_id', '=', $userExists->parent_id], ['requested_id', '=', $request->requested_id]])->whereIn('request_type', ['pending', 'hold'])->first();
             if (!empty($form)) {
                 return response()->json([
                     'status'    => 'failed',
