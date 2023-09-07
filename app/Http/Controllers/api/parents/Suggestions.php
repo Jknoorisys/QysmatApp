@@ -350,7 +350,7 @@ class Suggestions extends Controller
                     $count = 0;
                     foreach ($suggestion as $m) {
                         $singleton_id = $m->id;
-                        $swiped_up = SwipedUpUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id], ['swiped_user_id', '=', $singleton_id]])->first();
+                        $swiped_up = SwipedUpUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id], ['swiped_user_id', '=', $singleton_id]])->first();
                         
                         // $block = BlockList::where([
                         //     ['user_id', '=', $request->login_id],
