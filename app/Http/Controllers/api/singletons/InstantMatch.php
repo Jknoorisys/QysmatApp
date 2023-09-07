@@ -228,7 +228,7 @@ class InstantMatch extends Controller
                 ],400);
             }
 
-            $requests = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])->first();
+            $requests = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending'], ['user_id', '=', $request->swiped_user_id]])->first();
             if (empty($requests)) {
                 return response()->json([
                     'status'    => 'failed',
@@ -237,13 +237,13 @@ class InstantMatch extends Controller
             }
 
             if ($status == 'rejected') {
-                $update = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])
+                $update = InstantMatchRequest::where([['id', '=', $requests->id], ['request_type', '=', 'pending']])
                                     ->update(['request_type' => 'rejected', 'updated_at' => Carbon::now()]);
             }elseif ($status == 'maybe') {
-                $update = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])
+                $update = InstantMatchRequest::where([['id', '=', $requests->id], ['request_type', '=', 'pending']])
                                     ->update(['request_type' => 'hold', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
             }elseif ($status == 'un-matched') {
-                $update = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])
+                $update = InstantMatchRequest::where([['id', '=', $requests->id], ['request_type', '=', 'pending']])
                                     ->update(['request_type' => 'un-matched', 'updated_at' => Carbon::now()]);
                 if ($update) {
                     Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id]])
