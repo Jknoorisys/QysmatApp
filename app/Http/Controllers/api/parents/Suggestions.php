@@ -350,7 +350,7 @@ class Suggestions extends Controller
                     $count = 0;
                     foreach ($suggestion as $m) {
                         $singleton_id = $m->id;
-                        $swiped_up = SwipedUpUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id], ['swiped_user_id', '=', $singleton_id]])->first();
+                        $swiped_up = SwipedUpUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'], ['singleton_id', '=', $request->singleton_id], ['swiped_user_id', '=', $singleton_id]])->first();
                         
                         // $block = BlockList::where([
                         //     ['user_id', '=', $request->login_id],
@@ -514,11 +514,14 @@ class Suggestions extends Controller
 
                         $Matched = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'],['singleton_id', '=', $request->singleton_id]])->get();
 
+                        $SwipedUp = SwipedUpUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', 'parent'],['singleton_id', '=', $request->singleton_id]])->get();
+
                         $excludeIds = array_filter(array_merge(
                             $blocked->pluck('id')->toArray(),
                             $reported->pluck('id')->toArray(),
                             $unMatched->pluck('id')->toArray(),
                             $Matched->pluck('matched_id')->toArray(),
+                            $SwipedUp->pluck('swiped_user_id')->toArray(),
                         ));
 
                         $others_liked_me = Matches::where([['matches.match_id', '=', $request->singleton_id], ['matches.user_type', '=', 'parent'],['is_rematched', '=', 'no'],['is_reset', '=', 'no'],['match_type', '=', 'liked']])

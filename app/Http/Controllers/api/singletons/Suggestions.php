@@ -532,7 +532,7 @@ class Suggestions extends Controller
                     foreach ($suggestion as $m) {
                         $singleton_id = $m->id;
 
-                        $swiped_up = SwipedUpUsers ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['swiped_user_id', '=', $singleton_id]])->first();
+                        $swiped_up = SwipedUpUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['swiped_user_id', '=', $singleton_id]])->first();
 
                         $block = BlockList::where(function ($query) use ($request, $singleton_id) {
                                         $query->where([
@@ -665,11 +665,14 @@ class Suggestions extends Controller
 
                         $Matched = MyMatches ::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton']])->get();
 
+                        $SwipedUp = SwipedUpUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton']])->get();
+
                         $excludeIds = array_filter(array_merge(
                             $blocked->pluck('id')->toArray(),
                             $reported->pluck('id')->toArray(),
                             $unMatched->pluck('id')->toArray(),
                             $Matched->pluck('matched_id')->toArray(),
+                            $SwipedUp->pluck('swiped_user_id')->toArray(),
                         ));
                         
                         $others_liked_me = Matches::where([['matches.match_id', '=', $request->login_id], ['matches.user_type', '=', 'singleton'],['is_rematched', '=', 'no'],['is_reset', '=', 'no'],['match_type', '=', 'liked']])
