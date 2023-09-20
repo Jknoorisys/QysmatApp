@@ -75,7 +75,7 @@
 <script src=" assets/libs/ckeditor/samples/js/sample.js"></script>
 
 
-<script data-sample="2">
+<script data-sample="3">
     CKEDITOR.replace('answer', {
         height: 200,
         width:1000,
