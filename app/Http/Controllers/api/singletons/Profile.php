@@ -91,8 +91,9 @@ class Profile extends Controller
                 $profile = Singleton::where([['id','=',$request->login_id], ['status','=','Unblocked']])->first();
                 if (!empty($profile) && $profile->is_verified != 'pending') {
                     $user = Singleton::where([['id','=',$request->login_id], ['status','=','Unblocked'], ['is_email_verified','=','verified']])->first();
-                    if ($user && $user->parent_id != 0) {
-                        $parent = ParentsModel::where('id','=',$user->parent_id)->first();
+                    if ($user->parent_id && $user->parent_id != 0) {
+                        return $user->parent_id;
+                        $parent = ParentsModel::where('id','=', $user->parent_id)->first();
                         $user->parent_name = $parent ? $parent->name : '';
                         $user->parent_profile = $parent ? $parent->profile_pic : '';
                     }
@@ -139,7 +140,7 @@ class Profile extends Controller
                         $user->id_proof = ($user->id_proof == '' || empty($user->id_proof)) ? $old_user->id_proof : $user->id_proof;
                     }
 
-                    if ($user && $user->parent_id != 0) {
+                    if ($user->parent_id && $user->parent_id != 0) {
                         $parent = ParentsModel::where('id','=',$user->parent_id)->first();
                         $user->parent_name = $parent ? $parent->name : '';
                         $user->parent_profile = $parent ? $parent->profile_pic : '';
@@ -147,7 +148,7 @@ class Profile extends Controller
                 }
             } else {
                 $user = Singleton::where([['id','=',$request->login_id], ['status','=','Unblocked']])->first();
-                if ($user && $user->parent_id && $user->parent_id != 0) {
+                if ($user->parent_id && $user->parent_id != 0) {
                     $parent = ParentsModel::where('id','=',$user->parent_id)->first();
                     $user->parent_name = $parent ? $parent->name : '';
                     $user->parent_profile = $parent ? $parent->profile_pic : '';
