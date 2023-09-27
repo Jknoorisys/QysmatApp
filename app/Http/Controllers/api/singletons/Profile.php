@@ -91,8 +91,8 @@ class Profile extends Controller
                 $profile = Singleton::where([['id','=',$request->login_id], ['status','=','Unblocked']])->first();
                 if (!empty($profile) && $profile->is_verified != 'pending') {
                     $user = Singleton::where([['id','=',$request->login_id], ['status','=','Unblocked'], ['is_email_verified','=','verified']])->first();
-                    if (!empty($user->parent_id) && $user->parent_id != 0 && $user->parent_id != null) {
-                        $parent = ParentsModel::where('id','=',$user->parent_id)->first();
+                    if ($user->parent_id && $user->parent_id != 0) {
+                        $parent = $user->parent_id ? ParentsModel::where('id','=',$user->parent_id)->first() : null;
                         $user->parent_name = $parent ? $parent->name : '';
                         $user->parent_profile = $parent ? $parent->profile_pic : '';
                     }
