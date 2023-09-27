@@ -642,10 +642,18 @@ class Auth extends Controller
 
                     $reverify = ReVerifyRequests::where([['user_id',$user->id],['user_type', '=', 'parent'],['status','!=','verified']])->first();
 
-                    if ($user->mobile == '' && $reverify->mobile == '') {
-                        $user->register_profile = 0;
-                    }else {
-                        $user->register_profile = 1;
+                    if ($reverify) {
+                        if ($user->mobile == '' && $reverify->mobile == '') {
+                            $user->register_profile = 0;
+                        }else {
+                            $user->register_profile = 1;
+                        }
+                    } else {
+                        if ($user->mobile == '' ) {
+                            $user->register_profile = 0;
+                        }else {
+                            $user->register_profile = 1;
+                        }
                     }
 
                     if($user->is_email_verified == 'verified'){
@@ -746,10 +754,18 @@ class Auth extends Controller
                 if(Hash::check($request->password, $user->password)){
                     $reverify = ReVerifyRequests::where([['user_id',$user->id],['user_type', '=', 'parent'],['status','!=','verified']])->first();
 
-                    if ($user->mobile == '' && $reverify->mobile == '') {
-                        $user->register_profile = 0;
-                    }else {
-                        $user->register_profile = 1;
+                    if ($reverify) {
+                        if ($user->mobile == '' && $reverify->mobile == '') {
+                            $user->register_profile = 0;
+                        }else {
+                            $user->register_profile = 1;
+                        }
+                    } else {
+                        if ($user->mobile == '' ) {
+                            $user->register_profile = 0;
+                        }else {
+                            $user->register_profile = 1;
+                        }
                     }
                     
                     if($user->is_email_verified == 'verified'){
