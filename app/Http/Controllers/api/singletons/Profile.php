@@ -108,7 +108,7 @@ class Profile extends Controller
                                 ->first(['sc.user_id as id','sc.user_type','singletons.parent_id','sc.name','sc.lname','sc.email','sc.mobile','sc.photo1','sc.photo2','sc.photo3','sc.photo4','sc.photo5','sc.dob','sc.gender','sc.marital_status','sc.age','sc.height','sc.profession','sc.short_intro','sc.nationality','sc.country_code','sc.nationality_code','sc.ethnic_origin','sc.islamic_sect','sc.location','sc.lat','sc.long','sc.live_photo','sc.id_proof','sc.status as is_verified']);
                                 
                     if ($old_user) {
-                        $user->parent_id = ($user->parent_id == '' || empty($user->parent_id) || $user->parent_id == 0) ? $old_user->parent_id : $user->parent_id;
+                        $user->parent_id = ($user->parent_id == '' || empty($user->parent_id) || $user->parent_id == 0) ? $old_user->parent_id : $old_user->parent_id;
                         $user->name = ($user->name == '' || empty($user->name)) ? $old_user->name : $user->name;
                         $user->lname = ($user->lname == '' || empty($user->lname)) ? $old_user->lname : $user->lname;
                         $user->email = ($user->email == '' || empty($user->email)) ? $old_user->email : $user->email;
