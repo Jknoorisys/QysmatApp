@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\DeletedUsers;
+use App\Models\PremiumFeatures;
 use App\Models\Singleton;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -52,11 +53,17 @@ class Singletons extends Controller
                                                 ->select('singletons.*','subscriptions.subscription_type','subscriptions.price','subscriptions.currency')
                                                 ->first();
 
-            if ($data['details']->subscription_type == 'Basic') {
+            $featureStatus = PremiumFeatures::whereId(1)->first();
+            if ((!empty($featureStatus) && $featureStatus->status == 'inactive')) {
                 $data['details']->price = 'Free';
-                $features = [__("msg.Only 5 Profile Views per day"), __("msg.Unrestricted profile search criteria")];
-            }else {
                 $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant match request (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
+            }else{
+                if ($data['details']->subscription_type == 'Basic') {
+                    $data['details']->price = 'Free';
+                    $features = [__("msg.Only 5 Profile Views per day"), __("msg.Unrestricted profile search criteria")];
+                }else {
+                    $features = [__("msg.Unlimited swipes per day"), __("msg.Send instant match request (3 per week)"), __("msg.In-app telephone and video calls"), __("msg.Refer profiles to friends and family"), __("msg.Undo last swipe"), __("msg.Reset profile search and start again once a month")];
+                }            
             }
 
             $parent_id                   = $data['details']->parent_id;
