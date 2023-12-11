@@ -344,7 +344,7 @@ class Suggestions extends Controller
                 $this->db->where('parent_id', '!=', $request->login_id);
                 $suggestion = $this->db->get();
 
-                if(!$suggestion->isEmpty()){
+                if(!empty($suggestion)){
                     $users1 = [];
                     $likedMeUsers = [];
                     $count = 0;
