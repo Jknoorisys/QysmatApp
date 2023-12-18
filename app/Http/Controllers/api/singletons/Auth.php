@@ -38,6 +38,7 @@ class Auth extends Controller
             'lname.required' => 'Last name is required.',
             'lname.min' => 'Last name must be at least :min characters.',
             'lname.max' => 'Last name must not exceed :max characters.',
+            'email.unique' => 'This email has already been taken, please go back and log in with your email.',
         ];
 
         
@@ -156,6 +157,7 @@ class Auth extends Controller
             'lname.required' => 'Last name is required.',
             'lname.min' => 'Last name must be at least :min characters.',
             'lname.max' => 'Last name must not exceed :max characters.',
+            'email.unique' => 'This email has already been taken, please go back and log in with your email.',
         ];
 
         $validator = Validator::make($request->all(), [
