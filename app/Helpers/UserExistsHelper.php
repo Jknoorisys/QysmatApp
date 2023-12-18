@@ -841,7 +841,7 @@ use App\Models\Admin as AdminModel;
             'xcoxc.com',
             'yep.it',
             'yogamaven.com',
-            // 'yopmail.com',
+            'yopmail.com',
             'yopmail.fr',
             'yopmail.net',
             'yourdomain.com',
