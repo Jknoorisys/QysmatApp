@@ -151,6 +151,22 @@ class Singletons extends Controller
                 }
                 return redirect()->to('sigletons')->with('success', __('msg.Singleton Profile Verified Successfully'));
             } else {
+                $reciever = Singleton::where('id', '=', $id)->first();
+                if (isset($reciever) && !empty($reciever)) {
+                    $title = __('msg.Profile Rejected');
+                    $message = __('msg.Your Profile is Rejected by Admin');
+                    $fcm_regid[] = $reciever->fcm_token;
+                    $notification = array(
+                        'title'         => $title,
+                        'message'       => $message,
+                        'click_action'  => 'FLUTTER_NOTIFICATION_CLICK',
+                        'date'          => date('Y-m-d H:i'),
+                        'type'          => 'verification',
+                        'response'      => ''
+                    );
+                    $result = sendFCMNotification($notification, $fcm_regid, 'verification');
+                }
+
                 DB::table('re_verify_requests')->where([['user_id', '=', $id],['user_type', '=', 'singleton']])->update(['status' => $is_verified]);
                 return redirect()->to('sigletons')->with('success', __('msg.Singleton Profile Rejected Successfully'));
             }

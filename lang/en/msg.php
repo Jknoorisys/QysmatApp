@@ -394,7 +394,9 @@ return [
     // FCM Notifications
     'New Message'                                           => 'New Message',
     'Your Profile is Verified by Admin'                     => 'Your Profile is Verified by Admin',
+    'Your Profile is Rejected by Admin'                     => 'Your Profile is Rejected by Admin',
     'Profile Verified'                                      => 'Profile Verified',
+    'Profile Rejected'                                      => 'Profile Rejected',
     'You have a New Match Request!'                          => 'You have a New Match Request!',
     'Instant Match Request'                                 => 'Instant Match Request',
     'You have a Instant Match Request from'                 => 'You have a Instant Match Request from',
