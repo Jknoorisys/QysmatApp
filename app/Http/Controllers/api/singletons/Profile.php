@@ -406,8 +406,8 @@ class Profile extends Controller
                         'location'                  => $request->location ? $request->location : '',
                         'lat'                       => $request->lat ? $request->lat : '',
                         'long'                      => $request->long ? $request->long : '',
-                        'live_photo'                => $request->file('live_photo') ? $live_photo : ($reverifyRequest ? $reverifyRequest->live_photo : ''),
-                        'id_proof'                  => $request->file('id_proof') ? $id_proof : ($reverifyRequest ? $reverifyRequest->id_proof : ''),
+                        'live_photo'                => $request->file('live_photo') ? $live_photo : '',
+                        'id_proof'                  => $request->file('id_proof') ? $id_proof : '',
                         'status'                    => 'pending'
                     ]
                 );
