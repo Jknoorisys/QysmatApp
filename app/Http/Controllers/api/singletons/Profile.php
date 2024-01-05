@@ -509,7 +509,8 @@ class Profile extends Controller
         try {
             $user = Singleton::find($request->login_id);
             if(!empty($user)){
-                
+                $reverifyRequest = ReVerifyRequests::where([['user_id','=', $request->login_id], ['user_type','=','singleton'], ['status', '=', 'pending']])->first();
+
                 $file1 = $request->file('photo1');
                 if ($file1) {
                     $extension = $file1->getClientOriginalExtension();
@@ -555,11 +556,11 @@ class Profile extends Controller
                     [
                         'user_id'   => $request->login_id, 
                         'user_type' => 'singleton',
-                        'photo1'    => $request->file('photo1') ? $photo1 : '', 
-                        'photo2'    => $request->file('photo2') ? $photo2 : '',
-                        'photo3'    => $request->file('photo3') ? $photo3 : '',
-                        'photo4'    => $request->file('photo4') ? $photo4 : '',
-                        'photo5'    => $request->file('photo5') ? $photo5 : '',
+                        'photo1'    => $request->file('photo1') ? $photo1 : ($reverifyRequest ? $reverifyRequest->photo1 : ''), 
+                        'photo2'    => $request->file('photo2') ? $photo2 : ($reverifyRequest ? $reverifyRequest->photo2 : ''),
+                        'photo3'    => $request->file('photo3') ? $photo3 : ($reverifyRequest ? $reverifyRequest->photo3 : ''),
+                        'photo4'    => $request->file('photo4') ? $photo4 : ($reverifyRequest ? $reverifyRequest->photo4 : ''),
+                        'photo5'    => $request->file('photo5') ? $photo5 : ($reverifyRequest ? $reverifyRequest->photo5 : ''),
                         'status'    => 'pending'
                     ]
                 );
