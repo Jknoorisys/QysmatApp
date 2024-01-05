@@ -304,6 +304,7 @@ class Profile extends Controller
         try {
             $user = ParentsModel::find($request->login_id);
             if(!empty($user)){
+                $reverifyRequest = ReVerifyRequests::where([['user_id','=', $request->login_id], ['user_type','=','parent'], ['status', '=', 'pending']])->first();
                 $file = $request->file('profile_pic');
                 if ($file) {
                     $extension = $file->getClientOriginalExtension();
@@ -333,23 +334,22 @@ class Profile extends Controller
                     [
                         'user_id'                   => $request->login_id, 
                         'user_type'                 => 'parent',
-                        'name'                      => $request->name ? $request->name : '',
-                        'lname'                     => $request->lname ? $request->lname : '',
-                        'email'                     => $request->email ? $request->email : '',
-                        'mobile'                    => $request->mobile ? $request->mobile : '',
-                        'nationality'               => $request->nationality ? $request->nationality : '',
-                        'country_code'              => $request->country_code ? $request->country_code : '',
-                        'nationality_code'          => $request->nationality_code ? $request->nationality_code : '',
-                        'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : '',
-                        'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : '',
-                        'islamic_sect'              => $request->islamic_sect ? $request->islamic_sect : '',
-                        'location'                  => $request->location ? $request->location : '',
-                        'lat'                       => $request->lat ? $request->lat : '',
-                        'long'                      => $request->long ? $request->long : '',
-                        'relation_with_singleton'   => $request->relation_with_singleton ? $request->relation_with_singleton : '',
-                        'profile_pic'               => $request->file('profile_pic') ? $profile_pic : '',
-                        'live_photo'                => $request->file('live_photo') ? $live_photo : '',
-                        'id_proof'                  => $request->file('id_proof') ? $id_proof : '',
+                        'name'                      => $request->name ? $request->name : ($reverifyRequest ? $reverifyRequest->name : ''),
+                        'lname'                     => $request->lname ? $request->lname : ($reverifyRequest ? $reverifyRequest->lname : ''),
+                        'email'                     => $request->email ? $request->email : ($reverifyRequest ? $reverifyRequest->email : ''),
+                        'mobile'                    => $request->mobile ? $request->mobile : ($reverifyRequest ? $reverifyRequest->mobile : ''),
+                        'nationality'               => $request->nationality ? $request->nationality : ($reverifyRequest ? $reverifyRequest->nationality : ''),
+                        'country_code'              => $request->country_code ? $request->country_code : ($reverifyRequest ? $reverifyRequest->country_code : ''),
+                        'nationality_code'          => $request->nationality_code ? $request->nationality_code : ($reverifyRequest ? $reverifyRequest->nationality_code : ''),
+                        'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : ($reverifyRequest ? $reverifyRequest->ethnic_origin : ''),
+                        'islamic_sect'              => $request->islamic_sect ? $request->islamic_sect : ($reverifyRequest ? $reverifyRequest->islamic_sect : ''),
+                        'location'                  => $request->location ? $request->location : ($reverifyRequest ? $reverifyRequest->location : ''),
+                        'lat'                       => $request->lat ? $request->lat : ($reverifyRequest ? $reverifyRequest->lat : ''),
+                        'long'                      => $request->long ? $request->long : ($reverifyRequest ? $reverifyRequest->long : ''),
+                        'relation_with_singleton'   => $request->relation_with_singleton ? $request->relation_with_singleton : ($reverifyRequest ? $reverifyRequest->relation_with_singleton : ''),
+                        'profile_pic'               => $request->file('profile_pic') ? $profile_pic : ($reverifyRequest ? $reverifyRequest->profile_pic : ''),
+                        'live_photo'                => $request->file('live_photo') ? $live_photo : ($reverifyRequest ? $reverifyRequest->live_photo : ''),
+                        'id_proof'                  => $request->file('id_proof') ? $id_proof : ($reverifyRequest ? $reverifyRequest->id_proof : ''),
                         'status'                    => 'pending'
                     ]
                 );

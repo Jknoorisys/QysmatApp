@@ -365,7 +365,7 @@ class Profile extends Controller
             $age = Carbon::parse($request->dob)->age;
             $user = Singleton::find($request->login_id);
             if(!empty($user)){
-                $reverifyRequest = ReVerifyRequests::where([['user_id','=', $request->login_id], ['user_type','=','singleton']])->first();
+                $reverifyRequest = ReVerifyRequests::where([['user_id','=', $request->login_id], ['user_type','=','singleton'], ['status', '=', 'pending']])->first();
                 $file1 = $request->file('live_photo');
                 if ($file1) {
                     $extension = $file1->getClientOriginalExtension();
@@ -387,27 +387,27 @@ class Profile extends Controller
                     [
                         'user_id'                   => $request->login_id, 
                         'user_type'                 => 'singleton',
-                        'name'                      => $request->name ? $request->name : '',
-                        'lname'                     => $request->lname ? $request->lname : '',
-                        'email'                     => $request->email ? $request->email : '',
-                        'mobile'                    => $request->mobile ? $request->mobile : '',
-                        'dob'                       => $request->dob ? $request->dob : '',
-                        'gender'                    => $request->gender ? $request->gender : '',
-                        'marital_status'            => $request->marital_status ? $request->marital_status : 'Never Married',
-                        'age'                       => $age ? $age : '',
-                        'height'                    => $request->height ? $request->height : '',
-                        'profession'                => $request->profession ? $request->profession : '',
-                        'nationality'               => $request->nationality ? $request->nationality : '',
-                        'country_code'              => $request->country_code ? $request->country_code : '',
-                        'nationality_code'          => $request->nationality_code ? $request->nationality_code : '',
-                        'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : '',
-                        'islamic_sect'              => $request->islamic_sect ? $request->islamic_sect : '',
-                        'short_intro'               => $request->short_intro ? $request->short_intro : '',
-                        'location'                  => $request->location ? $request->location : '',
-                        'lat'                       => $request->lat ? $request->lat : '',
-                        'long'                      => $request->long ? $request->long : '',
-                        'live_photo'                => $request->file('live_photo') ? $live_photo : '',
-                        'id_proof'                  => $request->file('id_proof') ? $id_proof : '',
+                        'name'                      => $request->name ? $request->name : ($reverifyRequest ? $reverifyRequest->name : ''),
+                        'lname'                     => $request->lname ? $request->lname : ($reverifyRequest ? $reverifyRequest->lname : ''),
+                        'email'                     => $request->email ? $request->email : ($reverifyRequest ? $reverifyRequest->email : ''),
+                        'mobile'                    => $request->mobile ? $request->mobile : ($reverifyRequest ? $reverifyRequest->mobile : ''),
+                        'dob'                       => $request->dob ? $request->dob : ($reverifyRequest ? $reverifyRequest->dob : ''),
+                        'gender'                    => $request->gender ? $request->gender : ($reverifyRequest ? $reverifyRequest->gender : '' ),
+                        'marital_status'            => $request->marital_status ? $request->marital_status : ($reverifyRequest ? $reverifyRequest->marital_status : 'Never Married'),
+                        'age'                       => $age ? $age : ($reverifyRequest ? $reverifyRequest->age : ''),
+                        'height'                    => $request->height ? $request->height : ($reverifyRequest ? $reverifyRequest->height : ''),
+                        'profession'                => $request->profession ? $request->profession : ($reverifyRequest ? $reverifyRequest->profession : ''),
+                        'nationality'               => $request->nationality ? $request->nationality : ($reverifyRequest ? $reverifyRequest->nationality : ''),
+                        'country_code'              => $request->country_code ? $request->country_code : ($reverifyRequest ? $reverifyRequest->country_code : ''),
+                        'nationality_code'          => $request->nationality_code ? $request->nationality_code : ($reverifyRequest ? $reverifyRequest->nationality_code : ''),
+                        'ethnic_origin'             => $request->ethnic_origin ? $request->ethnic_origin : ($reverifyRequest ? $reverifyRequest->ethnic_origin : ''),
+                        'islamic_sect'              => $request->islamic_sect ? $request->islamic_sect : ($reverifyRequest ? $reverifyRequest->islamic_sect : ''),
+                        'short_intro'               => $request->short_intro ? $request->short_intro : ($reverifyRequest ? $reverifyRequest->short_intro : ''),
+                        'location'                  => $request->location ? $request->location : ($reverifyRequest ? $reverifyRequest->location : ''),
+                        'lat'                       => $request->lat ? $request->lat : ($reverifyRequest ? $reverifyRequest->lat : ''),
+                        'long'                      => $request->long ? $request->long : ($reverifyRequest ? $reverifyRequest->long : ''),
+                        'live_photo'                => $request->file('live_photo') ? $live_photo : ($reverifyRequest ? $reverifyRequest->live_photo : ''),
+                        'id_proof'                  => $request->file('id_proof') ? $id_proof : ($reverifyRequest ? $reverifyRequest->id_proof : ''),
                         'status'                    => 'pending'
                     ]
                 );
@@ -456,7 +456,6 @@ class Profile extends Controller
 
                     $admin = Admin::find(1);
                     $admin->notify(new AdminNotification($user, 'admin', 0, $details));
-                    // $send = sendWebNotification($details['title'], 'Someone '.$details['msg'])  ;
 
                     return response()->json([
                         'status'    => 'success',

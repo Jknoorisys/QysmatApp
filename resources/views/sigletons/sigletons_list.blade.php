@@ -84,7 +84,7 @@
                                     <td class="text-center">{{$value->name.' '.$value->lname}}</td>
                                     <td class="text-center">{{$value->email}}</td>
                                     <td class="text-center">{{$value->status}}</td>
-                                    <td class="text-center"><span class="label label-{{ $value->is_verified == 'verified' ? 'success': 'danger'}}">{{ $value->is_verified == 'verified' ? 'Verified': 'Not Verified'}}</span></td>
+                                    <td class="text-center"><span class="label label-{{ $value->is_verified == 'verified' ? 'success': 'danger'}}">{{ $value->is_verified == 'pending' ? 'Not Verified': ucfirst($value->is_verified) }}</span></td>
                                     <td class="text-center bt-switch">
 
                                         <div class="row justify-content-center">
