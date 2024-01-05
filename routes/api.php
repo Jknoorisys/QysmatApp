@@ -26,7 +26,6 @@ use App\Http\Controllers\api\singletons\Notifications;
 use App\Http\Controllers\api\singletons\Profile;
 use App\Http\Controllers\api\singletons\Suggestions;
 use App\Http\Controllers\api\singletons\Swipes as SingletonsSwipes;
-use App\Http\Controllers\api\singletons\ZoomAPI;
 use App\Http\Controllers\api\static_pages\StaticPages;
 use App\Http\Controllers\api\stripe\StripeSubscription;
 use App\Http\Controllers\api\subscriptions\SubscriptionPlans;
@@ -112,9 +111,6 @@ Route::prefix('singleton')->group(function () {
 
     // Notifications
     Route::post('get-notifications' , [Notifications::class, 'index']);
-
-    // Zoom API
-    Route::post('video-call' , [ZoomAPI::class, 'index']);
 });
 
 // Parents
