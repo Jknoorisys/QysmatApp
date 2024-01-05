@@ -365,6 +365,7 @@ class Profile extends Controller
             $age = Carbon::parse($request->dob)->age;
             $user = Singleton::find($request->login_id);
             if(!empty($user)){
+                $reverifyRequest = ReVerifyRequests::where([['user_id','=', $request->login_id], ['user_type','=','singleton']])->first();
                 $file1 = $request->file('live_photo');
                 if ($file1) {
                     $extension = $file1->getClientOriginalExtension();
@@ -405,8 +406,8 @@ class Profile extends Controller
                         'location'                  => $request->location ? $request->location : '',
                         'lat'                       => $request->lat ? $request->lat : '',
                         'long'                      => $request->long ? $request->long : '',
-                        'live_photo'                => $request->file('live_photo') ? $live_photo : '',
-                        'id_proof'                  => $request->file('id_proof') ? $id_proof : '',
+                        'live_photo'                => $request->file('live_photo') ? $live_photo : ($reverifyRequest ? $reverifyRequest->live_photo : ''),
+                        'id_proof'                  => $request->file('id_proof') ? $id_proof : ($reverifyRequest ? $reverifyRequest->id_proof : ''),
                         'status'                    => 'pending'
                     ]
                 );
