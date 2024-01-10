@@ -44,6 +44,7 @@ class Dashboard extends Controller
         $data['admin']               = $this->admin;
         $data['singletons']          = Singleton::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->count();
         $data['parents']             = ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->count();
+        $data['joint_singletons']    = Singleton::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified'], ['parent_id', '!=', 0]])->count();
 
         $data['active']              = Singleton::where([['status', '=' ,'Unblocked'],['is_email_verified', '=' ,'verified']])->count() + ParentsModel::where([['status', '=' ,'Unblocked'],['is_email_verified', '=' ,'verified']])->count();
         $data['blocked']             = Singleton::where([['status', '=' ,'Blocked'],['is_email_verified', '=' ,'verified']])->count() + ParentsModel::where([['status', '=' ,'Blocked'],['is_email_verified', '=' ,'verified']])->count();
