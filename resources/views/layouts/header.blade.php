@@ -13,9 +13,11 @@
     <nav class="navbar top-navbar navbar-expand-md navbar-dark">
         <div class="navbar-header" style="border: none">
             <!-- This is for the sidebar toggle which is visible on mobile only -->
-            <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)">
+            <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)" onclick="sideBarToggle()">
                 <i class="ti-menu ti-close"></i>
             </a>
+            
+            
             <!-- ============================================================== -->
             <!-- Logo -->
             <!-- ============================================================== -->
@@ -427,3 +429,12 @@
         </div>
     </nav>
 </header>
+
+<script>
+    function sideBarToggle() {
+        var mainWrapper = document.getElementById('main-wrapper');
+        if (mainWrapper) {
+            mainWrapper.classList.toggle('show-sidebar');
+        }
+    }
+</script>
