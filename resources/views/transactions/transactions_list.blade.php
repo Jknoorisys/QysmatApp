@@ -6,7 +6,7 @@
             <form class="" action="{{route('transactions')}}" method="post">
                 @csrf
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-lg-4 col-md-6 col-sm-12">
                         <label for="from_date" class="form-label">{{__('msg.From Date')}}</label>
                         {{-- <div class="form-group">
                             <input type="date" name="from_date" id="from_date" class="form-control" value="{{$from_date}}">
@@ -20,7 +20,7 @@
                             <input type='text' name="from_date" id="from_date" value="{{$from_date}}" class="form-control pickadate" placeholder="{{__('msg.From Date')}}" />
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-lg-4 col-md-6 col-sm-12">
                         <label for="to_date" class="form-label">{{__('msg.To Date')}}</label>
                         {{-- <div class="form-group">
                             <input type="date" name="to_date" id="to_date" class="form-control" value="{{$to_date}}">
@@ -34,13 +34,13 @@
                             <input type='text' name="to_date" id="to_date" value="{{$to_date}}" class="form-control pickadate" placeholder="{{__('msg.To Date')}}" />
                         </div>
                     </div>
-                    <div class="col-2">
+                    <div class="col-lg-2 col-md-6 col-sm-12">
                         <label for="search" class="form-label">&nbsp;</label>
                         <div class="form-group">
                             <button type="submit" id="search" class="btn btn-qysmat btn-block">{{__('msg.Search by Date')}}</button>
                         </div>
                     </div>
-                    <div class="col-2">
+                    <div class="col-lg-2 col-md-6 col-sm-12">
                         <label for="reset" class="form-label">&nbsp;</label>
                         <div class="form-group">
                             <a href="{{route('transactions')}}" id="reset" class="btn btn-qysmat-light btn-block">{{__('msg.Reset')}}</a>
