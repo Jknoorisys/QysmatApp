@@ -43,6 +43,20 @@ class Singletons extends Controller
         return view('layouts.main',$data);
     }
 
+    public function singletonWithParents(Request $request)
+    {
+        $search =  $request->search ? $request->search : '';
+        $data['admin']               = $this->admin;
+        $data['previous_title']      = __("msg.Dashboard");
+        $data['url']                 = route('dashboard');
+        $data['title']               = __("msg.Manage Joint Singletons");
+        $data['records']             = Singleton::where([['singletons.status', '!=' ,'Deleted'],['singletons.is_email_verified', '=' ,'verified'], ['singletons.parent_id', '!=', 0]])->join('parents', 'singletons.parent_id', '=', 'parents.id')->orderBy('singletons.name')->get(['singletons.*', 'parents.name as parent_name', 'parents.lname as parent_lname', 'parents.email as parent_email', 'parents.profile_pic as parent_profile_pic']);
+        $data['search']              =  $request->search;
+        $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
+        $data['content']             = view('joint_singletons.joint_singletons_list', $data);
+        return view('layouts.main',$data);
+    }
+
     public function viewSingleton(Request $request)
     {
         $id     = $request->id;

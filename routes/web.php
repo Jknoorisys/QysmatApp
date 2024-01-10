@@ -48,6 +48,7 @@ Route::post('viewSingleton' , [Singletons::class, 'viewSingleton'])->middleware(
 Route::post('verifySingleton' , [Singletons::class, 'verifySingleton'])->middleware('isLoggedIn')->name('verifySingleton');
 Route::post('changeStatus' , [Singletons::class, 'changeStatus'])->middleware('isLoggedIn')->name('changeStatus');
 Route::any('deleteSingleton' , [Singletons::class, 'deleteSingleton'])->middleware('isLoggedIn')->name('deleteSingleton');
+Route::any('joint-sigletons' , [Singletons::class, 'singletonWithParents'])->middleware('isLoggedIn')->name('joint-sigletons');
 
 // Manage Parents
 Route::any('parents' , [ParentsController::class, 'index'])->middleware('isLoggedIn')->name('parents');
