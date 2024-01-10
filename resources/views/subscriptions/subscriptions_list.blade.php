@@ -76,7 +76,7 @@
 
 <div class="row justify-content-center">
     @foreach ($records as $value)
-        <div class="col-4">
+        <div class="col-lg-4 col-md-6 col-sm-12">
             <div class="card">
                 <div class="card-header bg-qysmat">
                     <h4 class="card-title text-uppercase text-center">{{$value->subscription_type}}</h4>

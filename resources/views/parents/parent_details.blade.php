@@ -114,7 +114,7 @@
                 </div>
                 <div class="tab-pane fade" id="previous-month" role="tabpanel" aria-labelledby="pills-setting-tab">
                     <div class="row justify-content-center mt-4">
-                        <div class="col-6">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="card" style="border: 1px solid #e7e0d6; border-radius:15px;">
                                 <div class="card-header bg-qysmat">
                                     <h4 class="card-title text-uppercase text-center">{{$details->subscription_type}}</h4>

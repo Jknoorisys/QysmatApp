@@ -84,12 +84,11 @@
                                     <td class="text-center">{{$value->name.' '.$value->lname}}</td>
                                     <td class="text-center">{{$value->email}}</td>
                                     <td class="text-center">{{$value->status}}</td>
-                                    <td class="text-center"><span class="label label-{{ $value->is_verified == 'verified' ? 'success': 'danger'}}">{{ $value->is_verified == 'pending' ? 'Not Verified': ucfirst($value->is_verified) }}</span></td>
+                                    <td class="text-center"><span class="badge badge-{{ $value->is_verified == 'verified' ? 'success': 'danger'}}">{{ $value->is_verified == 'pending' ? 'Not Verified': ucfirst($value->is_verified) }}</span></td>
                                     <td class="text-center bt-switch">
 
                                         <div class="row justify-content-center">
-                                            {{-- <div class="col-3"></div> --}}
-                                            <div class="col-3 mt-1">
+                                            <div class="col-md-3 col-sm-6 mt-1">
                                                 <form action="{{route('changeStatus')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" name="id" value="{{$value->id}}">
@@ -97,21 +96,20 @@
                                                     <button type="submit" data-status="{{$value->status == 'Unblocked' ? 'Unblocked' : 'Blocked'}}" data-id="{{$value->id}}" data-name="{{$value->name}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Unblocked' ? 'checked' : ''}} /><label class="qysmat-lable" for="switch">Toggle</label></button>
                                                 </form>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-md-3 col-sm-6">
                                                 <form action="{{route('viewSingleton')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()" data-toggle="tooltip" title='View'> <i class="fas fa-eye"></i> </button>
                                                 </form>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-md-3 col-sm-6">
                                                 <form action="{{route('deleteSingleton')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat show_confirm" data-name="{{$value->name}}" data-id="{{$value->id}}" data-toggle="tooltip" title='Delete'> <i class="fas fa-trash"></i> </button>
                                                 </form>
                                             </div>
-                                            {{-- <div class="col-3"></div> --}}
                                         </div>
                                     </td>
                                 </tr>
