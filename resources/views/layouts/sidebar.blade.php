@@ -62,6 +62,13 @@
                 </li>
 
                 <li class="sidebar-item">
+                    <a class="sidebar-link waves-effect waves-dark" href="{{route('joint-sigletons')}}" aria-expanded="false">
+                        <i class="fa-solid fa-people-group"></i>
+                        <span class="hide-menu sidebar-title"> {{__('msg.Manage Joint Singletons')}} </span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
                     <a class="sidebar-link waves-effect waves-dark" href="{{route('subscriptions')}}" aria-expanded="false">
                         <i class="fa-solid fa-money-check"></i>
                         <span class="hide-menu sidebar-title"> {{__('msg.Manage Subscription Plan and Price')}} </span>
