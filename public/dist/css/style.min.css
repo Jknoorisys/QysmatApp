@@ -30666,7 +30666,7 @@ html[dir="ltr"] body .p-l-0 {
     color: #212529;
     margin-top: 15px;
     margin-right: 4px;
-    margin-left: 4px;
+    /* margin-left: 4px; */
 }
 #main-wrapper[data-layout="vertical"]
     .left-sidebar[data-sidebarbg="skin6"]
@@ -31830,7 +31830,7 @@ label {
     list-style: none;
 }
 .sidebar-nav > ul > li.selected {
-    padding: 0 0 0 10px;
+    padding: 4px 4px 4px 4px;
 }
 .sidebar-nav > ul > li.selected > a {
     border-radius: 60px 0 0 60px;

@@ -75,8 +75,7 @@
                                     <td class="text-center bt-switch">
 
                                         <div class="row justify-content-center">
-                                            <div class="col-3"></div>
-                                            <div class="col-2 mt-1">
+                                            <div class="col-md-2 col-sm-6 mt-1">
                                                 <form action="{{route('changeFAQStatus')}}" method="post" class="text-center">
                                                     @csrf
                                                     <input type="hidden" name="id" value="{{$value->id}}">
@@ -84,21 +83,20 @@
                                                     <button type="submit" data-status="{{$value->status == 'Active' ? 'Active' : 'Inactive'}}" data-id="{{$value->id}}" data-name="{{$value->question}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Inactive' ? '' : 'checked'}} /><label class="qysmat-lable" for="switch">Toggle</label></button>
                                                 </form>
                                             </div>
-                                            <div class="col-2">
+                                            <div class="col-md-2 col-sm-6">
                                                 <form action="{{route('updateFAQ')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()" data-toggle="tooltip" title='Edit'> <i class="fas fa-edit"></i> </button>
                                                 </form>
                                             </div>
-                                            <div class="col-2">
+                                            <div class="col-md-2 col-sm-6">
                                                 <form action="{{route('deleteFAQ')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat show_confirm" data-name="{{$value->question}}" data-id="{{$value->id}}" data-toggle="tooltip" title='Delete'> <i class="fas fa-trash"></i> </button>
                                                 </form>
                                             </div>
-                                            <div class="col-3"></div>
                                         </div>
                                     </td>
                                 </tr>

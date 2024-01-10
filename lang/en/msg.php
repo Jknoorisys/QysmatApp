@@ -121,6 +121,13 @@ return [
     'Parent Unblocked'          => 'Parent Unblocked',
     'Parent Deleted'            => 'Parent Deleted',
 
+    // Manage Joint Singletons
+    'Manage Joint Singletons'   => 'Manage Joint Singletons',
+    'Joint Singletons'          => 'Joint Singletons',
+    'Singleton'                 => 'Singleton',
+    'Parent'                    => 'Parent',
+    'Joint'                     => 'Joint',
+
     // Manage Transactions
     'Manage Transactions'       => 'Manage Transactions',
     'Transaction Details'       => 'Transaction Details',
