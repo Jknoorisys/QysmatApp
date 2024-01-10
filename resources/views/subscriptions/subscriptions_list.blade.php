@@ -57,10 +57,10 @@
 @if ($premiumStatus->status == 'inactive')
     <div class="card">
         <div class="row mt-2">
-            <div class="col-3">
+            <div class="col-lg-4 col-md-6 col-sm-12">
                 <h4 class="text-bold ml-4">{{ __('msg.Enable Premium Features') }}</h4>
             </div>
-            <div class="col-3">
+            <div class="col-lg-4 col-md-6 col-sm-12">
                 <form action="{{route('changeFeatureStatus')}}" method="post" class="text-center">
                     @csrf
                     <input type="hidden" name="status" value="{{$premiumStatus->status == 'active' ? 'inactive' : 'active' }}">
