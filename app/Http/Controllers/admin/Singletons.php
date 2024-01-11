@@ -96,6 +96,31 @@ class Singletons extends Controller
         }
     }
 
+    public function viewJointSingleton(Request $request)
+    {
+        $id     = $request->id;
+        if(!empty($id)){
+            $data['details']  = DB::table('singletons')
+                                    ->join('subscriptions','subscriptions.id','=','singletons.active_subscription_id')
+                                    ->where('singletons.id',$id)
+                                    ->select('singletons.*','subscriptions.subscription_type','subscriptions.price','subscriptions.currency')
+                                    ->first();
+
+            $parent_id                   = $data['details']->parent_id;
+            $data['parent_details']      = !empty($parent_id) ? DB::table('parents')->where([['id', '=', $parent_id],['status', '!=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->first() : '';
+            $data['reverify']            = DB::table('re_verify_requests')->where([['user_id', '=', $id],['user_type', '=', 'singleton'],['status', '=', 'pending']])->first();
+            $data['admin']               = $this->admin;
+            $data['previous_title']      = __("msg.Manage Joint Singletons");
+            $data['url']                 = route('joint-sigletons');
+            $data['title']               = __("msg.Joint Singleton Details");
+            $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
+            $data['content']             = view('joint_singletons.joint_singletons_details', $data);
+            return view('layouts/main', $data);
+        }else {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
+    }
+
     public function verifySingleton(Request $request)
     {
         $id = $request->id;
