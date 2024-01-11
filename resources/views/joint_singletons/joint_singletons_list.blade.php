@@ -58,8 +58,6 @@
                             <th class="text-center">{{ __('msg.No')}}</th>
                             <th class="text-center">{{ __('msg.Singleton')}}</th>
                             <th class="text-center">{{ __('msg.Parent')}}</th>
-                            {{-- <th class="text-center">{{ __('msg.Status')}}</th> --}}
-                            {{-- <th class="text-center">{{ __('msg.Verified')}}</th> --}}
                             <th class="text-center">{{ __('msg.Actions')}}</th>
                         </tr>
                     </thead>
