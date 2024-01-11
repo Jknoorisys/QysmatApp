@@ -69,7 +69,7 @@
                                 <tr>
                                     <td class="text-center">{{$loop->iteration}}</td>
                                     <td>
-                                        <a class="d-flex align-items-center" href="{{ route('sigletons') }}">
+                                        <a class="d-flex align-items-center text-secondary" href="{{ route('sigletons') }}">
                                             <div class="m-r-10">
                                                 <img src="{{ $value->photo1 ? asset($value->photo1) : asset('assets/images/users/no-image.png') }}" alt="user" class="rounded-circle" width="40" height="40">
                                             </div>
@@ -80,7 +80,7 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <div class="d-flex align-items-center">
+                                        <a class="d-flex align-items-center text-secondary" href="{{ route('parents') }}">
                                             <div class="m-r-10">
                                                 <img src="{{ $value->parent_profile_pic ? asset($value->parent_profile_pic) : asset('assets/images/users/no-image.png') }}" alt="user" class="rounded-circle" width="40" height="40">
                                             </div>
@@ -88,7 +88,7 @@
                                                 <h4 class="m-b-0 font-16">{{ $value->parent_name.' '.$value->parent_lname }}</h4>
                                                 <span>{{ $value->parent_email }}</span>
                                             </div>
-                                        </div>
+                                        </a>
                                     </td>
                                     {{-- <td class="text-center">{{$value->status}}</td> --}}
                                     {{-- <td class="text-center"><span class="label label-{{ $value->is_verified == 'verified' ? 'success': 'danger'}}">{{ $value->is_verified == 'pending' ? 'Not Verified': ucfirst($value->is_verified) }}</span></td> --}}
