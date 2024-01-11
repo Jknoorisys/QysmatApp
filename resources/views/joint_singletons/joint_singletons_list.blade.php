@@ -70,9 +70,9 @@
                                     <td class="text-center">{{$loop->iteration}}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            {{-- <div class="m-r-10">
-                                                <img src="{{ $value->photo1 ? asset($value->photo1) : asset('assets/images/users/no-image.png') }}" alt="user" class="rounded-circle" width="45">
-                                            </div> --}}
+                                            <div class="m-r-10">
+                                                <img src="{{ $value->photo1 ? asset($value->photo1) : asset('assets/images/users/no-image.png') }}" alt="user" class="rounded-circle" width="40" height="40">
+                                            </div>
                                             <div class="">
                                                 <h4 class="m-b-0 font-16">{{ $value->name.' '.$value->lname }}</h4>
                                                 <span>{{ $value->email }}</span>
@@ -81,9 +81,9 @@
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            {{-- <div class="m-r-10">
-                                                <img src="{{ $value->parent_profile_pic ? asset($value->parent_profile_pic) : asset('assets/images/users/no-image.png') }}" alt="user" class="rounded-circle" width="45">
-                                            </div> --}}
+                                            <div class="m-r-10">
+                                                <img src="{{ $value->parent_profile_pic ? asset($value->parent_profile_pic) : asset('assets/images/users/no-image.png') }}" alt="user" class="rounded-circle" width="40" height="40">
+                                            </div>
                                             <div class="">
                                                 <h4 class="m-b-0 font-16">{{ $value->parent_name.' '.$value->parent_lname }}</h4>
                                                 <span>{{ $value->parent_email }}</span>
