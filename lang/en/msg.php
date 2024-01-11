@@ -123,6 +123,7 @@ return [
 
     // Manage Joint Singletons
     'Manage Joint Singletons'   => 'Manage Joint Singletons',
+    'Joint Singleton Details'   => 'Joint Singleton Details',
     'Joint Singletons'          => 'Joint Singletons',
     'Singleton'                 => 'Singleton',
     'Parent'                    => 'Parent',

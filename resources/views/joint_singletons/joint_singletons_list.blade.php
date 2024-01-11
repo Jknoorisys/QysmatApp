@@ -91,7 +91,7 @@
                                     <td class="text-center bt-switch">
                                         <div class="row justify-content-center">
                                             <div class="col-12">
-                                                <form action="{{route('viewSingleton')}}" method="post">
+                                                <form action="{{route('view-joint-singleton')}}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{$value->id}}" id="id" name="id" />
                                                     <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()" data-toggle="tooltip" title='View'> <i class="fas fa-eye"></i> </button>
