@@ -69,7 +69,7 @@
                                 <tr>
                                     <td class="text-center">{{$loop->iteration}}</td>
                                     <td>
-                                        <div class="d-flex align-items-center">
+                                        <a class="d-flex align-items-center" href="{{ route('sigletons') }}">
                                             <div class="m-r-10">
                                                 <img src="{{ $value->photo1 ? asset($value->photo1) : asset('assets/images/users/no-image.png') }}" alt="user" class="rounded-circle" width="40" height="40">
                                             </div>
@@ -77,7 +77,7 @@
                                                 <h4 class="m-b-0 font-16">{{ $value->name.' '.$value->lname }}</h4>
                                                 <span>{{ $value->email }}</span>
                                             </div>
-                                        </div>
+                                        </a>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
