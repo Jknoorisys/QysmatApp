@@ -58,8 +58,6 @@
                             <th class="text-center">{{ __('msg.No')}}</th>
                             <th class="text-center">{{ __('msg.Singleton')}}</th>
                             <th class="text-center">{{ __('msg.Parent')}}</th>
-                            {{-- <th class="text-center">{{ __('msg.Status')}}</th> --}}
-                            {{-- <th class="text-center">{{ __('msg.Verified')}}</th> --}}
                             <th class="text-center">{{ __('msg.Actions')}}</th>
                         </tr>
                     </thead>
@@ -90,19 +88,8 @@
                                             </div>
                                         </a>
                                     </td>
-                                    {{-- <td class="text-center">{{$value->status}}</td> --}}
-                                    {{-- <td class="text-center"><span class="label label-{{ $value->is_verified == 'verified' ? 'success': 'danger'}}">{{ $value->is_verified == 'pending' ? 'Not Verified': ucfirst($value->is_verified) }}</span></td> --}}
                                     <td class="text-center bt-switch">
-
                                         <div class="row justify-content-center">
-                                            {{-- <div class="col-md-4 col-sm-6 mt-1">
-                                                <form action="{{route('changeStatus')}}" method="post">
-                                                    @csrf
-                                                    <input type="hidden" name="id" value="{{$value->id}}">
-                                                    <input type="hidden" name="status" value="{{$value->status == 'Unblocked' ? 'Blocked' : 'Unblocked' }}">
-                                                    <button type="submit" data-status="{{$value->status == 'Unblocked' ? 'Unblocked' : 'Blocked'}}" data-id="{{$value->id}}" data-name="{{$value->name}}" class="btn block_confirm btn-sm"><input type="checkbox" id="switch" {{$value->status == 'Unblocked' ? 'checked' : ''}} /><label class="qysmat-lable" for="switch">Toggle</label></button>
-                                                </form>
-                                            </div> --}}
                                             <div class="col-12">
                                                 <form action="{{route('viewSingleton')}}" method="post">
                                                     @csrf
@@ -110,13 +97,6 @@
                                                     <button type="submit" class="btn btn-lg text-qysmat" onclick="this.form.submit()" data-toggle="tooltip" title='View'> <i class="fas fa-eye"></i> </button>
                                                 </form>
                                             </div>
-                                            {{-- <div class="col-md-4 col-sm-6">
-                                                <form action="{{route('deleteSingleton')}}" method="post">
-                                                    @csrf
-                                                    <input type="hidden" value="{{$value->id}}" id="id" name="id" />
-                                                    <button type="submit" class="btn btn-lg text-qysmat show_confirm" data-name="{{$value->name}}" data-id="{{$value->id}}" data-toggle="tooltip" title='Delete'> <i class="fas fa-trash"></i> </button>
-                                                </form>
-                                            </div> --}}
                                         </div>
                                     </td>
                                 </tr>
@@ -134,48 +114,7 @@
     </div>
 </div>
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
 <script type="text/javascript">
-
-     $('.show_confirm').click(function(event) {
-        var form =  $(this).closest("form");
-        var name = $(this).data("name");
-        let id = $(this).data('id');
-        event.preventDefault();
-        swal({
-            title: "{{__('msg.Are You Sure')}}",
-            text: "{{__('msg.You want to Delete ')}}"+name+" ?",
-            icon: "warning",
-            buttons: ["{{__('msg.Cancel')}}", "{{__('msg.Yes')}}"],
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-        if (willDelete) {
-            form.submit();
-        }
-        });
-    });
-
-    $('.block_confirm').click(function(event) {
-        var form =  $(this).closest("form");
-        var name = $(this).data("name");
-        let status = $(this).data('status');
-        let id = $(this).data('id');
-        event.preventDefault();
-        swal({
-            title: "{{__('msg.Are You Sure')}}",
-            text: (status == 'Unblocked') ? "{{__('msg.You want to Block ')}}"+name+" ?" : "{{__('msg.You want to Unblock ')}}"+name+" ?",
-            icon: "warning",
-            buttons: ["{{__('msg.Cancel')}}", "{{__('msg.Yes')}}"],
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-        if (willDelete) {
-            form.submit();
-        }
-        });
-    });
 
     $(document).ready(function() {
     // Initialize DataTable
