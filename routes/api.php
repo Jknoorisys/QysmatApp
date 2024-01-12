@@ -29,6 +29,7 @@ use App\Http\Controllers\api\singletons\Swipes as SingletonsSwipes;
 use App\Http\Controllers\api\static_pages\StaticPages;
 use App\Http\Controllers\api\stripe\StripeSubscription;
 use App\Http\Controllers\api\subscriptions\SubscriptionPlans;
+use App\Http\Controllers\api\version\VersionController;
 use App\Http\Controllers\api\web_pages\WebPages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -249,3 +250,6 @@ Route::prefix('agora')->group(function () {
     Route::post('save' , [Call::class, 'callHistory']);
     Route::post('reject' , [Call::class, 'rejectCall']);
 });
+
+// App Version
+Route::post('app/version' , [VersionController::class, 'index']);
