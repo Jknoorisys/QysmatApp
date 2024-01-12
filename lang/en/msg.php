@@ -1051,4 +1051,11 @@ return [
         'user1' => 'User1 Not Found',
         'user2' => 'User2 Not Found'
     ],
+
+    'version' => [
+        'success' => 'Version Details Fetched Successfully!',
+        'failure' => 'Version Details Not Found!',
+        'latest'  => 'You have latest version of application.',
+        'update'  => 'New Version Available, Please Update Your Application...',
+    ]
 ];
