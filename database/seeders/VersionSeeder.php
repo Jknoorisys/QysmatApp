@@ -17,14 +17,14 @@ class VersionSeeder extends Seeder
     {
         DB::table('app_versions')->insert([
             [
-                'version' => '1.0.0',
+                'version' => '1.0.3',
                 'platform' => 'android',
                 'forcefully_update' => 'no',
                 'url' => 'https://play.google.com/store/apps/details?id=com.app.qysmat',
                 'created_at' => date('Y-m-d H:i:s')
             ],
             [
-                'version' => '1.0.0',
+                'version' => '1.0.4',
                 'platform' => 'ios',
                 'forcefully_update' => 'no',
                 'url' => 'https://apps.apple.com/gb/app/qysmat-the-new-way-to-marry/id6445908697',
