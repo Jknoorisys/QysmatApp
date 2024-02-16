@@ -105,18 +105,19 @@ class Swipes extends Controller
                                     ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->swiped_user_id]])
                                     ->first();
 
+                                    
+                $parent2 = ParentsModel::whereId($request->login_id)->first();
+                $parent1 = ParentsModel::whereId($parent->parent_id)->first();
+
+                $user2 = Singleton::whereId($request->singleton_id)->first();
+                $user1 = Singleton::whereId($request->swiped_user_id)->first();
+
                 if (!empty($mutual)) {
                     Matches::where([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])
                             ->orWhere([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id], ['is_rematched', '=', 'no']])
-                            ->update(['match_type' => 'matched', 'updated_at' => date('Y-m-d H:i:s')]);
+                            ->update(['match_type' => 'matched', 'matched_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
 
                     // send congratulations fcm notification
-                    $parent2 = ParentsModel::whereId($request->login_id)->first();
-                    $parent1 = ParentsModel::whereId($parent->parent_id)->first();
-
-                    $user2 = Singleton::whereId($request->singleton_id)->first();
-                    $user1 = Singleton::whereId($request->swiped_user_id)->first();
-
                     if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                         $title = __('msg.Profile Matched');
                         $body = __('msg.Congratulations It’s a Match!');
@@ -126,9 +127,11 @@ class Swipes extends Controller
                             'user1_id' => $user1->id,
                             'user1_name' => $user1->name,
                             'user1_profile' => $user1->photo1,
+                            'user1_blur_image' => $user1 ? ($user1->gender == 'Male' ? 'no' : $mutual->blur_image) : '',
                             'user2_id' => $user2->id,
                             'user2_name' => $user2->name,
                             'user2_profile' => $user2->photo1,
+                            'user2_blur_image' => $user2 ? ($user2->gender == 'Male' ? 'no' : $mutual->blur_image) : '',
                         );
                         sendFCMNotifications($token, $title, $body, $data);
 
@@ -138,9 +141,11 @@ class Swipes extends Controller
                             'user1_id' => $user2->id,
                             'user1_name' => $user2->name,
                             'user1_profile' => $user2->photo1,
+                            'user1_blur_image' => $user2 ? ($user2->gender == 'Male' ? 'no' : $mutual->blur_image) : '',
                             'user2_id' => $user1->id,
                             'user2_name' => $user1->name,
                             'user2_profile' => $user1->photo1,
+                            'user2_blur_image' => $user1 ? ($user1->gender == 'Male' ? 'no' : $mutual->blur_image) : '',
                         );
                         sendFCMNotifications($token1, $title, $body, $data1);
                     }
@@ -151,6 +156,7 @@ class Swipes extends Controller
                         'match_id' => $request->swiped_user_id,
                         'singleton_id' => $request->singleton_id,
                         'matched_parent_id' => $parent->parent_id,
+                        'blur_image' => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
                         'created_at' => date('Y-m-d H:i:s')
                     ];
 
@@ -310,7 +316,7 @@ class Swipes extends Controller
                         }elseif (!empty($match) && $match->match_type == 'matched') {
                             Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $last_swipe->swiped_user_id], ['singleton_id', '=', $request->singleton_id]])
                                     ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $last_swipe->swiped_user_id]])
-                                    ->update(['match_type' => 'liked', 'updated_at' => date('Y-m-d H:i:s')]);
+                                    ->update(['match_type' => 'liked', 'matched_at' =>  Null, 'updated_at' => date('Y-m-d H:i:s')]);
                         }
 
                         $swipe = LastSwipe::updateOrCreate(

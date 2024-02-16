@@ -164,7 +164,9 @@ class InstantMatch extends Controller
                         'sender_name' => $sender->name,
                         'sender_pic'=> $sender->photo1,
                         'sender_id'=> $sender->id,
-                        'reciever_id'=> $reciever->id
+                        'reciever_id'=> $reciever->id,
+                        'sender_blur_image'=> ($sender->gender == 'Male' ? 'no' : 'yes'),
+                        'reciever_blur_image'=> ($reciever->gender == 'Male' ? 'no' : 'yes'),
                     );
 
                     $result = sendFCMNotifications($token, $title, $body, $data);
@@ -259,12 +261,15 @@ class InstantMatch extends Controller
                 }
             }elseif ($status == 'matched') {
                 $update = InstantMatchRequest::where([['requested_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['request_type', '=', 'pending']])
-                                                ->update(['request_type' => 'matched', 'updated_at' => Carbon::now()]);
+                                                ->update(['request_type' => 'matched', 'matched_at' => date('Y-m-d H:i:s'), 'updated_at' => Carbon::now()]);
                 if ($update) {
                     $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id]])
                                     ->orWhere([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id]])
                                     ->first();
-                                    
+                       
+                    $user = Singleton::where([['id','=',$request->swiped_user_id],['status','!=','Deleted']])->first();
+                    $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+        
                     if (!empty($mutual)) {
                         // $busy = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['status', 'busy']])->first();
                         $matched = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['match_type', 'matched']])
@@ -290,9 +295,6 @@ class InstantMatch extends Controller
                             $match_type = 'matched';
 
                             // send congratulations fcm notification
-                            $user = Singleton::where([['id','=',$request->swiped_user_id],['status','!=','Deleted']])->first();
-                            $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
-
                             if (isset($user) && !empty($user) && isset($singleton) && !empty($singleton)) {
                                 $title = __('msg.Profile Matched');
                                 $body = __('msg.Congratulations It’s a Match!');
@@ -302,9 +304,11 @@ class InstantMatch extends Controller
                                     'user1_id' => $user->id,
                                     'user1_name' => $user->name,
                                     'user1_profile' => $user->photo1,
+                                    'user1_blur_image' => ($user->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
                                     'user2_id' => $singleton->id,
                                     'user2_name' => $singleton->name,
                                     'user2_profile' => $singleton->photo1,
+                                    'user2_blur_image' => ($singleton->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes'))
                                 );
                                 sendFCMNotifications($token, $title, $body, $data);
 
@@ -314,9 +318,11 @@ class InstantMatch extends Controller
                                     'user1_id' => $singleton->id,
                                     'user1_name' => $singleton->name,
                                     'user1_profile' => $singleton->photo1,
+                                    'user1_blur_image' => ($singleton->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
                                     'user2_id' => $user->id,
                                     'user2_name' => $user->name,
                                     'user2_profile' => $user->photo1,
+                                    'user2_blur_image' => ($user->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
                                 );
                                 sendFCMNotifications($token1, $title, $body, $data1);
                             }
@@ -324,13 +330,14 @@ class InstantMatch extends Controller
 
                         Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])
                                 ->orWhere([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['is_rematched', '=', 'no']])
-                                ->update(['match_type' => $match_type, 'is_reset' => 'no', 'queue' => $queue, 'updated_at' => date('Y-m-d H:i:s')]);
+                                ->update(['match_type' => $match_type, 'is_reset' => 'no', 'queue' => $queue, 'matched_at' => $match_type == 'matched' ? date('Y-m-d H:i:s') : Null, 'updated_at' => date('Y-m-d H:i:s')]);
                     }else{
                         $data = [
                             'user_id' => $request->login_id,
                             'user_type' => $request->user_type,
                             'match_id' => $request->swiped_user_id,
                             'matched_parent_id' => $parent->parent_id,
+                            'blur_image' => $user->gender == 'Female' ? $user->is_blurred : $singleton->is_blurred,
                             'created_at' => date('Y-m-d H:i:s')
                         ];
                         DB::table('matches')->insert($data);
@@ -400,10 +407,17 @@ class InstantMatch extends Controller
                     ->where([['instant_match_requests.requested_id', '=', $request->login_id], ['instant_match_requests.user_type', '=', $request->user_type], ['instant_match_requests.request_type', '=', 'pending']])
                     ->get(['instant_match_requests.id as request_id', 'singletons.*']);
 
-            $matched = Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
-                                ->orWhere([['match_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])->get();
+            // $matched = Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
+            //                     ->orWhere([['match_id', '=', $request->login_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])->get();
 
-            if(!$requests->isEmpty() && $matched->isEmpty()){
+            if(!$requests->isEmpty()){
+                foreach ($requests as $instantRequest) {
+                    if ($instantRequest->gender == 'Male') {
+                        $instantRequest->blur_image = 'no';
+                    } else{
+                        $instantRequest->blur_image = 'yes';
+                    }
+                }
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.singletons.requests-list.success'),

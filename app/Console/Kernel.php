@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('user:delete')->everyMinute();
+        $schedule->command('image:clear')->everyMinute();
     }
 
     /**

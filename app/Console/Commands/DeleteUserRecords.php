@@ -33,7 +33,6 @@ class DeleteUserRecords extends Command
         DB::table('swiped_up_users')->where('created_at', '<', $one_week_ago)->delete();
         $this->info('Successfully deleted swiped-up profiles.');
 
-        $one_hour_ago = now()->subHour(); 
         DB::table('instant_match_requests')->where('request_type', '=', 'hold')->where('created_at', '<', $one_week_ago)->update(['request_type' => 'pending', 'created_at' => Carbon::now()]);
         $this->info('Successfully updated swiped-up Instant Requests.');
     }
