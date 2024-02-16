@@ -24,7 +24,9 @@ return new class extends Migration
             $table->integer('queue');
             $table->enum('is_rematched',['no', 'yes'])->default('no');
             $table->enum('is_reset',['no', 'yes'])->default('no');
+            $table->enum('blur_image',['NA', 'yes', 'no'])->default('NA');
             $table->enum('status',['available', 'busy'])->default('available');
+            $table->dateTime('matched_at')->nullable();
             $table->timestamps();
         });
     }

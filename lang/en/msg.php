@@ -929,6 +929,12 @@ return [
             'invalid' => 'User Not Found!',
         ],
 
+        'update-blurred-status' => [
+            'success' => 'Blurred Status Updated Successfully!',
+            'failure' => 'Unable to Update Blurred Status, Please Try Again...!',
+            'invalid' => 'User Not Found!',
+        ],
+
         'update-location' => [
             'success' => 'Current Location Updated Successfully!',
             'failure' => 'Unable to Update Location, Please Try Again...!',
@@ -938,6 +944,12 @@ return [
         'upload-pictures' => [
             'success' => 'Profile Photos Uploaded Successfully!',
             'failure' => 'Unable to Upload Profile Photos, Please Try Again...!',
+            'invalid' => 'User Not Found!',
+        ],
+
+        'remove-pictures' => [
+            'success' => 'Profile Photos Removed Successfully!',
+            'failure' => 'Unable to Remove Profile Photos, Please Try Again...!',
             'invalid' => 'User Not Found!',
         ],
 

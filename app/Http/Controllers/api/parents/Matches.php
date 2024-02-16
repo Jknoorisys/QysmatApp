@@ -89,7 +89,7 @@ class Matches extends Controller
                     if (!empty($matched)) {
                         ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->un_matched_id], ['match_type', '=', 'matched'],['singleton_id', '=', $request->singleton_id]])
                                         ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->un_matched_id], ['match_type', '=', 'matched']])
-                                        ->update(['match_type' => 'un-matched', 'updated_at' => date('Y-m-d H:i:s'), 'status' => 'available']);
+                                        ->update(['match_type' => 'un-matched', 'matched_at' => Null, 'updated_at' => date('Y-m-d H:i:s'), 'status' => 'available']);
                     }
 
                     if (!empty($matchExists)) {
@@ -190,6 +190,33 @@ class Matches extends Controller
                     $singleton_id = $m->id;
                     $parent_id = $m->parent_id;
 
+                    $mutual = ModelsMatches::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['match_id', '=', $m->id],
+                            ['singleton_id', '=', $request->singleton_id],
+                        ])->orWhere([
+                            ['user_id', '=', $m->parent_id],
+                            ['user_type', '=', 'parent'],
+                            ['match_id', '=', $request->singleton_id],
+                            ['singleton_id', '=', $m->id],
+                        ]);
+                    })->first();
+
+                    if (!empty($mutual)) {
+                        $m->match_type = $mutual->match_type;
+                        if ($m->gender == 'Male') {
+                            $m->blur_image = 'no';
+                        } else{
+                            if ($m->match_type == 'matched') {
+                                $m->blur_image = $mutual->blur_image;
+                            } else{
+                                $m->blur_image = 'yes';
+                            }
+                        }
+                    }
+
                     $block = BlockList::where(function ($query) use ($request, $m) {
                         $query->where([
                             ['user_id', $request->login_id],
@@ -268,7 +295,7 @@ class Matches extends Controller
                         'status'    => 'success',
                         'message'   => __('msg.parents.match.success'),
                         'data'      => $users,
-                        'total'     => $total
+                        'total'     => count($users)
                     ],200);
                 }else{
                     return response()->json([
@@ -345,6 +372,33 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
+                    $mutual = ModelsMatches::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['match_id', '=', $m->id],
+                            ['singleton_id', '=', $request->singleton_id],
+                        ])->orWhere([
+                            ['user_id', '=', $m->parent_id],
+                            ['user_type', '=', 'parent'],
+                            ['match_id', '=', $request->singleton_id],
+                            ['singleton_id', '=', $m->id],
+                        ]);
+                    })->first();
+
+                    if (!empty($mutual)) {
+                        $m->match_type = $mutual->match_type;
+                        if ($m->gender == 'Male') {
+                            $m->blur_image = 'no';
+                        } else{
+                            if ($m->match_type == 'matched') {
+                                $m->blur_image = $mutual->blur_image;
+                            } else{
+                                $m->blur_image = 'yes';
+                            }
+                        }
+                    }
+
                     $block = BlockList::where(function ($query) use ($request, $m) {
                         $query->where([
                             ['user_id', $request->login_id],
@@ -423,7 +477,7 @@ class Matches extends Controller
                         'status'    => 'success',
                         'message'   => __('msg.parents.received-match.success'),
                         'data'      => $users,
-                        'total'     => $total
+                        'total'     => count($users)
                     ],200);
                 }else{
                     return response()->json([
@@ -500,6 +554,33 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
+                    $mutual = ModelsMatches::where(function ($query) use ($request, $m) {
+                        $query->where([
+                            ['user_id', '=', $request->login_id],
+                            ['user_type', '=', $request->user_type],
+                            ['match_id', '=', $m->id],
+                            ['singleton_id', '=', $request->singleton_id],
+                        ])->orWhere([
+                            ['user_id', '=', $m->parent_id],
+                            ['user_type', '=', 'parent'],
+                            ['match_id', '=', $request->singleton_id],
+                            ['singleton_id', '=', $m->id],
+                        ]);
+                    })->first();
+
+                    if (!empty($mutual)) {
+                        $m->match_type = $mutual->match_type;
+                        if ($m->gender == 'Male') {
+                            $m->blur_image = 'no';
+                        } else{
+                            if ($m->match_type == 'matched') {
+                                $m->blur_image = $mutual->blur_image;
+                            } else{
+                                $m->blur_image = 'yes';
+                            }
+                        }
+                    }
+
                     $block = BlockList::where(function ($query) use ($request, $m) {
                         $query->where([
                             ['user_id', $request->login_id],
@@ -578,7 +659,7 @@ class Matches extends Controller
                         'status'    => 'success',
                         'message'   => __('msg.parents.referred-match.success'),
                         'data'      => $users,
-                        'total'     => $total
+                        'total'     => count($users)
                     ],200);
                 }else{
                     return response()->json([
@@ -659,7 +740,7 @@ class Matches extends Controller
                         })
                         ->offset(($page_number - 1) * $per_page)
                         ->limit($per_page)
-                        ->get(['matches.user_id','matches.user_type','matches.match_type','matches.is_rematched','singletons.*']);
+                        ->get(['matches.user_id','matches.user_type','matches.match_type','matches.is_rematched','matches.blur_image','singletons.*']);
                         
             $loggedInUser = ParentsModel::find($request->login_id);
             foreach ($match as $m) {
@@ -674,6 +755,16 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_ids = $m->id;
+                    if ($m->gender == 'Male') {
+                        $m->blur_image = 'no';
+                    } else{
+                        if ($m->match_type == 'matched') {
+                            $m->blur_image = $m->blur_image;
+                        } else{
+                            $m->blur_image = 'yes';
+                        }
+                    }
+
                     $block = BlockList::where(function ($query) use ($request, $m) {
                         $query->where([
                             ['user_id', $request->login_id],
@@ -747,19 +838,12 @@ class Matches extends Controller
                     }
                 }
 
-                // return response()->json([
-                //     'status'    => 'success',
-                //     'message'   => __('msg.parents.match.success'),
-                //     'data'      => $match,
-                //     'total'     => $total
-                // ],200);
-
                 if(!empty($users)){
                     return response()->json([
                         'status'    => 'success',
                         'message'   => __('msg.singletons.match.success'),
                         'data'      => $users,
-                        'total'     => $total
+                        'total'     => count($users)
                     ],200);
                 }else{
                     return response()->json([
@@ -782,187 +866,6 @@ class Matches extends Controller
             ],500);
         }
     }
-
-    // public function reMatch(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'language' => [
-    //             'required' ,
-    //             Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
-    //         ],
-    //         'login_id'  => 'required||numeric',
-    //         'user_type' => [
-    //             'required' ,
-    //             Rule::in(['parent']),
-    //         ],
-    //         'singleton_id'    => 'required||numeric',
-    //         're_matched_id'   => 'required||numeric',
-    //     ]);
-
-    //     if($validator->fails()){
-    //         return response()->json([
-    //             'status'    => 'failed',
-    //             'message'   => __('msg.Validation Failed!'),
-    //             'errors'    => $validator->errors()
-    //         ],400);
-    //     }
-
-    //     try {
-
-    //         $premium = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-    //         $featureStatus = PremiumFeatures::whereId(1)->first();
-    //         if ((!empty($featureStatus) && $featureStatus->status == 'active') && (!empty($premium) && $premium->active_subscription_id == '1')) {
-    //             return response()->json([
-    //                 'status'    => 'failed',
-    //                 'message'   => __('msg.parents.re-match.premium'),
-    //             ],400);
-    //         }
-
-    //         $userExists = Singleton::find($request->re_matched_id);
-    //         if(empty($userExists) || $userExists->status == 'Deleted' || $userExists->status == 'Blocked'){
-    //             return response()->json([
-    //                 'status'    => 'failed',
-    //                 'message'   => __('msg.parents.re-match.invalid'),
-    //             ],400);
-    //         }
-
-    //         $rematched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id],['singleton_id', '=', $request->singleton_id]])
-    //                                     ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->re_matched_id]])
-    //                                     ->first();   
-
-    //         if(!empty($rematched) && $rematched->is_rematched == 'yes'){
-    //             return response()->json([
-    //                 'status'    => 'failed',
-    //                 'message'   => __('msg.parents.re-match.rematched'),
-    //             ],400);
-    //         }
-
-    //         // $blocked_singleton = BlockList::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['blocked_user_id', '=', $request->re_matched_id], ['blocked_user_type', '=', 'singleton']])
-    //         //                             ->first();
-
-    //         // $blocked_parent = BlockList::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['blocked_user_id', '=', $userExists->parent_id], ['blocked_user_type', '=', 'parent']])
-    //         //                             ->first();
-
-    //         // if(!empty($blocked_singleton) || !empty($blocked_parent)){
-    //         //     return response()->json([
-    //         //         'status'    => 'failed',
-    //         //         'message'   => __('msg.parents.re-match.failure'),
-    //         //     ],400);
-    //         // }
-
-    //         // $reported_singleton = ReportedUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['reported_user_id', '=', $request->re_matched_id], ['reported_user_type', '=', 'singleton']])
-    //         //                             ->first();
-
-    //         // $reported_parent = ReportedUsers::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', $request->singleton_id], ['reported_user_id', '=', $userExists->parent_id], ['reported_user_type', '=', 'parent']])
-    //         //                             ->first();
-
-    //         // if(!empty($reported_singleton) || !empty($reported_parent)){
-    //         //     return response()->json([
-    //         //         'status'    => 'failed',
-    //         //         'message'   => __('msg.parents.re-match.failure'),
-    //         //     ],400);
-    //         // }
-
-    //         $unmatched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id], ['is_rematched', '=', 'no'],['singleton_id', '=', $request->singleton_id], ['match_type', '=', 'un-matched']])
-    //                                     ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->re_matched_id], ['is_rematched', '=', 'no'], ['match_type', '=', 'un-matched']])
-    //                                     ->first();
-    //         if(!empty($unmatched)){
-               
-    //             $re_matched = ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->re_matched_id], ['is_rematched', '=', 'no'],['singleton_id', '=', $request->singleton_id], ['match_type', '=', 'un-matched']])
-    //                                         ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->re_matched_id], ['is_rematched', '=', 'no'], ['match_type', '=', 'un-matched']])
-    //                                         ->update(['match_type' => 'matched','is_rematched' => 'yes', 'updated_at' => date('Y-m-d H:i:s')]);
-                
-    //             if($re_matched){
-
-    //                 // send congratulations fcm notification
-    //                 $parent2 = ParentsModel::whereId($request->login_id)->first();
-    //                 $parent1 = ParentsModel::whereId($userExists->parent_id)->first();
-
-    //                 $user2 = Singleton::whereId($request->singleton_id)->first();
-    //                 $user1 = Singleton::whereId($request->re_matched_id)->first();
-
-    //                 if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
-    //                     $title = __('msg.Profile Matched');
-    //                     $body = __('msg.Congratulations It’s a Match!');
-    //                     $token = $parent1->fcm_token;
-    //                     $data = array(
-    //                         'notType' => "profile_matched",
-    //                         'user1_id' => $user1->id,
-    //                         'user1_name' => $user1->name,
-    //                         'user1_profile' => $user1->photo1,
-    //                         'user2_id' => $user2->id,
-    //                         'user2_name' => $user2->name,
-    //                         'user2_profile' => $user2->photo1,
-    //                     );
-    //                     sendFCMNotifications($token, $title, $body, $data);
-
-    //                     $token1 = $parent2->fcm_token;
-    //                     $data1 = array(
-    //                         'notType' => "profile_matched",
-    //                         'user1_id' => $user2->id,
-    //                         'user1_name' => $user2->name,
-    //                         'user1_profile' => $user2->photo1,
-    //                         'user2_id' => $user1->id,
-    //                         'user2_name' => $user1->name,
-    //                         'user2_profile' => $user1->photo1,
-    //                     );
-    //                     sendFCMNotifications($token1, $title, $body, $data1);
-    //                 }
-
-    //                 UnMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->re_matched_id]])
-    //                             ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $request->singleton_id]])
-    //                             ->delete();
-                    
-    //                 $myMatch = MyMatches::updateOrInsert(
-    //                             ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'matched_id' => $request->re_matched_id, 'singleton_id' => $request->singleton_id],
-    //                             ['user_id' => $request->login_id, 'user_type' => $request->user_type, 'matched_id' => $request->re_matched_id, 'singleton_id' => $request->singleton_id]
-    //                         ); 
-
-    //                 // $myMatch               = new MyMatches();
-    //                 // $myMatch->user_id      = $request->login_id ? $request->login_id : '';
-    //                 // $myMatch->user_type    = $request->user_type ? $request->user_type : '';
-    //                 // $myMatch->singleton_id = $request->singleton_id ? $request->singleton_id : '';
-    //                 // $myMatch->matched_id   = $request->re_matched_id ? $request->re_matched_id : '';
-    //                 // $myMatch->save();
-    
-    //                 if ($myMatch){
-
-    //                     $recieved = RecievedMatches::updateOrInsert(
-    //                         ['user_id' => $userExists->parent_id, 'user_type' => 'parent', 'recieved_match_id' => $request->singleton_id, 'singleton_id' => $request->re_matched_id],
-    //                         ['user_id' => $userExists->parent_id, 'user_type' => 'parent', 'recieved_match_id' => $request->singleton_id, 'singleton_id' => $request->re_matched_id]
-    //                     ); 
-    //                     // $recieved = new RecievedMatches();
-    //                     // $recieved->user_id = $userExists->parent_id ? $userExists->parent_id : '';
-    //                     // $recieved->user_type = 'parent';
-    //                     // $recieved->singleton_id = $request->re_matched_id ? $request->re_matched_id : '';
-    //                     // $recieved->recieved_match_id = $request->singleton_id ? $request->singleton_id : '';
-    //                     // $recieved->save();
-    //                 }
-
-    //                 return response()->json([
-    //                     'status'    => 'success',
-    //                     'message'   => __('msg.parents.re-match.success'),
-    //                 ],200);
-    //             }else{
-    //                 return response()->json([
-    //                     'status'    => 'failed',
-    //                     'message'   => __('msg.parents.re-match.failure'),
-    //                 ],400);
-    //             }
-    //         }else{
-    //             return response()->json([
-    //                 'status'    => 'failed',
-    //                 'message'   => __('msg.parents.re-match.not-found'),
-    //             ],400);
-    //         }
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status'    => 'failed',
-    //             'message'   => __('msg.error'),
-    //             'error'     => $e->getMessage()
-    //         ],500);
-    //     }
-    // }
 
     public function reMatch(Request $request)
     {

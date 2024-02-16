@@ -105,7 +105,7 @@ class Profile extends Controller
                                     $join->on('sc.user_id', '=', 'singletons.id')
                                         ->where('sc.user_type', '=', 'singleton');
                                 })
-                                ->first(['sc.user_id as id','sc.user_type','singletons.parent_id','sc.name','sc.lname','sc.email','sc.mobile','sc.photo1','sc.photo2','sc.photo3','sc.photo4','sc.photo5','sc.dob','sc.gender','sc.marital_status','sc.age','sc.height','sc.profession','sc.short_intro','sc.nationality','sc.country_code','sc.nationality_code','sc.ethnic_origin','sc.islamic_sect','sc.location','sc.lat','sc.long','sc.live_photo','sc.id_proof','sc.status as is_verified']);
+                                ->first(['sc.user_id as id','sc.user_type','singletons.parent_id','sc.name','sc.lname','sc.email','sc.mobile','sc.photo1','sc.photo2','sc.photo3','sc.photo4','sc.photo5','sc.dob','sc.gender','sc.marital_status','sc.age','sc.height','sc.profession','sc.short_intro','sc.nationality','sc.country_code','sc.nationality_code','sc.ethnic_origin','sc.islamic_sect','sc.location','sc.lat','sc.long','sc.live_photo','sc.id_proof','sc.status as is_verified', 'singletons.is_blurred']);
                                 
                     if ($old_user) {
                         if ($user) {
@@ -130,7 +130,7 @@ class Profile extends Controller
                             $user->lat = ($user->lat == '' || empty($user->lat)) ? $old_user->lat : $user->lat;
                             $user->long = ($user->long == '' || empty($user->long)) ? $old_user->long : $user->long;
                             $user->is_verified = ($user->is_verified == '' || empty($user->is_verified)) ? $old_user->is_verified : $user->is_verified;
-
+                            $user->is_blurred = ($user->is_blurred == '' || empty($user->is_blurred)) ? $old_user->is_blurred : $user->is_blurred;
                             $user->photo1 = ($user->photo1 == '' || empty($user->photo1)) ? $old_user->photo1 : $user->photo1;
                             $user->photo2 = ($user->photo2 == '' || empty($user->photo2)) ? $old_user->photo2 : $user->photo2;
                             $user->photo3 = ($user->photo3 == '' || empty($user->photo3)) ? $old_user->photo3 : $user->photo3;
@@ -182,130 +182,6 @@ class Profile extends Controller
             ],500);
         }
     }
-
-    // public function updateProfile(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'language' => [
-    //             'required',
-    //             Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
-    //         ],
-    //         'login_id'          => 'required||numeric',
-    //         'name'              => ['required', 'string', 'min:3', 'max:255'],
-    //         'email'             => ['required', 'email'],
-    //         // 'mobile'            => 'required||unique:singletons||unique:parents',
-    //         'mobile'            => 'required',
-    //         'dob'               => 'required',
-    //         'gender'            => 'required',
-    //         'height'            => 'required',
-    //         'profession'        => 'required',
-    //         'nationality'       => 'required',
-    //         'country_code'      => 'required',
-    //         'ethnic_origin'     => 'required',
-    //         'islamic_sect'      => 'required',
-    //         'short_intro'       => 'required',
-    //         'location'          => 'required',
-    //         'lat'               => 'required',
-    //         'long'              => 'required',
-    //         // 'live_photo'        => 'required',
-    //         // 'id_proof'          => 'required',
-    //     ]);
-
-    //     // if($validator->fails()){
-    //     //     return response()->json([
-    //     //         'status'    => 'failed',
-    //     //         'message'   => __('msg.Validation Failed!'),
-    //     //         'errors'    => $validator->errors()
-    //     //     ],400);
-    //     // }
-
-    //     $errors = [];
-    //     foreach ($validator->errors()->messages() as $key => $value) {
-    //         // if($key == 'email')
-    //             $key = 'error_message';
-    //             $errors[$key] = is_array($value) ? implode(',', $value) : $value;
-    //     }
-
-    //     if($validator->fails()){
-    //         return response()->json([
-    //             'status'    => 'failed',
-    //             'message'   => $errors['error_message'] ? $errors['error_message'] : __('msg.Validation Failed!'),
-    //             // 'errors'    => $validator->errors()
-    //         ],400);
-    //     }
-
-    //     try {
-    //         $age = Carbon::parse($request->dob)->age;
-    //         $user = Singleton::find($request->login_id);
-    //         if(!empty($user)){
-    //             $user->name          = $request->name ? $request->name : '';
-    //             $user->email         = $request->email ? $request->email : '';
-    //             $user->mobile        = $request->mobile ? $request->mobile : '';
-    //             $user->dob           = $request->dob ? $request->dob : '';
-    //             $user->gender        = $request->gender ? $request->gender : '';
-    //             $user->age           = $age ? $age : '';
-    //             $user->height        = $request->height ? $request->height : '';
-    //             $user->profession    = $request->profession ? $request->profession : '';
-    //             $user->country_code  = $request->country_code ? $request->country_code : '';
-    //             $user->nationality   = $request->nationality ? $request->nationality : '';
-    //             $user->ethnic_origin = $request->ethnic_origin ? $request->ethnic_origin : '';
-    //             $user->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
-    //             $user->short_intro   = $request->short_intro ? $request->short_intro : '';
-    //             $user->location      = $request->location ? $request->location : '';
-    //             $user->lat           = $request->lat ? $request->lat : '';
-    //             $user->long          = $request->long ? $request->long : '';
-
-    //             $file1 = $request->file('live_photo');
-    //             if ($file1) {
-    //                 $extension = $file1->getClientOriginalExtension();
-    //                 $filename = time().'.'.$extension;
-    //                 $file1->move('assets/uploads/singleton-live-photos/', $filename);
-    //                 $user->live_photo = 'assets/uploads/singleton-live-photos/'.$filename;
-    //             }
-
-    //             $file2 = $request->file('id_proof');
-    //             if ($file2) {
-    //                 $extension = $file2->getClientOriginalExtension();
-    //                 $filename = time().'.'.$extension;
-    //                 $file2->move('assets/uploads/singleton-id-proofs/', $filename);
-    //                 $user->id_proof = 'assets/uploads/singleton-id-proofs/'.$filename;
-    //             }
-
-    //         $userDetails =  $user->save();
-    //         if($userDetails){
-    //             DB::table('categories')->updateOrInsert(
-    //                 ['user_id' => $request->login_id, 'user_type' => 'singleton'],
-    //                 [
-    //                     'user_id' => $request->login_id,
-    //                     'user_type' => 'singleton',
-    //                     'gender'       => $request->gender == 'Male' ? 'Female' : 'Male'
-    //                 ]
-    //             );
-    //                 return response()->json([
-    //                     'status'    => 'success',
-    //                     'message'   => __('msg.singletons.update-profile.success'),
-    //                     'data'      => $user
-    //                 ],200);
-    //         }else{
-    //                 return response()->json([
-    //                     'status'    => 'failed',
-    //                     'message'   => __('msg.singletons.update-profile.failure'),
-    //                 ],400);
-    //         }
-    //         }else{
-    //             return response()->json([
-    //                 'status'    => 'failed',
-    //                 'message'   => __('msg.singletons.update-profile.invalid'),
-    //             ],400);
-    //         }
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status'    => 'failed',
-    //             'message'   => __('msg.error'),
-    //             'error'     => $e->getMessage()
-    //         ],500);
-    //     }
-    // }
 
     public function updateProfile(Request $request)
     {
@@ -364,6 +240,8 @@ class Profile extends Controller
         try {
             $age = Carbon::parse($request->dob)->age;
             $user = Singleton::find($request->login_id);
+            $is_blurred = 'NA';
+            
             if(!empty($user)){
                 $reverifyRequest = ReVerifyRequests::where([['user_id','=', $request->login_id], ['user_type','=','singleton'], ['status', '=', 'pending']])->first();
                 $file1 = $request->file('live_photo');
@@ -413,7 +291,13 @@ class Profile extends Controller
                 );
                 
                 if($userDetails){
-                    Singleton::where('id', '=', $request->login_id)->update(['is_verified' => 'pending']);
+                    if ($request->gender == 'Female' || $request->gender == 'female') {
+                        $is_blurred = 'yes';
+                    } else {
+                        $is_blurred = 'NA';
+                    }
+
+                    Singleton::where('id', '=', $request->login_id)->update(['is_verified' => 'pending', 'is_blurred' => $is_blurred]);
                     DB::table('categories')->updateOrInsert(
                         ['user_id' => $request->login_id, 'user_type' => 'singleton'],
                         [
@@ -446,7 +330,8 @@ class Profile extends Controller
                         'long'                      => $request->long ? $request->long : $user->long,
                         'live_photo'                => $request->file('live_photo') ? $live_photo : $user->live_photo,
                         'id_proof'                  => $request->file('id_proof') ? $id_proof : $user->id_proof,
-                        'is_verified'               => 'pending'
+                        'is_verified'               => 'pending',
+                        'is_blurred'                => $is_blurred,
                     ];
 
                     $details = [
@@ -556,11 +441,11 @@ class Profile extends Controller
                     [
                         'user_id'   => $request->login_id, 
                         'user_type' => 'singleton',
-                        'photo1'    => $request->file('photo1') ? $photo1 : ($reverifyRequest ? $reverifyRequest->photo1 : ''), 
-                        'photo2'    => $request->file('photo2') ? $photo2 : ($reverifyRequest ? $reverifyRequest->photo2 : ''),
-                        'photo3'    => $request->file('photo3') ? $photo3 : ($reverifyRequest ? $reverifyRequest->photo3 : ''),
-                        'photo4'    => $request->file('photo4') ? $photo4 : ($reverifyRequest ? $reverifyRequest->photo4 : ''),
-                        'photo5'    => $request->file('photo5') ? $photo5 : ($reverifyRequest ? $reverifyRequest->photo5 : ''),
+                        'photo1'    => $request->file('photo1') ? $photo1 : ($reverifyRequest ? $reverifyRequest->photo1 : $user->photo1), 
+                        'photo2'    => $request->file('photo2') ? $photo2 : ($reverifyRequest ? $reverifyRequest->photo2 : $user->photo2),
+                        'photo3'    => $request->file('photo3') ? $photo3 : ($reverifyRequest ? $reverifyRequest->photo3 : $user->photo3),
+                        'photo4'    => $request->file('photo4') ? $photo4 : ($reverifyRequest ? $reverifyRequest->photo4 : $user->photo4),
+                        'photo5'    => $request->file('photo5') ? $photo5 : ($reverifyRequest ? $reverifyRequest->photo5 : $user->photo5),
                         'status'    => 'pending'
                     ]
                 );
@@ -596,6 +481,65 @@ class Profile extends Controller
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.singletons.upload-pictures.invalid'),
+                ],400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function updateBlurredStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'   => 'required||numeric',
+            'is_blurred' => [
+                'required' ,
+                Rule::in(['NA','yes','no']),
+            ],
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+            $user = Singleton::find($request->login_id);
+            if(!empty($user)){
+                $update = Singleton::where('id', '=', $request->login_id)->update(['is_blurred' => $request->is_blurred]);
+                if($update){
+                    Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton']])
+                            ->orWhere('match_id', '=', $request->login_id)
+                            ->orWhere([['singleton_id', '=', $request->login_id], ['user_type', '=', 'parent']])
+                            ->update(['blur_image' => $request->is_blurred]);
+                            
+                    $user->is_blurred = $request->is_blurred ? $request->is_blurred : $user->is_blurred;
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.update-blurred-status.success'),
+                        'data'      => $user
+                    ],200);
+                }else{
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.singletons.update-blurred-status.failure'),
+                    ],400);
+                }
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.update-blurred-status.invalid'),
                 ],400);
             }
         } catch (\Exception $e) {
@@ -766,4 +710,75 @@ class Profile extends Controller
             ],500);
         }
     }
+
+    public function deleteUploadedPhoto(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'language' => [
+                'required' ,
+                Rule::in(['en','hi','ur','bn','ar','in','ms','tr','fa','fr','de','es']),
+            ],
+            'login_id'   => 'required||numeric',
+            'key' => [
+                'required' ,
+                Rule::in(['photo1', 'photo2', 'photo3', 'photo4', 'photo5']),
+            ],
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.Validation Failed!'),
+                'errors'    => $validator->errors()
+            ],400);
+        }
+
+        try {
+            $user = Singleton::find($request->login_id);
+            $key = $request->key;
+            if(!empty($user)){
+                $reverifyRequest = ReVerifyRequests::where([['user_id','=', $request->login_id], ['user_type','=','singleton']])->first();
+                if ($reverifyRequest) {
+                    $update = ReVerifyRequests::where([['user_id','=', $request->login_id], ['user_type','=','singleton']])->update([$key => '']);
+
+                    if($update){ 
+                        if ($user->is_verified != 'verified') {
+                            Singleton::where('id', '=', $request->login_id)->where($key, '=', $reverifyRequest->key)->update([$key => '']);
+                        }else{
+                            Singleton::where('id', '=', $request->login_id)->update([$key => '']);
+                        }  
+                        return response()->json([
+                            'status'    => 'success',
+                            'message'   => __('msg.singletons.remove-pictures.success'),
+                            'data'      => $user
+                        ],200);
+                    }else{
+                        return response()->json([
+                            'status'    => 'failed',
+                            'message'   => __('msg.singletons.remove-pictures.failure'),
+                        ],400);
+                    }
+                } else {
+                    Singleton::where('id', '=', $request->login_id)->update([$key => '']);
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => __('msg.singletons.remove-pictures.success'),
+                        'data'      => $user
+                    ],200);
+                }
+            }else{
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.remove-pictures.invalid'),
+                ],400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.error'),
+                'error'     => $e->getMessage()
+            ],500);
+        }
+    }
+
 }

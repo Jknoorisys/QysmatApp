@@ -298,6 +298,31 @@ class Chat extends Controller
                 //     $list[$key]->chat_status = 'enabled';
                 // }
 
+                $match_type = Matches::where(function ($query) use ($request, $value) {
+                    $query->where([
+                        ['user_id', '=', $request->login_id],
+                        ['user_type', '=', $request->user_type],
+                        ['match_id', '=', $value->id],
+                    ])->orWhere([
+                        ['match_id', '=', $request->login_id],
+                        ['user_type', '=', 'singleton'],
+                        ['user_id', '=', $value->id],
+                    ]);
+                })->first();
+
+                if (!empty($match_type)) {
+                    if ($value->gender == 'Male') {
+                        $list[$key]->blur_image = 'no';
+                    } else{
+                        if ($match_type->match_type == 'matched') {
+                            $list[$key]->blur_image = $match_type->blur_image;
+                        } else{
+                            $list[$key]->blur_image = 'yes';
+                        }
+                    }
+                    $list[$key]->match_type = $match_type->match_type;
+                }
+
                 $last_message = ChatHistory::where([['chat_histories.user_id', '=', $value->user_id],['chat_histories.user_type', '=', $request->user_type],['chat_histories.messaged_user_id', '=', $value->messaged_user_id],['chat_histories.messaged_user_type', '=', 'singleton'], ['deleted_by', '!=', $request->login_id]])
                                         ->orWhere([['chat_histories.user_id', '=', $value->messaged_user_id],['chat_histories.user_type', '=', 'singleton'],['chat_histories.messaged_user_id', '=', $value->user_id],['chat_histories.messaged_user_type', '=', $request->user_type], ['deleted_by', '!=', $request->login_id]])                        
                                         ->select('chat_histories.message')
@@ -598,21 +623,21 @@ class Chat extends Controller
                     $mutual = Matches  :: where([['user_id', '=', $linked->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->messaged_user_id], ['singleton_id', '=', $request->login_id]])
                                         ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->login_id], ['singleton_id', '=', $request->messaged_user_id]])
                                         ->first();
+                                        
+                        $user2 = Singleton::whereId($request->login_id)->first();
+                        $user1 = Singleton::whereId($request->messaged_user_id)->first();
+
+                        $parent2 = ParentsModel::whereId($linked->parent_id)->first();
+                        $parent1 = ParentsModel::whereId($parent->parent_id)->first();
 
                     if (!empty($mutual)) {
                         // Matches::where([['user_id', '=', $linked->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->messaged_user_id], ['singleton_id', '=', $request->login_id], ['is_rematched', '=', 'no']])
                         //         ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->login_id], ['singleton_id', '=', $request->messaged_user_id], ['is_rematched', '=', 'no']])
                         //         ->update(['match_type' => 'matched', 'updated_at' => date('Y-m-d H:i:s')]);
                         Matches::where([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->login_id], ['singleton_id', '=', $request->messaged_user_id], ['is_rematched', '=', 'no'], ['match_type', '=', 'liked']])
-                                ->update(['match_type' => 'matched', 'updated_at' => date('Y-m-d H:i:s')]);
+                                ->update(['match_type' => 'matched', 'matched_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
 
                         // send congratulations fcm notification
-                        $parent2 = ParentsModel::whereId($linked->parent_id)->first();
-                        $parent1 = ParentsModel::whereId($parent->parent_id)->first();
-
-                        $user2 = Singleton::whereId($request->login_id)->first();
-                        $user1 = Singleton::whereId($request->messaged_user_id)->first();
-
                         if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                             $title = __('msg.Profile Matched');
                             $body = __('msg.Congratulations It’s a Match!');
@@ -622,9 +647,11 @@ class Chat extends Controller
                                 'user1_id' => $user1->id,
                                 'user1_name' => $user1->name,
                                 'user1_profile' => $user1->photo1,
+                                'user1_blur_image' => ($user1->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
                                 'user2_id' => $user2->id,
                                 'user2_name' => $user2->name,
                                 'user2_profile' => $user2->photo1,
+                                'user2_blur_image' => ($user2->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
                             );
                             sendFCMNotifications($token, $title, $body, $data);
 
@@ -634,9 +661,11 @@ class Chat extends Controller
                                 'user1_id' => $user2->id,
                                 'user1_name' => $user2->name,
                                 'user1_profile' => $user2->photo1,
+                                'user1_blur_image' => ($user2->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
                                 'user2_id' => $user1->id,
                                 'user2_name' => $user1->name,
                                 'user2_profile' => $user1->photo1,
+                                'user2_blur_image' => ($user1->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
                             );
                             sendFCMNotifications($token1, $title, $body, $data1);
                         }
@@ -647,6 +676,7 @@ class Chat extends Controller
                             'match_id' => $request->messaged_user_id,
                             'singleton_id' => $request->login_id,
                             'matched_parent_id' => $parent->parent_id,
+                            'blur_image' => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
                             'created_at' => date('Y-m-d H:i:s')
                         ];
 

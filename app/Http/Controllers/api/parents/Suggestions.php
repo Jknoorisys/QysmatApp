@@ -579,6 +579,13 @@ class Suggestions extends Controller
                     }
 
                     if(!empty($users)){
+                        foreach ($users as &$user) {
+                            if (is_array($user)) {
+                                $user['blur_image'] = ($user['gender'] == 'Male') ? 'no' : 'yes';
+                            } elseif (is_object($user)) {
+                                $user->blur_image = ($user->gender == 'Male') ? 'no' : 'yes';
+                            }
+                        }
                         return response()->json([
                             'status'    => 'success',
                             'message'   => __('msg.parents.get-suggestions.success'),

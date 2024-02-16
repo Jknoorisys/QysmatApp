@@ -1304,7 +1304,7 @@ use App\Models\Admin as AdminModel;
         if ($user_type == 'singleton') {
             $mutual = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'hold']])
                                 ->orWhere([['match_id','=',$user_id],['user_type','=','singleton'], ['match_type', '=', 'hold']])
-                                ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no']);
+                                ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no', 'Matched_at' => Null]);
             $liked = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'liked']])
                                 ->orWhere([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'un-matched']])
                                 ->delete();
@@ -1332,7 +1332,7 @@ use App\Models\Admin as AdminModel;
                 if (!empty($other_queue)) {
                     Matches::where([['user_id', '=', $un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'hold'], ['queue', '=', $other_queue->queue]])
                                     ->orWhere([['match_id', '=', $un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'hold'], ['queue', '=', $other_queue->queue]])
-                                    ->update(['match_type' => 'matched','queue' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+                                    ->update(['match_type' => 'matched','queue' => 0, 'matched_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
 
                     $notify = Matches::where([['user_id', '=', $un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
                             ->orWhere([['match_id', '=', $un_matched_id], ['user_type', '=', 'singleton'], ['match_type', '=', 'matched']])
@@ -1352,9 +1352,11 @@ use App\Models\Admin as AdminModel;
                                 'user1_id' => $user1->id,
                                 'user1_name' => $user1->name,
                                 'user1_profile' => $user1->photo1,
+                                'user1_blur_image' => ($user1->gender == 'Male' ? 'no' : $notify->blur_image),
                                 'user2_id' => $user2->id,
                                 'user2_name' => $user2->name,
                                 'user2_profile' => $user2->photo1,
+                                'user2_blur_image' => ($user2->gender == 'Male' ? 'no' : $notify->blur_image),
                             );
                             sendFCMNotifications($token, $title, $body, $data);
 
@@ -1363,10 +1365,12 @@ use App\Models\Admin as AdminModel;
                                 'notType' => "profile_matched",
                                 'user1_id' => $user2->id,
                                 'user1_name' => $user2->name,
-                                'user1_profile' => $user1->photo1,
+                                'user1_profile' => $user2->photo1,
+                                'user1_blur_image' => ($user2->gender == 'Male' ? 'no' : $notify->blur_image),
                                 'user2_id' => $user1->id,
                                 'user2_name' => $user1->name,
                                 'user2_profile' => $user1->photo1,
+                                'user2_blur_image' => ($user1->gender == 'Male' ? 'no' : $notify->blur_image),
                             );
                             sendFCMNotifications($token1, $title, $body, $data1);
                         }
@@ -1374,14 +1378,14 @@ use App\Models\Admin as AdminModel;
 
                     Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'matched']])
                                 ->orWhere([['match_id','=',$user_id],['user_type','=','singleton'], ['match_type', '=', 'matched']])
-                                ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no'],['status' => 'available']);
+                                ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no', 'matched_at' => Null,'status' => 'available']);
                     Singleton::where('id', '=', $user_id)->orWhere('id', '=', $un_matched_id)->update(['chat_status' => 'available']);
                 }
             }
         } else {
             $mutual = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'matched']])
                                 ->orWhere([['matched_parent_id','=',$user_id],['user_type','=','parent'], ['match_type', '=', 'matched']])
-                                ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no']);
+                                ->update(['match_type' => 'liked', 'matched_at' => Null, 'queue' => 0, 'is_rematched' => 'no']);
             $liked = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'liked']])
                                 ->orWhere([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'un-matched']])
                                 ->delete();

@@ -114,6 +114,9 @@ class Swipes extends Controller
                                     ->orWhere([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id]])
                                     ->first();
 
+                $user = Singleton::where([['id','=',$request->swiped_user_id],['status','!=','Deleted']])->first();
+                $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
+
                 if (!empty($mutual)) {
                     // $busy = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['status', 'busy']])->first();
                     $matched = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['match_type', 'matched']])
@@ -130,9 +133,6 @@ class Swipes extends Controller
                         $match_type = 'matched';
 
                         // send congratulations fcm notification
-                        $user = Singleton::where([['id','=',$request->swiped_user_id],['status','!=','Deleted']])->first();
-                        $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
-
                         if (isset($user) && !empty($user) && isset($singleton) && !empty($singleton)) {
                             $title = __('msg.Profile Matched');
                             $body = __('msg.Congratulations It’s a Match!');
@@ -142,9 +142,11 @@ class Swipes extends Controller
                                 'user1_id' => $user->id,
                                 'user1_name' => $user->name,
                                 'user1_profile' => $user->photo1,
+                                'user1_blur_image' => ($user->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
                                 'user2_id' => $singleton->id,
                                 'user2_name' => $singleton->name,
                                 'user2_profile' => $singleton->photo1,
+                                'user2_blur_image' => ($singleton->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
                             );
                             sendFCMNotifications($token, $title, $body, $data);
 
@@ -154,9 +156,11 @@ class Swipes extends Controller
                                 'user1_id' => $singleton->id,
                                 'user1_name' => $singleton->name,
                                 'user1_profile' => $singleton->photo1,
+                                'user1_blur_image' => ($singleton->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
                                 'user2_id' => $user->id,
                                 'user2_name' => $user->name,
                                 'user2_profile' => $user->photo1,
+                                'user2_blur_image' => ($user->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
                             );
                             sendFCMNotifications($token1, $title, $body, $data1);
                         }
@@ -164,13 +168,14 @@ class Swipes extends Controller
 
                     Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['is_rematched', '=', 'no']])
                             ->orWhere([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['is_rematched', '=', 'no']])
-                            ->update(['match_type' => $match_type, 'queue' => $queue, 'is_reset' => 'no', 'updated_at' => date('Y-m-d H:i:s')]);
+                            ->update(['match_type' => $match_type, 'queue' => $queue, 'is_reset' => 'no', 'matched_at' => $match_type == 'matched' ? date('Y-m-d H:i:s') : Null, 'updated_at' => date('Y-m-d H:i:s')]);
                 }else{
                     $data = [
                         'user_id' => $request->login_id,
                         'user_type' => $request->user_type,
                         'match_id' => $request->swiped_user_id,
                         'matched_parent_id' => $parent->parent_id,
+                        'blur_image' => $user->gender == 'Female' ? $user->is_blurred : $singleton->is_blurred,
                         'created_at' => date('Y-m-d H:i:s')
                     ];
                     DB::table('matches')->insert($data);
@@ -291,7 +296,7 @@ class Swipes extends Controller
                         }elseif (!empty($match) && ($match->match_type == 'matched' || $match->match_type == 'hold')) {
                             Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $last_swipe->swiped_user_id]])
                                         ->orWhere([['user_id', '=', $last_swipe->swiped_user_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id]])
-                                        ->update(['match_type' => 'liked', 'is_reset' => 'no', 'queue' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+                                        ->update(['match_type' => 'liked', 'is_reset' => 'no', 'queue' => 0, 'matched_at' => Null, 'updated_at' => date('Y-m-d H:i:s')]);
                         }
 
                         $swipe = LastSwipe::updateOrCreate(

@@ -71,6 +71,8 @@ Route::prefix('singleton')->group(function () {
     Route::post('update-profile' , [Profile::class, 'updateProfile']);
     Route::post('update-location' , [Profile::class, 'updatecurrentlocation']);
     Route::post('upload-photos' , [Profile::class, 'uploadPhotos']);
+    Route::post('update-blurred-status' , [Profile::class, 'updateBlurredStatus']);
+    Route::post('remove-photo' , [Profile::class, 'deleteUploadedPhoto']);
     Route::post('get-access-details' , [Profile::class, 'getAccessDetails']);
     Route::post('busy' , [Profile::class, 'chatInProgress']);
 
