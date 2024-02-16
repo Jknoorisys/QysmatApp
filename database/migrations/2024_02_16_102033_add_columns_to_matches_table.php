@@ -15,14 +15,14 @@ return new class extends Migration
     {
         if (!Schema::hasColumn('matches', 'blur_image')) {
             Schema::table('matches', function (Blueprint $table) {
-                $table->enum('blur_image', ['NA', 'yes', 'no'])->default('NA');
+                $table->enum('blur_image', ['NA', 'yes', 'no'])->default('NA')->after('is_reset');
             });
         }
 
         // Add the matched_at column
         if (!Schema::hasColumn('matches', 'matched_at')) {
             Schema::table('matches', function (Blueprint $table) {
-                $table->dateTime('matched_at')->nullable();
+                $table->dateTime('matched_at')->nullable()->after('status');
             });
         }
     }

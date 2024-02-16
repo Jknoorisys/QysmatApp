@@ -15,7 +15,7 @@ return new class extends Migration
     {
         if (!Schema::hasColumn('singletons', 'is_blurred')) {
             Schema::table('singletons', function (Blueprint $table) {
-                $table->enum('is_blurred', ['NA', 'yes', 'no'])->default('NA');
+                $table->enum('is_blurred', ['NA', 'yes', 'no'])->default('NA')->after('is_verified');
             });
         }
     }
