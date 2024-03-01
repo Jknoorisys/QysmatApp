@@ -34,6 +34,7 @@ class Chat extends Controller
         }
     }
 
+    // send message to parent
     public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -596,7 +597,7 @@ class Chat extends Controller
                             'user_type' => 'singleton',
                             'match_id' => $request->messaged_user_singleton_id,
                             'matched_parent_id' => $request->messaged_user_id,
-                            'blur_image' => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
+                            // 'blur_image' => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
                             'created_at' => date('Y-m-d H:i:s')
                         ];
                         DB::table('matches')->insert($data);

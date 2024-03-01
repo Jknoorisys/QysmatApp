@@ -175,7 +175,7 @@ class Swipes extends Controller
                         'user_type' => $request->user_type,
                         'match_id' => $request->swiped_user_id,
                         'matched_parent_id' => $parent->parent_id,
-                        'blur_image' => $user->gender == 'Female' ? $user->is_blurred : $singleton->is_blurred,
+                        // 'blur_image' => $user->gender == 'Female' ? $user->is_blurred : $singleton->is_blurred,
                         'created_at' => date('Y-m-d H:i:s')
                     ];
                     DB::table('matches')->insert($data);

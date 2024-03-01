@@ -34,6 +34,7 @@ class Matches extends Controller
         }
     }
 
+    // unmatch user
     public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [

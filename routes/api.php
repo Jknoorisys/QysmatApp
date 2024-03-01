@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\agora\Call;
 use App\Http\Controllers\api\apple_pay\InAppSubscriptions;
 use App\Http\Controllers\api\bank_details\BankDetails;
+use App\Http\Controllers\api\clear_image\ClearImage;
 use App\Http\Controllers\api\contact_details\ContactDetails;
 use App\Http\Controllers\api\contact_us\ContactUs;
 use App\Http\Controllers\api\delete_account\DeleteUser;
@@ -255,3 +256,6 @@ Route::prefix('agora')->group(function () {
 
 // App Version
 Route::post('app/version' , [VersionController::class, 'index']);
+
+// Clear Image
+Route::post('clear-image' , [ClearImage::class, 'clearImage']);
