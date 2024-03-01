@@ -676,7 +676,7 @@ class Chat extends Controller
                             'match_id' => $request->messaged_user_id,
                             'singleton_id' => $request->login_id,
                             'matched_parent_id' => $parent->parent_id,
-                            'blur_image' => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
+                            // 'blur_image' => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
                             'created_at' => date('Y-m-d H:i:s')
                         ];
 

@@ -306,7 +306,7 @@ class InstantMatch extends Controller
                             'singleton_id'      => $request->singleton_id,
                             'matched_parent_id' => $parent->parent_id,
                             'match_type'        => 'matched',
-                            'blur_image'        => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
+                            // 'blur_image'        => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
                             'matched_at'        => date('Y-m-d H:i:s'),
                             'created_at'        => date('Y-m-d H:i:s')
                         ];

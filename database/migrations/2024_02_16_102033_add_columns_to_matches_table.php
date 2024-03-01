@@ -15,7 +15,7 @@ return new class extends Migration
     {
         if (!Schema::hasColumn('matches', 'blur_image')) {
             Schema::table('matches', function (Blueprint $table) {
-                $table->enum('blur_image', ['NA', 'yes', 'no'])->default('NA')->after('is_reset');
+                $table->enum('blur_image', ['yes', 'no'])->default('yes')->after('is_reset');
             });
         }
 

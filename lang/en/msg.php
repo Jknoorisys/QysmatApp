@@ -1064,6 +1064,13 @@ return [
         'user2' => 'User2 Not Found'
     ],
 
+    'clear-image' => [
+        'success' => 'Image Cleared Successfully!',
+        'failure' => 'Unable to Clear Image, Please Try Again...',
+        'invalid' => 'Your Matched User is Not Found!',
+        'not-found' => 'Match Not Found!',
+    ],
+
     'version' => [
         'success' => 'Version Details Fetched Successfully!',
         'failure' => 'Version Details Not Found!',
