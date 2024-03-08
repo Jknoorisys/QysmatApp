@@ -1352,11 +1352,11 @@ use App\Models\Admin as AdminModel;
                                 'user1_id' => $user1->id,
                                 'user1_name' => $user1->name,
                                 'user1_profile' => $user1->photo1,
-                                'user1_blur_image' => ($user1->gender == 'Male' ? 'no' : $notify->blur_image),
+                                'user1_blur_image' => ($user1->gender == 'Female' ? $notify->blur_image : 'no'),
                                 'user2_id' => $user2->id,
                                 'user2_name' => $user2->name,
                                 'user2_profile' => $user2->photo1,
-                                'user2_blur_image' => ($user2->gender == 'Male' ? 'no' : $notify->blur_image),
+                                'user2_blur_image' => ($user2->gender == 'Female' ? $notify->blur_image : 'no'),
                             );
                             sendFCMNotifications($token, $title, $body, $data);
 
@@ -1366,11 +1366,11 @@ use App\Models\Admin as AdminModel;
                                 'user1_id' => $user2->id,
                                 'user1_name' => $user2->name,
                                 'user1_profile' => $user2->photo1,
-                                'user1_blur_image' => ($user2->gender == 'Male' ? 'no' : $notify->blur_image),
+                                'user1_blur_image' => ($user2->gender == 'Female' ? $notify->blur_image : 'no'),
                                 'user2_id' => $user1->id,
                                 'user2_name' => $user1->name,
                                 'user2_profile' => $user1->photo1,
-                                'user2_blur_image' => ($user1->gender == 'Male' ? 'no' : $notify->blur_image),
+                                'user2_blur_image' => ($user1->gender == 'Female' ? $notify->blur_image : 'no'),
                             );
                             sendFCMNotifications($token1, $title, $body, $data1);
                         }

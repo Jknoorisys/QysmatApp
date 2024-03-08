@@ -102,6 +102,7 @@ class Auth extends Controller
                     'fcm_token'     => $request->fcm_token ? $request->fcm_token : '',
                     'device_token'  => $request->device_token ? $request->device_token : '',
                     'password'      => Hash::make($request->password),
+                    'is_blurred'    => 'no',
                 ]);
                 $user = Singleton::where('email','=',$request->email)->first();
             }else{
@@ -229,6 +230,7 @@ class Auth extends Controller
                     'social_type'   => $request->social_type ? $request->social_type : '',
                     'social_id'     => $request->social_id ? $request->social_id : '',
                     // 'password' => Hash::make($request->password),
+                    'is_blurred'    => 'no',
                 ]);
                 $user = Singleton::where('email','=',$request->email)->first();
             }else{

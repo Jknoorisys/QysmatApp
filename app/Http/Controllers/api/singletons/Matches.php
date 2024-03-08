@@ -122,11 +122,11 @@ class Matches extends Controller
                                     'user1_id' => $user1 ? $user1->id : '',
                                     'user1_name' => $user1 ?  $user1->name : '',
                                     'user1_profile' => $user1 ?  $user1->photo1 : '',
-                                    'user1_blur_image' => $user1 ? ($user1->gender == 'Male' ? 'no' : $notify->blur_image) : '',
+                                    'user1_blur_image' => $user1 ? ($user1->gender == 'Female' ? $notify->blur_image : 'no') : '',
                                     'user2_id' => $user2 ? $user2->id : '',
                                     'user2_name' => $user2 ? $user2->name : '',
                                     'user2_profile' => $user2 ? $user2->photo1 : '',
-                                    'user2_blur_image' => $user2 ? ($user2->gender == 'Male' ? 'no' : $notify->blur_image) : '',
+                                    'user2_blur_image' => $user2 ? ($user2->gender == 'Female' ? $notify->blur_image : 'no') : '',
                                 );
                                 sendFCMNotifications($token, $title, $body, $data);
 
@@ -136,11 +136,11 @@ class Matches extends Controller
                                     'user1_id' => $user2 ? $user2->id : '',
                                     'user1_name' => $user2 ?  $user2->name : '',
                                     'user1_profile' => $user2 ?  $user2->photo1 : '',
-                                    'user1_blur_image' => $user2 ? ($user2->gender == 'Male' ? 'no' : $notify->blur_image) : '',
+                                    'user1_blur_image' => $user2 ? ($user2->gender == 'Female' ? $notify->blur_image : 'no') : '',
                                     'user2_id' => $user1 ? $user1->id : '',
                                     'user2_name' => $user1 ? $user1->name : '',
                                     'user2_profile' => $user1 ? $user1->photo1 : '',
-                                    'user2_blur_image' => $user1 ? ($user1->gender == 'Male' ? 'no' : $notify->blur_image) : '',
+                                    'user2_blur_image' => $user1 ? ($user1->gender == 'Female' ? $notify->blur_image : 'no') : '',
                                 );
                                 sendFCMNotifications($token, $title, $body, $data1);
                             }
@@ -183,11 +183,11 @@ class Matches extends Controller
                                     'user1_id' => $user1 ? $user1->id : '',
                                     'user1_name' => $user1 ?  $user1->name : '',
                                     'user1_profile' => $user1 ?  $user1->photo1 : '',
-                                    'user1_blur_image' => $user1 ? ($user1->gender == 'Male' ? 'no' : $notify->blur_image) : '',
+                                    'user1_blur_image' => $user1 ? ($user1->gender == 'Female' ? $notify->blur_image : 'no') : '',
                                     'user2_id' => $user2 ? $user2->id : '',
                                     'user2_name' => $user2 ? $user2->name : '',
                                     'user2_profile' => $user2 ? $user2->photo1 : '',
-                                    'user2_blur_image' => $user2 ? ($user2->gender == 'Male' ? 'no' : $notify->blur_image) : '',
+                                    'user2_blur_image' => $user2 ? ($user2->gender == 'Female' ? $notify->blur_image : 'no') : '',
                                 );
                                 sendFCMNotifications($token1, $title, $body, $data);
 
@@ -197,11 +197,11 @@ class Matches extends Controller
                                     'user1_id' => $user2 ? $user2->id : '',
                                     'user1_name' => $user2 ?  $user2->name : '',
                                     'user1_profile' => $user2 ?  $user2->photo1 : '',
-                                    'user1_blur_image' => $user2 ? ($user2->gender == 'Male' ? 'no' : $notify->blur_image) : '',
+                                    'user1_blur_image' => $user2 ? ($user2->gender == 'Female' ? $notify->blur_image : 'no') : '',
                                     'user2_id' => $user1 ? $user1->id : '',
                                     'user2_name' => $user1 ? $user1->name : '',
                                     'user2_profile' => $user1 ? $user1->photo1 : '',
-                                    'user2_blur_image' => $user1 ? ($user1->gender == 'Male' ? 'no' : $notify->blur_image) : '',
+                                    'user2_blur_image' => $user1 ? ($user1->gender == 'Female' ? $notify->blur_image : 'no') : '',
                                 );
                                 sendFCMNotifications($token2, $title, $body, $data1);
                             }
@@ -351,7 +351,7 @@ class Matches extends Controller
                             if ($m->match_type == 'matched') {
                                 $m->blur_image = $mutual->blur_image;
                             } else{
-                                $m->blur_image = 'yes';
+                                $m->blur_image = $m->is_blurred;
                             }
                         }
                     }
@@ -523,7 +523,7 @@ class Matches extends Controller
                             if ($m->match_type == 'matched') {
                                 $m->blur_image = $mutual->blur_image;
                             } else{
-                                $m->blur_image = 'yes';
+                                $m->blur_image = $m->is_blurred;
                             }
                         }
                     }
@@ -692,7 +692,7 @@ class Matches extends Controller
                             if ($m->match_type == 'matched') {
                                 $m->blur_image = $mutual->blur_image;
                             } else{
-                                $m->blur_image = 'yes';
+                                $m->blur_image = $m->is_blurred;
                             }
                         }
                     }
@@ -868,7 +868,7 @@ class Matches extends Controller
                         if ($m->match_type == 'matched') {
                             $m->blur_image = $m->blur_image;
                         } else{
-                            $m->blur_image = 'yes';
+                            $m->blur_image = $m->is_blurred;
                         }
                     }
 

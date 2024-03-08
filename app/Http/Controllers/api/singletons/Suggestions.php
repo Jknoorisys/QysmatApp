@@ -544,9 +544,9 @@ class Suggestions extends Controller
                     if(!empty($users)){
                         foreach ($users as &$user) {
                             if (is_array($user)) {
-                                $user['blur_image'] = ($user['gender'] == 'Male') ? 'no' : 'yes';
+                                $user['blur_image'] = $user['gender'] == 'Female' ? $user['is_blurred'] : 'no';
                             } elseif (is_object($user)) {
-                                $user->blur_image = ($user->gender == 'Male') ? 'no' : 'yes';
+                                $user->blur_image = $user->gender == 'Female' ? $user->is_blurred : 'no';
                             }
                         }
                         return response()->json([

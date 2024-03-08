@@ -139,28 +139,28 @@ class Call extends Controller
                     $token = $reciever->fcm_token;
                     if ($request->receiver_user_type == 'singleton') {
                         $data = array(
-                        'notType'        => $request->call_type,
-                        'from_user_name' => $premium->name,
-                        'from_user_pic'  => $sender_pic,
-                        'from_user_id'   => $premium->id,
-                        'from_user_blur_image' => ($premium->gender == 'Male' ? 'no' : $mutual->blur_image),
-                        'to_user_id'     => $reciever->id,
-                        'to_user_type'   => $reciever->user_type,
-                        'to_user_blur_image'   => ($reciever->gender == 'Male' ? 'no' : $mutual->blur_image),
-                        'channel_name'   => $agora['channel'],
-                        'token'          => $agora['token'],
-                    );
+                            'notType'        => $request->call_type,
+                            'from_user_name' => $premium->name,
+                            'from_user_pic'  => $sender_pic,
+                            'from_user_id'   => $premium->id,
+                            'from_user_blur_image' => ($premium->gender == 'Female' ?  $mutual->blur_image : 'no'),
+                            'to_user_id'     => $reciever->id,
+                            'to_user_type'   => $reciever->user_type,
+                            'to_user_blur_image'   => ($reciever->gender == 'Female' ?  $mutual->blur_image : 'no'),
+                            'channel_name'   => $agora['channel'],
+                            'token'          => $agora['token'],
+                        );
                     } else {
                         $data = array(
-                        'notType'        => $request->call_type,
-                        'from_user_name' => $premium->name,
-                        'from_user_pic'  => $sender_pic,
-                        'from_user_id'   => $premium->id,
-                        'to_user_id'     => $reciever->id,
-                        'to_user_type'   => $reciever->user_type,
-                        'channel_name'   => $agora['channel'],
-                        'token'          => $agora['token'],
-                    );
+                            'notType'        => $request->call_type,
+                            'from_user_name' => $premium->name,
+                            'from_user_pic'  => $sender_pic,
+                            'from_user_id'   => $premium->id,
+                            'to_user_id'     => $reciever->id,
+                            'to_user_type'   => $reciever->user_type,
+                            'channel_name'   => $agora['channel'],
+                            'token'          => $agora['token'],
+                        );
                     }
                     
 

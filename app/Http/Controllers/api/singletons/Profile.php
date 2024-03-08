@@ -519,10 +519,10 @@ class Profile extends Controller
             if(!empty($user)){
                 $update = Singleton::where('id', '=', $request->login_id)->update(['is_blurred' => $request->is_blurred]);
                 if($update){
-                    // Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton']])
-                    //         ->orWhere('match_id', '=', $request->login_id)
-                    //         ->orWhere([['singleton_id', '=', $request->login_id], ['user_type', '=', 'parent']])
-                    //         ->update(['blur_image' => $request->is_blurred]);
+                    Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', 'singleton']])
+                            ->orWhere('match_id', '=', $request->login_id)
+                            ->orWhere([['singleton_id', '=', $request->login_id], ['user_type', '=', 'parent']])
+                            ->update(['blur_image' => $request->is_blurred]);
                             
                     $user->is_blurred = $request->is_blurred ? $request->is_blurred : $user->is_blurred;
                     return response()->json([
