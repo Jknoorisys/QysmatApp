@@ -142,11 +142,11 @@ class Swipes extends Controller
                                 'user1_id' => $user->id,
                                 'user1_name' => $user->name,
                                 'user1_profile' => $user->photo1,
-                                'user1_blur_image' => ($user->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                'user1_blur_image' => ($user->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user->is_blurred) : 'no'),
                                 'user2_id' => $singleton->id,
                                 'user2_name' => $singleton->name,
                                 'user2_profile' => $singleton->photo1,
-                                'user2_blur_image' => ($singleton->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                'user2_blur_image' => ($singleton->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $singleton->is_blurred) : 'no'),
                             );
                             sendFCMNotifications($token, $title, $body, $data);
 
@@ -156,11 +156,11 @@ class Swipes extends Controller
                                 'user1_id' => $singleton->id,
                                 'user1_name' => $singleton->name,
                                 'user1_profile' => $singleton->photo1,
-                                'user1_blur_image' => ($singleton->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                'user1_blur_image' => ($singleton->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $singleton->is_blurred) : 'no'),
                                 'user2_id' => $user->id,
                                 'user2_name' => $user->name,
                                 'user2_profile' => $user->photo1,
-                                'user2_blur_image' => ($user->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                'user2_blur_image' => ($user->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user->is_blurred) : 'no'),
                             );
                             sendFCMNotifications($token1, $title, $body, $data1);
                         }
@@ -175,7 +175,7 @@ class Swipes extends Controller
                         'user_type' => $request->user_type,
                         'match_id' => $request->swiped_user_id,
                         'matched_parent_id' => $parent->parent_id,
-                        // 'blur_image' => $user->gender == 'Female' ? $user->is_blurred : $singleton->is_blurred,
+                        'blur_image' => $user->gender == 'Female' ? $user->is_blurred : $singleton->is_blurred,
                         'created_at' => date('Y-m-d H:i:s')
                     ];
                     DB::table('matches')->insert($data);

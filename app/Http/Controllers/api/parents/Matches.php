@@ -177,6 +177,7 @@ class Matches extends Controller
                             ->get(['my_matches.user_id','my_matches.user_type','singletons.*','parents.name as parent_name', 'parents.profile_pic as parent_profile_pic', 'parents.relation_with_singleton']);
                             
             $loggedInUser = ParentsModel::find($request->login_id);
+            $loggedInUserChild = Singleton::find($request->singleton_id);
             foreach ($match as $m) {
                 $lat1 = $m->lat;
                 $long1 = $m->long;
@@ -190,6 +191,7 @@ class Matches extends Controller
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
                     $parent_id = $m->parent_id;
+                    $m->is_singleton_blurred_photos = $loggedInUserChild->is_blurred;
 
                     $mutual = ModelsMatches::where(function ($query) use ($request, $m) {
                         $query->where([
@@ -213,7 +215,7 @@ class Matches extends Controller
                             if ($m->match_type == 'matched') {
                                 $m->blur_image = $mutual->blur_image;
                             } else{
-                                $m->blur_image = 'yes';
+                                $m->blur_image = $m->is_blurred;
                             }
                         }
                     }
@@ -361,6 +363,7 @@ class Matches extends Controller
                         ->get(['recieved_matches.user_id','recieved_matches.user_type','recieved_matches.singleton_id','singletons.*','parents.name as parent_name', 'parents.profile_pic as parent_profile_pic', 'parents.relation_with_singleton']);
 
             $loggedInUser = ParentsModel::find($request->login_id);
+            $loggedInUserChild = Singleton::find($request->singleton_id);
             foreach ($match as $m) {
                 $lat1 = $m->lat;
                 $long1 = $m->long;
@@ -373,6 +376,7 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
+                    $m->is_singleton_blurred_photos = $loggedInUserChild->is_blurred;
                     $mutual = ModelsMatches::where(function ($query) use ($request, $m) {
                         $query->where([
                             ['user_id', '=', $request->login_id],
@@ -395,7 +399,7 @@ class Matches extends Controller
                             if ($m->match_type == 'matched') {
                                 $m->blur_image = $mutual->blur_image;
                             } else{
-                                $m->blur_image = 'yes';
+                                $m->blur_image = $m->is_blurred;
                             }
                         }
                     }
@@ -543,6 +547,7 @@ class Matches extends Controller
                     ->get(['referred_matches.user_id','referred_matches.user_type','referred_matches.singleton_id','singletons.*','parents.name as parent_name', 'parents.profile_pic as parent_profile_pic', 'parents.relation_with_singleton']);
 
             $loggedInUser = ParentsModel::find($request->login_id);
+            $loggedInUserChild = Singleton::find($request->singleton_id);
             foreach ($match as $m) {
                 $lat1 = $m->lat;
                 $long1 = $m->long;
@@ -555,6 +560,7 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_id = $m->id;
+                    $m->is_singleton_blurred_photos = $loggedInUserChild->is_blurred;
                     $mutual = ModelsMatches::where(function ($query) use ($request, $m) {
                         $query->where([
                             ['user_id', '=', $request->login_id],
@@ -577,7 +583,7 @@ class Matches extends Controller
                             if ($m->match_type == 'matched') {
                                 $m->blur_image = $mutual->blur_image;
                             } else{
-                                $m->blur_image = 'yes';
+                                $m->blur_image = $m->is_blurred;
                             }
                         }
                     }
@@ -744,6 +750,7 @@ class Matches extends Controller
                         ->get(['matches.user_id','matches.user_type','matches.match_type','matches.is_rematched','matches.blur_image','singletons.*']);
                         
             $loggedInUser = ParentsModel::find($request->login_id);
+            $loggedInUserChild = Singleton::find($request->singleton_id);
             foreach ($match as $m) {
                 $lat1 = $m->lat;
                 $long1 = $m->long;
@@ -756,13 +763,14 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_ids = $m->id;
+                    $m->is_singleton_blurred_photos = $loggedInUserChild->is_blurred;
                     if ($m->gender == 'Male') {
                         $m->blur_image = 'no';
                     } else{
                         if ($m->match_type == 'matched') {
                             $m->blur_image = $m->blur_image;
                         } else{
-                            $m->blur_image = 'yes';
+                            $m->blur_image = $m->is_blurred;
                         }
                     }
 

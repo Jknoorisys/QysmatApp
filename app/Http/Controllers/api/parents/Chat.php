@@ -216,6 +216,7 @@ class Chat extends Controller
 
         try {
             $parent_id = $request->login_id;
+            $loggedInUserChild = Singleton::find($request->singleton_id);
 
             $list = MessagedUsers::leftjoin('parents', function($join) use ($parent_id) {
                                         $join->on('parents.id','=','messaged_users.messaged_user_id')
@@ -232,6 +233,7 @@ class Chat extends Controller
             $filteredList = [];
             $ids = [];
             foreach ($list as $key => $value) {
+                $list[$key]->is_singleton_blurred_photos = $loggedInUserChild->is_blurred;
                 
                 // $block = BlockList::where([
                 //     ['user_id', '=', $request->messaged_user_id],
@@ -564,11 +566,11 @@ class Chat extends Controller
                                     'user1_id' => $user1->id,
                                     'user1_name' => $user1->name,
                                     'user1_profile' => $user1->photo1,
-                                    'user1_blur_image' => ($user1->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                    'user1_blur_image' => ($user1->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user1->is_blurred) : 'no'),
                                     'user2_id' => $user2->id,
                                     'user2_name' => $user2->name,
                                     'user2_profile' => $user2->photo1,
-                                    'user2_blur_image' => ($user2->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                    'user2_blur_image' => ($user2->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user2->is_blurred) : 'no'),
                                 );
                                 sendFCMNotifications($token, $title, $body, $data);
 
@@ -578,11 +580,11 @@ class Chat extends Controller
                                     'user1_id' => $user2->id,
                                     'user1_name' => $user2->name,
                                     'user1_profile' => $user2->photo1,
-                                    'user1_blur_image' => ($user2->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                    'user1_blur_image' => ($user2->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user2->is_blurred) : 'no'),
                                     'user2_id' => $user1->id,
                                     'user2_name' => $user1->name,
                                     'user2_profile' => $user1->photo1,
-                                    'user2_blur_image' => ($user1->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                    'user2_blur_image' => ($user1->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user1->is_blurred) : 'no'),
                                 );
                                 sendFCMNotifications($token1, $title, $body, $data1);
                             }
@@ -597,7 +599,7 @@ class Chat extends Controller
                             'user_type' => 'singleton',
                             'match_id' => $request->messaged_user_singleton_id,
                             'matched_parent_id' => $request->messaged_user_id,
-                            // 'blur_image' => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
+                            'blur_image' => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
                             'created_at' => date('Y-m-d H:i:s')
                         ];
                         DB::table('matches')->insert($data);

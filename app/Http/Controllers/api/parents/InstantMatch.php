@@ -144,7 +144,7 @@ class InstantMatch extends Controller
                         'sender_name' => $sender->name,
                         'sender_pic'=> $sender->photo1,
                         'sender_id'=> $sender->id,
-                        'sender_blur_image' => ($sender->gender == 'Male' ? 'no' : 'yes'),
+                        'sender_blur_image' => ($sender->gender == 'Female' ? $sender->is_blurred : 'no'),
                         'reciever_id'=> $reciever->id
                     );
 
@@ -276,11 +276,11 @@ class InstantMatch extends Controller
                                 'user1_id' => $user1->id,
                                 'user1_name' => $user1->name,
                                 'user1_profile' => $user1->photo1,
-                                'user1_blur_image' => ($user1->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                'user1_blur_image' => ($user1->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user1->is_blurred) : 'no'),
                                 'user2_id' => $user2->id,
                                 'user2_name' => $user2->name,
                                 'user2_profile' => $user2->photo1,
-                                'user2_blur_image' => ($user2->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                'user2_blur_image' => ($user2->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user2->is_blurred) : 'no'),
                             );
                             sendFCMNotifications($token, $title, $body, $data);
 
@@ -290,11 +290,11 @@ class InstantMatch extends Controller
                                 'user1_id' => $user2->id,
                                 'user1_name' => $user2->name,
                                 'user1_profile' => $user2->photo1,
-                                'user1_blur_image' => ($user2->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                'user1_blur_image' => ($user2->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user2->is_blurred) : 'no'),
                                 'user2_id' => $user1->id,
                                 'user2_name' => $user1->name,
                                 'user2_profile' => $user1->photo1,
-                                'user2_blur_image' => ($user1->gender == 'Male' ? 'no' : ($mutual->match_type == 'matched' ? $mutual->blur_image : 'yes')),
+                                'user2_blur_image' => ($user1->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user1->is_blurred) : 'no'),
                             );
                             sendFCMNotifications($token1, $title, $body, $data1);
                         }
@@ -306,7 +306,7 @@ class InstantMatch extends Controller
                             'singleton_id'      => $request->singleton_id,
                             'matched_parent_id' => $parent->parent_id,
                             'match_type'        => 'matched',
-                            // 'blur_image'        => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
+                            'blur_image'        => $user1->gender == 'Female' ? $user1->is_blurred : $user2->is_blurred,
                             'matched_at'        => date('Y-m-d H:i:s'),
                             'created_at'        => date('Y-m-d H:i:s')
                         ];
@@ -394,13 +394,18 @@ class InstantMatch extends Controller
                                             ->get(['instant_match_requests.id as request_id','instant_match_requests.singleton_id', 'parents.*']);
 
             if(!$requests->isEmpty()){
-                // foreach ($requests as $instantRequest) {
-                //     if ($instantRequest->gender == 'Male') {
-                //         $instantRequest->blur_image = 'no';
-                //     } else{
-                //         $instantRequest->blur_image = 'yes';
-                //     }
-                // }
+                $loggedInUserChild = Singleton::find($request->singleton_id);
+                foreach ($requests as $instantRequest) {
+                    $singleton = Singleton::find($instantRequest->singleton_id);
+                    $instantRequest->is_singleton_blurred_photos = $loggedInUserChild->is_blurred;
+                    if ($singleton->gender == 'Female') {
+                        $instantRequest->blur_image =  $singleton->is_blurred;
+                        $instantRequest->is_blurred =  $singleton->is_blurred;
+                    } else{
+                        $instantRequest->blur_image = 'no';
+                        $instantRequest->is_blurred =  'no';
+                    }
+                }
                 return response()->json([
                     'status'    => 'success',
                     'message'   => __('msg.parents.requests-list.success'),
