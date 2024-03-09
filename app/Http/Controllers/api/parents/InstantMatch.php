@@ -249,7 +249,7 @@ class InstantMatch extends Controller
                 }
             }elseif ($status == 'matched') {
                 $update = InstantMatchRequest::where([['requested_parent_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['requested_id', '=', $request->singleton_id], ['request_type', '=', 'pending']])
-                                    ->update(['request_type' => 'matched', 'matched_at' => date('Y-m-d H:i:s'), 'updated_at' => Carbon::now()]);
+                                    ->update(['request_type' => 'matched', 'updated_at' => Carbon::now()]);
                 if ($update) {
                     $mutual = Matches ::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->swiped_user_id], ['singleton_id', '=', $request->singleton_id]])
                                     ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->swiped_user_id]])
