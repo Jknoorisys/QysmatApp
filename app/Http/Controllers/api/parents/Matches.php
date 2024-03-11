@@ -61,8 +61,16 @@ class Matches extends Controller
 
         try {
             $userExists = Singleton::find($request->un_matched_id);
+            $singeletonExists = Singleton::find($request->singleton_id);
 
             if(empty($userExists) || $userExists->status == 'Deleted' || $userExists->status == 'Blocked'){
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.parents.un-match.invalid'),
+                ],400);
+            }
+
+            if(empty($singeletonExists) || $singeletonExists->status == 'Deleted' || $singeletonExists->status == 'Blocked'){
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => __('msg.parents.un-match.invalid'),
@@ -76,6 +84,7 @@ class Matches extends Controller
                                         ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->un_matched_id], ['match_type', '=', 'matched']])
                                         ->first();            
 
+            $is_blurred = $singeletonExists->gender == 'Female' ? $singeletonExists->is_blurred : $userExists->is_blurred;
             if(!empty($matchExists) || !empty($receievdMatchExists) || !empty($referredMatchExists) || !empty($matched)){
 
                 $user = new UnMatches();
@@ -90,7 +99,7 @@ class Matches extends Controller
                     if (!empty($matched)) {
                         ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->un_matched_id], ['match_type', '=', 'matched'],['singleton_id', '=', $request->singleton_id]])
                                         ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'],['match_id', '=', $request->singleton_id], ['singleton_id', '=', $request->un_matched_id], ['match_type', '=', 'matched']])
-                                        ->update(['match_type' => 'un-matched', 'matched_at' => Null, 'updated_at' => date('Y-m-d H:i:s'), 'status' => 'available']);
+                                        ->update(['match_type' => 'un-matched', 'matched_at' => Null, 'blur_image' => $is_blurred, 'updated_at' => date('Y-m-d H:i:s'), 'status' => 'available']);
                     }
 
                     if (!empty($matchExists)) {
