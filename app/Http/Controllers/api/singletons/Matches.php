@@ -872,6 +872,7 @@ class Matches extends Controller
                 $users = [];
                 foreach ($match as $m) {
                     $singleton_ids = $m->id;
+                    $m->match_type = $m->match_type;
                     if ($m->gender == 'Male') {
                         $m->blur_image = 'no';
                     } else{
