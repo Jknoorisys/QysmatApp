@@ -224,9 +224,15 @@ class Chat extends Controller
                                         $join->orOn('parents.id','=','messaged_users.user_id')
                                             ->where('messaged_users.user_id','!=',$parent_id);
                                     })
+                                    ->leftJoin('singletons as sigleton', function($join) use ($parent_id) {
+                                        $join->on('sigleton.id','=','messaged_users.messaged_user_singleton_id')
+                                            ->where('messaged_users.messaged_user_id','!=',$parent_id);
+                                        $join->orOn('sigleton.id','=','messaged_users.singleton_id')
+                                            ->where('messaged_users.user_id','!=',$parent_id);
+                                    })
                                     ->where([['messaged_users.user_id', '=', $request->login_id],['messaged_users.user_type', '=', $request->user_type], ['messaged_users.singleton_id', '=', $request->singleton_id], ['deleted_by', '!=', $request->login_id]])
                                     ->orWhere([['messaged_users.messaged_user_id', '=', $request->login_id],['messaged_users.messaged_user_type', '=', $request->user_type], ['messaged_users.messaged_user_singleton_id', '=', $request->singleton_id], ['deleted_by', '!=', $request->login_id]])
-                                    ->select('messaged_users.user_id','messaged_users.singleton_id','messaged_users.messaged_user_id','messaged_users.messaged_user_singleton_id','parents.*')
+                                    ->select('messaged_users.user_id','messaged_users.singleton_id','messaged_users.messaged_user_id','messaged_users.messaged_user_singleton_id','parents.*','sigleton.gender as singleton_gender','sigleton.is_blurred')
                                     ->orderBy('messaged_users.id', 'desc')
                                     ->get();
 
@@ -234,6 +240,34 @@ class Chat extends Controller
             $ids = [];
             foreach ($list as $key => $value) {
                 $list[$key]->is_singleton_blurred_photos = $loggedInUserChild->is_blurred;
+                $match_type = Matches::where(function ($query) use ($request, $value) {
+                    $query->where([
+                        ['match_id', '=', $value->messaged_user_singleton_id],
+                        ['user_type', '=', 'parent'],
+                        ['user_id', '=', $value->user_id],
+                        ['singleton_id', '=', $value->singleton_id]
+                    ])->orWhere([
+                        ['match_id', '=', $value->singleton_id],
+                        ['user_type', '=', 'parent'],
+                        ['user_id', '=', $value->messaged_user_id],
+                        ['singleton_id', '=', $value->messaged_user_singleton_id]
+                    ]);
+                })->first();
+
+
+                if (!empty($match_type)) {
+                    if ($value->singleton_gender == 'Male') {
+                        $list[$key]->blur_image = 'no';
+                    } else{
+                        if ($match_type->match_type == 'matched') {
+                            $list[$key]->blur_image = $match_type->blur_image;
+                        } else{
+                            $list[$key]->blur_image = $value->is_blurred;
+                        }
+                    }
+                    $list[$key]->match_type = $match_type->match_type;
+                }
+
                 
                 // $block = BlockList::where([
                 //     ['user_id', '=', $request->messaged_user_id],
