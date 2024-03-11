@@ -64,6 +64,7 @@ class Matches extends Controller
             $singleton_id = $request->login_id;
             $un_matched_id = $request->un_matched_id;
             $userExists = Singleton::find($request->un_matched_id);
+            $singletonDetails = Singleton::find($request->login_id);
 
             if(empty($userExists) || $userExists->staus == 'Deleted' || $userExists->staus == 'Blocked'){
                 return response()->json([
@@ -71,6 +72,15 @@ class Matches extends Controller
                     'message'   => __('msg.singletons.un-match.invalid'),
                 ],400);
             }
+
+            if(empty($userExists) || $userExists->staus == 'Deleted' || $userExists->staus == 'Blocked'){
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => __('msg.singletons.un-match.invalid'),
+                ],400);
+            }
+
+            $is_blurred = $singletonDetails->gender == 'Female' ? $singletonDetails->is_blurred : $userExists->is_blurred;
 
             $matchExists = MyMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', '0'],['matched_id', '=', $request->un_matched_id]])->first();
             $receievdMatchExists = RecievedMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type],['singleton_id', '=', '0'],['recieved_match_id', '=', $request->un_matched_id]])->first();
@@ -83,7 +93,7 @@ class Matches extends Controller
                 if (!empty($matched)) {
                     ModelsMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->un_matched_id], ['match_type', '=', 'matched']])
                                     ->orWhere([['user_id', '=', $request->un_matched_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['match_type', '=', 'matched']])
-                                    ->update(['match_type' => 'un-matched', 'is_reset' => 'no', 'matched_at' => Null, 'updated_at' => date('Y-m-d H:i:s'), 'status' => 'available']);
+                                    ->update(['match_type' => 'un-matched', 'is_reset' => 'no', 'blur_image' => $is_blurred, 'matched_at' => Null, 'updated_at' => date('Y-m-d H:i:s'), 'status' => 'available']);
 
                     $queue = ModelsMatches::
                                             leftjoin('singletons', function($join) use ($singleton_id) {
