@@ -717,7 +717,7 @@ return [
             'success' => 'Suggestions Based on Singleton Categories Fetched Successfully!',
             'failure' => 'No Suggestions Found!',
             'invalid' => 'Category Details Not Found!',
-            'not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
+            'not-linked' => 'Your profile is not linked with a single Muslim. Please request him/her download the Qysmat app, register and share their ‘Access Request Code',
         ],
 
         'swips' => [
@@ -1001,7 +1001,7 @@ return [
         'blocked' => 'User is Blocked by Admin!',
         'not-verified' => 'Profile not Verified By Admin, Please Try After Some Time...',
         'singleton-not-linked' => 'Your profile is not linked with your Parent/Guardian, please ask him/her to enter the access code that you have received in your email.',
-        'parent-not-linked' => 'Your Profile is Not Linked with Your Children, Please search and Link.',
+        'parent-not-linked' => 'Your profile is not linked with a single Muslim. Please request him/her download the Qysmat app, register and share their ‘Access Request Code',
         'busy' => 'Now that you’re in an open conversation, you will no longer be able to use other features on the app during this time',
         'available' => 'No Chat in Progress...',
     ],
