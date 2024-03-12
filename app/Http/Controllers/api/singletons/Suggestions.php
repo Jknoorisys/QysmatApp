@@ -161,6 +161,7 @@ class Suggestions extends Controller
                 $category->height        = $request->height ? $request->height : '';
                 $category->height_converted  = $request->height ? $height_converted : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
+                $category->ethnic_origin  = $request->ethnic_origin ? $request->ethnic_origin : '';
 
                 $category_details = $category->save();
 
@@ -192,6 +193,7 @@ class Suggestions extends Controller
                 $category->height        = $request->height ? $request->height : '';
                 $category->height_converted = $request->height ? $height_converted : '';
                 $category->islamic_sect  = $request->islamic_sect ? $request->islamic_sect : '';
+                $category->ethnic_origin = $request->ethnic_origin ? $request->ethnic_origin : '';
 
                 $category_details = $category->save();
 
@@ -272,6 +274,8 @@ class Suggestions extends Controller
                 $longitude = $category->long ? $category->long : '';
 
                 $islamic_sect = $category->islamic_sect ? $category->islamic_sect : '';
+                $ethnic_origin = $category->ethnic_origin ? $category->ethnic_origin : '';
+
                 $age = $category->age_range ? explode('-',$category->age_range) : '';
                 $min_age = $age ? $age[0] : '' ;
                 $max_age = $age ? $age[1] : '';
@@ -321,7 +325,11 @@ class Suggestions extends Controller
                 }
 
                 if(!empty($islamic_sect)){
-                    $this->db->where('islamic_sect','=',$islamic_sect);
+                    $this->db->where('islamic_sect', '=', $islamic_sect);
+                }
+
+                if(!empty($ethnic_origin)){
+                    $this->db->where('ethnic_origin', '=', $ethnic_origin);
                 }
 
                 if(!empty($min_age) && !empty($max_age)){
