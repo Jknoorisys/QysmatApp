@@ -1069,6 +1069,8 @@ return [
         'failure' => 'Unable to Clear Image, Please Try Again...',
         'invalid' => 'Your Matched User is Not Found!',
         'not-found' => 'Match Not Found!',
+        'already-clear-singleton' => 'You have already un-blurred your photos for this user',
+        'already-clear-parent' => 'You have already un-blurred your child photos for this user',
     ],
 
     'version' => [
