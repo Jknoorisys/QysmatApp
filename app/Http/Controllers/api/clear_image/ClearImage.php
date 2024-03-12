@@ -73,6 +73,20 @@ class ClearImage extends Controller
                 ],400);
             }
 
+            if ($matched->blur_image == 'no') {
+                if ($request->user_type == 'singleton') {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.clear-image.already-clear-singleton'),
+                    ], 400);
+                } else {
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => __('msg.clear-image.already-clear-parent'),
+                    ], 400);
+                }
+            }
+
             if ($request->user_type == 'singleton') {
                 $clearImage = Matches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['match_id', '=', $request->match_id], ['match_type', '=', 'matched']])
                                         ->orWhere([['user_id', '=', $request->match_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->login_id], ['match_type', '=', 'matched']])
