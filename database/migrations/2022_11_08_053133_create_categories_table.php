@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('user_id');
             $table->integer('singleton_id');
             $table->enum('user_type', ['singleton','parent'])->default('singleton');
-            $table->enum('gender', ['Male','Female', 'Other']);
+            $table->enum('gender', ['Male','Female', 'Other'])->nullable();
             $table->string('age_range');
             $table->string('profession');
             $table->string('location');
