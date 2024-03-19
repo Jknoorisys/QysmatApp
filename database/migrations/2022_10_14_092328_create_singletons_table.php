@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('photo5');
             $table->string('dob');
             $table->string('age');
-            $table->enum('gender', ['Male','Female', 'Other']);
+            $table->enum('gender', ['Male','Female', 'Other'])->nullable();
             $table->enum('marital_status', ['none','Never Married','Divorced', 'Widowed'])->default('none');
             $table->string('height');
             $table->float('height_converted');
