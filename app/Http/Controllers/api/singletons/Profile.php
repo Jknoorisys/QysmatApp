@@ -291,13 +291,13 @@ class Profile extends Controller
                 );
                 
                 if($userDetails){
-                    if ($request->gender == 'Female' || $request->gender == 'female') {
-                        $is_blurred = 'yes';
-                    } else {
-                        $is_blurred = 'NA';
-                    }
+                    // if ($request->gender == 'Female' || $request->gender == 'female') {
+                    //     $is_blurred = 'yes';
+                    // } else {
+                    //     $is_blurred = 'no';
+                    // }
 
-                    Singleton::where('id', '=', $request->login_id)->update(['is_verified' => 'pending', 'is_blurred' => $is_blurred]);
+                    Singleton::where('id', '=', $request->login_id)->update(['is_verified' => 'pending']);
                     DB::table('categories')->updateOrInsert(
                         ['user_id' => $request->login_id, 'user_type' => 'singleton'],
                         [
@@ -331,7 +331,7 @@ class Profile extends Controller
                         'live_photo'                => $request->file('live_photo') ? $live_photo : $user->live_photo,
                         'id_proof'                  => $request->file('id_proof') ? $id_proof : $user->id_proof,
                         'is_verified'               => 'pending',
-                        'is_blurred'                => $is_blurred,
+                        'is_blurred'                => $user->is_blurred,
                     ];
 
                     $details = [
