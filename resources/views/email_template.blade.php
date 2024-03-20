@@ -182,7 +182,7 @@
                                               </table>
                                             </td>
                                           </tr>
-                                          <tr>
+                                          {{-- <tr>
                                             <td class="r18-c" align="left">
                                               <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r19-o" style="table-layout: fixed; width: 100%;">
                                                 <tr>
@@ -194,7 +194,7 @@
                                                 </tr>
                                               </table>
                                             </td>
-                                          </tr>
+                                          </tr> --}}
                                           <tr>
                                             <td class="r18-c" align="left">
                                               <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r19-o" style="table-layout: fixed; width: 100%;">
