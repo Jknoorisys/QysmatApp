@@ -178,19 +178,19 @@
                                         </table>
                                       </td>
                                     </tr>
-                                    {{-- <tr>
+                                    <tr>
                                       <td class="r18-c" align="left">
                                         <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r19-o" style="table-layout: fixed; width: 100%;">
                                           <tr>
                                             <td align="left" valign="top" class="r20-i nl2go-default-textstyle" style="color: #392f65; font-family: Inter; font-size: 16px; line-height: 1.5; text-align: left;">
                                               <div>
-                                                <div class="nl2go_class_14_white_l" style="color: #fff; font-family: Inter; font-size: 14px; font-weight: 300;">{{ strip_tags($address->details); }}<br>{{ strip_tags($phone->details); }}<br><a href="http://" style="color: #fff; text-decoration: none;">{{ strip_tags($email->details); }}</a></div>
+                                                <div class="nl2go_class_14_white_l" style="color: #fff; font-family: Inter; font-size: 14px; font-weight: 300;">{{ strip_tags($address->details); }}<br><a href="http://" style="color: #fff; text-decoration: none;">{{ strip_tags($email->details); }}</a></div>
                                               </div>
                                             </td>
                                           </tr>
                                         </table>
                                       </td>
-                                    </tr> --}}
+                                    </tr>
                                     <tr>
                                       <td class="r18-c" align="left">
                                         <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r19-o" style="table-layout: fixed; width: 100%;">
