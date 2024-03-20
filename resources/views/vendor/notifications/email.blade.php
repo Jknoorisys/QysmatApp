@@ -207,7 +207,7 @@
                                                 <tr>
                                                   <td align="left" valign="top" class="r20-i nl2go-default-textstyle" style="color: #392f65; font-family: Inter; font-size: 16px; line-height: 1.5; text-align: left;">
                                                     <div>
-                                                      <div class="nl2go_class_14_white_l" style="color: #fff; font-family: Inter; font-size: 14px; font-weight: 300;">New address, 123<br>London<br><a href="http://" style="color: #fff; text-decoration: none;">contact@qysmat.com</a></div>
+                                                      <div class="nl2go_class_14_white_l" style="color: #fff; font-family: Inter; font-size: 14px; font-weight: 300;">New address, 123<br>London<br><a href="http://" style="color: #fff; text-decoration: none;">admin@qysmat.com</a></div>
                                                     </div>
                                                   </td>
                                                 </tr>
