@@ -158,13 +158,13 @@
                                   <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r1-o" style="table-layout: fixed; width: 100%;">
                                     <!-- Contact Details -->
                                     <?php 
-                                        $contactDetails = App\Models\ContactDetails::whereIn('contact_type', ['address', 'email', 'phone', 'instagram', 'facebook', 'twitter'])->get();
-                                        $address = $contactDetails->firstWhere('contact_type', 'address');
-                                        $email = $contactDetails->firstWhere('contact_type', 'email');
-                                        $phone = $contactDetails->firstWhere('contact_type', 'phone');
-                                        $instagram = $contactDetails->firstWhere('contact_type', 'instagram');
-                                        $facebook = $contactDetails->firstWhere('contact_type', 'facebook');
-                                        $twitter = $contactDetails->firstWhere('contact_type', 'twitter');
+                                        $contactDetails = App\Models\ContactDetails::whereIn('contact_type', ['address', 'email', 'phone', 'instagram', 'facebook', 'twitter'])->where('status', 'Active')->get();
+                                        $address = $contactDetails->firstWhere('contact_type', 'address') ?? null;
+                                        $email = $contactDetails->firstWhere('contact_type', 'email') ?? null;
+                                        $phone = $contactDetails->firstWhere('contact_type', 'phone') ?? null;
+                                        $instagram = $contactDetails->firstWhere('contact_type', 'instagram') ?? null;
+                                        $facebook = $contactDetails->firstWhere('contact_type', 'facebook') ?? null;
+                                        $twitter = $contactDetails->firstWhere('contact_type', 'twitter') ?? null;
                                      ?>
                                     <tr>
                                       <td valign="top" class="r7-i">
@@ -188,7 +188,17 @@
                                                 <tr>
                                                   <td align="left" valign="top" class="r20-i nl2go-default-textstyle" style="color: #392f65; font-family: Inter; font-size: 16px; line-height: 1.5; text-align: left;">
                                                     <div>
-                                                      <div class="nl2go_class_14_white_l" style="color: #fff; font-family: Inter; font-size: 14px; font-weight: 300;">{{ strip_tags($address->details); }}<br><a href="http://" style="color: #fff; text-decoration: none;">{{ strip_tags($email->details); }}</a></div>
+                                                      <div class="nl2go_class_14_white_l" style="color: #fff; font-family: Inter; font-size: 14px; font-weight: 300;">
+                                                        @if ($address) {{ 
+                                                          strip_tags($address->details); }}<br>
+                                                        @endif 
+                                                        @if ($phone) {{ 
+                                                          strip_tags($phone->details); }}<br>
+                                                        @endif
+                                                        @if ($email) 
+                                                        <a href="http://" style="color: #fff; text-decoration: none;">{{ strip_tags($email->details); }}</a>
+                                                        @endif
+                                                      </div>
                                                     </div>
                                                   </td>
                                                 </tr>
@@ -223,6 +233,7 @@
                                                               <td class="r26-i" style="padding-right: 196px; padding-top: 15px;">
                                                                 <table width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation">
                                                                   <tr>
+                                                                    @if ($facebook)
                                                                     <th width="42" valign="" class="r27-c mobshow resp-table" style="font-weight: normal;">
                                                                       <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r28-o" style="table-layout: fixed; width: 100%;">
                                                                         <!-- -->
@@ -232,6 +243,8 @@
                                                                         </tr>
                                                                       </table>
                                                                     </th>
+                                                                    @endif
+                                                                    @if ($instagram)
                                                                     <th width="42" valign="" class="r27-c mobshow resp-table" style="font-weight: normal;">
                                                                       <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r28-o" style="table-layout: fixed; width: 100%;">
                                                                         <!-- -->
@@ -241,6 +254,8 @@
                                                                         </tr>
                                                                       </table>
                                                                     </th>
+                                                                    @endif
+                                                                    @if ($twitter)
                                                                     <th width="42" valign="" class="r27-c mobshow resp-table" style="font-weight: normal;">
                                                                       <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r28-o" style="table-layout: fixed; width: 100%;">
                                                                         <!-- -->
@@ -250,6 +265,7 @@
                                                                         </tr>
                                                                       </table>
                                                                     </th>
+                                                                    @endif
                                                                   </tr>
                                                                 </table>
                                                               </td>
