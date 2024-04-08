@@ -29,6 +29,10 @@ class ContactDetailsSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s')
             ],
             [
+                'contact_type'  => 'country',
+                'created_at' => date('Y-m-d H:i:s')
+            ],
+            [
                 'contact_type'  => 'instagram',
                 'created_at' => date('Y-m-d H:i:s')
             ],
