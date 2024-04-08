@@ -153,14 +153,15 @@
                             <table cellspacing="0" cellpadding="0" border="0" role="presentation" width="100%" class="r1-o" style="table-layout: fixed; width: 100%;">
                               <!-- Contact Details -->
                               <?php 
-                                  $contactDetails = App\Models\ContactDetails::whereIn('contact_type', ['address', 'email', 'phone', 'instagram', 'facebook', 'twitter'])->where('status', 'Active')->get();
+                                  $contactDetails = App\Models\ContactDetails::whereIn('contact_type', ['address', 'country', 'email', 'phone', 'instagram', 'facebook', 'twitter'])->where('status', 'Active')->get();
                                   $address = $contactDetails->firstWhere('contact_type', 'address') ?? null;
+                                  $country = $contactDetails->firstWhere('contact_type', 'country') ?? null;
                                   $email = $contactDetails->firstWhere('contact_type', 'email') ?? null;
                                   $phone = $contactDetails->firstWhere('contact_type', 'phone') ?? null;
                                   $instagram = $contactDetails->firstWhere('contact_type', 'instagram') ?? null;
                                   $facebook = $contactDetails->firstWhere('contact_type', 'facebook') ?? null;
                                   $twitter = $contactDetails->firstWhere('contact_type', 'twitter') ?? null;
-                               ?>
+                              ?>
                               <tr>
                                 <td valign="top" class="r7-i">
                                   <table width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation">
@@ -186,6 +187,9 @@
                                                 <div class="nl2go_class_14_white_l" style="color: #fff; font-family: Inter; font-size: 14px; font-weight: 300;">
                                                   @if ($address) {{ 
                                                     strip_tags($address->details); }}<br>
+                                                  @endif 
+                                                  @if ($country) {{ 
+                                                    strip_tags($country->details); }}<br>
                                                   @endif 
                                                   @if ($phone) {{ 
                                                     strip_tags($phone->details); }}<br>
