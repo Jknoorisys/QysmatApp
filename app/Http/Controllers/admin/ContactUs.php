@@ -32,6 +32,9 @@ class ContactUs extends Controller
         $data['url']                      = route('dashboard');
         $data['title']                    = __("msg.Manage Contact Us  Forms");
         $data['records']                  = ModelsContactUs::get();
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['notifications']            = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']                  = view('contact_us.contact_us_list', $data);
         return view('layouts.main',$data);

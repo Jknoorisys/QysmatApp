@@ -35,6 +35,9 @@ class Subscriptions extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Subscriptions");
         $data['records']             =  ModelsSubscriptions::paginate(10);
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['premiumStatus']       =  PremiumFeatures::whereId(1)->first();
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
 
@@ -78,6 +81,9 @@ class Subscriptions extends Controller
         $data['url']                 = route('subscriptions');
         $data['title']               = __("msg.Update Subscription Price");
         $data['records']             =  ModelsSubscriptions::find($id);
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('subscriptions.subscriptions_update', $data);
         return view('layouts.main',$data);

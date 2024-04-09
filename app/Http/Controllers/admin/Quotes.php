@@ -32,6 +32,9 @@ class Quotes extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Islamic Quotes");
         $data['records']             =  ModelsQuotes::where('status', '!=' ,'Deleted')->orderBy('id','desc')->get();
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('quotes.quotes_list', $data);
         // return $data['records'];exit;
@@ -104,6 +107,9 @@ class Quotes extends Controller
         $data['url']                 = route('quotes');
         $data['title']               = __("msg.Update Islamic Quotes");
         $data['records']             =  ModelsQuotes::find($id);
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('quotes.quotes_update', $data);
         return view('layouts.main',$data);

@@ -32,6 +32,9 @@ class WebPages extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Web Pages");
         $data['records']             =  ModelsWebPages::where('status', '!=' ,'Deleted')->get();
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('web_pages.web_pages_list', $data);
         return view('layouts.main',$data);
@@ -96,6 +99,9 @@ class WebPages extends Controller
         $data['url']                 = route('web_pages');
         $data['title']               = __("msg.Update Page");
         $data['records']             =  ModelsWebPages::find($id);
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('web_pages.web_pages_update', $data);
         return view('layouts.main',$data);

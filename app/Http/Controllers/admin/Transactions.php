@@ -43,6 +43,10 @@ class Transactions extends Controller
             $data['records']               = ModelsTransactions::orderBy('created_at','DESC')->get();
         }
 
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
+
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('transactions.transactions_list', $data);
         return view('layouts.main',$data);
@@ -53,6 +57,9 @@ class Transactions extends Controller
         $id     = $request->id;
         if(!empty($id)){
             $data['details']             = ModelsTransactions::where('id',$id)->first();
+            if ($data['details'] == null) {
+                return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+            }
             $data['admin']               = $this->admin;
             $data['previous_title']      = __("msg.Manage Transactions");
             $data['url']                 = route('transactions');

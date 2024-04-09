@@ -32,6 +32,9 @@ class FAQS extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage FAQs");
         $data['records']             =  ModelsFaqs::where('status', '!=' ,'Deleted')->get();
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('faqs.faq_list', $data);
         return view('layouts.main',$data);
@@ -93,6 +96,9 @@ class FAQS extends Controller
         $data['url']                 = route('faqs');
         $data['title']               = __("msg.Update FAQ");
         $data['records']             =  ModelsFaqs::find($id);
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('faqs.update_faq', $data);
         return view('layouts.main',$data);
