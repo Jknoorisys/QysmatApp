@@ -37,6 +37,9 @@ class ParentsController extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Parents");
         $data['records']             = $search ? ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->Where('name', 'LIKE', "%$search%")->orWhere('email', 'LIKE', "%$search%")->orderBy('name')->get() : ParentsModel::where([['status', '!=' ,'Deleted'], ['is_email_verified', '=' ,'verified']])->orderBy('name')->get();
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['search']              =  $request->search;
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('parents.parents_list', $data);
@@ -50,8 +53,13 @@ class ParentsController extends Controller
             $data['details']             = DB::table('parents')
                                                 ->join('subscriptions','subscriptions.id','=','parents.active_subscription_id')
                                                 ->where('parents.id',$id)
+                                                ->where('status', '!=' ,'Deleted')
                                                 ->select('parents.*','subscriptions.subscription_type','subscriptions.price','subscriptions.currency')
                                                 ->first();
+
+            if ($data['details'] == null) {
+                return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+            }
 
             $featureStatus = PremiumFeatures::whereId(1)->first();
             if ((!empty($featureStatus) && $featureStatus->status == 'inactive')) {

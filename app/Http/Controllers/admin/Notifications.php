@@ -34,6 +34,9 @@ class Notifications extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Notifications");
         $data['records']             = $this->admin->notifications()->where('user_type','=','admin')->get();
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('notifications.notifications_list', $data);
         return view('layouts.main',$data);

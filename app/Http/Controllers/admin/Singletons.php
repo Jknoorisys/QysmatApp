@@ -37,6 +37,9 @@ class Singletons extends Controller
         $data['url']                 = route('dashboard');
         $data['title']               = __("msg.Manage Singletons");
         $data['records']             = $search ? Singleton::where([['status', '!=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->Where('name', 'LIKE', "%$search%")->orWhere('email', 'LIKE', "%$search%")->orderBy('name')->get() : Singleton::where([['status', '!=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->orderBy('name')->get();
+        if ($data['records'] == null) {
+            return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+        }
         $data['search']              =  $request->search;
         $data['notifications']       = $this->admin->unreadNotifications->where('user_type','=','admin');
         $data['content']             = view('sigletons.sigletons_list', $data);
@@ -64,8 +67,12 @@ class Singletons extends Controller
             $data['details']             = DB::table('singletons')
                                                 ->join('subscriptions','subscriptions.id','=','singletons.active_subscription_id')
                                                 ->where('singletons.id',$id)
+                                                ->where('singletons.status', '!=' ,'Deleted')
                                                 ->select('singletons.*','subscriptions.subscription_type','subscriptions.price','subscriptions.currency')
                                                 ->first();
+            if ($data['details'] == null) {
+                return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+            }
 
             $featureStatus = PremiumFeatures::whereId(1)->first();
             if ((!empty($featureStatus) && $featureStatus->status == 'inactive')) {
@@ -103,8 +110,13 @@ class Singletons extends Controller
             $data['details']  = DB::table('singletons')
                                     ->join('subscriptions','subscriptions.id','=','singletons.active_subscription_id')
                                     ->where('singletons.id',$id)
+                                    ->where('singletons.status', '!=' ,'Deleted')
                                     ->select('singletons.*','subscriptions.subscription_type','subscriptions.price','subscriptions.currency')
                                     ->first();
+
+            if ($data['details'] == null) {
+                return back()->with('fail', __('msg.Somthing Went Wrong, Please Try Again...'));
+            }
 
             $parent_id                   = $data['details']->parent_id;
             $data['parent_details']      = !empty($parent_id) ? DB::table('parents')->where([['id', '=', $parent_id],['status', '!=' ,'Deleted'],['is_email_verified', '=' ,'verified']])->first() : '';
