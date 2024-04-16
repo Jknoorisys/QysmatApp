@@ -53,7 +53,7 @@ class ParentsController extends Controller
             $data['details']             = DB::table('parents')
                                                 ->join('subscriptions','subscriptions.id','=','parents.active_subscription_id')
                                                 ->where('parents.id',$id)
-                                                ->where('status', '!=' ,'Deleted')
+                                                ->where('parents.status', '!=' ,'Deleted')
                                                 ->select('parents.*','subscriptions.subscription_type','subscriptions.price','subscriptions.currency')
                                                 ->first();
 
