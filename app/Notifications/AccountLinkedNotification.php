@@ -63,7 +63,7 @@ class AccountLinkedNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Profile Linked'),
-            'msg'       => __('msg.Your profile is linked with').' '.$this->user->name.' ('._('msg.for registration purposes only'.')'),
+            'msg'       => __('msg.Your profile is linked with').' '.$this->user->name.' ('.__('msg.for registration purposes only'.')'),
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }
