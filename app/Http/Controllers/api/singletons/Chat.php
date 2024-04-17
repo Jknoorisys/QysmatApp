@@ -15,6 +15,7 @@ use App\Models\ReferredMatches;
 use App\Models\Singleton;
 use App\Models\ReportedUsers as ModelsReportedUsers;
 use App\Models\UnMatches;
+use App\Notifications\MutualMatchNotification;
 use App\Notifications\ReferNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -639,6 +640,11 @@ class Chat extends Controller
 
                         // send congratulations fcm notification
                         if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
+                            // database notification
+                            $msg = __('msg.Congratulations! Your child got a new match with');
+                            $parent2->notify(new MutualMatchNotification($parent1, $parent2->user_type, $user2->id, ($msg.' '.$user1->name)));
+                            $parent1->notify(new MutualMatchNotification($parent2, $parent1->user_type, $user1->id, ($msg.' '.$user2->name)));
+
                             $title = __('msg.Profile Matched');
                             $body = __('msg.Congratulations It’s a Match!');
                             $token = $parent1->fcm_token;
@@ -685,7 +691,7 @@ class Chat extends Controller
 
                     $user = ParentsModel::where([['id','=',$linked->parent_id],['status','!=','Deleted']])->first();
                     $singleton = Singleton::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
-                    $user->notify(new ReferNotification($singleton, $user->user_type, $request->login_id));
+                    $user->notify(new ReferNotification($singleton, $user->user_type, $request->login_id, __('msg.has referred a match for Families to connect')));
 
 
                     return response()->json([

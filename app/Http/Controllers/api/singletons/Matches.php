@@ -16,6 +16,8 @@ use App\Models\RematchRequests;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\UnMatches;
+use App\Notifications\MutualMatchNotification;
+use App\Notifications\ReMatchNotification;
 use App\Notifications\UnmatchNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -124,6 +126,10 @@ class Matches extends Controller
                             $user1 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
 
                             if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
+                                $msg = __('msg.Congratulations! You got a new match with');
+                                $user2->notify(new MutualMatchNotification($user1, $user2->user_type, 0, ($msg.' '.$user1->name)));
+                                $user1->notify(new MutualMatchNotification($user2, $user1->user_type, 0, ($msg.' '.$user2->name)));
+
                                 $title = __('msg.Profile Matched');
                                 $body = __('msg.Congratulations It’s a Match!');
                                 $token = $user1->fcm_token;
@@ -185,6 +191,10 @@ class Matches extends Controller
                             $user1 = Singleton::where([['id', '=', $notify->match_id],['user_type', '=', 'singleton']])->first();
 
                             if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
+                                $msg = __('msg.Congratulations! You got a new match with');
+                                $user2->notify(new MutualMatchNotification($user1, $user2->user_type, 0, ($msg.' '.$user1->name)));
+                                $user1->notify(new MutualMatchNotification($user2, $user1->user_type, 0, ($msg.' '.$user2->name)));
+
                                 $title = __('msg.Profile Matched');
                                 $body = __('msg.Congratulations It’s a Match!');
                                 $token1 = $user1->fcm_token;
@@ -261,7 +271,7 @@ class Matches extends Controller
                     
                     $sender = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
                     $reciever = Singleton::where([['id', '=', $request->un_matched_id], ['status', '=', 'Unblocked']])->first();
-                    $msg = __('msg.has Unmatched Your Profile');
+                    $msg = __('msg.has unmatched you');
                     $reciever->notify(new UnmatchNotification($sender, $reciever->user_type, 0, $msg));
                     return response()->json([
                         'status'    => 'success',
@@ -1082,6 +1092,10 @@ class Matches extends Controller
                 
                 
                 if($re_matched){
+                    $sender = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+                    $reciever = Singleton::where([['id', '=', $request->re_matched_id], ['status', '=', 'Unblocked']])->first();
+                    $reciever->notify(new ReMatchNotification($sender, $reciever->user_type, 0));
+                    
                     UnMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->re_matched_id]])
                                 ->orWhere([['user_id', '=', $request->re_matched_id], ['user_type', '=', 'singleton'], ['un_matched_id', '=', $request->login_id]])
                                 ->delete();

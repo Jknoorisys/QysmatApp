@@ -77,14 +77,14 @@ class BlockOrReportUser extends Controller
 
             if($user_details){
 
-                $sender = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-                if (!empty($blocked_user_singletons)) {
-                    foreach ($blocked_user_singletons as $singleton) {
-                        $userExists->notify(new BlockNotification($sender, $userExists->user_type, $singleton->id));
-                    }
-                } else {
-                    $userExists->notify(new BlockNotification($sender, $userExists->user_type, 0));
-                }
+                // $sender = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+                // if (!empty($blocked_user_singletons)) {
+                //     foreach ($blocked_user_singletons as $singleton) {
+                //         $userExists->notify(new BlockNotification($sender, $userExists->user_type, $singleton->id));
+                //     }
+                // } else {
+                //     $userExists->notify(new BlockNotification($sender, $userExists->user_type, 0));
+                // }
                 
                 return response()->json([
                     'status'    => 'success',

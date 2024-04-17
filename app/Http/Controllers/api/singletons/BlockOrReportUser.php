@@ -101,10 +101,10 @@ class BlockOrReportUser extends Controller
                                             ->update($data);
                 }
 
-                $sender = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
-                $reciever = Singleton::where([['id', '=', $request->blocked_user_id], ['status', '=', 'Unblocked']])->first();
+                // $sender = Singleton::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+                // $reciever = Singleton::where([['id', '=', $request->blocked_user_id], ['status', '=', 'Unblocked']])->first();
 
-                $reciever->notify(new BlockNotification($sender, $reciever->user_type, 0));
+                // $reciever->notify(new BlockNotification($sender, $reciever->user_type, 0));
 
                 return response()->json([
                     'status'    => 'success',

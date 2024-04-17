@@ -49,7 +49,7 @@ class AdminNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => $this->details['title'],
-            'msg'       => $this->user->name.' '.$this->user->lname.' '.$this->details['msg'],
+            'msg'       => $this->user->name.' '.$this->details['msg'],
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

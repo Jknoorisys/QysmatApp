@@ -44,7 +44,7 @@ class AccountLinkedNotification extends Notification
     {
         return (new MailMessage)
                     ->greeting(__('msg.Hi').'!')
-                    ->line(__('msg.Your Profile is Linked with').' '.$this->user->name.' '.$this->user->lname);
+                    ->line(__('msg.Your profile is linked with').' '.$this->user->name);
                     // ->line(__('msg.To See His/Her Profile, Click on the Link Below'))
                     // ->action(__('msg.Click Here'), url('/'));
     }
@@ -63,7 +63,7 @@ class AccountLinkedNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Profile Linked'),
-            'msg'       => __('msg.Your Profile is Linked with').' '.$this->user->name.' '.$this->user->lname,
+            'msg'       => __('msg.Your profile is linked with').' '.$this->user->name.' '._('msg.(for registration purposes only)'),
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

@@ -14,6 +14,7 @@ use App\Models\ReferredMatches;
 use App\Models\ReportedUsers;
 use App\Models\Singleton;
 use App\Models\UnMatches;
+use App\Notifications\ReMatchNotification;
 use App\Notifications\UnmatchNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -116,7 +117,7 @@ class Matches extends Controller
 
                     $sender = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
                     $reciever = ParentsModel::where([['id', '=', $userExists->parent_id], ['status', '=', 'Unblocked']])->first();
-                    $msg = __("msg.has Unmatched Your Child's Profile");
+                    $msg = __("msg.has unmatched you");
                     $reciever->notify(new UnmatchNotification($sender, $reciever->user_type, $request->un_matched_id, $msg));
 
                     return response()->json([
@@ -967,6 +968,10 @@ class Matches extends Controller
                 $re_matched = DB::table('rematch_requests')->updateOrInsert($uniqueKeys, $data);
 
                 if($re_matched){
+                    $sender = ParentsModel::where([['id', '=', $request->login_id], ['status', '=', 'Unblocked']])->first();
+                    $reciever = ParentsModel::where([['id', '=', $userExists->parent_id], ['status', '=', 'Unblocked']])->first();
+                    $reciever->notify(new ReMatchNotification($sender, $reciever->user_type, $request->re_matched_id));
+
                     UnMatches::where([['user_id', '=', $request->login_id], ['user_type', '=', $request->user_type], ['un_matched_id', '=', $request->re_matched_id]])
                             ->orWhere([['user_id', '=', $userExists->parent_id], ['user_type', '=', 'parent'], ['un_matched_id', '=', $request->singleton_id]])
                             ->delete();
