@@ -16,11 +16,12 @@ class ReferNotification extends Notification
      *
      * @return void
      */
-    public function __construct($user, $user_type, $singleton_id)
+    public function __construct($user, $user_type, $singleton_id, $msg)
     {
         $this->user         = $user;
         $this->user_type    = $user_type;
         $this->singleton_id = $singleton_id;
+        $this->msg          = $msg;
     }
 
     /**
@@ -63,7 +64,7 @@ class ReferNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Match Referred'),
-            'msg'       => $this->user->name.' '.$this->user->lname.' '.__('msg.has Referred a Match.'),
+            'msg'       => $this->user->name.' '.$this->msg,
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

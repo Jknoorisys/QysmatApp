@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class BlockNotification extends Notification
+class MutualMatchNotification extends Notification
 {
     use Queueable;
 
@@ -16,11 +16,12 @@ class BlockNotification extends Notification
      *
      * @return void
      */
-    public function __construct($user, $user_type, $singleton_id)
+    public function __construct($user, $user_type, $singleton_id, $msg)
     {
         $this->user         = $user;
         $this->user_type    = $user_type;
         $this->singleton_id = $singleton_id;
+        $this->msg          = $msg;
     }
 
     /**
@@ -61,8 +62,8 @@ class BlockNotification extends Notification
             'user_type' => $this->user->user_type,
             'name'      => $this->user->name,
             'email'     => $this->user->email,
-            'title'     => __('msg.Blocked'),
-            'msg'       => __('msg.You are Blocked by').' '.$this->user->name,
+            'title'     => __('msg.New Match Request'),
+            'msg'       => $this->msg,
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

@@ -17,6 +17,7 @@ use App\Models\Singleton;
 use App\Models\SwipedUpUsers;
 use App\Models\UnMatches;
 use App\Notifications\MatchNotification;
+use App\Notifications\MutualMatchNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -134,6 +135,10 @@ class Swipes extends Controller
 
                         // send congratulations fcm notification
                         if (isset($user) && !empty($user) && isset($singleton) && !empty($singleton)) {
+                            $msg = __('msg.Congratulations! You got a new match with');
+                            $singleton->notify(new MutualMatchNotification($user, $singleton->user_type, 0, ($msg.' '.$user->name)));
+                            $user->notify(new MutualMatchNotification($singleton, $user->user_type, 0, ($msg.' '.$singleton->name)));
+
                             $title = __('msg.Profile Matched');
                             $body = __('msg.Congratulations It’s a Match!');
                             $token = $user->fcm_token;

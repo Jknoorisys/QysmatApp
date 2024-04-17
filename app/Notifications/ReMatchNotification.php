@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class BlockNotification extends Notification
+class ReMatchNotification extends Notification
 {
     use Queueable;
 
@@ -61,8 +61,8 @@ class BlockNotification extends Notification
             'user_type' => $this->user->user_type,
             'name'      => $this->user->name,
             'email'     => $this->user->email,
-            'title'     => __('msg.Blocked'),
-            'msg'       => __('msg.You are Blocked by').' '.$this->user->name,
+            'title'     => __('msg.Re-Match Request'),
+            'msg'       => $this->user->name.' '.__("msg.has sent you a match request again"),
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

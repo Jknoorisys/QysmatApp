@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Storage;
 use Stripe\Stripe;
 use Willywes\AgoraSDK\RtcTokenBuilder;
 use App\Models\Admin as AdminModel;
+use App\Notifications\MutualMatchNotification;
 
     function userExist($login_id, $user_type)
     {
@@ -1345,6 +1346,12 @@ use App\Models\Admin as AdminModel;
                         if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                             $title = __('msg.Profile Matched');
                             $body = __('msg.Congratulations It’s a Match!');
+
+                            // database notification
+                            $msg = __('msg.Congratulations! You got a new match with');
+                            $user2->notify(new MutualMatchNotification($user1, $user2->user_type, 0, ($msg.' '.$user1->name)));
+                            $user1->notify(new MutualMatchNotification($user2, $user1->user_type, 0, ($msg.' '.$user2->name)));
+
                             $token = $user1->fcm_token;
                             $token1 = $user2->fcm_token;
                             $data = array(

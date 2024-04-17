@@ -62,7 +62,7 @@ class InstantMatchNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Instant Match Request'),
-            'msg'       => $this->user->name.' '.$this->user->lname.' '.__('msg.has Sent you an Instant Match Request.'),
+            'msg'       => $this->user->name.' '.__('msg.has sent you an instant match request'),
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

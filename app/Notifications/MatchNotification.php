@@ -44,7 +44,7 @@ class MatchNotification extends Notification
     {
         return (new MailMessage)
                     ->greeting(__('msg.Hi').'!')
-                    ->line($this->user->name.' '.__('msg.has Sent you a Match Request.'));
+                    ->line($this->user->name.' '.__('msg.has liked your single Muslims profile'));
                     // ->line(__('msg.To See His/Her Profile, Click on the Link Below'))
                     // ->action(__('msg.Click Here'), url('/'));
     }
@@ -62,8 +62,8 @@ class MatchNotification extends Notification
             'user_type' => $this->user->user_type,
             'name'      => $this->user->name,
             'email'     => $this->user->email,
-            'title'     => __('msg.Match Request'),
-            'msg'       => $this->user->name.' '.$this->user->lname.' '.__('msg.has Sent you a Match Request.'),
+            'title'     => __('msg.Profile Liked'),
+            'msg'       => $this->user->name.' '.__("msg.has liked your single Muslims profile"),
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }
