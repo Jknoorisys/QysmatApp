@@ -560,7 +560,7 @@ class Profile extends Controller
                     ],400);
                 }
 
-                ParentChild::where([['singleton_id', '=', $accessRequest->singleton_id],['access_code','=',$request->access_code]])->update(['parent_id' => $request->login_id,'status' => 'Linked']);
+                ParentChild::where([['singleton_id', '=', $accessRequest->singleton_id],['access_code','=',$request->access_code]])->update(['parent_id' => $request->login_id,'status' => 'Linked', 'access_code' => '']);
                 Singleton::where('id','=',$accessRequest->singleton_id)->update(['parent_id' => $request->login_id]);
 
                 $user = Singleton::where([['id','=',$accessRequest->singleton_id],['status','!=','Deleted']])->first();
