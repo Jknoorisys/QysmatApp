@@ -387,7 +387,7 @@ return [
     "New Match Request"                                     => "New Match Request",
     "Congratulations! You got a new match with"             => "Congratulations! You got a new match with",
     "Congratulations! Your child got a new match with"      => "Congratulations! Your child got a new match with",
-    "(for registration purposes only)"                     => "(for registration purposes only)",
+    "for registration purposes only"                     => "for registration purposes only",
     "has sent you an instant match request"                 => "has sent you an instant match request",
     "has liked your single Muslims profile"                 => "has liked your single Muslims profile",
     "has referred a match for single Muslims to connect"    => "has referred a match for single Muslims to connect",
