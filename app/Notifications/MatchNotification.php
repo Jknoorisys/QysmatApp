@@ -63,7 +63,7 @@ class MatchNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Profile Liked'),
-            'msg'       => $this->user->name.' '.__("msg.has liked your single Muslims profile"),
+            'msg'       => $this->user->name.' '.__("msg.has liked your single Muslims profile").'.',
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

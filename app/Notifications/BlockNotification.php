@@ -62,7 +62,7 @@ class BlockNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Blocked'),
-            'msg'       => __('msg.You are Blocked by').' '.$this->user->name,
+            'msg'       => __('msg.You are Blocked by').' '.$this->user->name.'.',
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

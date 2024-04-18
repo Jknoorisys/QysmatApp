@@ -57,7 +57,7 @@ class SendNotification extends Notification
     {
         return [
             'title'     => __('msg.Anouncment'),
-            'msg'       => $this->message,
+            'msg'       => $this->message.'.',
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }
