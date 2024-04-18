@@ -64,7 +64,7 @@ class ReferNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Match Referred'),
-            'msg'       => $this->user->name.' '.$this->msg,
+            'msg'       => $this->user->name.' '.$this->msg.'.',
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

@@ -62,7 +62,7 @@ class ReMatchNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Re-Match Request'),
-            'msg'       => $this->user->name.' '.__("msg.has sent you a match request again"),
+            'msg'       => $this->user->name.' '.__("msg.has sent you a match request again").'.',
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

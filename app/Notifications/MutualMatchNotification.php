@@ -63,7 +63,7 @@ class MutualMatchNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.New Match Request'),
-            'msg'       => $this->msg,
+            'msg'       => $this->msg.'.',
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }

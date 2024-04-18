@@ -63,7 +63,7 @@ class UnmatchNotification extends Notification
             'name'      => $this->user->name,
             'email'     => $this->user->email,
             'title'     => __('msg.Unmatched'),
-            'msg'       => $this->user->name.' '.$this->msg,
+            'msg'       => $this->user->name.' '.$this->msg.'.',
             'datetime'  => date('Y-m-d h:i:s'),
         ];
     }
