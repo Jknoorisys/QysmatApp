@@ -51,14 +51,14 @@ class Suggestions extends Controller
                 echo json_encode($response);die();
             }
 
-            if (empty($user) || $user->is_verified != 'verified') {
-                $response = [
-                    'status'    => 'failed',
-                    'message'   => __('msg.helper.not-verified'),
-                    'status_code' => 403
-                ];
-                echo json_encode($response);die();
-            }
+            // if (empty($user) || $user->is_verified != 'verified') {
+            //     $response = [
+            //         'status'    => 'failed',
+            //         'message'   => __('msg.helper.not-verified'),
+            //         'status_code' => 403
+            //     ];
+            //     echo json_encode($response);die();
+            // }
 
             $linked = ParentChild::where([['parent_id','=',$_POST['login_id']], ['singleton_id','=',$_POST['singleton_id']]])->first();
             if (empty($linked) || ($linked->status) != 'Linked') {
@@ -145,6 +145,14 @@ class Suggestions extends Controller
                 'message'   => __('msg.Validation Failed!'),
                 'errors'    => $validator->errors()
             ],400);
+        }
+
+        $user = ParentsModel::find($request->login_id);
+        if (empty($user) || $user->is_verified != 'verified') {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.helper.not-verified'),
+            ], 400);
         }
 
         try {
@@ -248,6 +256,14 @@ class Suggestions extends Controller
                 'message'   => __('msg.Validation Failed!'),
                 'errors'    => $validator->errors()
             ],400);
+        }
+
+        $user = ParentsModel::find($request->login_id);
+        if (empty($user) || $user->is_verified != 'verified') {
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => __('msg.helper.not-verified'),
+            ], 400);
         }
 
         try {
