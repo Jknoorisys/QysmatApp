@@ -147,13 +147,13 @@ class Suggestions extends Controller
             ],400);
         }
 
-        $user = ParentsModel::find($request->login_id);
-        if (empty($user) || $user->is_verified != 'verified') {
-            return response()->json([
-                'status'    => 'failed',
-                'message'   => __('msg.helper.not-verified'),
-            ], 400);
-        }
+        // $user = ParentsModel::find($request->login_id);
+        // if (empty($user) || $user->is_verified != 'verified') {
+        //     return response()->json([
+        //         'status'    => 'failed',
+        //         'message'   => __('msg.helper.not-verified'),
+        //     ], 400);
+        // }
 
         try {
             $height = $request->height ? explode('-',$request->height) : '';
