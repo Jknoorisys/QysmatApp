@@ -597,7 +597,7 @@ return [
         'invitation' => [
             'success' => 'Invitation Sent...',
             'failure' => "Unable to Send Invitation, Please Try Again...",
-            'invalid' => 'Your profile is not linked with your Parent/Guardian, please ask him/her to enter the access code that you have received in your email. If not received, please check your spam/junk mail for access code. If not received, please check your spam/junk mail for access code. If not received, please check your spam/junk mail for access code.',
+            'invalid' => 'Your profile is not linked with your Parent/Guardian, please ask him/her to enter the access code that you have received in your email. If not received, please check your spam/junk mail for access code.',
             'blocked' => 'Your Child has Blocked this User!',
             'reported' => 'Your Child has Reported this User!',
             'un-matched' => 'Your Child has Un-Matched this User!',
@@ -994,7 +994,7 @@ return [
             'success' => 'Suggestions Based on Singleton Categories Fetched Successfully!',
             'failure' => 'No Suggestions Found!',
             'invalid' => 'Category Details Not Found!',
-            'not-linked' => 'Your profile is not linked with your Parent/Guardian, please ask him/her to enter the access code that you have received in your email. If not received, please check your spam/junk mail for access code. If not received, please check your spam/junk mail for access code.',
+            'not-linked' => 'Your profile is not linked with your Parent/Guardian, please ask him/her to enter the access code that you have received in your email. If not received, please check your spam/junk mail for access code.',
         ],
 
         'swips' => [
