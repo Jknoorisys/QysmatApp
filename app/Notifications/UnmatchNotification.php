@@ -21,7 +21,7 @@ class UnmatchNotification extends Notification
         $this->user         = $user;
         $this->user_type    = $user_type;
         $this->singleton_id = $singleton_id;
-        $this->msg = $msg.'.';
+        $this->msg = $msg;
     }
 
     /**
