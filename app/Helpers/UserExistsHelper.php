@@ -1401,6 +1401,9 @@ use App\Notifications\MutualMatchNotification;
             $liked = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'liked']])
                                 ->orWhere([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'un-matched']])
                                 ->delete();
+            Matches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                                ->orWhere([['matched_parent_id','=',$user_id],['user_type','=','parent']])
+                                ->delete();
         }
     }
 
