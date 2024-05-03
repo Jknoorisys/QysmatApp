@@ -1388,12 +1388,12 @@ use App\Notifications\MutualMatchNotification;
                                 ->update(['match_type' => 'liked', 'queue' => 0, 'is_rematched' => 'no', 'matched_at' => Null,'status' => 'available']);
                     Singleton::where('id', '=', $user_id)->orWhere('id', '=', $un_matched_id)->update(['chat_status' => 'available']);
                 }
-
-                // delete all matches of the deleted user
-                Matches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
-                                ->orWhere([['match_id','=',$user_id],['user_type','=','singleton']])
-                                ->delete();
             }
+
+             // delete all matches of the deleted user
+             Matches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                        ->orWhere([['match_id','=',$user_id],['user_type','=','singleton']])
+                        ->delete();
         } else {
             $mutual = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'matched']])
                                 ->orWhere([['matched_parent_id','=',$user_id],['user_type','=','parent'], ['match_type', '=', 'matched']])
