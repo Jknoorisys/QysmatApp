@@ -1283,9 +1283,10 @@ use App\Notifications\MutualMatchNotification;
         if($user_type == 'singleton'){
             $link = ParentChild::where([['singleton_id', '=', $user_id]])->delete();
         }else{
-            $link = ParentChild::where([['parent_id', '=', $user_id]])->delete();
+            // $link = ParentChild::where([['parent_id', '=', $user_id]])->delete();
+            $link = ParentChild::where([['parent_id', '=', $user_id]])->update(['parent_id' => 0, 'status' => 'Unlinked', 'updated_at' => date('Y-m-d H:i:s')]);
             if($link){
-                Singleton::where('parent_id', '=', $user_id)->update(['parent_id' => '', 'updated_at' => date('Y-m-d H:i:s')]);
+                Singleton::where('parent_id', '=', $user_id)->update(['parent_id' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
             }
         }
 
