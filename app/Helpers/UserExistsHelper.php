@@ -1289,17 +1289,62 @@ use App\Notifications\MutualMatchNotification;
             }
         }
 
-        $match = MyMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
-        $unmatch = UnMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
-        $refer = ReferredMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
-        $received = RecievedMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
+        if ($user_type == 'parent') {
+            $match = MyMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                            ->delete();
 
-        $requests = InstantMatchRequest::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
-        $block = BlockList::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
-        $report = ReportedUsers::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
-        $chat = MessagedUsers::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
+            $unmatch = UnMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                            ->delete();
+
+            $refer = ReferredMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                                    ->delete();
+
+            $received = RecievedMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                                       ->delete();
+
+            $requests = InstantMatchRequest::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                                            ->orWhere([['requested_parent_id','=',$user_id],['user_type','=',$user_type]])
+                                            ->delete();
+
+        } else {
+            $match = MyMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                            ->orWhere('matched_id','=',$user_id)
+                            ->delete();
+
+            $unmatch = UnMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                            ->orWhere('un_matched_id','=',$user_id)
+                            ->delete();
+
+            $refer = ReferredMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                                    ->orWhere('referred_match_id','=',$user_id)
+                                    ->delete();
+
+            $received = RecievedMatches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                                    ->orWhere('recieved_match_id','=',$user_id)
+                                    ->delete();
+
+            $requests = InstantMatchRequest::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                                    ->orWhere([['requested_id','=',$user_id],['user_type','=',$user_type]])
+                                    ->delete();
+
+        }
+
+        
+        $block = BlockList::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                            ->orWhere([['blocked_user_id','=',$user_id],['blocked_user_type','=',$user_type]])
+                            ->delete();
+
+        $report = ReportedUsers::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                                ->orWhere([['reported_user_id','=',$user_id],['reported_user_type','=',$user_type]])
+                                ->delete();
+
+        $chat = MessagedUsers::where([['user_id','=',$user_id],['user_type','=',$user_type]])
+                                ->orWhere([['messaged_user_id','=',$user_id],['messaged_user_type','=',$user_type]])
+                                ->delete();
+
         $chat = ChatHistory::where([['user_id','=',$user_id],['user_type','=',$user_type]])
                             ->orWhere([['messaged_user_id','=',$user_id],['messaged_user_type','=',$user_type]])->delete();
+
         $swipe = LastSwipe::where([['user_id','=',$user_id],['user_type','=',$user_type]])->delete();
 
         if ($user_type == 'singleton') {
@@ -1401,6 +1446,8 @@ use App\Notifications\MutualMatchNotification;
             $liked = Matches::where([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'liked']])
                                 ->orWhere([['user_id','=',$user_id],['user_type','=',$user_type], ['match_type', '=', 'un-matched']])
                                 ->delete();
+
+            // delete all matches of the deleted user
             Matches::where([['user_id','=',$user_id],['user_type','=',$user_type]])
                                 ->orWhere([['matched_parent_id','=',$user_id],['user_type','=','parent']])
                                 ->delete();
