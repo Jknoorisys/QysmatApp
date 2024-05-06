@@ -132,7 +132,7 @@ class Matches extends Controller
 
                                 $title = __('msg.Profile Matched');
                                 $body = __('msg.Congratulations It’s a Match!');
-                                $token = $user1->fcm_token;
+                                $token1 = $user1->fcm_token;
                                 $data = array(
                                     'notType' => "profile_matched",
                                     'user1_id' => $user1 ? $user1->id : '',
@@ -144,9 +144,9 @@ class Matches extends Controller
                                     'user2_profile' => $user2 ? $user2->photo1 : '',
                                     'user2_blur_image' => $user2 ? ($user2->gender == 'Female' ? $notify->blur_image : 'no') : '',
                                 );
-                                sendFCMNotifications($token, $title, $body, $data);
+                                sendFCMNotifications($token1, $title, $body, $data);
 
-                                $token = $user2->fcm_token;
+                                $token2 = $user2->fcm_token;
                                 $data1 = array(
                                     'notType' => "profile_matched",
                                     'user1_id' => $user2 ? $user2->id : '',
@@ -158,7 +158,7 @@ class Matches extends Controller
                                     'user2_profile' => $user1 ? $user1->photo1 : '',
                                     'user2_blur_image' => $user1 ? ($user1->gender == 'Female' ? $notify->blur_image : 'no') : '',
                                 );
-                                sendFCMNotifications($token, $title, $body, $data1);
+                                sendFCMNotifications($token2, $title, $body, $data1);
                             }
                         }
                    }

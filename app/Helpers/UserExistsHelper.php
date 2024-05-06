@@ -1398,8 +1398,7 @@ use App\Notifications\MutualMatchNotification;
                             $user2->notify(new MutualMatchNotification($user1, $user2->user_type, 0, ($msg.' '.$user1->name)));
                             $user1->notify(new MutualMatchNotification($user2, $user1->user_type, 0, ($msg.' '.$user2->name)));
 
-                            $token = $user1->fcm_token;
-                            $token1 = $user2->fcm_token;
+                            $token1 = $user1->fcm_token;
                             $data = array(
                                 'notType' => "profile_matched",
                                 'user1_id' => $user1->id,
@@ -1411,9 +1410,9 @@ use App\Notifications\MutualMatchNotification;
                                 'user2_profile' => $user2->photo1,
                                 'user2_blur_image' => ($user2->gender == 'Female' ? $notify->blur_image : 'no'),
                             );
-                            sendFCMNotifications($token, $title, $body, $data);
+                            sendFCMNotifications($token1, $title, $body, $data);
 
-                            $token1 = $user2->fcm_token;
+                            $token2 = $user2->fcm_token;
                             $data1 = array(
                                 'notType' => "profile_matched",
                                 'user1_id' => $user2->id,
@@ -1425,7 +1424,7 @@ use App\Notifications\MutualMatchNotification;
                                 'user2_profile' => $user1->photo1,
                                 'user2_blur_image' => ($user1->gender == 'Female' ? $notify->blur_image : 'no'),
                             );
-                            sendFCMNotifications($token1, $title, $body, $data1);
+                            sendFCMNotifications($token2, $title, $body, $data1);
                         }
                     }    
 

@@ -302,7 +302,7 @@ class InstantMatch extends Controller
 
                                 $title = __('msg.Profile Matched');
                                 $body = __('msg.Congratulations It’s a Match!');
-                                $token = $user->fcm_token;
+                                $token1 = $user->fcm_token;
                                 $data = array(
                                     'notType' => "profile_matched",
                                     'user1_id' => $user->id,
@@ -314,9 +314,9 @@ class InstantMatch extends Controller
                                     'user2_profile' => $singleton->photo1,
                                     'user2_blur_image' => ($singleton->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $singleton->is_blurred) : 'no')
                                 );
-                                sendFCMNotifications($token, $title, $body, $data);
+                                sendFCMNotifications($token1, $title, $body, $data);
 
-                                $token1 = $singleton->fcm_token;
+                                $token2 = $singleton->fcm_token;
                                 $data1 = array(
                                     'notType' => "profile_matched",
                                     'user1_id' => $singleton->id,
@@ -328,7 +328,7 @@ class InstantMatch extends Controller
                                     'user2_profile' => $user->photo1,
                                     'user2_blur_image' => ($user->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user->is_blurred) : 'no'),
                                 );
-                                sendFCMNotifications($token1, $title, $body, $data1);
+                                sendFCMNotifications($token2, $title, $body, $data1);
                             }
                         }
 
