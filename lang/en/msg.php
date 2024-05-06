@@ -351,7 +351,7 @@ return [
     'Access Request'                                        => 'Access Request',
     'Your Access Code is'                                   => 'Your Access Code is',
     'Your Profile is Linked with'                           => 'Your Profile is Linked with',
-    "Your profile is linked with"                          => "Your profile is linked with",
+    "Your profile is linked with"                           => "Your profile is linked with",
     'Profile Linked'                                        => 'Profile Linked',
     'Click Here'                                            => 'Click Here',
     'New Registration'                                      => 'New Registration',

@@ -121,7 +121,7 @@ class Swipes extends Controller
                     // send congratulations fcm notification
                     if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
                         // database notification
-                        $msg = __('msg.Congratulations! Your child got a new match with');
+                        $msg = __('msg.Congratulations! You got a new match with');
                         $parent2->notify(new MutualMatchNotification($parent1, $parent2->user_type, $user2->id, ($msg.' '.$user1->name)));
                         $parent1->notify(new MutualMatchNotification($parent2, $parent1->user_type, $user1->id, ($msg.' '.$user2->name)));
 
