@@ -127,7 +127,7 @@ class Swipes extends Controller
 
                         $title = __('msg.Profile Matched');
                         $body = __('msg.Congratulations It’s a Match!');
-                        $token = $parent1->fcm_token;
+                        $token1 = $parent1->fcm_token;
                         $data = array(
                             'notType' => "profile_matched",
                             'user1_id' => $user1->id,
@@ -139,9 +139,9 @@ class Swipes extends Controller
                             'user2_profile' => $user2->photo1,
                             'user2_blur_image' => $user2 ? ($user2->gender == 'Female' ? $mutual->blur_image : 'no') : '',
                         );
-                        sendFCMNotifications($token, $title, $body, $data);
+                        sendFCMNotifications($token1, $title, $body, $data);
 
-                        $token1 = $parent2->fcm_token;
+                        $token2 = $parent2->fcm_token;
                         $data1 = array(
                             'notType' => "profile_matched",
                             'user1_id' => $user2->id,
@@ -153,7 +153,7 @@ class Swipes extends Controller
                             'user2_profile' => $user1->photo1,
                             'user2_blur_image' => $user1 ? ($user1->gender == 'Female' ? $mutual->blur_image : 'no') : '',
                         );
-                        sendFCMNotifications($token1, $title, $body, $data1);
+                        sendFCMNotifications($token2, $title, $body, $data1);
                     }
                 }else{
                     $data = [

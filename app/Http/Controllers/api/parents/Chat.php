@@ -600,7 +600,7 @@ class Chat extends Controller
 
                                 $title = __('msg.Profile Matched');
                                 $body = __('msg.Congratulations It’s a Match!');
-                                $token = $user1->fcm_token;
+                                $token1 = $user1->fcm_token;
                                 $data = array(
                                     'notType' => "profile_matched",
                                     'user1_id' => $user1->id,
@@ -612,9 +612,9 @@ class Chat extends Controller
                                     'user2_profile' => $user2->photo1,
                                     'user2_blur_image' => ($user2->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user2->is_blurred) : 'no'),
                                 );
-                                sendFCMNotifications($token, $title, $body, $data);
+                                sendFCMNotifications($token1, $title, $body, $data);
 
-                                $token1 = $user2->fcm_token;
+                                $token2 = $user2->fcm_token;
                                 $data1 = array(
                                     'notType' => "profile_matched",
                                     'user1_id' => $user2->id,
@@ -626,7 +626,7 @@ class Chat extends Controller
                                     'user2_profile' => $user1->photo1,
                                     'user2_blur_image' => ($user1->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user1->is_blurred) : 'no'),
                                 );
-                                sendFCMNotifications($token1, $title, $body, $data1);
+                                sendFCMNotifications($token2, $title, $body, $data1);
                             }
                         }
 
