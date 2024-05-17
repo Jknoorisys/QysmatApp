@@ -506,6 +506,7 @@ class Chat extends Controller
                     'message'   => __('msg.parents.swips.un-matched'),
                 ],400);
             }
+            
 
             $linked = ParentChild::where([['parent_id','=',$request->login_id],['singleton_id','=',$request->singleton_id],['status','=','Linked']])->first();
             if (!empty($linked)) {
@@ -556,6 +557,11 @@ class Chat extends Controller
                 }
 
                 if ($send) {
+
+                    $mutualSingletons = Matches ::where([['user_id', '=', $request->singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->messaged_user_singleton_id], ['match_type', '=', 'matched']])
+                                                ->orWhere([['user_id', '=', $request->messaged_user_singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->singleton_id], ['match_type', '=', 'matched']])
+                                                ->first();
+
                     $user = Singleton::where([['id','=',$linked->singleton_id],['status','!=','Deleted']])->first();
                     $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
                     $user->notify(new ReferNotification($parent, $user->user_type, 0, __('msg.has referred a match for single Muslims to connect')));
@@ -569,13 +575,20 @@ class Chat extends Controller
                         ]
                     );
                     
+                   if(!empty($mutualSingletons)) {
+                        return response()->json([
+                            'status'    => 'success',
+                            'message'   => __('msg.parents.invitation.success'),
+                            'data'      => $invite
+                        ],200);
+                   } else {
                     $mutual = Matches ::where([['user_id', '=', $linked->singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $request->messaged_user_singleton_id]])
-                                        ->orWhere([['user_id', '=', $request->messaged_user_singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $linked->singleton_id]])
-                                        ->first();
+                            ->orWhere([['user_id', '=', $request->messaged_user_singleton_id], ['user_type', '=', 'singleton'], ['match_id', '=', $linked->singleton_id]])
+                            ->first();
 
                     $user2 = Singleton::whereId($request->singleton_id)->first();
                     $user1 = Singleton::whereId($request->messaged_user_singleton_id)->first();
-            
+
                     if (!empty($mutual)) {
                         // $busy = Matches::where([['user_id', '=', $request->swiped_user_id], ['user_type', '=', 'singleton'],['status', 'busy']])->first();
                         $matched = Matches::where([['user_id', '=', $request->messaged_user_singleton_id], ['user_type', '=', 'singleton'],['match_type', 'matched']])
@@ -593,7 +606,7 @@ class Chat extends Controller
 
                             // send congratulations fcm notification
                             if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
-                               // database notification
+                            // database notification
                                 $msg = __('msg.Congratulations! You got a new match with');
                                 $user2->notify(new MutualMatchNotification($user1, $user2->user_type, 0, ($msg.' '.$user1->name)));
                                 $user1->notify(new MutualMatchNotification($user2, $user1->user_type, 0, ($msg.' '.$user2->name)));
@@ -650,6 +663,8 @@ class Chat extends Controller
                         'message'   => __('msg.parents.invitation.success'),
                         'data'      => $invite
                     ],200);
+                   }
+                
                 } else {
                     return response()->json([
                         'status'    => 'failed',

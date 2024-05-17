@@ -621,6 +621,8 @@ class Chat extends Controller
                     );
 
                     $parent = Singleton:: where([['id', '=', $request->messaged_user_id], ['status','=', 'Unblocked'], ['is_verified', '=', 'verified']])->first();
+
+                
                     $mutual = Matches  :: where([['user_id', '=', $linked->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->messaged_user_id], ['singleton_id', '=', $request->login_id]])
                                         ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->login_id], ['singleton_id', '=', $request->messaged_user_id]])
                                         ->first();
@@ -635,46 +637,48 @@ class Chat extends Controller
                         // Matches::where([['user_id', '=', $linked->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->messaged_user_id], ['singleton_id', '=', $request->login_id], ['is_rematched', '=', 'no']])
                         //         ->orWhere([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->login_id], ['singleton_id', '=', $request->messaged_user_id], ['is_rematched', '=', 'no']])
                         //         ->update(['match_type' => 'matched', 'updated_at' => date('Y-m-d H:i:s')]);
-                        Matches::where([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->login_id], ['singleton_id', '=', $request->messaged_user_id], ['is_rematched', '=', 'no'], ['match_type', '=', 'liked']])
+                        if ($mutual->match_type != 'matched') {
+                            Matches::where([['user_id', '=', $parent->parent_id], ['user_type', '=', 'parent'], ['match_id', '=', $request->login_id], ['singleton_id', '=', $request->messaged_user_id], ['is_rematched', '=', 'no'], ['match_type', '=', 'liked']])
                                 ->update(['match_type' => 'matched', 'matched_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
 
-                        // send congratulations fcm notification
-                        if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
-                            // database notification
-                            $msg = __('msg.Congratulations! You got a new match with');
-                            $parent2->notify(new MutualMatchNotification($parent1, $parent2->user_type, $user2->id, ($msg.' '.$user1->name)));
-                            $parent1->notify(new MutualMatchNotification($parent2, $parent1->user_type, $user1->id, ($msg.' '.$user2->name)));
+                            // send congratulations fcm notification
+                            if (isset($user1) && !empty($user1) && isset($user2) && !empty($user2)) {
+                                // database notification
+                                $msg = __('msg.Congratulations! You got a new match with');
+                                $parent2->notify(new MutualMatchNotification($parent1, $parent2->user_type, $user2->id, ($msg.' '.$user1->name)));
+                                $parent1->notify(new MutualMatchNotification($parent2, $parent1->user_type, $user1->id, ($msg.' '.$user2->name)));
 
-                            $title = __('msg.Profile Matched');
-                            $body = __('msg.Congratulations It’s a Match!');
-                            $token1 = $parent1->fcm_token;
-                            $data = array(
-                                'notType' => "profile_matched",
-                                'user1_id' => $user1->id,
-                                'user1_name' => $user1->name,
-                                'user1_profile' => $user1->photo1,
-                                'user1_blur_image' => ($user1->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user1->is_blurred) : 'no'),
-                                'user2_id' => $user2->id,
-                                'user2_name' => $user2->name,
-                                'user2_profile' => $user2->photo1,
-                                'user2_blur_image' => ($user2->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user2->is_blurred) : 'no'),
-                            );
-                            sendFCMNotifications($token1, $title, $body, $data);
+                                $title = __('msg.Profile Matched');
+                                $body = __('msg.Congratulations It’s a Match!');
+                                $token1 = $parent1->fcm_token;
+                                $data = array(
+                                    'notType' => "profile_matched",
+                                    'user1_id' => $user1->id,
+                                    'user1_name' => $user1->name,
+                                    'user1_profile' => $user1->photo1,
+                                    'user1_blur_image' => ($user1->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user1->is_blurred) : 'no'),
+                                    'user2_id' => $user2->id,
+                                    'user2_name' => $user2->name,
+                                    'user2_profile' => $user2->photo1,
+                                    'user2_blur_image' => ($user2->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user2->is_blurred) : 'no'),
+                                );
+                                sendFCMNotifications($token1, $title, $body, $data);
 
-                            $token2 = $parent2->fcm_token;
-                            $data1 = array(
-                                'notType' => "profile_matched",
-                                'user1_id' => $user2->id,
-                                'user1_name' => $user2->name,
-                                'user1_profile' => $user2->photo1,
-                                'user1_blur_image' => ($user2->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user2->is_blurred) : 'no'),
-                                'user2_id' => $user1->id,
-                                'user2_name' => $user1->name,
-                                'user2_profile' => $user1->photo1,
-                                'user2_blur_image' => ($user1->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user1->is_blurred) : 'no'),
-                            );
-                            sendFCMNotifications($token2, $title, $body, $data1);
-                        }
+                                $token2 = $parent2->fcm_token;
+                                $data1 = array(
+                                    'notType' => "profile_matched",
+                                    'user1_id' => $user2->id,
+                                    'user1_name' => $user2->name,
+                                    'user1_profile' => $user2->photo1,
+                                    'user1_blur_image' => ($user2->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user2->is_blurred) : 'no'),
+                                    'user2_id' => $user1->id,
+                                    'user2_name' => $user1->name,
+                                    'user2_profile' => $user1->photo1,
+                                    'user2_blur_image' => ($user1->gender == 'Female' ? ($mutual->match_type == 'matched' ? $mutual->blur_image : $user1->is_blurred) : 'no'),
+                                );
+                                sendFCMNotifications($token2, $title, $body, $data1);
+                            }
+                        } 
                     }else{
                         $data = [
                             'user_id' => $linked->parent_id,
