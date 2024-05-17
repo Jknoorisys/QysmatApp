@@ -382,6 +382,7 @@ return [
     "has Unmatched Your Child's Profile"                    => "has Unmatched Your Child's Profile",
     'Profile Liked'                                         => 'Profile Liked',
     "has Liked Your Child's Profile."                       => "has Liked Your Child's Profile.",
+    "Someone liked your single Muslims profile"             => "Someone liked your single Muslims profile",
     "Re-Match Request"                                      => "Re-Match Request",
     "has sent you a Match Request again."                   => "has sent you a Match Request again.",
     "New Match Request"                                     => "New Match Request",

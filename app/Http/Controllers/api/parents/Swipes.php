@@ -199,8 +199,8 @@ class Swipes extends Controller
                 $user = ParentsModel::where([['id','=',$parent->parent_id],['status','!=','Deleted']])->first();
                 $parent = ParentsModel::where([['id','=',$request->login_id],['status','=','Unblocked']])->first();
                 if (isset($user) && !empty($user)) {
-                    $title = __('msg.Match Request!');
-                    $message = __('msg.You have a Match Request!');
+                    $title = __('msg.Profile Liked');
+                    $message = __('msg.Someone liked your single Muslims profile');
                     $fcm_regid[] = $user->fcm_token;
                     $notification = array(
                         'title'         => $title,
