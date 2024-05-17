@@ -598,9 +598,9 @@ return [
             'success' => 'Invitation Sent...',
             'failure' => "Unable to Send Invitation, Please Try Again...",
             'invalid' => 'Your profile is not linked with your Parent/Guardian, please ask him/her to enter the access code that you have received in your email. If not received, please check your spam/junk mail for access code.',
-            'blocked' => 'Your Child has Blocked this User!',
-            'reported' => 'Your Child has Reported this User!',
-            'un-matched' => 'Your Child has Un-Matched this User!',
+            'blocked' => 'Single Muslim has Blocked this User!',
+            'reported' => 'Single Muslim has Reported this User!',
+            'un-matched' => 'Single Muslim has Un-Matched this User!',
         ],
 
         'un-match' => [
@@ -693,24 +693,24 @@ return [
         'access-request' => [
             'success' => 'Access Request Sent Successfully!',
             'failure' => 'Unable to Send Access Request, Please Try Again...',
-            'invalid' => 'Child Already Linked!',
+            'invalid' => 'Single Muslim Already Linked!',
         ],
 
         'verify-access-request' => [
             'success' => 'Profile Linked Successfully!',
             'failure' => 'Access Code Does not Match! Please Try Again...',
-            'invalid' => 'Child Already Linked with his/her Parent/Guardian',
-            'not-verified' => 'The Child You are trying to Connect with is not Verified By admin ...'
+            'invalid' => 'Single Muslim Already Linked with his/her Parent/Guardian',
+            'not-verified' => 'The Single Muslim You are trying to Connect with is not Verified By admin ...'
         ],
 
         'get-linked-profiles' => [
             'success' => 'Linked Profile List Fetched Successfully!',
             'failure' => 'No Profile Found!',
-            'invalid' => 'No non-premium Child Found!',
+            'invalid' => 'No non-premium Single Muslim Found!',
         ],
 
         'get-child-profile' => [
-            'success' => 'Child Profile Details Fetched Successfully!',
+            'success' => 'Single Muslim Profile Details Fetched Successfully!',
             'failure' => 'No Profile Found!',
         ],
 
@@ -1028,7 +1028,7 @@ return [
             'failure' => 'Unable to Create Stripe Session, Please Try Again...' ,
             'invalid' => 'Invalid Plan, Please Try Again...',
             'parent-not-premium' => 'You can not Purchase a Joint Subscription if your Father/Guardian does not have Premium Account.',
-            'child-not-premium' => 'You does not have any Non-Premium Child, Please Try Again...'
+            'child-not-premium' => 'You does not have any Non-Premium Single Muslim, Please Try Again...'
         ],
         'success' => 'Subscribed Successfully!',
         'failure' => 'Unable to Subscribe, Please Try Again...',
@@ -1044,7 +1044,7 @@ return [
             'failure' => 'Unable to Create In App Payment Session, Please Try Again...' ,
             'invalid' => 'Invalid Plan, Please Try Again...',
             'parent-not-premium' => 'You can not Purchase a Joint Subscription if your Father/Guardian does not have Premium Account.',
-            'child-not-premium' => 'You does not have any Non-Premium Child, Please Try Again...'
+            'child-not-premium' => 'You does not have any Non-Premium Single Muslim, Please Try Again...'
         ],
         
         'success' => 'Subscribed Successfully!',
@@ -1086,7 +1086,7 @@ return [
         'invalid' => 'Your Matched User is Not Found!',
         'not-found' => 'Match Not Found!',
         'already-clear-singleton' => 'You have already un-blurred your photos for this user',
-        'already-clear-parent' => 'You have already un-blurred your child photos for this user',
+        'already-clear-parent' => 'You have already un-blurred your single muslim photos for this user',
     ],
 
     'version' => [
