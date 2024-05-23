@@ -842,7 +842,7 @@ use App\Notifications\MutualMatchNotification;
             'xcoxc.com',
             'yep.it',
             'yogamaven.com',
-            // 'yopmail.com',
+            'yopmail.com',
             'yopmail.fr',
             'yopmail.net',
             'yourdomain.com',

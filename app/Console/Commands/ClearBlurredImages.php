@@ -30,7 +30,7 @@ class ClearBlurredImages extends Command
     {
         $one_hour_ago = now()->subHour();
         $seven_days_ago = now()->subDays(7); 
-        DB::table('matches')->where('matched_at', '<', $one_hour_ago)->update(['blur_image' => 'no']);
+        DB::table('matches')->where('matched_at', '<', $seven_days_ago)->update(['blur_image' => 'no']);
         $this->info('Successfully cleared blurred images.');
     }
 }
